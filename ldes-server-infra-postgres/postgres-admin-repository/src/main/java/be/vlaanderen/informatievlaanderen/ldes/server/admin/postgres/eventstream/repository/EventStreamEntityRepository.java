@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface EventStreamEntityRepository extends JpaRepository<EventStreamEn
 	@Modifying
 	@Query("DELETE FROM EventStreamEntity e WHERE e.name = :name")
 	int deleteByName(String name);
+
+    @Modifying
+    @Query("update EventStreamEntity e set e.isClosed = true WHERE e.id = :id")
+    void closeEventStream(@Param("id") String collectionName);
 }

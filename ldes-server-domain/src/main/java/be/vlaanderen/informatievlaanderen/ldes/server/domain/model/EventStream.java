@@ -8,7 +8,7 @@ public class EventStream {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final boolean versionCreationEnabled;
-	private boolean isClosed;
+	private final boolean isClosed;
 
 	public EventStream(String collection,
 					   String timestampPath,
@@ -47,10 +47,6 @@ public class EventStream {
 
 	public boolean isClosed() {
 		return isClosed;
-	}
-
-	public void close() {
-		isClosed = true;
 	}
 
 	@Override
