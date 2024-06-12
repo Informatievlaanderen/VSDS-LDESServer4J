@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -133,7 +134,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
-				.atMost(40, SECONDS)
+				.atMost(POLLING_RATE, SECONDS)
 				.untilAsserted(() -> {
 					responseModel = fetchFragment(url);
 					assertNotNull(responseModel);
@@ -241,7 +242,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).next().toString();
 
 
-		await().atMost(Duration.ofSeconds(120))
+		await().atMost(POLLING_RATE, SECONDS)
 				.until(() -> {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
@@ -252,7 +253,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-		await().atMost(Duration.ofSeconds(80))
+		await().atMost(POLLING_RATE, SECONDS)
 				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
 	}
 
@@ -303,7 +304,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
 	public void iFetchAStreamingFragment(String url, String compareUrl) {
-		await().atMost(Duration.ofSeconds(80))
+		await().atMost(POLLING_RATE, SECONDS)
 				.untilAsserted(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)

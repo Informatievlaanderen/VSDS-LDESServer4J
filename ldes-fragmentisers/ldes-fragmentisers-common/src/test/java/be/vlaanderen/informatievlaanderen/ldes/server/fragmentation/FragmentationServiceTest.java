@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -12,11 +12,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.mem
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.junit.jupiter.api.AfterEach;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -35,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -97,7 +95,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation(new MembersIngestedEvent("collection", List.of()));
 
-		await().atMost(10, TimeUnit.SECONDS)
+		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
@@ -107,7 +105,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
-		await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
+		await().atMost(POLLING_RATE, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 		verify(memberMapper, times(members.size() * 3))
 				.mapToFragmentationMember(any());
 	}
