@@ -2,8 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdatase
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.repository.DataServiceEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.service.DcatServiceEntityConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.entity.DcatDataServiceEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.mapper.DcatViewMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.repository.DcatDataServiceEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.springframework.stereotype.Component;
@@ -15,38 +17,44 @@ import java.util.Optional;
 @Component
 public class DcatDataServicePostgresRepository implements DcatViewRepository {
 
-    private final DataServiceEntityRepository repository;
-	private final DcatServiceEntityConverter converter = new DcatServiceEntityConverter();
+    private final DcatDataServiceEntityRepository dcatDataServiceEntityRepository;
+    private final ViewEntityRepository viewEntityRepository;
 
-	public DcatDataServicePostgresRepository(DataServiceEntityRepository repository) {
-		this.repository = repository;
-	}
+	public DcatDataServicePostgresRepository(DcatDataServiceEntityRepository dcatDataServiceEntityRepository, ViewEntityRepository viewEntityRepository) {
+		this.dcatDataServiceEntityRepository = dcatDataServiceEntityRepository;
+        this.viewEntityRepository = viewEntityRepository;
+    }
 
     @Override
 	@Transactional
     public void save(DcatView dcatView) {
-        repository.save(converter.fromDcatView(dcatView));
+        final String collectionName = dcatView.getViewName().getCollectionName();
+        final String viewName = dcatView.getViewName().getViewName();
+        dcatDataServiceEntityRepository.findByViewName(collectionName, viewName)
+                .or(() -> viewEntityRepository.findByViewName(collectionName, viewName).map(DcatDataServiceEntity::new))
+                .ifPresent(dcatDataServiceEntity -> {
+                    dcatDataServiceEntity.setModel(dcatView.getDcat());
+                    dcatDataServiceEntityRepository.save(dcatDataServiceEntity);
+                });
     }
 
     @Override
     public Optional<DcatView> findByViewName(ViewName viewName) {
-        return repository.findById(viewName.asString())
-                .map(converter::toDcatView);
+        return dcatDataServiceEntityRepository
+                .findByViewName(viewName.getCollectionName(), viewName.getViewName())
+                .map(DcatViewMapper::fromEntity);
     }
 
     @Override
+    @Transactional
     public void delete(ViewName viewName) {
-        repository.deleteById(viewName.asString());
+        dcatDataServiceEntityRepository.deleteByViewName(viewName.getCollectionName(), viewName.getViewName());
     }
 
     @Override
-    public void deleteByCollectionName(String collectionName) {
-        repository.deleteAllByViewNameStartingWith(collectionName + "/");
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<DcatView> findAll() {
-        return repository.findAll().stream().map(converter::toDcatView).toList();
+        return dcatDataServiceEntityRepository.findAll().stream().map(DcatViewMapper::fromEntity).toList();
     }
 
 }

@@ -15,7 +15,7 @@ public class DcatDatasetEntity {
     private Integer collectionId;
 
     @MapsId
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "collection_id", nullable = false)
     private EventStreamEntity eventStream;
@@ -24,7 +24,7 @@ public class DcatDatasetEntity {
     @Convert(converter = ModelConverter.class)
     private Model model;
 
-    public DcatDatasetEntity() {}
+    protected DcatDatasetEntity() {}
 
     public DcatDatasetEntity(EventStreamEntity eventStream) {
         this.eventStream = eventStream;

@@ -14,8 +14,6 @@ public interface DcatViewRepository {
 
     void delete(ViewName viewName);
 
-    void deleteByCollectionName(String collectionName);
-
     List<DcatView> findAll();
 
 }
