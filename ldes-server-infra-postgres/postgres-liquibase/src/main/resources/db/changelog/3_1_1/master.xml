@@ -9,4 +9,5 @@
     <include file="/db/changelog/3_1_1/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
     <include file="/db/changelog/3_1_1/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
     <include file="/db/changelog/3_1_1/event-source/add-fk-to-event-source.xml"/>
+    <include file="/db/changelog/3_1_1/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
 </databaseChangeLog>
