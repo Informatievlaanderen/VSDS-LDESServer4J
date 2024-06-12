@@ -301,10 +301,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 
-	@When("I fetch a fragment from url {string} in a streaming way")
-	public void iFetchAStreamingFragment(String url) {
+	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
+	public void iFetchAStreamingFragment(String url, String compareUrl) {
 		await().atMost(Duration.ofSeconds(80))
-				.until(() -> {
+				.untilAsserted(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
 							.accept(MediaType.TEXT_EVENT_STREAM)
@@ -325,13 +325,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						responseModel.add(eventModel);
 					});
 
-					return Objects.nonNull(responseModel);
+					assertTrue(responseModel.isIsomorphicWith(getResponseAsModel(compareUrl, Lang.TURTLE.getHeaderString())));
 				});
-	}
-
-	@Then("The response model is the same as the model from the url {string}")
-	public void modelIsIsomorphic(String url) throws Exception {
-		assertTrue(responseModel.isIsomorphicWith(getResponseAsModel(url, Lang.TURTLE.getHeaderString())));
 	}
 
 	@When("I close the collection {string}")
