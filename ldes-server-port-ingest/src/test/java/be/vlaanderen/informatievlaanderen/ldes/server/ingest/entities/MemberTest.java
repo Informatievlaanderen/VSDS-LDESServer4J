@@ -51,7 +51,7 @@ class MemberTest {
                 0L, true, UUID.randomUUID().toString(), model);
 
         assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-                member.getId());
+                member.getSubject());
         assertEquals(0L, member.getSequenceNr());
         assertEquals("collectionName", member.getCollectionName());
         assertTrue(member.getModel().isIsomorphicWith(model));

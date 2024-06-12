@@ -39,7 +39,7 @@ class StateObjectMemberExtractorTest {
 
 
         assertThat(members)
-                .map(IngestedMember::getId)
+                .map(IngestedMember::getSubject)
                 .containsExactlyInAnyOrderElementsOf(expectedMemberIds);
 
     }

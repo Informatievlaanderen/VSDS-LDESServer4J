@@ -52,7 +52,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 		assertTrue(retrievedMember.isPresent());
 		IngestedMember retrievedMemberPresent = retrievedMember.get();
 		IngestedMember member = members.get(index - 1);
-		assertEquals(member.getId(), retrievedMemberPresent.getId());
+		assertEquals(member.getSubject(), retrievedMemberPresent.getSubject());
 		assertEquals(member.getCollectionName(), retrievedMemberPresent.getCollectionName());
 		assertEquals(sequencNr, retrievedMemberPresent.getSequenceNr());
 	}

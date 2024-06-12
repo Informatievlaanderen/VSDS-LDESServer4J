@@ -11,6 +11,7 @@ import jakarta.persistence.Query;
 import org.apache.jena.riot.Lang;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
+@Repository
 @Primary
 public class MemberPostgresRepository implements MemberRepository {
 	public static final Lang CONVERSION_LANG = Lang.RDFPROTO;
@@ -52,12 +53,12 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	protected boolean membersExist(List<IngestedMember> members) {
-		return repository.existsByIdIn(members.stream().map(IngestedMember::getId).toList());
+		return repository.existsByIdIn(members.stream().map(IngestedMember::getSubject).toList());
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
 		return members.stream()
-				       .map(IngestedMember::getId)
+				       .map(IngestedMember::getSubject)
 				       .collect(Collectors.toSet())
 				       .size() != members.size();
 	}
