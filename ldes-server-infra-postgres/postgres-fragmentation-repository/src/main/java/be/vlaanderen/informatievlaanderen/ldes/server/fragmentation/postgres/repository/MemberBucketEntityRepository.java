@@ -6,11 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
 public interface MemberBucketEntityRepository extends PagingAndSortingRepository<MemberBucketEntity, String> {
-	List<MemberBucketEntity> findAllByViewNameAndSequenceNr(String viewName, Long sequenceNr);
-
 	void deleteAllByViewName(String viewName);
 
 	void deleteAllByViewNameStartingWith(String collectionName);

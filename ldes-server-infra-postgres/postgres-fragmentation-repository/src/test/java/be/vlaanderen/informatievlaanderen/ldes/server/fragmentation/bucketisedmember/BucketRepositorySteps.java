@@ -8,11 +8,12 @@ import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest {
 
@@ -38,7 +39,9 @@ public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest 
 
     @When("I save the bucketisedMembers using the BucketisedMemberRepository")
     public void iSaveTheMembers() {
-        bucketisedMemberRepository.insertAll(members);
+        members.stream()
+                .map(mapper::toMemberBucketisationEntity)
+                .forEach(memberBucketJpaRepository::save);
     }
 
     @When("I delete the members of collection {string}")
@@ -54,32 +57,23 @@ public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest 
     @Then("The BucketisedMemberRepository contains all the members")
     public void membersArePresent() {
         members.forEach(bucketisedMember -> {
-            assertFalse(
-                    bucketisedMemberRepository
-                            .getFirstUnallocatedMember(bucketisedMember.viewName(), bucketisedMember.sequenceNr()).isEmpty());
+            assertTrue(memberBucketEntityRepository
+                    .findUnprocessedBuckets(bucketisedMember.getViewName(), bucketisedMember.viewName().getCollectionName(), Pageable.ofSize(1000)).isEmpty());
         });
-        bucketisedMemberRepository.insertAll(members);
     }
 
     @Then("The BucketisedMemberRepository does not contain the members of collection {string}")
     public void membersOfCollectionAreNotPresent(String collection) {
         members.forEach(bucketisedMember -> {
-            assertFalse(
-                    bucketisedMember.viewName().getCollectionName().equals(collection) ^
-                            bucketisedMemberRepository
-                                    .getFirstUnallocatedMember(bucketisedMember.viewName(), bucketisedMember.sequenceNr()).isEmpty());
+            assertTrue(memberBucketEntityRepository
+                    .findUnprocessedBuckets(bucketisedMember.getViewName(), collection, Pageable.ofSize(1000)).isEmpty());
         });
-        bucketisedMemberRepository.insertAll(members);
     }
 
     @Then("The BucketisedMemberRepository does not contain the members of view {string}")
     public void membersAreNotPresent(String viewName) {
-        members.forEach(bucketisedMember -> {
-            assertFalse(
-                    bucketisedMember.viewName().asString().equals(viewName) ^
-                    bucketisedMemberRepository
-                            .getFirstUnallocatedMember(bucketisedMember.viewName(), bucketisedMember.sequenceNr()).isEmpty());
-        });
-        bucketisedMemberRepository.insertAll(members);
+        var view = ViewName.fromString(viewName);
+        assertTrue(memberBucketEntityRepository
+                .findUnprocessedBuckets(view.getViewName(), view.getCollectionName(), Pageable.ofSize(1000)).isEmpty());
     }
 }

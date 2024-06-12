@@ -21,7 +21,7 @@ public class MemberUnallocatedHandlerFetch {
 	@EventListener
 	public void handleMemberUnallocatedEvent(MemberUnallocatedEvent event) {
 		allocationRepository.deleteByMemberIdAndCollectionNameAndViewName(event.memberId(),
-				event.viewName().getCollectionName(), event.viewName().getViewName());
+				event.viewName().getCollectionName(), event.viewName().asString());
 		String viewName = event.viewName().asString();
 		Metrics.counter(LDES_SERVER_MEMBERS_REMOVED_FROM_FRAGMENT_COUNT, "view",  viewName).increment();
 	}

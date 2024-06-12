@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewRebucketisedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -22,7 +22,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;

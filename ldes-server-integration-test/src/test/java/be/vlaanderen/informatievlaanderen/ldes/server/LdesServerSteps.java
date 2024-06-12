@@ -16,6 +16,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
+import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -232,26 +233,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
 			throws Exception {
 		// Get only relation from view
-		String fragmentUrl = RDFParser.fromString(mockMvc.perform(get("/%s/%s".formatted(collection, view))
-								.accept("text/turtle"))
-						.andReturn()
-						.getResponse()
-						.getContentAsString())
-				.lang(Lang.TURTLE)
-				.toModel()
-				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node"))
-				.next()
-				.toString();
+		Awaitility.await()
+				.until(() -> fetchFragment("/%s/%s".formatted(collection, view))
+						.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).hasNext());
+
+		String fragmentUrl = fetchFragment("/%s/%s".formatted(collection, view))
+				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).next().toString();
+
 
 		await().atMost(Duration.ofSeconds(120))
 				.until(() -> {
-					Model fragmentPage = RDFParser.fromString(
-									mockMvc.perform(get(fragmentUrl.formatted(collection, view))
-													.accept("text/turtle"))
-											.andReturn()
-											.getResponse()
-											.getContentAsString())
-							.lang(Lang.TURTLE).toModel();
+					Model fragmentPage = fetchFragment(fragmentUrl);
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
 							       .toList().size() == expectedMemberCount;
@@ -346,5 +338,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iCloseTheEventstream(String collection) throws Exception {
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collection}/close", collection))
 				.andExpect(status().is2xxSuccessful());
+	}
+
+	private Model fetchFragment(String path) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(path))
+						.accept("text/turtle"))
+				.andReturn()
+				.getResponse();
+		return new ResponseToModelConverter(response).convert();
 	}
 }
