@@ -23,8 +23,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -36,8 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @EnableScheduling
-@EnableAsync
 public class FragmentationService {
+	public static final int POLLING_RATE = 1500;
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final String BUCKETISATION_JOB = "bucketisation";
 	private final String REBUCKETISATION_JOB = "rebucketisation";
@@ -79,7 +77,6 @@ public class FragmentationService {
 	}
 
 	@EventListener
-	@Async
 	public void handleViewInitializationEvent(ViewNeedsRebucketisationEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		launchJob(rebucketiseJob(), new JobParametersBuilder()
 				.addString("viewName", event.viewName().asString())
@@ -87,7 +84,7 @@ public class FragmentationService {
 				.toJobParameters());
 	}
 
-	@Scheduled(fixedRate = 1500)
+	@Scheduled(fixedRate = POLLING_RATE)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		if (shouldTriggerBucketisation.get() && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
 			shouldTriggerBucketisation.set(false);

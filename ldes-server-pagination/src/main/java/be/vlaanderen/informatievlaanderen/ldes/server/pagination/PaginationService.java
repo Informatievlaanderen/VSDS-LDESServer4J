@@ -21,7 +21,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -66,14 +65,12 @@ public class PaginationService {
 
 
 	@EventListener
-	@Async
 	@SuppressWarnings("java:S2629")
 	public void handleMemberBucketisedEvent(MembersBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		shouldTriggerPagination = true;
 	}
 
 	@EventListener
-	@Async
 	@SuppressWarnings("java:S2629")
 	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		runJob(newViewPaginationJob(), new JobParametersBuilder()

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -43,6 +42,7 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
@@ -134,16 +134,16 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
 				.atMost(40, SECONDS)
-				.pollInterval(1, SECONDS)
-				.untilAsserted(() -> mockMvc.perform(get(url))
-						.andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
-						.andDo(result -> responseModel = new ResponseToModelConverter(result.getResponse()).convert()));
+				.untilAsserted(() -> {
+					responseModel = fetchFragment(url);
+					assertNotNull(responseModel);
+					assertEquals(expectedNumberOfMembers, responseModel.listObjectsOfProperty(TREE_MEMBER).toList().size());
+				});
 	}
 
 	@And("The expected response is equal to {string}")
 	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException {
 		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
-
 		Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
@@ -340,6 +340,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						.accept("text/turtle"))
 				.andReturn()
 				.getResponse();
+		if (response.getStatus() == 404) {
+			return null;
+		}
 		return new ResponseToModelConverter(response).convert();
 	}
 }
