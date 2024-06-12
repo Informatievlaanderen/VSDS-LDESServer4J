@@ -11,7 +11,7 @@ public interface DcatDatasetRepository {
 
 	void saveDataset(DcatDataset dataset);
 
-	boolean deleteDataset(String id);
+	void deleteDataset(String id);
 
 	List<DcatDataset> findAll();
 

@@ -40,13 +40,8 @@ public class DcatDatasetPostgresRepository implements DcatDatasetRepository {
 
     @Override
     @Transactional
-    public boolean deleteDataset(String collectionName) {
-        final var dcatDatasetEntity = dcatDatasetEntityRepository.findByCollectionName(collectionName);
-        if (dcatDatasetEntity.isPresent()) {
-            dcatDatasetEntityRepository.delete(dcatDatasetEntity.get());
-            return true;
-        }
-        return false;
+    public void deleteDataset(String collectionName) {
+        dcatDatasetEntityRepository.deleteByCollectionName(collectionName);
     }
 
     @Override

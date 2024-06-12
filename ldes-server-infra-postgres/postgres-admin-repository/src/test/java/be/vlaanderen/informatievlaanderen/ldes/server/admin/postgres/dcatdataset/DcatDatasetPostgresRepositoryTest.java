@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,7 +50,6 @@ class DcatDatasetPostgresRepositoryTest {
 
     @Test
     void when_DatasetPresent_Then_ReturnDataset() {
-
         when(dcatDatasetEntityRepository.findByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(Optional.of(entity));
 
         Optional<DcatDataset> retrievedDataset = repository.retrieveDataset(DATASET_COLLECTION_NAME);
@@ -96,11 +97,19 @@ class DcatDatasetPostgresRepositoryTest {
 
     @Test
     void when_DatasetPresent_Then_DatasetRemoved() {
-        when(dcatDatasetEntityRepository.findByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(Optional.of(entity));
-
         repository.deleteDataset(DATASET_COLLECTION_NAME);
 
-        verify(dcatDatasetEntityRepository).delete(entity);
+        verify(dcatDatasetEntityRepository).deleteByCollectionName(DATASET_COLLECTION_NAME);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void test_ExistsByCollectionName(boolean exists) {
+        when(dcatDatasetEntityRepository.existsByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(exists);
+
+        final boolean result = repository.exitsByCollectionName(DATASET_COLLECTION_NAME);
+
+        assertThat(result).isEqualTo(exists);
     }
 
     @Nested
