@@ -36,11 +36,11 @@ Feature: Server basic fetching functionality
       | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view          | cartoons            |
 
   @setupStreaming
-#  Scenario: The LDES server supports streaming for fetching
-#    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
-#    When I ingest 1 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
-#    When I fetch a fragment from url "/mobility-hindrances/paged" in a streaming way and is equal to the model of "/mobility-hindrances/paged"
-#    When I fetch a fragment from url "/mobility-hindrances/paged?pageNumber=1" in a streaming way and is equal to the model of "/mobility-hindrances/paged"
+  Scenario: The LDES server supports streaming for fetching
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+    When I ingest 1 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
+    When I fetch a fragment from url "/mobility-hindrances/paged" in a streaming way and is equal to the model of "/mobility-hindrances/paged"
+    When I fetch a fragment from url "/mobility-hindrances/paged?pageNumber=1" in a streaming way and is equal to the model of "/mobility-hindrances/paged?pageNumber=1"
 
   @clearRegistry
   Scenario Outline: Counter is created and returns number of inserted members
