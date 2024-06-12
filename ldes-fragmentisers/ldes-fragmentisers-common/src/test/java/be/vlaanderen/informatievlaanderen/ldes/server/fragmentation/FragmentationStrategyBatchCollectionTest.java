@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
@@ -42,7 +41,7 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initResult.viewName));
+		verify(viewBucketisationService).setFragmentationHasView(initResult.viewName);
 	}
 
 	@Test
@@ -54,6 +53,8 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+
+		verify(viewBucketisationService).setFragmentationHasDeletedView(initResult.viewName());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
@@ -69,7 +70,7 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
-		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initViewAddedResult.viewName));
+		verify(viewBucketisationService).setFragmentationHasView(initViewAddedResult.viewName);
 	}
 
 	@Test
@@ -82,6 +83,8 @@ class FragmentationStrategyBatchCollectionTest {
 				new EventStreamDeletedEvent(initResult.viewName.getCollectionName()));
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+
+		verify(viewBucketisationService).setFragmentationHasDeletedCollection(initResult.viewName.getCollectionName());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());

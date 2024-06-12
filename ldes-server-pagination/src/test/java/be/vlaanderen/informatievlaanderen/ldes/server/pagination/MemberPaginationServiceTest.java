@@ -47,7 +47,7 @@ class MemberPaginationServiceTest {
         assertEquals(1, memberAllocations.size());
 
         InOrder inOrder = inOrder(fragmentRepository);
-        inOrder.verify(fragmentRepository, times(1)).incrementNrOfMembersAdded(child.getFragmentId(),1);
+        inOrder.verify(fragmentRepository, times(2)).saveFragment(child);
         inOrder.verifyNoMoreInteractions();
     }
 }

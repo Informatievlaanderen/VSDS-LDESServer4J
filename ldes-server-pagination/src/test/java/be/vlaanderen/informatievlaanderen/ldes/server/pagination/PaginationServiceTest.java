@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAl
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -39,90 +42,91 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
-        MemberPaginationServiceCreator.class})
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
+		MemberPaginationServiceCreator.class, ViewBucketisationService.class})
 class PaginationServiceTest {
-    private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
-    @MockBean(name = "bucketisationPartitioner")
-    private Partitioner bucketisationPartitioner;
-    @MockBean(name = "viewBucketisationPartitioner")
-    private Partitioner viewBucketisationPartitioner;
-    @MockBean
-    private ItemReader<List<BucketisedMember>> reader;
-    @MockBean
-    private ItemWriter<List<MemberAllocation>> writer;
-    @MockBean
-    private FragmentRepository fragmentRepository;
-    @Autowired
-    private PaginationService paginationService;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-    private List<MemberAllocation> output;
+	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
+	@MockBean(name = "bucketisationPartitioner")
+	private Partitioner bucketisationPartitioner;
+	@MockBean(name = "viewBucketisationPartitioner")
+	private Partitioner viewBucketisationPartitioner;
+	@MockBean
+	private ItemReader<List<BucketisedMember>> reader;
+	@MockBean
+	private ItemWriter<List<MemberAllocation>> writer;
+	@MockBean
+	private FragmentRepository fragmentRepository;
+	@Autowired
+	private PaginationService paginationService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+	private List<MemberAllocation> output;
 
-    @Test
-    void when_MemberBucketised_Then_CorrectServiceCalled() throws Exception {
-        when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
-        eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
+	@Test
+	void when_MemberBucketised_Then_CorrectServiceCalled() throws Exception {
+		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
+		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
-        mockBucketisationPartitioner();
-        mockReader();
-        mockWriter();
+		mockBucketisationPartitioner();
+		mockReader();
+		mockWriter();
 
-        paginationService.handleMemberBucketisedEvent(new MembersBucketisedEvent());
 
-        verify(fragmentRepository).incrementNrOfMembersAdded(fromFragmentId("/s/v1?pageNumber=1"), 4);
-        assertEquals(4, output.size());
-    }
+		paginationService.handleMemberBucketisedEvent(new MembersBucketisedEvent());
 
-    @Test
-    void when_ViewDeleted_Then_ServiceRemoved() throws Exception {
-        when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
-        eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
+		await()
+				.timeout(25, SECONDS)
+				.untilAsserted(() -> assertEquals(4, output.size()));
+	}
 
-        mockViewBucketisationPartitioner();
-        mockReader();
-        mockWriter();
+	@Test
+	void when_ViewDeleted_Then_ServiceRemoved() throws Exception {
+		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
+		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
-        paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
+		mockViewBucketisationPartitioner();
+		mockReader();
+		mockWriter();
 
-        verify(fragmentRepository).incrementNrOfMembersAdded(fromFragmentId("/s/v1?pageNumber=1"), 4);
-        assertEquals(4, output.size());
-    }
+		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
 
-    private void mockBucketisationPartitioner() {
-        ExecutionContext context = new ExecutionContext();
-        context.putString("viewName", VIEW_NAME_1.asString());
-        context.putString("fragmentId", VIEW_NAME_1.asString());
+		assertEquals(4, output.size());
+	}
 
-        when(bucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
-    }
+	private void mockBucketisationPartitioner() {
+		ExecutionContext context = new ExecutionContext();
+		context.putString("viewName", VIEW_NAME_1.asString());
+		context.putString("fragmentId", VIEW_NAME_1.asString());
 
-    private void mockViewBucketisationPartitioner() {
-        ExecutionContext context = new ExecutionContext();
-        context.putString("fragmentId", VIEW_NAME_1.asString());
+		when(bucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
+	}
 
-        when(viewBucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
-    }
+	private void mockViewBucketisationPartitioner() {
+		ExecutionContext context = new ExecutionContext();
+		context.putString("fragmentId", VIEW_NAME_1.asString());
 
-    private void mockReader() throws Exception {
-        when(reader.read()).thenReturn(bucketisedMembers(), null);
-    }
+		when(viewBucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
+	}
 
-    private void mockWriter() throws Exception {
-        output = new ArrayList<>();
-        doAnswer(invocation -> {
-            Chunk<List<MemberAllocation>> items = invocation.getArgument(0);
-            output.addAll(items.getItems().stream().flatMap(List::stream).toList());
-            return null;
-        }).when(writer).write(any());
-    }
+	private void mockReader() throws Exception {
+		when(reader.read()).thenReturn(bucketisedMembers(), null);
+	}
 
-    private List<BucketisedMember> bucketisedMembers() {
-        return List.of(
-                new BucketisedMember("x/1", VIEW_NAME_1, "es/v1", 0L),
-                new BucketisedMember("x/2", VIEW_NAME_1, "es/v1", 0L),
-                new BucketisedMember("x/3", VIEW_NAME_1, "es/v1", 0L),
-                new BucketisedMember("x/4", VIEW_NAME_1, "es/v1", 0L)
-        );
-    }
+	private void mockWriter() throws Exception {
+		output = new ArrayList<>();
+		doAnswer(invocation -> {
+			Chunk<List<MemberAllocation>> items = invocation.getArgument(0);
+			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
+			return null;
+		}).when(writer).write(any());
+	}
+
+	private List<BucketisedMember> bucketisedMembers() {
+		return List.of(
+				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1", 0L),
+				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1", 0L),
+				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1", 0L),
+				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1", 0L)
+		);
+	}
 }

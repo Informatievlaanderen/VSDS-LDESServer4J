@@ -12,7 +12,6 @@ import java.util.List;
 
 @Component
 public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCreator {
-	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 	private final ApplicationContext applicationContext;
 	private final RootFragmentCreator rootFragmentCreator;
 

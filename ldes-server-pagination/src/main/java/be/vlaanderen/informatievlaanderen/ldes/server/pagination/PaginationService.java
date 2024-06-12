@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
+@EnableScheduling
 public class PaginationService {
 	private static final String PAGINATION_JOB = "pagination";
 	private static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
@@ -92,7 +94,7 @@ public class PaginationService {
 		return !jobExplorer.findRunningJobExecutions(jobName).isEmpty();
 	}
 
-	private void runJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+	protected void runJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		jobLauncher.run(job, jobParameters);
 		if (job.getName().equals(PAGINATION_JOB) && shouldTriggerPagination) {
 			shouldTriggerPagination = false;
