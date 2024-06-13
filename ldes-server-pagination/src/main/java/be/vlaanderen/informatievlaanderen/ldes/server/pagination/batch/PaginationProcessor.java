@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService.ServiceType.PAGINATION;
+
 @Component
 public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>, List<MemberAllocation>> {
 
@@ -47,13 +49,13 @@ public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>
 	public void handleViewInitializationEvent(ViewSupplier event) {
 		paginationServices.put(event.viewSpecification().getName().asString(),
 				memberPaginationServiceCreator.createPaginationService(event.viewSpecification()));
-		viewBucketisationService.setPaginationHasView(event.viewSpecification().getName());
+		viewBucketisationService.setHasView(event.viewSpecification().getName(), PAGINATION);
 	}
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		paginationServices.remove(event.getViewName().asString());
-		viewBucketisationService.setPaginationHasDeletedView(event.getViewName());
+		viewBucketisationService.setDeletedView(event.getViewName(), PAGINATION);
 	}
 
 	@EventListener
@@ -63,7 +65,7 @@ public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>
 				.filter(viewName -> ViewName.fromString(viewName).getCollectionName().equals(event.collectionName()))
 				.toList()
 				.forEach(paginationServices::remove);
-		viewBucketisationService.setPaginationHasDeletedCollection(event.collectionName());
+		viewBucketisationService.setDeletedCollection(event.collectionName(), PAGINATION);
 	}
 
 	protected Map<String, MemberPaginationService> getPaginationServices() {

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService.ServiceType.FRAGMENTATION;
+
 @Component
 public class FragmentationStrategyBatchCollection implements FragmentationStrategyCollection {
 
@@ -59,7 +61,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	public void handleViewAddedEvent(ViewSupplier event) {
 		final var fragmentationStrategyExecutor = createExecutor(event.viewSpecification().getName(), event.viewSpecification());
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
-		viewBucketisationService.setFragmentationHasView(event.viewSpecification().getName());
+		viewBucketisationService.setHasView(event.viewSpecification().getName(), FRAGMENTATION);
 	}
 
 	@EventListener
@@ -68,7 +70,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 				executor -> Objects.equals(executor.getViewName().getCollectionName(), event.collectionName()));
 		fragmentRepository.deleteTreeNodesByCollection(event.collectionName());
 		bucketisedMemberRepository.deleteByCollection(event.collectionName());
-		viewBucketisationService.setFragmentationHasDeletedCollection(event.collectionName());
+		viewBucketisationService.setDeletedCollection(event.collectionName(), FRAGMENTATION);
 	}
 
 	@EventListener
@@ -76,7 +78,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 		removeFromStrategySet(executor -> Objects.equals(executor.getViewName(), event.getViewName()));
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());
 		bucketisedMemberRepository.deleteByViewName(event.getViewName());
-		viewBucketisationService.setFragmentationHasDeletedView(event.getViewName());
+		viewBucketisationService.setDeletedView(event.getViewName(), FRAGMENTATION);
 	}
 
 	private void removeFromStrategySet(Predicate<FragmentationStrategyBatchExecutor> filterPredicate) {

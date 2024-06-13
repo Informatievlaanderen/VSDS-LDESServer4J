@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnableBatchProcessing
 @SpringBatchTest
-public class PartitionerTest extends PostgresFragmentationIntegrationTest {
+class PartitionerTest extends PostgresFragmentationIntegrationTest {
 	@Autowired
 	private BucketisationPartitioner partitioner;
 

@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService.ServiceType.FRAGMENTATION;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +42,7 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		verify(viewBucketisationService).setFragmentationHasView(initResult.viewName);
+		verify(viewBucketisationService).setHasView(initResult.viewName, FRAGMENTATION);
 	}
 
 	@Test
@@ -54,7 +55,7 @@ class FragmentationStrategyBatchCollectionTest {
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		verify(viewBucketisationService).setFragmentationHasDeletedView(initResult.viewName());
+		verify(viewBucketisationService).setDeletedView(initResult.viewName(), FRAGMENTATION);
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
@@ -70,7 +71,7 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
-		verify(viewBucketisationService).setFragmentationHasView(initViewAddedResult.viewName);
+		verify(viewBucketisationService).setHasView(initViewAddedResult.viewName, FRAGMENTATION);
 	}
 
 	@Test
@@ -84,7 +85,7 @@ class FragmentationStrategyBatchCollectionTest {
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		verify(viewBucketisationService).setFragmentationHasDeletedCollection(initResult.viewName.getCollectionName());
+		verify(viewBucketisationService).setDeletedCollection(initResult.viewName.getCollectionName(), FRAGMENTATION);
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
