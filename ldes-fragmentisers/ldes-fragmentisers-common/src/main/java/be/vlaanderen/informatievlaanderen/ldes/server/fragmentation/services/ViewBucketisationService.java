@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class ViewBucketisationService {
 	private final ApplicationEventPublisher eventPublisher;
-	private final Map<String, Boolean> fragmentationHasView = new HashMap<>();
-	private final Map<String, Boolean> paginationHasView = new HashMap<>();
+	private final Set<String> fragmentationHasView = new HashSet<>();
+	private final Set<String> paginationHasView = new HashSet<>();
 
 	public ViewBucketisationService(ApplicationEventPublisher eventPublisher) {
 		this.eventPublisher = eventPublisher;
@@ -21,9 +21,9 @@ public class ViewBucketisationService {
 
 	public synchronized void setHasView(@NotNull ViewName view, @NotNull ServiceType serviceType) {
 		if (serviceType.equals(ServiceType.FRAGMENTATION)) {
-			fragmentationHasView.put(view.asString(), true);
+			fragmentationHasView.add(view.asString());
 		} else {
-			paginationHasView.put(view.asString(), true);
+			paginationHasView.add(view.asString());
 		}
 		checkAndLaunchEvent(view);
 	}
@@ -40,25 +40,20 @@ public class ViewBucketisationService {
 	public synchronized void setDeletedCollection(@NotNull String collectionName,
 	                                              @NotNull ServiceType serviceType) {
 		if (serviceType.equals(ServiceType.FRAGMENTATION)) {
-			fragmentationHasView.keySet()
-					.stream()
-					.filter(viewName -> ViewName.fromString(viewName).getCollectionName().equals(collectionName))
-					.toList()
-					.forEach(fragmentationHasView::remove);
+			fragmentationHasView.removeIf(viewName -> ViewName.fromString(viewName)
+					.getCollectionName()
+					.equals(collectionName));
 		} else {
-			paginationHasView.keySet()
-					.stream()
-					.filter(viewName -> ViewName.fromString(viewName).getCollectionName().equals(collectionName))
-					.toList()
-					.forEach(paginationHasView::remove);
+			paginationHasView.removeIf(viewName -> ViewName.fromString(viewName)
+					.getCollectionName()
+					.equals(collectionName));
 		}
 
 
 	}
 
 	private void checkAndLaunchEvent(ViewName viewName) {
-		if (fragmentationHasView.getOrDefault(viewName.asString(), false) &&
-		    paginationHasView.getOrDefault(viewName.asString(), false)) {
+		if (fragmentationHasView.contains(viewName.asString()) && paginationHasView.contains(viewName.asString())) {
 			eventPublisher.publishEvent(new ViewNeedsRebucketisationEvent(viewName));
 		}
 	}
