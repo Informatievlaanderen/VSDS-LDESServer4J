@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -72,7 +71,7 @@ class PaginationServiceTest {
 		mockWriter();
 
 
-		paginationService.handleMemberBucketisedEvent(new MembersBucketisedEvent());
+		paginationService.handleMemberBucketisedEvent();
 
 		await()
 				.timeout(25, SECONDS)

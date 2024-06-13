@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
@@ -93,7 +92,7 @@ class FragmentationServiceTest {
 		mockReader(members);
 		mockWriter();
 
-		fragmentationService.executeFragmentation(new MembersIngestedEvent("collection", List.of()));
+		fragmentationService.executeFragmentation();
 
 		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
