@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +17,12 @@ public class IngestEventSourceServiceImpl implements IngestEventSourceService {
 	}
 
 	@Override
-	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+	public Stream<IngestedMember> getMemberStreamOfCollection(String collectionName) {
 		return memberRepository.getMemberStreamOfCollection(collectionName);
 	}
 
 	@Override
-	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
+	public Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
 		return memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequenceNr);
 	}
 

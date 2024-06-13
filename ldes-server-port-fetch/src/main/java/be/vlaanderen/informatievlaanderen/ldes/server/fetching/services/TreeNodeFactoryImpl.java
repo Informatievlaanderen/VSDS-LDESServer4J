@@ -35,7 +35,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId()).toList();
 		List<Member> members = memberFetcher
-				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList()).toList();
+				.fetchAllByIds(memberIds.stream().map(MemberAllocation::memberId).toList()).toList();
 
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),

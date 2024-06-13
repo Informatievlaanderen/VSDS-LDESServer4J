@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
@@ -20,18 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
-	private List<Member> members;
-	private Optional<Member> retrievedMember;
+	private List<IngestedMember> members;
+	private Optional<IngestedMember> retrievedMember;
 
 	@When("I save the members using the MemberRepository")
-	public void iSaveTheMembers(List<Member> members) {
+	public void iSaveTheMembers(List<IngestedMember> members) {
 		memberRepository.insertAll(members);
 		this.members = members;
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
-	public Member memberEntryTransformer(Map<String, String> row) {
-		return new Member(
+	public IngestedMember memberEntryTransformer(Map<String, String> row) {
+		return new IngestedMember(
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("versionOf"),
@@ -50,8 +50,8 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 	@And("The retrieved member has the same properties as the {int} member in the table and has sequenceNr {int}")
 	public void theRetrievedMemberHasTheSamePropertiesAsTheMemberInTheTableAndHasSequenceNr(int index, int sequencNr) {
 		assertTrue(retrievedMember.isPresent());
-		Member retrievedMemberPresent = retrievedMember.get();
-		Member member = members.get(index - 1);
+		IngestedMember retrievedMemberPresent = retrievedMember.get();
+		IngestedMember member = members.get(index - 1);
 		assertEquals(member.getId(), retrievedMemberPresent.getId());
 		assertEquals(member.getCollectionName(), retrievedMemberPresent.getCollectionName());
 		assertEquals(sequencNr, retrievedMemberPresent.getSequenceNr());
@@ -74,7 +74,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@Then("I can get an ordered stream from all the members of the {string} collection containing {int} members")
 	public void iCanGetAnOrderedStreamFromAllTheMembersOfTheCollection(String collectionName, int memberCount) {
-		List<Member> result = memberRepository.getMemberStreamOfCollection(collectionName).toList();
+		List<IngestedMember> result = memberRepository.getMemberStreamOfCollection(collectionName).toList();
 		for (int i = 0; i < result.size(); i++) {
 			assertEquals(i, result.get(i).getSequenceNr().intValue());
 		}

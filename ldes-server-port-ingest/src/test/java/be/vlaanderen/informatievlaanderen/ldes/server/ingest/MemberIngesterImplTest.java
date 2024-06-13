@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollectionImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
@@ -61,7 +61,7 @@ class MemberIngesterImplTest {
     void whenValidatorThrowsAnException_thenTheIngestIsAborted_andTheExceptionIsThrown() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
 
-        Member member = new Member(
+        IngestedMember member = new IngestedMember(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, true, "txId", model);
@@ -78,7 +78,7 @@ class MemberIngesterImplTest {
     @DisplayName("Adding Member when there is a member with the same id that already exists")
     void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
-        Member member = new Member(
+        IngestedMember member = new IngestedMember(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, true, "txId", model);
@@ -95,7 +95,7 @@ class MemberIngesterImplTest {
     @DisplayName("Adding Member when there is no existing member with the same id")
     void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQ).toModel();
-        Member member = new Member(
+        IngestedMember member = new IngestedMember(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, true, "txId", model);

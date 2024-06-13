@@ -98,7 +98,7 @@ public class AllocationRepositorySteps extends PostgresAllocationIntegrationTest
 	private void assertGetMemberAllocationsByFragmentId(String fragmentId, List<String> expectedIds) {
 		List<MemberAllocation> memberAllocationsByFragmentId = allocationPostgresRepository
 				.getMemberAllocationsByFragmentId(fragmentId).toList();
-		List<String> actualIds = memberAllocationsByFragmentId.stream().map(MemberAllocation::getId).sorted().toList();
+		List<String> actualIds = memberAllocationsByFragmentId.stream().map(MemberAllocation::id).sorted().toList();
 		assertEquals(expectedIds, actualIds);
 	}
 

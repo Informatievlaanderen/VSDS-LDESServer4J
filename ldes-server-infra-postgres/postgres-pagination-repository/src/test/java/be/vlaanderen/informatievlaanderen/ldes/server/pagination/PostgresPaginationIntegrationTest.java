@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.SequenceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
@@ -56,11 +55,6 @@ public class PostgresPaginationIntegrationTest {
         @Bean
         public MemberRepository memberRepository() {
             return Mockito.mock(MemberRepository.class);
-        }
-
-        @Bean
-        public SequenceEntityRepository sequenceEntityRepository() {
-            return Mockito.mock(SequenceEntityRepository.class);
         }
 
         @Bean

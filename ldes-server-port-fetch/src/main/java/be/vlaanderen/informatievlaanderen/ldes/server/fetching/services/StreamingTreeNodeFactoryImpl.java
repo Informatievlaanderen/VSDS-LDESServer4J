@@ -40,7 +40,7 @@ public class StreamingTreeNodeFactoryImpl implements StreamingTreeNodeFactory {
 
     @Override
     public Stream<Member> getMembersOfFragment(String treeNodeId) {
-        List<String> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId).map(MemberAllocation::getMemberId).toList();
+        List<String> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId).map(MemberAllocation::memberId).toList();
         return memberFetcher.fetchAllByIds(memberIds);
     }
 }

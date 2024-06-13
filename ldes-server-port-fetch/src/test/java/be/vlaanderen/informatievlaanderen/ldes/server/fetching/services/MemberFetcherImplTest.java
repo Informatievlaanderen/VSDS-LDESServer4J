@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -60,9 +60,9 @@ class MemberFetcherImplTest {
                 .containsExactlyInAnyOrderElementsOf(MEMBER_IDS);
     }
 
-    private Stream<Member> createIngestMembers() {
+    private Stream<IngestedMember> createIngestMembers() {
         return MEMBER_IDS.stream()
-                .map(id -> new Member(
+                .map(id -> new IngestedMember(
                         id,
                         COLLECTION,
                         "http://example.org/verkeerspunt/meting",

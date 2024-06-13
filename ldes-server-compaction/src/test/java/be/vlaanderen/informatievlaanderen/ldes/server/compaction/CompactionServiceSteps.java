@@ -99,7 +99,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 					return fragmentAllocations.stream()
 							.filter(fragmentAllocation -> requested.contains(fragmentAllocation.fragmentId))
 							.flatMap(fragmentAllocations1 -> fragmentAllocations1.memberAllocations.stream()
-									.map(MemberAllocation::getMemberId)).toList();
+									.map(MemberAllocation::memberId)).toList();
 				});
 	}
 

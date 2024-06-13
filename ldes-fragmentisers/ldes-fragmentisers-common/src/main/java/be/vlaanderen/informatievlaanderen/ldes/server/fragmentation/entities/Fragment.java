@@ -18,7 +18,7 @@ public class Fragment {
 	public static final String ROOT = "root";
 	private final LdesFragmentIdentifier identifier;
 	private Boolean immutable;
-	private final int nrOfMembersAdded;
+	private int nrOfMembersAdded;
 	private final List<TreeRelation> relations;
 	private LocalDateTime deleteTime;
 	private LocalDateTime nextUpdateTs = null;
@@ -82,6 +82,10 @@ public class Fragment {
 
 	public int getNrOfMembersAdded() {
 		return this.nrOfMembersAdded;
+	}
+
+	public int incrementNrOfMembersAdded() {
+		return this.nrOfMembersAdded++;
 	}
 
 	public Optional<LdesFragmentIdentifier> getParentId() {

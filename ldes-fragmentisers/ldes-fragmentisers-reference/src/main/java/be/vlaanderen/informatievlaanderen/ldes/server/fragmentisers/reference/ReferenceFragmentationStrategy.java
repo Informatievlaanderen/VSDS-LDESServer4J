@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
@@ -36,7 +36,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     }
 
     @Override
-    public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, Member member,
+    public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
                                                       Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
         final var rootFragment = getOrCreateRootFragment(parentFragment);

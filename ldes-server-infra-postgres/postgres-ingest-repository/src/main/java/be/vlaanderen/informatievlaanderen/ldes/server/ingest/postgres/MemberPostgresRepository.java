@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
@@ -41,7 +41,7 @@ public class MemberPostgresRepository implements MemberRepository {
 
 	@Override
 	@Transactional
-	public List<Member> insertAll(List<Member> members) {
+	public List<IngestedMember> insertAll(List<IngestedMember> members) {
 		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
 			repository.saveAll(members.stream().map(mapper::toMemberEntity).toList());
 			return members;
@@ -51,24 +51,24 @@ public class MemberPostgresRepository implements MemberRepository {
 		}
 	}
 
-	protected boolean membersExist(List<Member> members) {
-		return repository.existsByIdIn(members.stream().map(Member::getId).toList());
+	protected boolean membersExist(List<IngestedMember> members) {
+		return repository.existsByIdIn(members.stream().map(IngestedMember::getId).toList());
 	}
 
-	protected boolean membersContainDuplicateIds(List<Member> members) {
+	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
 		return members.stream()
-				       .map(Member::getId)
+				       .map(IngestedMember::getId)
 				       .collect(Collectors.toSet())
 				       .size() != members.size();
 	}
 
 	@Override
-	public Optional<Member> findById(String id) {
+	public Optional<IngestedMember> findById(String id) {
 		return repository.findById(id).map(mapper::toMember);
 	}
 
 	@Override
-	public Stream<Member> findAllByIds(List<String> memberIds) {
+	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
 		return repository.findAllByIdIn(memberIds)
 				.stream()
 				.map(mapper::toMember);
@@ -81,7 +81,7 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	@Override
-	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+	public Stream<IngestedMember> getMemberStreamOfCollection(String collectionName) {
 		return repository
 				.getAllByCollectionNameOrderBySequenceNrAsc(collectionName)
 				.stream()
@@ -105,7 +105,7 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	@Override
-	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
+	public Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
 		return repository.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
 				.map(mapper::toMember);
 	}

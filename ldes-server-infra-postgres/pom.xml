@@ -10,12 +10,12 @@
     </parent>
     <packaging>pom</packaging>
     <modules>
+        <module>postgres-liquibase</module>
         <module>postgres-admin-repository</module>
         <module>postgres-fetch-repository</module>
         <module>postgres-fragmentation-repository</module>
         <module>postgres-ingest-repository</module>
         <module>postgres-retention-repository</module>
-        <module>postgres-liquibase</module>
         <module>postgres-pagination-repository</module>
     </modules>
 
@@ -32,6 +32,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-63</artifactId>

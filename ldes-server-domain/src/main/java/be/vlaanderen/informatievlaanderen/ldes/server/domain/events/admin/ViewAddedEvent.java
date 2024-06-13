@@ -18,7 +18,7 @@ public class ViewAddedEvent implements ViewSupplier {
 		return viewSpecification.getName();
 	}
 
-	public ViewSpecification getViewSpecification() {
+	public ViewSpecification viewSpecification() {
 		return viewSpecification;
 	}
 }

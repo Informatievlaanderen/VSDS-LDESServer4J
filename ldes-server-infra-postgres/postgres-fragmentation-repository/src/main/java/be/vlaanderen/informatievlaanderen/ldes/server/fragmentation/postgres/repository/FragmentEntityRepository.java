@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("java:S100")
 @Primary
+@Repository
 public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, String> {
 
     Optional<FragmentEntity> findLdesFragmentEntityByRootAndViewName(Boolean root, String viewName);
@@ -21,7 +23,6 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
     List<FragmentEntity> findAllByImmutableAndViewName(Boolean immutable, String viewName);
 
     Optional<FragmentEntity> findByImmutableAndParentId(boolean immutable, String parentId);
-    Optional<FragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
     Stream<FragmentEntity> findAllByViewName(String viewName);
 

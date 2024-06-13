@@ -1,9 +1,8 @@
 spring:
   main:
     allow-bean-definition-overriding: true
-  jpa:
-    hibernate:
-      ddl-auto: update
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
 
 ldes-server:
   compaction-duration: "PT1M"

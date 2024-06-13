@@ -57,7 +57,6 @@ class PageCreatorTest {
 		assertTrue(newFragment.getFragmentPairs().contains(new FragmentPair("pageNumber", "2")));
 		InOrder inOrder = inOrder(fragmentRepository);
 		inOrder.verify(fragmentRepository, times(1)).saveFragment(existingFragment);
-		inOrder.verify(fragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
 		assertTrue(existingFragment.isImmutable());
 	}
