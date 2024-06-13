@@ -1,78 +1,141 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberBucketisedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
+@EnableScheduling
 public class PaginationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaginationService.class);
-    private final MemberPaginationServiceCreator memberPaginationServiceCreator;
-    private final PaginationSequenceRepository sequenceRepository;
-    private final Map<ViewName, MemberPaginationService> map = new HashMap<>();
-    private final ExecutorService executorService;
+	private static final String PAGINATION_JOB = "pagination";
+	private static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
+	private final JobLauncher jobLauncher;
+	private final JobRepository jobRepository;
+	private final PlatformTransactionManager transactionManager;
+	private final Partitioner bucketisationPartitioner;
+	private final Partitioner viewBucketisationPartitioner;
+	private final ItemReader<List<BucketisedMember>> reader;
+	private final PaginationProcessor processor;
+	private final ItemWriter<List<MemberAllocation>> writer;
+	private final TaskExecutor taskExecutor;
+	private final JobExplorer jobExplorer;
+	private boolean shouldTriggerPagination;
 
-    public PaginationService(MemberPaginationServiceCreator memberPaginationServiceCreator, PaginationSequenceRepository sequenceRepository) {
-        this.memberPaginationServiceCreator = memberPaginationServiceCreator;
-        this.sequenceRepository = sequenceRepository;
-        executorService = createExecutorService();
-    }
+	public PaginationService(JobLauncher jobLauncher, JobRepository jobRepository,
+	                         PlatformTransactionManager transactionManager,
+	                         @Qualifier("bucketisationPartitioner") Partitioner bucketisationPartitioner,
+	                         @Qualifier("viewBucketisationPartitioner") Partitioner viewBucketisationPartitioner,
+	                         ItemReader<List<BucketisedMember>> reader, PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer, TaskExecutor taskExecutor, JobExplorer jobExplorer) {
+		this.jobLauncher = jobLauncher;
+		this.jobRepository = jobRepository;
+		this.transactionManager = transactionManager;
+		this.bucketisationPartitioner = bucketisationPartitioner;
+		this.viewBucketisationPartitioner = viewBucketisationPartitioner;
+		this.reader = reader;
+		this.processor = processor;
+		this.writer = writer;
+		this.taskExecutor = taskExecutor;
+		this.jobExplorer = jobExplorer;
+	}
 
-    @EventListener
-    public void handleViewInitializationEvent(ViewInitializationEvent event) {
-        addToMap(event.getViewName(), event.getViewSpecification());
-    }
 
-    @EventListener
-    public void handleViewAddedEvent(ViewAddedEvent event) {
-        addToMap(event.getViewName(), event.getViewSpecification());
-    }
+	@EventListener(MembersBucketisedEvent.class)
+	public void handleMemberBucketisedEvent() {
+		shouldTriggerPagination = true;
+	}
 
-    @EventListener
-    public void handleViewDeletedEvent(ViewDeletedEvent event) {
-        ViewName viewName = event.getViewName();
-        MemberPaginationService paginationService = map.get(viewName);
-        if (paginationService.isRunning()) {
-            paginationService.stopTask();
-        }
-        sequenceRepository.deleteByViewName(viewName);
-        map.remove(viewName);
-    }
+	@EventListener
+	@SuppressWarnings("java:S2629")
+	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+		jobLauncher.run(newViewPaginationJob(), new JobParametersBuilder()
+				.addString("viewName", event.viewName())
+				.addLocalDateTime("triggered", LocalDateTime.now())
+				.toJobParameters());
+	}
 
-    @EventListener
-    @Async
-    @SuppressWarnings("java:S2629")
-    public void handleMemberBucketisedEvent(MemberBucketisedEvent event) {
-        ViewName viewName = event.viewName();
-        MemberPaginationService paginationService = map.get(viewName);
-        if (paginationService == null) {
-            LOGGER.warn("Missing view: {}", viewName.asString());
-        } else if (!paginationService.isRunning()) {
-            Future<?> task = executorService.submit(paginationService::paginateMember);
-            paginationService.setTask(task);
-        }
-    }
+	@Scheduled(fixedRate = 1500)
+	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+		if (shouldTriggerPagination && noJobRunning(PAGINATION_JOB) && noJobRunning(NEW_VIEW_PAGINATION_JOB)) {
+			shouldTriggerPagination = false;
+			jobLauncher.run(paginationJob(), new JobParametersBuilder().toJobParameters());
+		}
+	}
 
-    private ExecutorService createExecutorService() {
-        return new ThreadPoolExecutor(0, 5,
-                0L, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<>(5, true), new ThreadPoolExecutor.DiscardPolicy());
-    }
+	private boolean noJobRunning(String jobName) {
+		return jobExplorer.findRunningJobExecutions(jobName).isEmpty();
+	}
 
-    private void addToMap(ViewName viewName, ViewSpecification view) {
-        map.put(viewName, memberPaginationServiceCreator.createPaginationService(viewName, view));
-    }
+	private Job paginationJob() {
+		return new JobBuilder(PAGINATION_JOB, jobRepository)
+				.start(paginationStep())
+				.incrementer(new RunIdIncrementer())
+				.build();
+	}
+
+	private Job newViewPaginationJob() {
+		return new JobBuilder(NEW_VIEW_PAGINATION_JOB, jobRepository)
+				.start(newViewPaginationStep())
+				.build();
+	}
+
+	private Step paginationStep() {
+		return new StepBuilder("paginationMasterStep", jobRepository)
+				.partitioner("memberBucketPartitionStep", bucketisationPartitioner)
+				.step(new StepBuilder("paginationStep", jobRepository)
+						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
+						.reader(reader)
+						.processor(processor)
+						.writer(writer)
+						.allowStartIfComplete(true)
+						.build()
+				)
+				.taskExecutor(taskExecutor)
+				.allowStartIfComplete(true)
+				.build();
+	}
+
+	private Step newViewPaginationStep() {
+		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
+				.partitioner("memberBucketPartitionStep", viewBucketisationPartitioner)
+				.step(new StepBuilder("paginationStep", jobRepository)
+						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
+						.reader(reader)
+						.processor(processor)
+						.writer(writer)
+						.allowStartIfComplete(true)
+						.build()
+				)
+				.taskExecutor(taskExecutor)
+				.allowStartIfComplete(true)
+				.build();
+	}
+
 }

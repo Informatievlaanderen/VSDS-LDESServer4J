@@ -18,13 +18,13 @@ public class ViewCapacityCreator {
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		viewCollection
-				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
+				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.viewSpecification().getPageSize()));
 	}
 
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		viewCollection
-				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
+				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.viewSpecification().getPageSize()));
 	}
 
 }

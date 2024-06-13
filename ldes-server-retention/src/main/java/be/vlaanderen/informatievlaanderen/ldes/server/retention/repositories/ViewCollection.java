@@ -17,7 +17,7 @@ public class ViewCollection {
 
     @EventListener({ViewAddedEvent.class, ViewInitializationEvent.class})
     public void handle(ViewSupplier event) {
-        views.put(event.getViewSpecification().getName(), event.getViewSpecification());
+        views.put(event.viewSpecification().getName(), event.viewSpecification());
     }
 
     @EventListener

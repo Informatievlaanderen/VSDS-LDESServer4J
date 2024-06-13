@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -42,7 +42,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, Member member,
+	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
 													  Observation parentObservation) {
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
 

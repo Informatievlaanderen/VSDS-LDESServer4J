@@ -4,13 +4,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,16 +25,16 @@ class FragmentationStrategyImplTest {
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
 		Fragment fragment = new Fragment(FRAGMENT_ID);
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.id()).thenReturn(MEMBER_ID);
 		when(member.sequenceNr()).thenReturn(SEQ_NR);
 
 		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(fragment, member, mock(Observation.class));
 
 		assertThat(members).hasSize(1);
-		assertThat(members.getFirst()).hasFieldOrPropertyWithValue("memberId", MEMBER_ID)
-				.hasFieldOrPropertyWithValue("viewName", VIEW_NAME)
-				.hasFieldOrPropertyWithValue("fragmentId", FRAGMENT_ID.asDecodedFragmentId())
-				.hasFieldOrPropertyWithValue("sequenceNr", SEQ_NR);
+		assertEquals(MEMBER_ID, members.getFirst().memberId());
+		assertEquals(VIEW_NAME, members.getFirst().viewName());
+		assertEquals(FRAGMENT_ID.asDecodedFragmentId(), members.getFirst().fragmentId());
+		assertEquals(SEQ_NR, members.getFirst().sequenceNr());
 	}
 }

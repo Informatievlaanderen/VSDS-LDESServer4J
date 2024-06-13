@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 
 import java.time.LocalDateTime;
@@ -23,9 +23,9 @@ public class MemberModel {
         return model;
     }
 
-    public Member mapToMember(String collectionName, LocalDateTime ingestedTimestamp, String txId) {
+    public IngestedMember mapToMember(String collectionName, LocalDateTime ingestedTimestamp, String txId) {
         final String memberId = "%s/%s%s%s".formatted(collectionName, subjectUri, DELIMITER, ingestedTimestamp);
-        return new Member(
+        return new IngestedMember(
                 memberId,
                 collectionName,
                 subjectUri,

@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
@@ -51,7 +51,7 @@ class GeospatialFragmentationStrategyTest {
 
 	@Test
 	void when_MemberIsAddedToFragment_GeospatialFragmentationIsApplied() {
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 
 		when(geospatialBucketiser.bucketise(member.id(), member.model())).thenReturn(Set.of("1/1/1",
 				"2/2/2", "3/3/3"));
@@ -74,7 +74,7 @@ class GeospatialFragmentationStrategyTest {
 	}
 	@Test
 	void when_MemberIsAddedToDefaultFragment_GeospatialFragmentationIsApplied() {
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 
 		when(geospatialBucketiser.bucketise(member.id(), member.model())).thenReturn(Set.of(DEFAULT_BUCKET_STRING));
 		Fragment defaultTileFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE, DEFAULT_BUCKET_STRING));

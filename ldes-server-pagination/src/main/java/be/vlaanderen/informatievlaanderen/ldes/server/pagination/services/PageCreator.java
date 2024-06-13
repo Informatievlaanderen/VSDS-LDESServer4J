@@ -33,7 +33,6 @@ public class PageCreator {
 		String nextPageNumber = getPageNumberAndGiveIncremented(previousFragment);
 		Fragment newFragment = createFragment(parentFragment, nextPageNumber);
 		makeFragmentImmutableAndUpdateRelations(previousFragment, newFragment);
-		fragmentRepository.saveFragment(newFragment);
 		return newFragment;
 	}
 

@@ -27,12 +27,12 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 
     @EventListener
     public void handleViewAddedEvent(ViewAddedEvent event) {
-        addToMap(event.getViewName(), event.getViewSpecification());
+        addToMap(event.getViewName(), event.viewSpecification());
     }
 
     @EventListener
     public void handleViewInitializationEvent(ViewInitializationEvent event) {
-        addToMap(event.getViewName(), event.getViewSpecification());
+        addToMap(event.getViewName(), event.viewSpecification());
     }
 
     @EventListener

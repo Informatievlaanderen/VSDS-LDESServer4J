@@ -1,2 +1,0 @@
-insert into pagination_sequence (view_name, last_processed_sequence)
-SELECT view_name, last_processed_sequence FROM fragmentation_sequence

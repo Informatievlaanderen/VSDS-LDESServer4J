@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.default
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class MemberIngestValidatorImplTest {
 
     @Test
     void validationShouldNotFail_whenThereAreNoValidators() {
-        Member member = createBasicMember();
+        IngestedMember member = createBasicMember();
 
         assertThatNoException().isThrownBy(() -> validator.validate(member));
     }
@@ -40,7 +40,7 @@ class MemberIngestValidatorImplTest {
         });
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
-        Member member = createBasicMember();
+        IngestedMember member = createBasicMember();
         assertThatThrownBy(() -> validator.validate(member))
                 .isInstanceOf(ShaclValidationException.class)
                 .hasMessage("Shacl validation failed: \n\ninvalid");
@@ -57,7 +57,7 @@ class MemberIngestValidatorImplTest {
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
-        Member member = createBasicMember();
+        IngestedMember member = createBasicMember();
         assertThatNoException().isThrownBy(() -> validator.validate(member));
     }
 
@@ -70,13 +70,13 @@ class MemberIngestValidatorImplTest {
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
         validator.handleShaclDeletedEvent(new ShaclDeletedEvent("myCollection"));
 
-        Member member = createBasicMember();
+        IngestedMember member = createBasicMember();
 
         assertThatNoException().isThrownBy(() -> validator.validate(member));
     }
 
-    private Member createBasicMember() {
-        return new Member("id", "myCollection", "versionOf", LocalDateTime.now(), 0L, true, "txId", null);
+    private IngestedMember createBasicMember() {
+        return new IngestedMember("id", "myCollection", "versionOf", LocalDateTime.now(), 0L, true, "txId", null);
     }
 
 }

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.VersionObjectModelBuilder;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 
 public class VersionObjectCreatorImpl implements VersionObjectCreator {
@@ -14,7 +14,7 @@ public class VersionObjectCreatorImpl implements VersionObjectCreator {
     }
 
     @Override
-    public Model createFromMember(Member member) {
+    public Model createFromMember(IngestedMember member) {
         return VersionObjectModelBuilder.create()
                 .withMemberId(member.getId())
                 .withVersionOfProperties(versionOfPath, member.getVersionOf())

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,21 +10,21 @@ public interface MemberRepository {
 
 	boolean memberExists(String memberId);
 
-	List<Member> insertAll(List<Member> members);
+	List<IngestedMember> insertAll(List<IngestedMember> members);
 
-	Optional<Member> findById(String id);
+	Optional<IngestedMember> findById(String id);
 
-	Stream<Member> findAllByIds(List<String> memberIds);
+	Stream<IngestedMember> findAllByIds(List<String> memberIds);
 
 	void deleteMembersByCollection(String collectionName);
 
-	Stream<Member> getMemberStreamOfCollection(String collectionName);
+	Stream<IngestedMember> getMemberStreamOfCollection(String collectionName);
 
 	void deleteMembers(List<String> memberId);
 
 	void removeFromEventSource(List<String> ids);
 
-	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
+	Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
 	long getMemberCount();
 

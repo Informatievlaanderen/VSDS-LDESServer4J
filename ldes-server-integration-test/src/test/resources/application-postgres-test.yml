@@ -11,9 +11,11 @@ management:
         include:
           - prometheus
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
+  batch:
+    jdbc:
+      initialize-schema: always
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
 
 logging:
   level:

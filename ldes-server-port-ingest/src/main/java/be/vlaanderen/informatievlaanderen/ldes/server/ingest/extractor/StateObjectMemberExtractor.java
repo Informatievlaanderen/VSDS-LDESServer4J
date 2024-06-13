@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public class StateObjectMemberExtractor implements MemberExtractor {
     }
 
     @Override
-    public List<Member> extractMembers(Model ingestedModel) {
+    public List<IngestedMember> extractMembers(Model ingestedModel) {
         final String txId = UUID.randomUUID().toString();
         final LocalDateTime ingestedTimestamp = LocalDateTime.now();
 
