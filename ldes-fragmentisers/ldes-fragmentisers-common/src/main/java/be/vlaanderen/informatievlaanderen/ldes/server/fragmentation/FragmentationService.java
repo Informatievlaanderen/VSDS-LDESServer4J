@@ -71,8 +71,8 @@ public class FragmentationService {
 		this.fragmentRepository = fragmentRepository;
 	}
 
-	@EventListener
-	public void executeFragmentation(MembersIngestedEvent event) {
+	@EventListener(MembersIngestedEvent.class)
+	public void executeFragmentation() {
 		shouldTriggerBucketisation.set(true);
 	}
 

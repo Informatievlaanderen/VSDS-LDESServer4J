@@ -13,7 +13,7 @@ public interface MemberBucketEntityRepository extends PagingAndSortingRepository
 
 	void deleteAllByViewNameStartingWith(String collectionName);
 
-	@Query(value = "select fb.* from fragmentation_bucketisation fb " +
+	@Query(value = "SELECT fb.* from fragmentation_bucketisation fb " +
 	               "LEFT JOIN fetch_allocation fa ON " +
 	               "fb.view_name = fa.view_name AND fb.member_id = fa.member_id " +
 	               "WHERE fa.id IS NULL AND fb.view_name = :viewName AND fb.fragment_id = :fragmentId " +

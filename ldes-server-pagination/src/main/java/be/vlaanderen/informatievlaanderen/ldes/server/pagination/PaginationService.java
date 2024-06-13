@@ -67,9 +67,8 @@ public class PaginationService {
 	}
 
 
-	@EventListener
-	@SuppressWarnings("java:S2629")
-	public void handleMemberBucketisedEvent(MembersBucketisedEvent event) {
+	@EventListener(MembersBucketisedEvent.class)
+	public void handleMemberBucketisedEvent() {
 		shouldTriggerPagination = true;
 	}
 
