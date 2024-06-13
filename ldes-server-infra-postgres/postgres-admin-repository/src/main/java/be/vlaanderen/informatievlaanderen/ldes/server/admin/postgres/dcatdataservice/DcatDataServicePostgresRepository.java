@@ -8,13 +8,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataser
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class DcatDataServicePostgresRepository implements DcatViewRepository {
 
     private final DcatDataServiceEntityRepository dcatDataServiceEntityRepository;

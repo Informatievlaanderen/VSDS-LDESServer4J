@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "dcat_dataservice")
+@Table(name = "dcat_dataservices")
 public class DcatDataServiceEntity {
 
 	@Id
