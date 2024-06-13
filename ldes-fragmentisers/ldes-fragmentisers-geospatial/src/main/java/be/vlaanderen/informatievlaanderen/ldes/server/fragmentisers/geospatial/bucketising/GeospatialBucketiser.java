@@ -7,18 +7,16 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
-import org.locationtech.jts.geom.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateToTileStringConverter.calculateTiles;
 
 public class GeospatialBucketiser {
 	private final GeospatialConfig geospatialConfig;
@@ -30,19 +28,14 @@ public class GeospatialBucketiser {
 
 	public Set<String> bucketise(String memberId, Model memberModel) {
 		try {
-			List<Coordinate> coordinates = new ArrayList<>();
-
-			getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
-							geospatialConfig.fragmentationPath())
-					.map(this::toCoordinates)
-					.forEach(coordinates::addAll);
-			Set<String> tiles = coordinates.stream()
-					.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
-							geospatialConfig.maxZoom()))
+            Set<String> tiles = getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(), geospatialConfig.fragmentationPath())
+					.flatMap(geometryWrapper -> calculateTiles(geometryWrapper.getXYGeometry().toText(), geospatialConfig.maxZoom()).stream())
 					.collect(Collectors.toSet());
+
 			if(tiles.isEmpty()) {
 				tiles.add(DEFAULT_BUCKET_STRING);
 			}
+
 			return tiles;
 		} catch (Exception exception) {
 			LOGGER.warn("Could not geospatialy fragment member {} Reason: {}", memberId, exception.getMessage());
@@ -80,9 +73,5 @@ public class GeospatialBucketiser {
 			LOGGER.warn("Could not extract coordinates from statement Reason: {}", exception.getMessage());
 			return Optional.empty();
 		}
-	}
-
-	private List<Coordinate> toCoordinates(GeometryWrapper geometryWrapper) {
-		return List.of(geometryWrapper.getXYGeometry().getCoordinates());
 	}
 }

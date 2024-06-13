@@ -26,7 +26,7 @@ public class GeospatialRelationsAttributer implements RelationsAttributer {
 				() -> new MissingFragmentValueException(currentFragment.getFragmentIdString(), FRAGMENT_KEY_TILE));
 		Tile currentTile = TileConverter.fromString(fragmentWKT);
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
-		return BoundingBoxConverter.toWKT(currentBoundingBox);
+		return BoundingBoxConverter.toWkt(currentBoundingBox);
 	}
 
 }
