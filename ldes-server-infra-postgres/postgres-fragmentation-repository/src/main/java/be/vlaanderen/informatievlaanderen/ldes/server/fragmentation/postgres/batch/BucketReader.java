@@ -21,8 +21,9 @@ import java.util.List;
 @Component
 @StepScope
 public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExecutionListener {
-	private final MemberBucketEntityMapper mapper;
+	private static final String VIEWNAME = "viewName";
 	private static final int PAGE_SIZE = 100;
+	private final MemberBucketEntityMapper mapper;
 	private int currentPage = 0;
 	private String viewName;
 	private String fragmentId;
@@ -35,6 +36,7 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	}
 
 	@BeforeStep
+	@Override
 	public void beforeStep(StepExecution stepExecution) {
 		currentPage = 0;
 		viewName = getViewName(stepExecution);
@@ -62,10 +64,10 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	}
 
 	private String getViewName(StepExecution stepExecution) {
-		if (stepExecution.getJobParameters().getParameters().containsKey("viewName")) {
-			return stepExecution.getJobParameters().getString("viewName");
+		if (stepExecution.getJobParameters().getParameters().containsKey(VIEWNAME)) {
+			return stepExecution.getJobParameters().getString(VIEWNAME);
 		} else {
-			return stepExecution.getExecutionContext().getString("viewName");
+			return stepExecution.getExecutionContext().getString(VIEWNAME);
 		}
 	}
 

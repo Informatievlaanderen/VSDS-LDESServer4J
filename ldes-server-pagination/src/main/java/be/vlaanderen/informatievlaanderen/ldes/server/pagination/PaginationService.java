@@ -5,7 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -73,7 +76,7 @@ public class PaginationService {
 	@EventListener
 	@SuppressWarnings("java:S2629")
 	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		runJob(newViewPaginationJob(), new JobParametersBuilder()
+		jobLauncher.run(newViewPaginationJob(), new JobParametersBuilder()
 				.addString("viewName", event.viewName())
 				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
@@ -81,26 +84,14 @@ public class PaginationService {
 
 	@Scheduled(fixedRate = 1500)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		if (shouldTriggerPagination && !isJobRunning(PAGINATION_JOB) && !isJobRunning(NEW_VIEW_PAGINATION_JOB)) {
+		if (shouldTriggerPagination && noJobRunning(PAGINATION_JOB) && noJobRunning(NEW_VIEW_PAGINATION_JOB)) {
 			shouldTriggerPagination = false;
-			runJob(paginationJob(), new JobParametersBuilder().toJobParameters());
+			jobLauncher.run(paginationJob(), new JobParametersBuilder().toJobParameters());
 		}
 	}
 
-	private boolean isJobRunning(String jobName) {
-		return !jobExplorer.findRunningJobExecutions(jobName).isEmpty();
-	}
-
-	protected void runJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		jobLauncher.run(job, jobParameters);
-		if (job.getName().equals(PAGINATION_JOB) && shouldTriggerPagination) {
-			shouldTriggerPagination = false;
-			runJob(job, jobParameters);
-		} else if (job.getName().equals(PAGINATION_JOB) && shouldTriggerPagination) {
-			shouldTriggerPagination = false;
-			runJob(paginationJob(), new JobParametersBuilder().toJobParameters());
-		}
-
+	private boolean noJobRunning(String jobName) {
+		return jobExplorer.findRunningJobExecutions(jobName).isEmpty();
 	}
 
 	private Job paginationJob() {

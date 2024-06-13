@@ -24,13 +24,13 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 	@Override
 	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
-		Chunk<? extends BucketisedMember> buckets = new Chunk<>(chunk.getItems()
+		Chunk<BucketisedMember> buckets = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
 				.toList());
 
-		try(Connection connection = dataSource.getConnection()) {
-			PreparedStatement ps = connection.prepareStatement(SQL);
+		try(Connection connection = dataSource.getConnection();
+		    PreparedStatement ps = connection.prepareStatement(SQL)) {
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
@@ -41,7 +41,6 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				ps.addBatch();
 			}
 			ps.executeBatch();
-			ps.closeOnCompletion();
 		}
 
 	}

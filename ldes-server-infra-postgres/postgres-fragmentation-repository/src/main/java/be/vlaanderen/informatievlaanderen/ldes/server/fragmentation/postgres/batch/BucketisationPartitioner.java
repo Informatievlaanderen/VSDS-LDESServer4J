@@ -25,12 +25,12 @@ public class BucketisationPartitioner implements Partitioner {
 		                                                                         "fb.member_id = fa.member_id " +
 		                                                                         "WHERE fa.id IS NULL", Object[].class).getResultList();
 
-		Map<String, ExecutionContext> contextMap = new HashMap<>(viewNameFragmentIdPairs.size());
+		Map<String, ExecutionContext> contextMap = HashMap.newHashMap(viewNameFragmentIdPairs.size());
 		for (Object[] pair : viewNameFragmentIdPairs) {
 			String viewName = (String) pair[0];
 			String fragmentId = (String) pair[1];
 
-			ExecutionContext context = new ExecutionContext(new HashMap<>(2));
+			ExecutionContext context = new ExecutionContext(HashMap.newHashMap(2));
 			context.putString("viewName", viewName);
 			context.putString("fragmentId", fragmentId);
 
