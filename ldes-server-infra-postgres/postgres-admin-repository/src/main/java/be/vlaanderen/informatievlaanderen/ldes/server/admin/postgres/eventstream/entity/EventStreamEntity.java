@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstrea
 
 import jakarta.persistence.*;
 
-@Entity(name = "collections")
+@Entity
 @Table(name = "collections")
 public class EventStreamEntity {
     @Id
