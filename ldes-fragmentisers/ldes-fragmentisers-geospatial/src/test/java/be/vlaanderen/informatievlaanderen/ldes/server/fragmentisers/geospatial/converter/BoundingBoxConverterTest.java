@@ -15,7 +15,7 @@ class BoundingBoxConverterTest {
 		String expectedWKT = "POLYGON ((4.32861328125 50.78510168548185, 4.32861328125 50.778155274659234, 4.317626953125 50.778155274659234, 4.317626953125 50.78510168548185, 4.32861328125 50.78510168548185))";
 		BoundingBox boundingBox = new BoundingBox(new Tile(15, 16777, 11001));
 
-		String actualWKT = BoundingBoxConverter.toWKT(boundingBox);
+		String actualWKT = BoundingBoxConverter.toWkt(boundingBox);
 
 		assertEquals(expectedWKT, actualWKT);
 	}

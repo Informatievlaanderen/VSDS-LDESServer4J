@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 public class BoundingBoxConverter {
@@ -11,14 +12,18 @@ public class BoundingBoxConverter {
 	private BoundingBoxConverter() {
 	}
 
-	public static String toWKT(BoundingBox boundingBox) {
+	public static Geometry toPolygon(BoundingBox boundingBox) {
 		Coordinate[] coordinates = new Coordinate[] {
 				new Coordinate(boundingBox.getEast(), boundingBox.getNorth()),
 				new Coordinate(boundingBox.getEast(), boundingBox.getSouth()),
 				new Coordinate(boundingBox.getWest(), boundingBox.getSouth()),
 				new Coordinate(boundingBox.getWest(), boundingBox.getNorth()),
 				new Coordinate(boundingBox.getEast(), boundingBox.getNorth()) };
-		return GEOMETRY_FACTORY.createPolygon(coordinates).toText();
+		return GEOMETRY_FACTORY.createPolygon(coordinates);
+	}
+
+	public static String toWkt(BoundingBox boundingBox) {
+		return toPolygon(boundingBox).toText();
 	}
 
 }
