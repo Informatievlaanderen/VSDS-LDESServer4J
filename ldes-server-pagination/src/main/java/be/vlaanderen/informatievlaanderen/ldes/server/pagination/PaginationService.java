@@ -66,7 +66,7 @@ public class PaginationService {
 
 	@EventListener
 	@SuppressWarnings("java:S2629")
-	public void handleMemberBucketisedEvent(MembersBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+	public void handleMemberBucketisedEvent(MembersBucketisedEvent event) {
 		shouldTriggerPagination = true;
 	}
 

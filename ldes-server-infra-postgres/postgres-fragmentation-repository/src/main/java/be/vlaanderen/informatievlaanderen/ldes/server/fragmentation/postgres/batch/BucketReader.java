@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.MemberBucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.MemberBucketEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
@@ -43,7 +42,7 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	}
 
 	@Override
-	public ExitStatus afterStep(@NotNull StepExecution stepExecution) {
+	public ExitStatus afterStep(StepExecution stepExecution) {
 		return stepExecution.getExitStatus();
 	}
 
@@ -56,12 +55,10 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 			return null;
 		}
 
-		List<BucketisedMember> out = page.getContent()
+		return page.getContent()
 				.stream()
 				.map(mapper::toBucketisedMember)
 				.toList();
-
-		return out;
 	}
 
 	private String getViewName(StepExecution stepExecution) {

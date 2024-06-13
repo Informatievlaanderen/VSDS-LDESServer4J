@@ -30,7 +30,7 @@ public class BucketisationPartitioner implements Partitioner {
 			String viewName = (String) pair[0];
 			String fragmentId = (String) pair[1];
 
-			ExecutionContext context = new ExecutionContext();
+			ExecutionContext context = new ExecutionContext(new HashMap<>(2));
 			context.putString("viewName", viewName);
 			context.putString("fragmentId", fragmentId);
 

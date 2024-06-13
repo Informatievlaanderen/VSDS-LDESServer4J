@@ -37,8 +37,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FragmentationService {
 	public static final int POLLING_RATE = 1500;
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
-	private final String BUCKETISATION_JOB = "bucketisation";
-	private final String REBUCKETISATION_JOB = "rebucketisation";
+	private static final String BUCKETISATION_JOB = "bucketisation";
+	private static final String REBUCKETISATION_JOB = "rebucketisation";
 	private final JobLauncher jobLauncher;
 	private final JobExplorer jobExplorer;
 	private final JobRepository jobRepository;

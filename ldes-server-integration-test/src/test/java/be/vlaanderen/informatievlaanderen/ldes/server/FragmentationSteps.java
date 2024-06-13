@@ -59,7 +59,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	}
 
 	@And("I fetch the next fragment through the first {string}")
-	public void iFetchTheNextFragmentThroughTheFirst(String relation) throws Exception {
+	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
 		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
@@ -139,7 +139,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	}
 
 	@When("I fetch the timebased fragment {string} fragment of this month of {string}")
-	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) throws Exception {
+	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) {
 		LocalDateTime now = LocalDateTime.now();
 		currentPath = "/%s/%s?year=%s&month=%02d".formatted(collection, view, now.getYear(), now.getMonthValue());
 

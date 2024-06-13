@@ -29,7 +29,7 @@ public class MemberPaginationService {
 	@Transactional
 	public List<MemberAllocation> paginateMember(List<BucketisedMember> bucketisedMembers) {
 		if (bucketisedMembers.isEmpty()) {
-			return null;
+			return List.of();
 		}
 
 		String viewName = bucketisedMembers.getFirst().getViewName();

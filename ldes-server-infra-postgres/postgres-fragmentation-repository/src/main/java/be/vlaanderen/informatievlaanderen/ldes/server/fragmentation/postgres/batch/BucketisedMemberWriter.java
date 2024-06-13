@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -17,8 +16,11 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	private static final String SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
 	                                  "values (?, ?, ?, ?)";
 
-	@Autowired
-	private DataSource dataSource;
+	private final DataSource dataSource;
+
+	public BucketisedMemberWriter(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
 	@Override
 	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
@@ -39,6 +41,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				ps.addBatch();
 			}
 			ps.executeBatch();
+			ps.closeOnCompletion();
 		}
 
 	}

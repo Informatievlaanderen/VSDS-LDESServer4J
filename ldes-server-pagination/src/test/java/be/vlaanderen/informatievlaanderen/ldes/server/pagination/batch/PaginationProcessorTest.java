@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = { PaginationProcessor.class, MemberPaginationServiceCreator.class, ViewBucketisationService.class })
-public class PaginationProcessorTest {
+class PaginationProcessorTest {
 	@MockBean
 	FragmentRepository fragmentRepository;
 	@Autowired

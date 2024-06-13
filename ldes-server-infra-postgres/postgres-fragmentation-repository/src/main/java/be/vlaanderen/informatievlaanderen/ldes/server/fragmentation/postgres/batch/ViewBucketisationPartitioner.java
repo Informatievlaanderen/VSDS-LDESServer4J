@@ -34,7 +34,7 @@ public class ViewBucketisationPartitioner implements Partitioner {
 				.setParameter("viewName", viewName)
 				.getResultList();
 
-		Map<String, ExecutionContext> contextMap = new HashMap<>(fragmentIds.size());
+		Map<String, ExecutionContext> contextMap = HashMap.newHashMap(fragmentIds.size());
 		for (String fragmentId : fragmentIds) {
 			ExecutionContext context = new ExecutionContext();
 			context.putString("fragmentId", fragmentId);
