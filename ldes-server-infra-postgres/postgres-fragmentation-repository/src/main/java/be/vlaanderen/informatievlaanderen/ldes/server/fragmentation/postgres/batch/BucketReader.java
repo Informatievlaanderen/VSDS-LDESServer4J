@@ -21,12 +21,12 @@ import java.util.List;
 @Component
 @StepScope
 public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExecutionListener {
-	private static final String VIEWNAME = "viewName";
+	private static final String VIEW_NAME = "viewName";
 	private static final int PAGE_SIZE = 100;
 	private final MemberBucketEntityMapper mapper;
 	private int currentPage = 0;
-	private String viewName;
-	private String fragmentId;
+	private String bucketViewName;
+	private String bucketFragmentId;
 
 	private final MemberBucketEntityRepository repository;
 
@@ -39,8 +39,8 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
 		currentPage = 0;
-		viewName = getViewName(stepExecution);
-		fragmentId = getFragmentId(stepExecution);
+		bucketViewName = getViewName(stepExecution);
+		bucketFragmentId = getFragmentId(stepExecution);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	@Transactional(readOnly = true)
 	public List<BucketisedMember> read() {
 		Pageable pageable = PageRequest.of(currentPage++, PAGE_SIZE);
-		Page<MemberBucketEntity> page = repository.findUnprocessedBuckets(viewName, fragmentId, pageable);
+		Page<MemberBucketEntity> page = repository.findUnprocessedBuckets(bucketViewName, bucketFragmentId, pageable);
 		if (page.isEmpty()) {
 			return null;
 		}
@@ -64,10 +64,10 @@ public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExe
 	}
 
 	private String getViewName(StepExecution stepExecution) {
-		if (stepExecution.getJobParameters().getParameters().containsKey(VIEWNAME)) {
-			return stepExecution.getJobParameters().getString(VIEWNAME);
+		if (stepExecution.getJobParameters().getParameters().containsKey(VIEW_NAME)) {
+			return stepExecution.getJobParameters().getString(VIEW_NAME);
 		} else {
-			return stepExecution.getExecutionContext().getString(VIEWNAME);
+			return stepExecution.getExecutionContext().getString(VIEW_NAME);
 		}
 	}
 

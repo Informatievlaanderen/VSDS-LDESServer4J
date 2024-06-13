@@ -22,7 +22,7 @@ public class MemberAllocationBatchWriter implements ItemWriter<List<MemberAlloca
 
 	@Override
 	public void write(Chunk<? extends List<MemberAllocation>> chunk) throws Exception {
-		Chunk<MemberAllocation> memberAllocations = new Chunk(chunk.getItems()
+		Chunk<MemberAllocation> memberAllocations = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
 				.distinct()
