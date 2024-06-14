@@ -15,4 +15,5 @@ public interface DcatDatasetRepository {
 
 	List<DcatDataset> findAll();
 
+	boolean exitsByCollectionName(String collectionName);
 }

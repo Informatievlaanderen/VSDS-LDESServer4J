@@ -13,86 +13,100 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventStreamPostgresRepositoryTest {
-	private static final String COLLECTION_NAME = "collection1";
-	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
-			"isVersionOf", false);
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf", false);
-	private EventStreamPostgresRepository repository;
-	@Mock
-	private EventStreamEntityRepository eventStreamEntityRepository;
+    private static final String COLLECTION_NAME = "collection-name";
+    private static final String OTHER_COLLECTION_NAME = "other-collection";
+    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
+    private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "timestampPath", "versionOfPath", false, false);
+    private EventStreamPostgresRepository repository;
 
-	@BeforeEach
-	void setUp() {
-		repository = new EventStreamPostgresRepository(eventStreamEntityRepository);
-	}
+    @Mock
+    private EventStreamEntityRepository eventStreamEntityRepository;
 
-	@Test
-	@DisplayName("test retrieval of all eventstreams of a non-empty mongo collection")
-	void when_dbHasEntities_then_returnAll() {
-		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
-				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version", false)));
+    @BeforeEach
+    void setUp() {
+        repository = new EventStreamPostgresRepository(eventStreamEntityRepository);
+    }
 
-		List<EventStream> eventStreams = repository.retrieveAllEventStreams();
-		List<EventStream> expectedEventStreams = List.of(
-				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", false));
-		verify(eventStreamEntityRepository).findAll();
-		assertEquals(expectedEventStreams, eventStreams);
-	}
+    @Test
+    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
+    void when_dbHasEntities_then_returnAll() {
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
+                EVENT_STREAM_ENTITY,
+                new EventStreamEntity("other_collection", "created", "version", false, false)
+        ));
+        final List<EventStream> expectedEventStreams = List.of(
+                EVENT_STREAM,
+                new EventStream("other_collection", "created", "version", false));
 
-	@Test
-	void when_dbIsEmpty_then_returnEmptyList() {
-		when(eventStreamEntityRepository.findAll()).thenReturn(List.of());
+        final List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
-		List<EventStream> eventStreams = repository.retrieveAllEventStreams();
+        assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
+    }
 
-		verify(eventStreamEntityRepository).findAll();
-		assertTrue(eventStreams.isEmpty());
-	}
+    @Test
+    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
+    void when_dbHasEntitiesInTwoDataModels_then_returnAllOnce() {
+        final String otherTimestampPath = "other-timestampPath";
+        final String otherVersionOfPath = "other-versionOf-path";
+        List<EventStream> expectedEventStreams = List.of(
+                EVENT_STREAM,
+                new EventStream(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false)
+        );
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
+                EVENT_STREAM_ENTITY,
+                new EventStreamEntity(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false)
+        ));
 
-	@Test
-	void when_singleEventStreamQueried() {
-		when(eventStreamEntityRepository.findById(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_ENTITY));
+        List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
-		Optional<EventStream> eventStream = repository.retrieveEventStream(COLLECTION_NAME);
+        assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
+    }
 
-		verify(eventStreamEntityRepository).findById(COLLECTION_NAME);
-		assertTrue(eventStream.isPresent());
-		assertEquals(EVENT_STREAM, eventStream.get());
-	}
+    @Test
+    void when_dbIsEmpty_then_returnEmptyList() {
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of());
 
-	@Test
-	void when_emptyDbQueried_then_returnEmptyOptional() {
-		final String collection = "other";
-		when(eventStreamEntityRepository.findById(collection)).thenReturn(Optional.empty());
+        List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
-		Optional<EventStream> eventStream = repository.retrieveEventStream(collection);
+        assertThat(eventStreams).isEmpty();
+    }
 
-		verify(eventStreamEntityRepository).findById(collection);
-		assertTrue(eventStream.isEmpty());
-	}
+    @Test
+    void when_singleEventStreamQueried() {
+        when(eventStreamEntityRepository.findByName(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_ENTITY));
 
-	@Test
-	void test_insertion() {
-		EventStream savedEventStream = repository.saveEventStream(EVENT_STREAM);
+        Optional<EventStream> eventStream = repository.retrieveEventStream(COLLECTION_NAME);
 
-		verify(eventStreamEntityRepository).save(any(EventStreamEntity.class));
-		assertEquals(EVENT_STREAM, savedEventStream);
-	}
+        assertThat(eventStream).contains(EVENT_STREAM);
+    }
 
-	@Test
-	void test_deletion() {
-		repository.deleteEventStream(COLLECTION_NAME);
+    @Test
+    void when_emptyDbQueried_then_returnEmptyOptional() {
+        Optional<EventStream> eventStream = repository.retrieveEventStream(OTHER_COLLECTION_NAME);
 
-		verify(eventStreamEntityRepository).deleteById(COLLECTION_NAME);
-	}
+        verify(eventStreamEntityRepository).findByName(OTHER_COLLECTION_NAME);
+        assertThat(eventStream).isEmpty();
+    }
+
+    @Test
+    void test_insertion() {
+        EventStream savedEventStream = repository.saveEventStream(EVENT_STREAM);
+
+        verify(eventStreamEntityRepository).save(any());
+        assertThat(savedEventStream).isEqualTo(EVENT_STREAM);
+    }
+
+    @Test
+    void test_deletion() {
+        repository.deleteEventStream(OTHER_COLLECTION_NAME);
+
+        verify(eventStreamEntityRepository).deleteByName(OTHER_COLLECTION_NAME);
+    }
 }

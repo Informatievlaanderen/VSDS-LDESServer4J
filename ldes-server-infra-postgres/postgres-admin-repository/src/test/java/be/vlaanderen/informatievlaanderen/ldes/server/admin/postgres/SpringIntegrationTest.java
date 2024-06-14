@@ -1,7 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.repository.DataServiceEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.repository.DcatDataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.DcatCatalogPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.repository.DcatCatalogEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -18,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 @DataJpaTest
 @ActiveProfiles("postgres-test")
 @AutoConfigureEmbeddedDatabase
-@ContextConfiguration(classes = { DataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
+@ContextConfiguration(classes = { DcatDataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres" })
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
@@ -26,4 +28,8 @@ public class SpringIntegrationTest {
 	public DcatCatalogPostgresRepository dcatCatalogPostgresRepository;
 	@Autowired
 	public DcatViewRepository dcatViewPostgresRepository;
+	@Autowired
+	public EventStreamRepository eventStreamRepository;
+	@Autowired
+	public ViewRepository viewRepository;
 }

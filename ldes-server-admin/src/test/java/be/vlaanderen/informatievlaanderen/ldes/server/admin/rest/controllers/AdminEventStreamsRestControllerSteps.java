@@ -25,7 +25,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -136,12 +139,10 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	}
 
 	@Given("a db which does not contain specified event stream")
-	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
+	public void aDbWhichDoesNotContainSpecifiedEventStream() {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		final Model shacl = readModelFromFile("shacl/server-shape.ttl");
 		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
-		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
 	@And("I verify the event stream in the response body to file (.*)$")

@@ -3,128 +3,152 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdatase
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity.DcatDatasetEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.repository.DcatDatasetEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DcatDatasetPostgresRepositoryTest {
 
-	private static final String DATASET_ID = "id";
-	private static final String MODEL_FILE_PATH = "dcat-dataset/dataset.ttl";
-	private DcatDatasetEntity entity;
-	private DcatDataset dataset;
-	private DcatDatasetPostgresRespository repository;
-	@Mock
-	private DcatDatasetEntityRepository entityRepository;
+    private static final String DATASET_COLLECTION_NAME = "id";
+    private static final String MODEL_FILE_PATH = "dcat-dataset/dataset.ttl";
+    private DcatDatasetEntity entity;
+    private DcatDataset dataset;
+    @Mock
+    private DcatDatasetEntityRepository dcatDatasetEntityRepository;
+    @Mock
+    private EventStreamEntityRepository eventStreamEntityRepository;
+    @InjectMocks
+    private DcatDatasetPostgresRepository repository;
 
-	@BeforeEach
-	void setUp() throws URISyntaxException, IOException {
-		Model model = readModelFromFile(MODEL_FILE_PATH);
-		dataset = new DcatDataset(DATASET_ID, model);
-		entity = new DcatDatasetEntity(DATASET_ID, readDataFromFile(MODEL_FILE_PATH));
-		repository = new DcatDatasetPostgresRespository(entityRepository);
-	}
+    @BeforeEach
+    void setUp() {
+        Model model = readDcatDatasetModel();
+        dataset = new DcatDataset(DATASET_COLLECTION_NAME, model);
+        entity = initializeEntity(model);
+    }
 
-	@Test
-	void when_DatasetPresent_Then_ReturnDataset() {
-		when(entityRepository.findById(DATASET_ID)).thenReturn(Optional.of(entity));
+    @Test
+    void when_DatasetPresent_Then_ReturnDataset() {
+        when(dcatDatasetEntityRepository.findByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(Optional.of(entity));
 
-		Optional<DcatDataset> actualDataset = repository.retrieveDataset(DATASET_ID);
+        Optional<DcatDataset> retrievedDataset = repository.retrieveDataset(DATASET_COLLECTION_NAME);
 
-		verify(entityRepository).findById(DATASET_ID);
-		assertTrue(actualDataset.isPresent());
-		assertEquals(dataset.getCollectionName(), actualDataset.get().getCollectionName());
-		assertTrue(dataset.getModel().isIsomorphicWith(actualDataset.get().getModel()));
-	}
+        assertThat(retrievedDataset)
+                .hasValueSatisfying(actualDataset -> {
+                    assertThat(actualDataset.getCollectionName()).isEqualTo(DATASET_COLLECTION_NAME);
+                    assertThat(actualDataset.getModel()).matches(dataset.getModel()::isIsomorphicWith);
+                });
+    }
 
-	@Test
-	void when_DatasetNotPresent_Then_ReturnEmpty() {
-		final String otherId = "other";
-		when(entityRepository.findById(otherId)).thenReturn(Optional.empty());
+    @Test
+    void when_DatasetNotPresent_Then_ReturnEmpty() {
+        final String otherId = "other";
+        when(dcatDatasetEntityRepository.findByCollectionName(otherId)).thenReturn(Optional.empty());
 
-		Optional<DcatDataset> actualDataset = repository.retrieveDataset(otherId);
+        Optional<DcatDataset> actualDataset = repository.retrieveDataset(otherId);
 
-		verify(entityRepository).findById(otherId);
-		assertTrue(actualDataset.isEmpty());
-	}
+        assertTrue(actualDataset.isEmpty());
+    }
 
-	@Test
-	void when_DatasetAdded() {
-		repository.saveDataset(dataset);
+    @Test
+    void given_NewDataSet_when_SaveDataSet_then_SaveDcatDatasetEntity() {
+        when(dcatDatasetEntityRepository.findByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(Optional.of(entity));
 
-		verify(entityRepository).save(any(DcatDatasetEntity.class));
-	}
+        repository.saveDataset(dataset);
 
-	@Test
-	void when_DatasetPresent_Then_DatasetRemoved() {
-		repository.deleteDataset(DATASET_ID);
+        InOrder inOrder = inOrder(dcatDatasetEntityRepository, eventStreamEntityRepository);
+        inOrder.verify(dcatDatasetEntityRepository).findByCollectionName(DATASET_COLLECTION_NAME);
+        inOrder.verify(dcatDatasetEntityRepository).save(any(DcatDatasetEntity.class));
+    }
 
-		verify(entityRepository).deleteById(DATASET_ID);
-	}
+    @Test
+    void given_ExistingDataSet_when_SaveDataSet_then_SaveDcatDatasetEntity() {
+        when(dcatDatasetEntityRepository.findByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(Optional.empty());
+        when(eventStreamEntityRepository.findByName(DATASET_COLLECTION_NAME)).thenReturn(Optional.of(mock()));
 
-	@Nested
-	class FindAll {
-		@Test
-		void when_NoEntitiesAreFound_then_AnEmptyListIsReturned() {
-			when(entityRepository.findAll()).thenReturn(new ArrayList<>());
+        repository.saveDataset(dataset);
 
-			List<DcatDataset> result = repository.findAll();
+        InOrder inOrder = inOrder(dcatDatasetEntityRepository, eventStreamEntityRepository);
+        inOrder.verify(dcatDatasetEntityRepository).findByCollectionName(DATASET_COLLECTION_NAME);
+        inOrder.verify(eventStreamEntityRepository).findByName(DATASET_COLLECTION_NAME);
+        inOrder.verify(dcatDatasetEntityRepository).save(any(DcatDatasetEntity.class));
+    }
 
-			assertTrue(result.isEmpty());
-		}
+    @Test
+    void when_DatasetPresent_Then_DatasetRemoved() {
+        repository.deleteDataset(DATASET_COLLECTION_NAME);
 
-		@Test
-		void when_EntitiesAreFound_then_AListOfDcatDatasetIsReturned() throws Exception {
-			String modelString = readDataFromFile(MODEL_FILE_PATH);
-			DcatDatasetEntity dataset1 = new DcatDatasetEntity("col1", modelString);
-			DcatDatasetEntity dataset2 = new DcatDatasetEntity("col2", modelString);
-			when(entityRepository.findAll()).thenReturn(List.of(dataset1, dataset2));
+        verify(dcatDatasetEntityRepository).deleteByCollectionName(DATASET_COLLECTION_NAME);
+    }
 
-			List<DcatDataset> result = repository.findAll();
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void test_ExistsByCollectionName(boolean exists) {
+        when(dcatDatasetEntityRepository.existsByCollectionName(DATASET_COLLECTION_NAME)).thenReturn(exists);
 
-			assertEquals(2, result.size());
-			assertTrue(result.get(0).getModel().isIsomorphicWith(readModelFromFile(MODEL_FILE_PATH)));
-			List<String> collections = result.stream().map(DcatDataset::getCollectionName).toList();
-			assertTrue(collections.contains("col1"));
-			assertTrue(collections.contains("col2"));
-		}
+        final boolean result = repository.exitsByCollectionName(DATASET_COLLECTION_NAME);
 
-	}
+        assertThat(result).isEqualTo(exists);
+    }
 
-	private Model readModelFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-				.toString();
-		return RDFDataMgr.loadModel(uri);
-	}
+    @Nested
+    class FindAll {
+        @Test
+        void when_NoEntitiesAreFound_then_AnEmptyListIsReturned() {
+            when(dcatDatasetEntityRepository.findAll()).thenReturn(new ArrayList<>());
 
-	private String readDataFromFile(String fileName)
-			throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		return Files.lines(path).collect(Collectors.joining());
-	}
+            List<DcatDataset> result = repository.findAll();
+
+            assertTrue(result.isEmpty());
+        }
+
+        @Test
+        void when_EntitiesAreFound_then_AListOfDcatDatasetIsReturned() {
+            final String otherCollectionName = "other";
+            DcatDatasetEntity secondEntity = mock();
+            when(secondEntity.getCollectionName()).thenReturn(otherCollectionName);
+            when(dcatDatasetEntityRepository.findAll()).thenReturn(List.of(entity, secondEntity));
+
+            List<DcatDataset> result = repository.findAll();
+
+            assertThat(result)
+                    .hasSize(2)
+                    .containsExactlyInAnyOrder(new DcatDataset(DATASET_COLLECTION_NAME), new DcatDataset(otherCollectionName))
+                    .first()
+                    .matches(dcatDataset -> dcatDataset.getModel().isIsomorphicWith(readDcatDatasetModel()));
+        }
+
+    }
+
+    private Model readDcatDatasetModel() {
+        return RDFParser.source(MODEL_FILE_PATH).toModel();
+    }
+
+    private DcatDatasetEntity initializeEntity(Model dcatModel) {
+        final EventStreamEntity eventStreamEntity = new EventStreamEntity(DATASET_COLLECTION_NAME, "", "", false, false);
+        final DcatDatasetEntity datasetEntity = new DcatDatasetEntity(eventStreamEntity);
+        datasetEntity.setModel(dcatModel);
+        return datasetEntity;
+    }
 }

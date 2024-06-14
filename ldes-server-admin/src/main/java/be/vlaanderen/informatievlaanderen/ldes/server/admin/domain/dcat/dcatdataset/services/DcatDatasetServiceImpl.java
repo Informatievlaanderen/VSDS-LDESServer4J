@@ -50,7 +50,7 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 
 	@Override
 	public void deleteDataset(String collectionName) {
-		if (repository.retrieveDataset(collectionName).isEmpty()) {
+		if (!repository.exitsByCollectionName(collectionName)) {
 			LOGGER.warn("No metadata found for collection: {}", collectionName);
 		} else {
 			repository.deleteDataset(collectionName);

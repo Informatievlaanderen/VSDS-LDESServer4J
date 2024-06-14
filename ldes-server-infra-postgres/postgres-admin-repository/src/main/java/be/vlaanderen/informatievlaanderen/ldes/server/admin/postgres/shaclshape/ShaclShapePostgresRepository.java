@@ -2,45 +2,49 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.mapper.ShaclShapeMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository.ShaclShapeEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.service.ShaclShapeEntityConverter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class ShaclShapePostgresRepository implements ShaclShapeRepository {
-	private final ShaclShapeEntityRepository repository;
-	private final ShaclShapeEntityConverter converter = new ShaclShapeEntityConverter();
+    private final ShaclShapeEntityRepository shaclShapeEntityRepository;
+    private final EventStreamEntityRepository eventStreamEntityRepository;
 
-	public ShaclShapePostgresRepository(ShaclShapeEntityRepository repository) {
-		this.repository = repository;
-	}
+    public ShaclShapePostgresRepository(ShaclShapeEntityRepository shaclShapeEntityRepository, EventStreamEntityRepository eventStreamEntityRepository) {
+        this.shaclShapeEntityRepository = shaclShapeEntityRepository;
+        this.eventStreamEntityRepository = eventStreamEntityRepository;
+    }
 
-	@Override
-	public List<ShaclShape> retrieveAllShaclShapes() {
-		return repository.findAll()
-				.stream()
-				.map(converter::toShaclShape)
-				.toList();
-	}
+    @Override
+    public List<ShaclShape> retrieveAllShaclShapes() {
+        return shaclShapeEntityRepository.findAll().stream().map(ShaclShapeMapper::fromEntity).toList();
+    }
 
-	@Override
-	public Optional<ShaclShape> retrieveShaclShape(String collectionName) {
-		return repository.findById(collectionName).map(converter::toShaclShape);
-	}
+    @Override
+    public Optional<ShaclShape> retrieveShaclShape(String collectionName) {
+        return shaclShapeEntityRepository.findByCollectionName(collectionName).map(ShaclShapeMapper::fromEntity);
+    }
 
-	@Override
-	@Transactional
-	public ShaclShape saveShaclShape(ShaclShape shaclShape) {
-		repository.save(converter.fromShaclShape(shaclShape));
-		return shaclShape;
-	}
+    @Override
+    public void saveShaclShape(ShaclShape shaclShape) {
+        shaclShapeEntityRepository.findByCollectionName(shaclShape.getCollection())
+                .or(() -> eventStreamEntityRepository.findByName(shaclShape.getCollection()).map(ShaclShapeEntity::new))
+                .ifPresent(shaclShapeEntity -> {
+                    shaclShapeEntity.setModel(shaclShape.getModel());
+                    shaclShapeEntityRepository.save(shaclShapeEntity);
+                });
+    }
 
-	@Override
-	public void deleteShaclShape(String collectionName) {
-		repository.deleteById(collectionName);
-	}
+    @Override
+    @Transactional
+    public void deleteShaclShape(String collectionName) {
+        shaclShapeEntityRepository.deleteByCollectionName(collectionName);
+    }
 }

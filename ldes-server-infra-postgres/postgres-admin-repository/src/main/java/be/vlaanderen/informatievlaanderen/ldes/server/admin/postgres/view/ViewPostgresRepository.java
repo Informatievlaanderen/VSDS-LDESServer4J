@@ -1,56 +1,63 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view;
 
+
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.mapper.ViewSpecificationMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service.ViewEntityConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class ViewPostgresRepository implements ViewRepository {
+    private final ViewEntityRepository viewEntityRepository;
+    private final EventStreamEntityRepository eventStreamEntityRepository;
 
-	private final ViewEntityRepository repository;
-	private final ViewEntityConverter converter = new ViewEntityConverter();
-
-	public ViewPostgresRepository(ViewEntityRepository repository) {
-		this.repository = repository;
+    public ViewPostgresRepository(ViewEntityRepository viewEntityRepository, EventStreamEntityRepository eventStreamEntityRepository) {
+        this.viewEntityRepository = viewEntityRepository;
+        this.eventStreamEntityRepository = eventStreamEntityRepository;
     }
 
-	@Override
-	public List<ViewSpecification> retrieveAllViews() {
-		return repository
-				.findAll()
-				.stream()
-				.map(converter::toView)
-				.toList();
-	}
+    @Override
+    public List<ViewSpecification> retrieveAllViews() {
+        return viewEntityRepository.findAll().stream()
+                .map(ViewSpecificationMapper::fromEntity)
+                .toList();
+    }
 
-	@Override
-	public void saveView(ViewSpecification viewSpecification) {
-		repository.save(converter.fromView(viewSpecification));
-	}
+    @Override
+    public void saveView(ViewSpecification viewSpecification) {
+        final ViewEntity viewEntity = ViewSpecificationMapper.toEntity(viewSpecification);
+        final EventStreamEntity eventStreamEntity = eventStreamEntityRepository
+                .findByName(viewSpecification.getName().getCollectionName())
+                .orElseThrow(() -> new MissingResourceException("EventStream", viewSpecification.getName().getCollectionName()));
+        viewEntity.setEventStream(eventStreamEntity);
+        viewEntityRepository.save(viewEntity);
+    }
 
-	@Override
-	public void deleteViewByViewName(ViewName viewName) {
-		repository.deleteById(viewName.asString());
-	}
+    @Override
+    @Transactional
+    public void deleteViewByViewName(ViewName viewName) {
+        viewEntityRepository.deleteByViewName(viewName.getCollectionName(), viewName.getViewName());
+    }
 
-	@Override
-	public Optional<ViewSpecification> getViewByViewName(ViewName viewName) {
-		return repository
-				.findById(viewName.asString())
-				.map(converter::toView);
-	}
+    @Override
+    public Optional<ViewSpecification> getViewByViewName(ViewName viewName) {
+        return viewEntityRepository.findByViewName(viewName.getCollectionName(), viewName.getViewName()).map(ViewSpecificationMapper::fromEntity);
+    }
 
-	@Override
-	public List<ViewSpecification> retrieveAllViewsOfCollection(String collectionName) {
-		return retrieveAllViews()
-				.stream()
-				.filter(viewSpecification -> viewSpecification.getName().getCollectionName().equals(collectionName))
-				.toList();
-	}
+    @Override
+    public List<ViewSpecification> retrieveAllViewsOfCollection(String collectionName) {
+        return viewEntityRepository.findAllByCollectionName(collectionName).stream()
+                .map(ViewSpecificationMapper::fromEntity)
+                .toList();
+    }
 }

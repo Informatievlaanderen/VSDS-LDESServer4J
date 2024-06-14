@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-dcat-dataservices-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="dcat_dataservices"/>
+            </not>
+        </preConditions>
+        <createTable tableName="dcat_dataservices">
+            <column name="view_id" type="int">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dcat_dataservice"/>
+            </column>
+            <column name="model" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_dcat_dataservice_view_id"
+                                 baseTableName="dcat_dataservices" baseColumnNames="view_id"
+                                 referencedTableName="views" referencedColumnNames="view_id"
+                                 onDelete="CASCADE"/>
+        <rollback>
+            <dropTable tableName="dcat_dataservices" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-dcat-dataservices-data" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="create-new-dcat-dataservices-table" author="vsds"
+                               changeLogFile="db/changelog/3_1_1/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
+        </preConditions>
+        <sqlFile path="db/changelog/3_1_1/dcat-dataservice/migrate-dcat-dataservices-data.sql"/>
+        <rollback>
+            <delete tableName="dcat_dataservices"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="drop-old-dcat-dataservice-table" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="migrate-dcat-dataservices-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_1/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
+        </preConditions>
+        <dropTable tableName="dcat_dataservice"/>
+    </changeSet>
+</databaseChangeLog>
