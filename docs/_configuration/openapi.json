@@ -3,7 +3,7 @@
   "info": {
     "title": "LDES Server Admin API",
     "description": "This API makes it possible to manage an LDES Server",
-    "version": "2.16.0-SNAPSHOT"
+    "version": "3.1.0"
   },
   "servers": [
     {
@@ -15,7 +15,7 @@
     "/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat": {
       "put": {
         "tags": [
-          "DCAT"
+          "DCAT DataService"
         ],
         "summary": "Update DCAT metadata for a view",
         "operationId": "updateDcat",
@@ -79,7 +79,7 @@
       },
       "post": {
         "tags": [
-          "DCAT"
+          "DCAT DataService"
         ],
         "summary": "Add DCAT metadata for a view",
         "operationId": "createDcat",
@@ -140,7 +140,7 @@
       },
       "delete": {
         "tags": [
-          "DCAT"
+          "DCAT DataService"
         ],
         "summary": "Delete DCAT metadata for a view",
         "operationId": "deleteDcat",
@@ -187,10 +187,14 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "event-stream"
           }
         ],
         "responses": {
+          "404": {
+            "description": "No event stream with provided id could be found"
+          },
           "200": {
             "description": "OK",
             "content": {
@@ -246,9 +250,6 @@
                 ]
               }
             }
-          },
-          "404": {
-            "description": "No event stream with provided id could be found"
           }
         }
       },
@@ -265,7 +266,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "event-stream"
           }
         ],
         "requestBody": {
@@ -295,6 +297,9 @@
           "400": {
             "description": "The provided shacl shape is not valid"
           },
+          "404": {
+            "description": "No event stream with provided id could be found"
+          },
           "200": {
             "description": "OK",
             "content": {
@@ -350,9 +355,131 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/eventstreams/{collectionName}/eventsource": {
+      "put": {
+        "tags": [
+          "Event Streams"
+        ],
+        "summary": "Update the Event Source of an Event Stream",
+        "operationId": "updateEventSource",
+        "parameters": [
+          {
+            "name": "collectionName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "event-stream"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "text/turtle": {
+              "schema": {
+                "type": "string"
+              },
+              "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n\n<> a ldes:EventSource ;\n    ldes:retentionPolicy [\n        a ldes:DurationAgoPolicy ;\n        tree:value \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> ;\n      ] .\n"
+            },
+            "application/n-quads": {
+              "schema": {
+                "type": "string"
+              },
+              "example": "<http://njh.me/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventSource> .\n<http://njh.me/> <https://w3id.org/ldes#retentionPolicy> _:genid1 .\n_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#DurationAgoPolicy> .\n_:genid1 <https://w3id.org/tree#value> \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> .\n"
+            },
+            "application/ld+json": {
+              "example": [
+                {
+                  "@id": "_:b0",
+                  "@type": [
+                    "https://w3id.org/ldes#DurationAgoPolicy"
+                  ],
+                  "https://w3id.org/tree#value": [
+                    {
+                      "@value": "PT5S",
+                      "@type": "http://www.w3.org/2001/XMLSchema#duration"
+                    }
+                  ]
+                },
+                {
+                  "@id": "http://njh.me/",
+                  "@type": [
+                    "https://w3id.org/ldes#EventSource"
+                  ],
+                  "https://w3id.org/ldes#retentionPolicy": [
+                    {
+                      "@id": "_:b0"
+                    }
+                  ]
+                },
+                {
+                  "@id": "https://w3id.org/ldes#DurationAgoPolicy"
+                },
+                {
+                  "@id": "https://w3id.org/ldes#EventSource"
+                }
+              ]
+            }
           },
+          "required": true
+        },
+        "responses": {
           "404": {
-            "description": "No event stream with provided id could be found"
+            "description": "Event Stream with provided collection name could not be found"
+          },
+          "200": {
+            "description": "Event Source has been successfully updated",
+            "content": {
+              "text/turtle": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n\n<> a ldes:EventSource ;\n    ldes:retentionPolicy [\n        a ldes:DurationAgoPolicy ;\n        tree:value \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> ;\n      ] .\n"
+              },
+              "application/n-quads": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "<http://njh.me/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventSource> .\n<http://njh.me/> <https://w3id.org/ldes#retentionPolicy> _:genid1 .\n_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#DurationAgoPolicy> .\n_:genid1 <https://w3id.org/tree#value> \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> .\n"
+              },
+              "application/ld+json": {
+                "example": [
+                  {
+                    "@id": "_:b0",
+                    "@type": [
+                      "https://w3id.org/ldes#DurationAgoPolicy"
+                    ],
+                    "https://w3id.org/tree#value": [
+                      {
+                        "@value": "PT5S",
+                        "@type": "http://www.w3.org/2001/XMLSchema#duration"
+                      }
+                    ]
+                  },
+                  {
+                    "@id": "http://njh.me/",
+                    "@type": [
+                      "https://w3id.org/ldes#EventSource"
+                    ],
+                    "https://w3id.org/ldes#retentionPolicy": [
+                      {
+                        "@id": "_:b0"
+                      }
+                    ]
+                  },
+                  {
+                    "@id": "https://w3id.org/ldes#DurationAgoPolicy"
+                  },
+                  {
+                    "@id": "https://w3id.org/ldes#EventSource"
+                  }
+                ]
+              }
+            }
           }
         }
       }
@@ -360,7 +487,7 @@
     "/admin/api/v1/eventstreams/{collectionName}/dcat": {
       "put": {
         "tags": [
-          "DCAT"
+          "DCAT Dataset"
         ],
         "summary": "Update DCAT metadata for a LDES",
         "operationId": "putDataset",
@@ -414,7 +541,7 @@
       },
       "post": {
         "tags": [
-          "DCAT"
+          "DCAT Dataset"
         ],
         "summary": "Add DCAT metadata for a LDES",
         "operationId": "postDataset",
@@ -465,7 +592,7 @@
       },
       "delete": {
         "tags": [
-          "DCAT"
+          "DCAT Dataset"
         ],
         "summary": "Delete DCAT metadata for a LDES",
         "operationId": "deleteDataset",
@@ -491,7 +618,7 @@
     "/admin/api/v1/dcat/{catalogId}": {
       "put": {
         "tags": [
-          "DCAT"
+          "DCAT Catalog"
         ],
         "summary": "Update DCAT configuration for the server",
         "operationId": "putServerDcat",
@@ -548,7 +675,7 @@
       },
       "delete": {
         "tags": [
-          "DCAT"
+          "DCAT Catalog"
         ],
         "summary": "Delete DCAT configuration for the server",
         "operationId": "deleteServerDcat",
@@ -917,14 +1044,143 @@
         }
       }
     },
+    "/admin/api/v1/eventstreams/{collectionName}/close": {
+      "post": {
+        "tags": [
+          "Event Streams"
+        ],
+        "summary": "Close an Event Stream",
+        "operationId": "closeEventStream",
+        "parameters": [
+          {
+            "name": "collectionName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "event-stream"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Event Stream with provided collection name could not be found"
+          },
+          "200": {
+            "description": "Event Stream is successfully closed and all related fragments are made immutable"
+          }
+        }
+      }
+    },
     "/admin/api/v1/dcat": {
       "get": {
         "tags": [
-          "DCAT"
+          "DCAT Catalog"
         ],
         "summary": "The combined metadata for the server is retrieved",
         "operationId": "getDcat",
         "responses": {
+          "500": {
+            "description": "The validation report of the invalid dcat.",
+            "content": {
+              "text/turtle": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "@prefix company: <http://sample.org/company/> .\n@prefix dc:      <http://purl.org/dc/elements/1.1/> .\n@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n@prefix sh:      <http://www.w3.org/ns/shacl#> .\n@prefix terms:   <http://purl.org/dc/terms/> .\n\n[ rdf:type     sh:ValidationReport ;\n  sh:conforms  false ;\n  sh:result    [ rdf:type                      sh:ValidationResult ;\n                 sh:focusNode                  <http://localhost:8080> ;\n                 sh:resultMessage              \"ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>\" ;\n                 sh:resultPath                 terms:publisher ;\n                 sh:resultSeverity             sh:Violation ;\n                 sh:sourceConstraintComponent  sh:ClassConstraintComponent ;\n                 sh:sourceShape                []  ;\n                 sh:value                      company:PublisherX\n               ]\n] .\n"
+              },
+              "application/n-quads": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationReport> .\n_:genid1 <http://www.w3.org/ns/shacl#conforms> \"false\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n_:genid1 <http://www.w3.org/ns/shacl#result> _:genid2 .\n_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationResult> .\n_:genid2 <http://www.w3.org/ns/shacl#focusNode> <http://localhost:8080> .\n_:genid2 <http://www.w3.org/ns/shacl#resultMessage> \"ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>\" .\n_:genid2 <http://www.w3.org/ns/shacl#resultPath> <http://purl.org/dc/terms/publisher> .\n_:genid2 <http://www.w3.org/ns/shacl#resultSeverity> <http://www.w3.org/ns/shacl#Violation> .\n_:genid2 <http://www.w3.org/ns/shacl#sourceConstraintComponent> <http://www.w3.org/ns/shacl#ClassConstraintComponent> .\n_:genid2 <http://www.w3.org/ns/shacl#sourceShape> _:genid3 .\n_:genid2 <http://www.w3.org/ns/shacl#value> <http://sample.org/company/PublisherX> .\n"
+              },
+              "application/ld+json": {
+                "example": [
+                  {
+                    "@type": [
+                      "http://www.w3.org/ns/shacl#ValidationReport"
+                    ],
+                    "http://www.w3.org/ns/shacl#conforms": [
+                      {
+                        "@value": false
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#result": [
+                      {
+                        "@id": "_:b1"
+                      }
+                    ]
+                  },
+                  {
+                    "@id": "_:b1",
+                    "@type": [
+                      "http://www.w3.org/ns/shacl#ValidationResult"
+                    ],
+                    "http://www.w3.org/ns/shacl#focusNode": [
+                      {
+                        "@id": "http://localhost:8080"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#resultMessage": [
+                      {
+                        "@value": "ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#resultPath": [
+                      {
+                        "@id": "http://purl.org/dc/terms/publisher"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#resultSeverity": [
+                      {
+                        "@id": "http://www.w3.org/ns/shacl#Violation"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#sourceConstraintComponent": [
+                      {
+                        "@id": "http://www.w3.org/ns/shacl#ClassConstraintComponent"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#sourceShape": [
+                      {
+                        "@id": "_:b2"
+                      }
+                    ],
+                    "http://www.w3.org/ns/shacl#value": [
+                      {
+                        "@id": "http://sample.org/company/PublisherX"
+                      }
+                    ]
+                  },
+                  {
+                    "@id": "_:b2"
+                  },
+                  {
+                    "@id": "http://localhost:8080"
+                  },
+                  {
+                    "@id": "http://purl.org/dc/terms/publisher"
+                  },
+                  {
+                    "@id": "http://sample.org/company/PublisherX"
+                  },
+                  {
+                    "@id": "http://www.w3.org/ns/shacl#ClassConstraintComponent"
+                  },
+                  {
+                    "@id": "http://www.w3.org/ns/shacl#ValidationReport"
+                  },
+                  {
+                    "@id": "http://www.w3.org/ns/shacl#ValidationResult"
+                  },
+                  {
+                    "@id": "http://www.w3.org/ns/shacl#Violation"
+                  }
+                ]
+              }
+            }
+          },
           "200": {
             "description": "The combined DCAT of the server is returned",
             "content": {
@@ -1127,113 +1383,12 @@
                 ]
               }
             }
-          },
-          "500": {
-            "description": "The validation report of the invalid dcat.",
-            "content": {
-              "text/turtle": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "@prefix company: <http://sample.org/company/> .\n@prefix dc:      <http://purl.org/dc/elements/1.1/> .\n@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n@prefix sh:      <http://www.w3.org/ns/shacl#> .\n@prefix terms:   <http://purl.org/dc/terms/> .\n\n[ rdf:type     sh:ValidationReport ;\n  sh:conforms  false ;\n  sh:result    [ rdf:type                      sh:ValidationResult ;\n                 sh:focusNode                  <http://localhost:8080> ;\n                 sh:resultMessage              \"ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>\" ;\n                 sh:resultPath                 terms:publisher ;\n                 sh:resultSeverity             sh:Violation ;\n                 sh:sourceConstraintComponent  sh:ClassConstraintComponent ;\n                 sh:sourceShape                []  ;\n                 sh:value                      company:PublisherX\n               ]\n] .\n"
-              },
-              "application/n-quads": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationReport> .\n_:genid1 <http://www.w3.org/ns/shacl#conforms> \"false\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n_:genid1 <http://www.w3.org/ns/shacl#result> _:genid2 .\n_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationResult> .\n_:genid2 <http://www.w3.org/ns/shacl#focusNode> <http://localhost:8080> .\n_:genid2 <http://www.w3.org/ns/shacl#resultMessage> \"ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>\" .\n_:genid2 <http://www.w3.org/ns/shacl#resultPath> <http://purl.org/dc/terms/publisher> .\n_:genid2 <http://www.w3.org/ns/shacl#resultSeverity> <http://www.w3.org/ns/shacl#Violation> .\n_:genid2 <http://www.w3.org/ns/shacl#sourceConstraintComponent> <http://www.w3.org/ns/shacl#ClassConstraintComponent> .\n_:genid2 <http://www.w3.org/ns/shacl#sourceShape> _:genid3 .\n_:genid2 <http://www.w3.org/ns/shacl#value> <http://sample.org/company/PublisherX> .\n"
-              },
-              "application/ld+json": {
-                "example": [
-                  {
-                    "@type": [
-                      "http://www.w3.org/ns/shacl#ValidationReport"
-                    ],
-                    "http://www.w3.org/ns/shacl#conforms": [
-                      {
-                        "@value": false
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#result": [
-                      {
-                        "@id": "_:b1"
-                      }
-                    ]
-                  },
-                  {
-                    "@id": "_:b1",
-                    "@type": [
-                      "http://www.w3.org/ns/shacl#ValidationResult"
-                    ],
-                    "http://www.w3.org/ns/shacl#focusNode": [
-                      {
-                        "@id": "http://localhost:8080"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#resultMessage": [
-                      {
-                        "@value": "ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#resultPath": [
-                      {
-                        "@id": "http://purl.org/dc/terms/publisher"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#resultSeverity": [
-                      {
-                        "@id": "http://www.w3.org/ns/shacl#Violation"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#sourceConstraintComponent": [
-                      {
-                        "@id": "http://www.w3.org/ns/shacl#ClassConstraintComponent"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#sourceShape": [
-                      {
-                        "@id": "_:b2"
-                      }
-                    ],
-                    "http://www.w3.org/ns/shacl#value": [
-                      {
-                        "@id": "http://sample.org/company/PublisherX"
-                      }
-                    ]
-                  },
-                  {
-                    "@id": "_:b2"
-                  },
-                  {
-                    "@id": "http://localhost:8080"
-                  },
-                  {
-                    "@id": "http://purl.org/dc/terms/publisher"
-                  },
-                  {
-                    "@id": "http://sample.org/company/PublisherX"
-                  },
-                  {
-                    "@id": "http://www.w3.org/ns/shacl#ClassConstraintComponent"
-                  },
-                  {
-                    "@id": "http://www.w3.org/ns/shacl#ValidationReport"
-                  },
-                  {
-                    "@id": "http://www.w3.org/ns/shacl#ValidationResult"
-                  },
-                  {
-                    "@id": "http://www.w3.org/ns/shacl#Violation"
-                  }
-                ]
-              }
-            }
           }
         }
       },
       "post": {
         "tags": [
-          "DCAT"
+          "DCAT Catalog"
         ],
         "summary": "Add DCAT configuration for the server",
         "operationId": "postServerDcat",
@@ -1262,6 +1417,9 @@
           "required": true
         },
         "responses": {
+          "400": {
+            "description": "Provided DCAT configuration is not valid"
+          },
           "201": {
             "description": "The generated UUID that is linked to the created DCAT",
             "content": {
@@ -1272,9 +1430,6 @@
                 "example": "e1c9443a-ab9f-407f-a65b-09d69f481966"
               }
             }
-          },
-          "400": {
-            "description": "Provided DCAT configuration is not valid"
           }
         }
       }
@@ -1459,6 +1614,9 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Missing EventStream or Missing View"
+          },
           "200": {
             "description": "OK",
             "content": {
@@ -1466,14 +1624,9 @@
               "application/ld+json": {},
               "application/n-quads": {}
             }
-          },
-          "404": {
-            "description": "Missing EventStream or Missing View"
           }
         }
-      }
-    },
-    "/admin/api/v1/eventstreams/{collectionName}/views/{view}": {
+      },
       "delete": {
         "tags": [
           "Views"
@@ -1492,7 +1645,7 @@
             "example": "event-stream"
           },
           {
-            "name": "view",
+            "name": "viewName",
             "in": "path",
             "description": "The name of deleted view",
             "required": true,

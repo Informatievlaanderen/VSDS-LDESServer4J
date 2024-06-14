@@ -12,7 +12,7 @@ import org.apache.jena.rdf.model.Model;
 
 import static org.apache.jena.riot.WebContent.*;
 
-@Tag(name = "DCAT")
+@Tag(name = "DCAT DataService")
 @SuppressWarnings("java:S2479") // whitespace needed for examples
 public interface OpenApiDcatViewsController {
 

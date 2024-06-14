@@ -53,10 +53,10 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 
 	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "{collectionname}/{view}", produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
+	@GetMapping(value = "{collectionName}/{view}", produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
 	public ResponseEntity<ResponseBodyEmitter> retrieveLdesFragmentStreaming(@PathVariable("view") String view,
 																			 @RequestParam Map<String, String> requestParameters,
-																			 @PathVariable("collectionname") String collectionName) {
+																			 @PathVariable String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		LdesFragmentIdentifier id = new LdesFragmentIdentifier(viewName,
 				requestParameters.entrySet().stream()
@@ -79,11 +79,11 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 
 	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "{collectionname}/{view}")
+	@GetMapping(value = "{collectionName}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(@PathVariable("view") String view,
 														 @RequestParam Map<String, String> requestParameters,
 														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
-														 @PathVariable("collectionname") String collectionName) {
+														 @PathVariable String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = getFragment(viewName, requestParameters);
 		return ResponseEntity
