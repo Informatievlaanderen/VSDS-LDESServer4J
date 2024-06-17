@@ -29,9 +29,9 @@
     <changeSet id="migrate-dcat-dataservices-data" author="vsds">
         <preConditions>
             <changeSetExecuted id="create-new-dcat-dataservices-table" author="vsds"
-                               changeLogFile="db/changelog/3_1_1/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
+                               changeLogFile="db/changelog/3_1_0/admin-data-model/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_1/dcat-dataservice/migrate-dcat-dataservices-data.sql"/>
+        <sqlFile path="db/changelog/3_1_0/admin-data-model/dcat-dataservice/migrate-dcat-dataservices-data.sql"/>
         <rollback>
             <delete tableName="dcat_dataservices"/>
         </rollback>
@@ -39,7 +39,7 @@
     <changeSet id="drop-old-dcat-dataservice-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate-dcat-dataservices-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_1/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
+                               changeLogFile="db/changelog/3_1_0/admin-data-model/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
         </preConditions>
         <dropTable tableName="dcat_dataservice"/>
     </changeSet>

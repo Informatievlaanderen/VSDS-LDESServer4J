@@ -1,0 +1,3 @@
+insert into members (subject, collection_id, version_of, timestamp, sequence_nr, transaction_id, is_in_event_source, member_model)
+select ingest_ldesmember.id, collections.collection_id, ingest_ldesmember.version_of, ingest_ldesmember.timestamp, ingest_ldesmember.sequence_nr, ingest_ldesmember.transaction_id, ingest_ldesmember.is_in_event_source, ingest_ldesmember.model
+from ingest_ldesmember left join collections on ingest_ldesmember.collection_name=collections.name

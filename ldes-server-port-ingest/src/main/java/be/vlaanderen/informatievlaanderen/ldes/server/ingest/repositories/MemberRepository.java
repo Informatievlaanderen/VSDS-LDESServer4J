@@ -26,8 +26,4 @@ public interface MemberRepository {
 
 	Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
-	long getMemberCount();
-
-	long getMemberCountOfCollection(String collectionName);
-
 }

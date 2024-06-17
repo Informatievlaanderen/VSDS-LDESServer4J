@@ -9,22 +9,22 @@
             </not>
         </preConditions>
         <createTable tableName="members">
-            <column name="id" type="VARCHAR(255)">
+            <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="members_pkey"/>
             </column>
             <column name="subject" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="collection_id" type="VARCHAR(255)">
-                <constraints nullable="false" foreignKeyName="fk_collection_id" references="collections(id)"/>
+            <column name="collection_id" type="SMALLINT">
+                <constraints nullable="false"/>
             </column>
             <column name="is_in_event_source" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="model" type="BYTEA">
+            <column name="member_model" type="BYTEA">
                 <constraints nullable="false"/>
             </column>
-            <column name="sequence_nr" type="BIGINT">
+            <column autoIncrement="true" name="sequence_nr" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE">
@@ -37,17 +37,29 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addForeignKeyConstraint baseTableName="members" baseColumnNames="collection_id"
+                                 constraintName="fk_collection_id"
+                                 referencedTableName="collections"
+                                 referencedColumnNames="collection_id"
+                                 onDelete="CASCADE"/>
+        <createIndex indexName="idx3mw3hkmk4pkhm5hg5plm4bdqs" tableName="members">
+            <column name="id"/>
+            <column name="timestamp"/>
+        </createIndex>
+        <createIndex indexName="idx3mw3hkmk4phlm5hg3vsm4bzes" tableName="members">
+            <column name="subject"/>
+        </createIndex>
         <rollback>
-            <dropTable tableName="member" cascadeConstraints="true" />
+            <dropTable tableName="members" cascadeConstraints="true" />
         </rollback>
     </changeSet>
     <changeSet id="migrate_members" author="vsds">
         <preConditions>
             <tableExists tableName="members"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_2/migrate-members.sql"/>
+        <sqlFile path="db/changelog/3_1_0/member-data-model/migrate-members.sql"/>
         <rollback>
-            <delete tableName="collections"/>
+            <delete tableName="members"/>
         </rollback>
     </changeSet>
 

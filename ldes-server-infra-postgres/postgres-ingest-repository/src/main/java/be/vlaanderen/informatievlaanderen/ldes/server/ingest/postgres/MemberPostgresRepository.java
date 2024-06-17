@@ -8,9 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.Member
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.apache.jena.riot.Lang;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +17,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants.LDES_SERVER_DELETED_MEMBERS_COUNT;
+
 @Repository
 @Primary
 public class MemberPostgresRepository implements MemberRepository {
-	public static final Lang CONVERSION_LANG = Lang.RDFPROTO;
-	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
+	private final DatabaseColumnModelConverter modelConverter;
 	private final EntityManager entityManager;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper, EntityManager entityManager) {
+                                    MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, EntityManager entityManager) {
 		this.repository = repository;
 		this.mapper = mapper;
-		this.entityManager = entityManager;
+        this.modelConverter = modelConverter;
+        this.entityManager = entityManager;
 		MemberEntityListener.repository = repository;
 	}
 
@@ -44,7 +44,29 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Transactional
 	public List<IngestedMember> insertAll(List<IngestedMember> members) {
 		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
-			repository.saveAll(members.stream().map(mapper::toMemberEntity).toList());
+			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, is_in_event_source, member_model) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA) FROM collections c, (VALUES ";
+
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < members.size(); i++) {
+				sb.append("(?, ?, ?, ?, ?, ?, ?),");
+			}
+			sql += sb.substring(0, sb.length() - 1);
+			sql += ") AS o(subject, version, timestamp, transaction, eventSource, model, collectionName) WHERE c.name = o.collectionName";
+
+			Query query = entityManager.createNativeQuery(sql);
+
+			int index = 1;
+			for (IngestedMember member : members) {
+				query.setParameter(index++, member.getSubject());
+				query.setParameter(index++, member.getVersionOf());
+				query.setParameter(index++, member.getTimestamp());
+				query.setParameter(index++, member.getTransactionId());
+				query.setParameter(index++, member.isInEventSource());
+				query.setParameter(index++, modelConverter.convertToDatabaseColumn(member.getModel()));
+				query.setParameter(index++, member.getCollectionName());
+			}
+
+			query.executeUpdate();
 			return members;
 		}
 		else {
@@ -53,7 +75,7 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	protected boolean membersExist(List<IngestedMember> members) {
-		return repository.existsByIdIn(members.stream().map(IngestedMember::getSubject).toList());
+		return repository.existsBySubjectIn(members.stream().map(IngestedMember::getSubject).toList());
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
@@ -70,7 +92,7 @@ public class MemberPostgresRepository implements MemberRepository {
 
 	@Override
 	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
-		return repository.findAllByIdIn(memberIds)
+		return repository.findAllBySubjectIn(memberIds)
 				.stream()
 				.map(mapper::toMember);
 	}
@@ -100,7 +122,7 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Transactional
 	public void removeFromEventSource(List<String> ids) {
 		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
-		                                        "WHERE m.id IN :memberIds");
+		                                        "WHERE m.subject IN :memberIds");
 		query.setParameter("memberIds", ids);
 		query.executeUpdate();
 	}
@@ -109,16 +131,6 @@ public class MemberPostgresRepository implements MemberRepository {
 	public Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
 		return repository.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
 				.map(mapper::toMember);
-	}
-
-	@Override
-	public long getMemberCount() {
-		return repository.count();
-	}
-
-	@Override
-	public long getMemberCountOfCollection(String collectionName) {
-		return repository.countByCollectionName(collectionName);
 	}
 
 }

@@ -15,7 +15,7 @@ public class MemberEntityListener {
 	@PrePersist
 	public void onPrePersist(MemberEntity memberEntity) {
 		if (memberEntity.getSequenceNr() == null) {
-			Long maxSequenceNr = repository.getNextSequenceNr(memberEntity.getCollectionName());
+			Long maxSequenceNr = repository.getNextSequenceNr(memberEntity.getCollection().getName());
 			memberEntity.setSequenceNr(maxSequenceNr != null ? maxSequenceNr + 1 : 1);
 		}
 	}

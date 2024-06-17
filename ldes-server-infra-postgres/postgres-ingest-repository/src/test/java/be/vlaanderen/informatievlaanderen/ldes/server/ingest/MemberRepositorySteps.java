@@ -114,12 +114,13 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@Then("The number of members is {int}")
 	public void theRetrievedMemberIsEmpty(int memberCount) {
-		assertEquals(memberCount, memberRepository.getMemberCount());
+		assertEquals(memberCount, memberRepository.getMemberStreamOfCollection("mobility-hindrances").count() +
+				memberRepository.getMemberStreamOfCollection("other").count());
 	}
 
 	@Then("The number of members of the {string} collection is {int}")
 	public void theRetrievedMemberIsEmpty(String collectionName, int memberCount) {
-		assertEquals(memberCount, memberRepository.getMemberCountOfCollection(collectionName));
+		assertEquals(memberCount, memberRepository.getMemberStreamOfCollection(collectionName).count());
 	}
 
 	@Then("I delete all members from the {string} collection")
