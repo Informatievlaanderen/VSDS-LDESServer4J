@@ -215,7 +215,9 @@ networks:
 ## Migration to 3.0
 
 Since the Mongodb implementation got replaced with a PostgreSQL one, a migration path has been provided.
-To enable this, add the following properties to your config:
+This migration path is only needed for those who wish to move their 2.x LDES servers to the latest version.
+
+To enable this, please first take in the 3.0.0 release and add the following properties to your config:
 
 ````yaml
 ldes-server:
@@ -229,4 +231,12 @@ spring:
       initialize-schema: always
 ````
 
+> **_ALTERNATIVE MIGRATION:_**  Besides the provided migration solution, It is also possible to set up your new 3.x Server 
+> next to your 2.x Server and then use and LDES workbench to send over the data from the 2.x Server to the 3.x Server.
+> This pipeline in [LDIO] should contain an [LDES Client] to read data from the 2.x Server and an [LDIO Http Out] to send data towards the 3.x Server.
+
+
+[LDIO]: https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/ldio
+[LDES Client]: https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/ldio/ldio-inputs/ldio-ldes-client
+[LDIO Http Out]: https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/ldio/ldio-outputs/ldio-http-out
 [spring documentation]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html
