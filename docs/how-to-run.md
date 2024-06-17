@@ -196,7 +196,7 @@ services:
       - ldes
     depends_on:
       - ldes-postgres
-  postgres:
+  ldes-postgres:
     container_name: ldes-postgres
     image: postgres:14-alpine
     ports:

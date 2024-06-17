@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,7 +40,7 @@ public interface OpenApiShapeController {
 					"""))
 	})
 	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found", content = @Content)
-	Model getShape(String collectionName);
+	Model getShape(@Parameter(example = "event-stream") String collectionName);
 
 	@Operation(summary = "Adds a shape to a collection")
 	@ApiResponse(responseCode = "200", content = {
@@ -67,7 +68,7 @@ public interface OpenApiShapeController {
 	})
 	@ApiResponse(responseCode = "400", description = "The provided shacl shape is not valid", content = @Content)
 	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found", content = @Content)
-	Model putShape(String collectionName,
+	Model putShape(@Parameter(example = "event-stream") String collectionName,
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix event-stream: <http://localhost:8080/event-stream/> .
