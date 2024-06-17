@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import static org.apache.jena.riot.WebContent.*;
 
 @SuppressWarnings("java:S2479") // whitespace needed for examples
-@Tag(name = "DCAT Catalog")
+@Tag(name = "DCAT")
 public interface OpenApiServerDcatController {
 
 	@ApiResponse(responseCode = "200", description = "The combined DCAT of the server is returned", content = {
