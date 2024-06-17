@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,14 +43,14 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Transactional
 	public List<IngestedMember> insertAll(List<IngestedMember> members) {
 		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, is_in_event_source, member_model) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA) FROM collections c, (VALUES ";
+			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, sequence_nr, transaction_id, is_in_event_source, member_model, old_id) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), CASE WHEN o.seq = NULL THEN (SELECT MAX(sequence_nr)+1 FROM members WHERE collection_id = c.collection_id) ELSE cast(o.seq as BIGINT) END AS new_seq, transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA) o.oldId FROM collections c, (VALUES ";
 
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < members.size(); i++) {
-				sb.append("(?, ?, ?, ?, ?, ?, ?),");
+				sb.append("(?, ?, ?, ?, ?, ?, ?, ?, ?),");
 			}
 			sql += sb.substring(0, sb.length() - 1);
-			sql += ") AS o(subject, version, timestamp, transaction, eventSource, model, collectionName) WHERE c.name = o.collectionName";
+			sql += ") AS o(subject, version, timestamp, seq, transaction, eventSource, model, collectionName, oldId) WHERE c.name = o.collectionName";
 
 			Query query = entityManager.createNativeQuery(sql);
 
@@ -60,10 +59,12 @@ public class MemberPostgresRepository implements MemberRepository {
 				query.setParameter(index++, member.getSubject());
 				query.setParameter(index++, member.getVersionOf());
 				query.setParameter(index++, member.getTimestamp());
+				query.setParameter(index++, member.getSequenceNr());
 				query.setParameter(index++, member.getTransactionId());
 				query.setParameter(index++, member.isInEventSource());
 				query.setParameter(index++, modelConverter.convertToDatabaseColumn(member.getModel()));
 				query.setParameter(index++, member.getCollectionName());
+				query.setParameter(index++, member.getCollectionName() + "/" + member.getSubject());
 			}
 
 			query.executeUpdate();
@@ -75,7 +76,7 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	protected boolean membersExist(List<IngestedMember> members) {
-		return repository.existsBySubjectIn(members.stream().map(IngestedMember::getSubject).toList());
+		return repository.existsByOldIdIn(members.stream().map(member -> member.getCollectionName() + "/" + member.getSubject()).toList());
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
@@ -86,13 +87,8 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	@Override
-	public Optional<IngestedMember> findById(String id) {
-		return repository.findById(id).map(mapper::toMember);
-	}
-
-	@Override
 	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
-		return repository.findAllBySubjectIn(memberIds)
+		return repository.findAllByOldIdIn(memberIds)
 				.stream()
 				.map(mapper::toMember);
 	}
@@ -126,11 +122,4 @@ public class MemberPostgresRepository implements MemberRepository {
 		query.setParameter("memberIds", ids);
 		query.executeUpdate();
 	}
-
-	@Override
-	public Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
-		return repository.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
-				.map(mapper::toMember);
-	}
-
 }

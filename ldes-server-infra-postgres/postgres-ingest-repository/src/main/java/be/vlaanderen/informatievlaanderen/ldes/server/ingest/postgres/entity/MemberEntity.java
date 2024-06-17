@@ -22,9 +22,10 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private long id;
-    @Column(name = "subject", unique = true, nullable = false)
+    @Column(name = "old_id", nullable = false)
+    private String oldId;
+    @Column(name = "subject", nullable = false)
     private String subject;
-
     @ManyToOne(cascade=CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @Fetch(FetchMode.SELECT)
@@ -34,8 +35,7 @@ public class MemberEntity {
     private String versionOf;
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
-    @Column(name = "sequence_nr", nullable = false, columnDefinition = "serial")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "sequence_nr", nullable = false)
     private Long sequenceNr;
     @Column(name = "transaction_id", nullable = false)
     private String transactionId;

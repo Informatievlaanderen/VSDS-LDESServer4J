@@ -24,9 +24,9 @@ public class MemberModel {
     }
 
     public IngestedMember mapToMember(String collectionName, LocalDateTime ingestedTimestamp, String txId) {
-        final String memberId = "%s/%s%s%s".formatted(collectionName, subjectUri, DELIMITER, ingestedTimestamp);
+        final String memberSubject = "%s%s%s".formatted(subjectUri, DELIMITER, ingestedTimestamp);
         return new IngestedMember(
-                memberId,
+                memberSubject,
                 collectionName,
                 subjectUri,
                 ingestedTimestamp,

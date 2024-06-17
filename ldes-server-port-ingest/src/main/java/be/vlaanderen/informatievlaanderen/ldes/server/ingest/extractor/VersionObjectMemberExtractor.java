@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberIdNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -25,11 +25,11 @@ public class VersionObjectMemberExtractor implements MemberExtractor {
 
     @Override
     public List<IngestedMember> extractMembers(Model ingestedModel) {
-        final String memberId = extractMemberId(ingestedModel);
+        final String memberSubject = extractMemberSubject(ingestedModel);
         final String transactionId = UUID.randomUUID().toString();
         final String versionOf = extractVersionOf(ingestedModel);
         final LocalDateTime timestamp = extractTimestamp(ingestedModel);
-        final IngestedMember member = new IngestedMember(memberId, collectionName, versionOf, timestamp, null, true, transactionId, ingestedModel);
+        final IngestedMember member = new IngestedMember(memberSubject, collectionName, versionOf, timestamp, null, true, transactionId, ingestedModel);
         return List.of(member);
     }
 
@@ -50,15 +50,15 @@ public class VersionObjectMemberExtractor implements MemberExtractor {
                 .orElseThrow(() -> new IllegalStateException("Ingested model does not contain expected %s".formatted(timestampPath)));
     }
 
-    private String extractMemberId(Model model) {
+    private String extractMemberSubject(Model model) {
         final var ids = model
                 .listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath))
                 .filterDrop(RDFNode::isAnon)
                 .toSet();
         if (ids.size() != 1) {
-            throw new MemberIdNotFoundException(model);
+            throw new MemberSubjectNotFoundException(model);
         } else {
-            return collectionName + "/" + ids.iterator().next().toString();
+            return ids.iterator().next().toString();
         }
     }
 }

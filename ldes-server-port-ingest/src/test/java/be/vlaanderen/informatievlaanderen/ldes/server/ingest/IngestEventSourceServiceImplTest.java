@@ -39,17 +39,6 @@ class IngestEventSourceServiceImplTest {
 		assertEquals(3, resultList.size());
 	}
 
-	@Test
-	void test_getNextMember() {
-		long sequence = 0L;
-		when(memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence))
-				.thenReturn(Optional.of(createMember(0)));
-
-		Optional<IngestedMember> result = eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence);
-
-		assertThat(result).isPresent().matches(memberOptional -> Objects.equals(memberOptional.get().getSubject(), "0"));
-	}
-
 	private IngestedMember createMember(int id) {
 		return new IngestedMember(String.valueOf(id), COLLECTION_NAME, null, null, (long) id, true, null, null);
 	}

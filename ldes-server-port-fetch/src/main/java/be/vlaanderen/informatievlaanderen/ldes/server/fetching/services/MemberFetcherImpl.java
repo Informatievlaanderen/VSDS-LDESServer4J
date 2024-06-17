@@ -28,7 +28,7 @@ public class MemberFetcherImpl implements MemberFetcher {
     public Stream<Member> fetchAllByIds(List<String> ids) {
         return memberRepository.findAllByIds(ids)
                 .map(ingestMember -> new Member(
-                        ingestMember.getSubject(),
+                        ingestMember.getCollectionName() + "/" + ingestMember.getSubject(),
                         versionObjectCreatorMap.get(ingestMember.getCollectionName()).createFromMember(ingestMember)
                 ));
     }

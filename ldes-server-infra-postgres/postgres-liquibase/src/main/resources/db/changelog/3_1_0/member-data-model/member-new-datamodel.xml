@@ -15,6 +15,9 @@
             <column name="subject" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="old_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="collection_id" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
@@ -24,7 +27,7 @@
             <column name="member_model" type="BYTEA">
                 <constraints nullable="false"/>
             </column>
-            <column autoIncrement="true" name="sequence_nr" type="BIGINT">
+            <column name="sequence_nr" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE">
@@ -47,7 +50,7 @@
             <column name="timestamp"/>
         </createIndex>
         <createIndex indexName="idx3mw3hkmk4phlm5hg3vsm4bzes" tableName="members">
-            <column name="subject"/>
+            <column name="old_id"/>
         </createIndex>
         <rollback>
             <dropTable tableName="members" cascadeConstraints="true" />

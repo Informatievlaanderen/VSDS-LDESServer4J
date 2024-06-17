@@ -21,9 +21,4 @@ public class IngestEventSourceServiceImpl implements IngestEventSourceService {
 		return memberRepository.getMemberStreamOfCollection(collectionName);
 	}
 
-	@Override
-	public Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
-		return memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequenceNr);
-	}
-
 }

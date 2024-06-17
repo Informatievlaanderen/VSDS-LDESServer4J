@@ -12,8 +12,6 @@ public interface MemberRepository {
 
 	List<IngestedMember> insertAll(List<IngestedMember> members);
 
-	Optional<IngestedMember> findById(String id);
-
 	Stream<IngestedMember> findAllByIds(List<String> memberIds);
 
 	void deleteMembersByCollection(String collectionName);
@@ -23,7 +21,4 @@ public interface MemberRepository {
 	void deleteMembers(List<String> memberId);
 
 	void removeFromEventSource(List<String> ids);
-
-	Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
-
 }

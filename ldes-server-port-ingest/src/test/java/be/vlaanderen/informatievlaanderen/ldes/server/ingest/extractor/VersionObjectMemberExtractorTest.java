@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberIdNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -65,7 +65,7 @@ class VersionObjectMemberExtractorTest {
         final Model model = readModelWithTwoVersionOfPaths();
 
         assertThatThrownBy(() -> memberExtractor.extractMembers(model))
-                .isInstanceOf(MemberIdNotFoundException.class);
+                .isInstanceOf(MemberSubjectNotFoundException.class);
     }
 
     @Test
@@ -73,7 +73,7 @@ class VersionObjectMemberExtractorTest {
         final Model model = readModelWithoutSpecifiedPath(VERSION_OF_PATH);
 
         assertThatThrownBy(() -> memberExtractor.extractMembers(model))
-                .isInstanceOf(MemberIdNotFoundException.class);
+                .isInstanceOf(MemberSubjectNotFoundException.class);
     }
 
     @Test

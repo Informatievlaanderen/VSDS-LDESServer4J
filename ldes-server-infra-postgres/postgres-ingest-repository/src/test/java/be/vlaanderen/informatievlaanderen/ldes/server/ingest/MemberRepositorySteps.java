@@ -10,23 +10,20 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
-	private List<IngestedMember> members;
+	private List<IngestedMember> members = new ArrayList<>();
 	private Optional<IngestedMember> retrievedMember;
 
 	@When("I save the members using the MemberRepository")
 	public void iSaveTheMembers(List<IngestedMember> members) {
 		memberRepository.insertAll(members);
-		this.members = members;
+		this.members.addAll(members);
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -36,7 +33,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 				row.get("collectionName"),
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp")),
-                row.get("sequenceNr").isEmpty() ? null : Long.parseLong(row.get("sequenceNr")),
+				null,
 				true,
 				UUID.randomUUID().toString(),
 				ModelFactory.createDefaultModel());
@@ -44,7 +41,8 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@Then("The member with id {string} can be retrieved from the database")
 	public void theMemberWithIdCanBeRetrievedFromTheDatabase(String id) {
-		retrievedMember = memberRepository.findById(id);
+		retrievedMember = memberRepository.findAllByIds(List.of(id)).findFirst();
+		assertTrue(retrievedMember.isPresent());
 	}
 
 	@And("The retrieved member has the same properties as the {int} member in the table and has sequenceNr {int}")
@@ -100,11 +98,6 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 	@When("I delete the member with id {string}")
 	public void iDeleteMemberWithId(String memberId) {
 		memberRepository.deleteMembers(List.of(memberId));
-	}
-
-	@And("I search for the first member from collection {string} and sequenceNr greater than {int}")
-	public void iSearchForTheFirstMemberFromCollectionAndSequenceNrGreaterThan(String collectionName, int sequence) {
-		retrievedMember = memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequence);
 	}
 
 	@Then("The retrieved member is empty")
