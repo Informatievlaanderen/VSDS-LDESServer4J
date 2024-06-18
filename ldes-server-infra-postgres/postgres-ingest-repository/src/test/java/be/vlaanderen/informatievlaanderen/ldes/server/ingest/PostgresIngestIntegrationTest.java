@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.MemberPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class })
+@ContextConfiguration(classes = { MemberEntityRepository.class, MemberEntityListener.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest" })
 @SuppressWarnings("java:S2187")
 public class PostgresIngestIntegrationTest {

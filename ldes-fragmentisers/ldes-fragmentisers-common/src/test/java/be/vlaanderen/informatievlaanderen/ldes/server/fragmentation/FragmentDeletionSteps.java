@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
@@ -36,7 +35,7 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 				row.get("relation").isEmpty() ? new ArrayList<>()
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-						.collect(Collectors.toList()),
+						.toList(),
 				getDeleteTime(row.get("daysUntilDeletion")));
 	}
 
