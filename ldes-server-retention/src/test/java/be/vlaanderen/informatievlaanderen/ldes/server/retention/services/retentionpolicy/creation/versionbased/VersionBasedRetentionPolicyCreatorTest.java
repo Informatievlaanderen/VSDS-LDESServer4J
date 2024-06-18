@@ -12,48 +12,49 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class VersionBasedRetentionPolicyCreatorTest {
 
-	private VersionBasedRetentionPolicyCreator versionBasedRetentionPolicyCreator;
+    private VersionBasedRetentionPolicyCreator versionBasedRetentionPolicyCreator;
 
-	@BeforeEach
-	void setUp() {
-		this.versionBasedRetentionPolicyCreator = new VersionBasedRetentionPolicyCreator();
-	}
+    @BeforeEach
+    void setUp() {
+        this.versionBasedRetentionPolicyCreator = new VersionBasedRetentionPolicyCreator();
+    }
 
-	@Test
-	void when_ModelDescribesAValidVersionBasedRetentionPolicy_then_AVersionBasedRetentionPolicyIsReturned()
-			throws URISyntaxException {
-		Model retentionModel = readModelFromFile("retentionpolicy/versionbased/valid_versionbased.ttl");
+    @Test
+    void when_ModelDescribesAValidVersionBasedRetentionPolicy_then_AVersionBasedRetentionPolicyIsReturned()
+            throws URISyntaxException {
+        Model retentionModel = readModelFromFile("retentionpolicy/versionbased/valid_versionbased.ttl");
 
-		RetentionPolicy retentionPolicy = versionBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel);
+        RetentionPolicy retentionPolicy = versionBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel);
 
-        assertInstanceOf(VersionBasedRetentionPolicy.class, retentionPolicy);
-	}
+        assertThat(retentionPolicy).isInstanceOf(VersionBasedRetentionPolicy.class);
+    }
 
-	@Test
-	void when_ModelDoesNotExactlyHaveOneLdesAmountStatement_then_AnIllegalArgumentExceptionIsThrown()
-			throws URISyntaxException {
-		Model retentionModel = readModelFromFile("retentionpolicy/versionbased/invalid_versionbased.ttl");
+    @Test
+    void when_ModelDoesNotExactlyHaveOneLdesAmountStatement_then_AnIllegalArgumentExceptionIsThrown()
+            throws URISyntaxException {
+        final String expectedMessage = """
+                Cannot Create Version Based Retention Policy in which there is not exactly 1 https://w3id.org/ldes#amount statement.
+                 Found 2 statements in :
+                [ a                               <https://w3id.org/ldes#LatestVersionSubset>;
+                  <https://w3id.org/ldes#amount>  3 , 2
+                ] .
+                """;
+        Model retentionModel = readModelFromFile("retentionpolicy/versionbased/invalid_versionbased.ttl");
 
-		IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
-				() -> versionBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel));
-		assertEquals(
-				"Cannot Create Version Based Retention Policy in which there is not exactly 1 https://w3id.org/ldes#amount statement.\n"
-						+
-						" Found 2 statements in :\n" +
-						"[ a                               <https://w3id.org/ldes#LatestVersionSubset>;\n" +
-						"  <https://w3id.org/ldes#amount>  3 , 2\n" +
-						"] .\n",
-				illegalArgumentException.getMessage());
-	}
+        assertThatThrownBy(() -> versionBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(expectedMessage);
+    }
 
-	private Model readModelFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI().toString();
-		return RDFDataMgr.loadModel(uri);
-	}
+    private Model readModelFromFile(String fileName) throws URISyntaxException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI().toString();
+        return RDFDataMgr.loadModel(uri);
+    }
 }

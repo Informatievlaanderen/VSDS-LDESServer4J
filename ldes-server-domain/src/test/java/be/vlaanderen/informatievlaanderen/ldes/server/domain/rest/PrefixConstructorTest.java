@@ -20,7 +20,7 @@ class PrefixConstructorTest {
     private PrefixConstructor prefixConstructor;
 
     @Test
-    void when_NotUsingRelativeUrls_Then_GetHostname() throws Exception {
+    void when_NotUsingRelativeUrls_Then_GetHostname() {
         prefixConstructor = new PrefixConstructor(hostname, false);
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -32,7 +32,7 @@ class PrefixConstructorTest {
     }
     @ParameterizedTest(name = "Request with URI {0} returns {1}")
     @ArgumentsSource(RequestUriArgumentsProvider.class)
-    void when_UsingRelativeUrls_Then_GetCorrectPrefix(String requestUri, String expected) throws Exception {
+    void when_UsingRelativeUrls_Then_GetCorrectPrefix(String requestUri, String expected) {
         prefixConstructor = new PrefixConstructor(hostname, true);
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -53,5 +53,5 @@ class PrefixConstructorTest {
                     Arguments.of("", ""),
                     Arguments.of("test/testing/testing/testing", "../../../.."));
         }
-    };
+    }
 }

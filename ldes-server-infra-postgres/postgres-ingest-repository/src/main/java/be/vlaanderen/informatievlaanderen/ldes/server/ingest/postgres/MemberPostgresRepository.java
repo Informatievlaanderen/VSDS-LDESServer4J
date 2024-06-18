@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
@@ -32,7 +31,6 @@ public class MemberPostgresRepository implements MemberRepository {
 		this.repository = repository;
 		this.mapper = mapper;
 		this.entityManager = entityManager;
-		MemberEntityListener.repository = repository;
 	}
 
 	public boolean memberExists(String memberId) {
@@ -98,8 +96,8 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Override
 	@Transactional
 	public void removeFromEventSource(List<String> ids) {
-		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
-		                                        "WHERE m.id IN :memberIds");
+		final String sql = "UPDATE MemberEntity m SET m.isInEventSource = false WHERE m.id IN :memberIds";
+		Query query = entityManager.createQuery(sql);
 		query.setParameter("memberIds", ids);
 		query.executeUpdate();
 	}
