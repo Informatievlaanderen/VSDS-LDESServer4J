@@ -1,6 +1,14 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="/db/changelog/3_1_0/eventstream-closed-column.xml" />
+    <include file="/db/changelog/3_1_0/event-stream/new-eventstream-data-model.xml"/>
+    <include file="/db/changelog/3_1_0/views/new-view-data-model.xml"/>
+    <include file="/db/changelog/3_1_0/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
+    <include file="/db/changelog/3_1_0/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
+    <include file="/db/changelog/3_1_0/event-source/add-fk-to-event-source.xml"/>
+    <include file="/db/changelog/3_1_0/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
 
 </databaseChangeLog>
