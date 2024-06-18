@@ -2,14 +2,16 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.rdf.model.Model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -34,15 +36,15 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	}
 
 	@Override
-	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
-			Observation parentObservation) {
+	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
+													  Observation parentObservation) {
 		Observation geospatialFragmentationObservation = Observation.createNotStarted("geospatial fragmentation",
 				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
 		getRootTileFragment(parentFragment);
 
-		Set<String> tiles = geospatialBucketiser.bucketise(memberId, memberModel);
+		Set<String> tiles = geospatialBucketiser.bucketise(member.id(), member.model());
 
 		List<Fragment> fragments = tiles
 				.stream()
@@ -54,11 +56,14 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 					}
 				}).toList();
 
-		fragments
+		List<BucketisedMember> members = fragments
 				.parallelStream()
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, memberId, memberModel,
-						geospatialFragmentationObservation));
+				.map(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
+						geospatialFragmentationObservation))
+				.flatMap(Collection::stream)
+				.toList();
 		geospatialFragmentationObservation.stop();
+		return members;
 	}
 
 	private void getRootTileFragment(Fragment parentFragment) {

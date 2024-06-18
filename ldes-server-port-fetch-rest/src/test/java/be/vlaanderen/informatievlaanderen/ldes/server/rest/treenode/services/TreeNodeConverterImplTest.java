@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
@@ -158,12 +157,6 @@ class TreeNodeConverterImplTest {
                 .hasToString("[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#member, https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165]");
     }
 
-    private int getNumberOfStatements(Model model) {
-        AtomicInteger statementCounter = new AtomicInteger();
-        model.listStatements().forEach((statement) -> statementCounter.getAndIncrement());
-        return statementCounter.get();
-    }
-
     private void verifyTreeNodeStatement(Model model) {
         assertThat(model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement())
                 .hasToString(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
@@ -182,14 +175,6 @@ class TreeNodeConverterImplTest {
                 .hasToString(String.format("[%s, http://purl.org/dc/terms/isPartOf, %s]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
                         HOST_NAME + "/" + COLLECTION_NAME));
-    }
-
-    private void verifyRemainingItemsStatement(Model model) {
-        assertThat(model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).nextStatement()).hasToString(
-                String.format("[%s, %s, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
-                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
-                        TREE_REMAINING_ITEMS)
-        );
     }
 
     private void verifyRemainingItemsStatementAbsent(Model model) {

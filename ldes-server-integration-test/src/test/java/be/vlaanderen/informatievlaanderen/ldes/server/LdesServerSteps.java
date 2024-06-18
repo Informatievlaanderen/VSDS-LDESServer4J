@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -16,6 +15,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
+import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,7 +42,9 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -132,17 +134,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
-				.atMost(40, SECONDS)
-				.pollInterval(1, SECONDS)
-				.untilAsserted(() -> mockMvc.perform(get(url))
-						.andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
-						.andDo(result -> responseModel = new ResponseToModelConverter(result.getResponse()).convert()));
+				.atMost(POLLING_RATE, SECONDS)
+				.untilAsserted(() -> {
+					responseModel = fetchFragment(url);
+					assertNotNull(responseModel);
+					assertEquals(expectedNumberOfMembers, responseModel.listObjectsOfProperty(TREE_MEMBER).toList().size());
+				});
 	}
 
 	@And("The expected response is equal to {string}")
 	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException {
 		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
-
 		Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
@@ -232,26 +234,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
 			throws Exception {
 		// Get only relation from view
-		String fragmentUrl = RDFParser.fromString(mockMvc.perform(get("/%s/%s".formatted(collection, view))
-								.accept("text/turtle"))
-						.andReturn()
-						.getResponse()
-						.getContentAsString())
-				.lang(Lang.TURTLE)
-				.toModel()
-				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node"))
-				.next()
-				.toString();
+		Awaitility.await()
+				.until(() -> fetchFragment("/%s/%s".formatted(collection, view))
+						.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).hasNext());
 
-		await().atMost(Duration.ofSeconds(40))
+		String fragmentUrl = fetchFragment("/%s/%s".formatted(collection, view))
+				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).next().toString();
+
+
+		await().atMost(POLLING_RATE, SECONDS)
 				.until(() -> {
-					Model fragmentPage = RDFParser.fromString(
-									mockMvc.perform(get(fragmentUrl.formatted(collection, view))
-													.accept("text/turtle"))
-											.andReturn()
-											.getResponse()
-											.getContentAsString())
-							.lang(Lang.TURTLE).toModel();
+					Model fragmentPage = fetchFragment(fragmentUrl);
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
 							       .toList().size() == expectedMemberCount;
@@ -260,7 +253,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-		await().atMost(Duration.ofSeconds(20))
+		await().atMost(POLLING_RATE, SECONDS)
 				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
 	}
 
@@ -309,10 +302,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 
-	@When("I fetch a fragment from url {string} in a streaming way")
-	public void iFetchAStreamingFragment(String url) {
-		await().atMost(Duration.ofSeconds(40))
-				.until(() -> {
+	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
+	public void iFetchAStreamingFragment(String url, String compareUrl) {
+		await().atMost(POLLING_RATE, SECONDS)
+				.untilAsserted(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
 							.accept(MediaType.TEXT_EVENT_STREAM)
@@ -333,12 +326,24 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						responseModel.add(eventModel);
 					});
 
-					return Objects.nonNull(responseModel);
+					assertTrue(responseModel.isIsomorphicWith(getResponseAsModel(compareUrl, Lang.TURTLE.getHeaderString())));
 				});
 	}
 
-	@Then("The response model is the same as the model from the url {string}")
-	public void modelIsIsomorphic(String url) throws Exception {
-		assertTrue(responseModel.isIsomorphicWith(getResponseAsModel(url, Lang.TURTLE.getHeaderString())));
+	@When("I close the collection {string}")
+	public void iCloseTheEventstream(String collection) throws Exception {
+		mockMvc.perform(post("/admin/api/v1/eventstreams/{collection}/close", collection))
+				.andExpect(status().is2xxSuccessful());
+	}
+
+	private Model fetchFragment(String path) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(path))
+						.accept("text/turtle"))
+				.andReturn()
+				.getResponse();
+		if (response.getStatus() == 404) {
+			return null;
+		}
+		return new ResponseToModelConverter(response).convert();
 	}
 }

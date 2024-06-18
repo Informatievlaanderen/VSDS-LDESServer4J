@@ -3,7 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -39,16 +42,17 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	}
 
 	@Override
-	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
-			Observation parentObservation) {
+	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
+													  Observation parentObservation) {
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
 
-		Fragment fragment = getFragmentationTimestamp(memberId, memberModel)
+		Fragment fragment = getFragmentationTimestamp(member.id(), member.model())
 				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
 				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
 
-		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
+		List<BucketisedMember> members = super.addMemberToFragment(fragment, member, fragmentationObservation);
 		fragmentationObservation.stop();
+		return members;
 	}
 
 	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String memberId, Model memberModel) {

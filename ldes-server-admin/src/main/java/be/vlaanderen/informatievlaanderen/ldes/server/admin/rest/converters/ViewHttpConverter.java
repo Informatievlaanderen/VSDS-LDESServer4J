@@ -50,7 +50,7 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	@Override
 	public ViewSpecification read(@NotNull Class<? extends ViewSpecification> clazz, @NotNull HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
-		throw new UnsupportedOperationException("Not supported to read a viewSpecification");
+		throw new UnsupportedOperationException("Not supported to read a viewName");
 	}
 
 	@Override

@@ -10,7 +10,7 @@ public interface ShaclShapeRepository {
 
 	Optional<ShaclShape> retrieveShaclShape(String collectionName);
 
-	ShaclShape saveShaclShape(ShaclShape shaclShape);
+	void saveShaclShape(ShaclShape shaclShape);
 
 	void deleteShaclShape(String collectionName);
 }

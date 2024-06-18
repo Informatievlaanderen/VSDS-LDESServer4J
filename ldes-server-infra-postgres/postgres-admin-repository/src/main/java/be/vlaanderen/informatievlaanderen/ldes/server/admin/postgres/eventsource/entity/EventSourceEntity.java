@@ -1,35 +1,47 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource.entity;
 
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.Type;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.ModelListConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
 @Entity
-@Table(name = "eventsource")
+@Table(name = "eventsources")
 public class EventSourceEntity {
-	@Id
-	private String collectionName;
-	@Type(JsonBinaryType.class)
-	@Column(columnDefinition = "jsonb")
-	private List<String> retentionPolicies;
+    @Id
+    @Column(name = "collection_id", nullable = false)
+    private Integer collectionId;
 
-	protected EventSourceEntity() {}
+    @MapsId
+    @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private EventStreamEntity eventStream;
 
-	public EventSourceEntity(String collectionName, List<String> retentionPolicies) {
-		this.collectionName = collectionName;
-		this.retentionPolicies = retentionPolicies;
-	}
+    @Convert(converter = ModelListConverter.class)
+    @Column(name = "retention_policies", columnDefinition = "text", nullable = false)
+    private List<Model> retentionPolicies;
 
-	public String getCollectionName() {
-		return collectionName;
-	}
+    public EventSourceEntity() {
+    }
 
-	public List<String> getRetentionPolicies() {
-		return retentionPolicies;
-	}
+    public EventSourceEntity(EventStreamEntity eventStream) {
+        this.eventStream = eventStream;
+    }
+
+    public String getCollectionName() {
+        return eventStream.getName();
+    }
+
+    public List<Model> getRetentionPolicies() {
+        return retentionPolicies;
+    }
+
+    public void setRetentionPolicies(List<Model> retentionPolicies) {
+        this.retentionPolicies = retentionPolicies;
+    }
 }

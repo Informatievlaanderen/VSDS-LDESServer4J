@@ -240,6 +240,28 @@ class AdminEventStreamsRestControllerTest {
 		}
 	}
 
+	@Nested
+	class CloseEventStream {
+		@Test
+		void when_collectionExists_and_triesToClose_then_expectStatus200() throws Exception {
+			mockMvc.perform(post("/admin/api/v1/eventstreams/name1/close"))
+					.andExpect(status().isOk());
+
+			verify(eventStreamService).closeEventStream(COLLECTION);
+		}
+
+		@Test
+		void when_collectionDoesNotExist_then_expectStatus404() throws Exception {
+			doThrow(MissingResourceException.class).when(eventStreamService).closeEventStream(COLLECTION);
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams/name1/close"))
+					.andExpect(status().isNotFound())
+					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
+
+			verify(eventStreamService).closeEventStream(COLLECTION);
+		}
+	}
+
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()

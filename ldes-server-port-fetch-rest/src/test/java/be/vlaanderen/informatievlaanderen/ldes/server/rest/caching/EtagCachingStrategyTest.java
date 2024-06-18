@@ -22,10 +22,6 @@ class EtagCachingStrategyTest {
 	private static final LdesFragmentIdentifier node3 = new LdesFragmentIdentifier(
 			new ViewName("collectionName", "node3"), List.of());
 
-	private static TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, true, List.of(), List.of(), "collectionName", null);
-	}
-
 	private static TreeNode createView(String viewName, List<TreeRelation> relations, List<Member> members) {
 		return new TreeNode("/" + viewName, false, true, relations, members, "collectionName", null);
 	}

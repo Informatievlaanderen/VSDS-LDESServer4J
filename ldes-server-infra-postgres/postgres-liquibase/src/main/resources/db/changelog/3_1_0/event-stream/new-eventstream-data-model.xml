@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-collections-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="collections"/>
+            </not>
+        </preConditions>
+        <createTable tableName="collections">
+            <column autoIncrement="true" name="collection_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_collections"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp_path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version_of_path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_versions" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_closed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint columnNames="name" constraintName="uc_collections_name" tableName="collections"/>
+        <rollback>
+            <dropUniqueConstraint tableName="collections" constraintName="uc_collections_name"/>
+            <dropTable tableName="collections"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-eventstream-data" author="vsds">
+        <preConditions>
+            <tableExists tableName="collections"/>
+        </preConditions>
+        <sqlFile path="db/changelog/3_1_0/event-stream/migrate-eventstream-data.sql"/>
+        <rollback>
+            <delete tableName="collections"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="drop-old-eventstream-table" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="migrate-eventstream-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_0/event-stream/new-eventstream-data-model.xml"/>
+        </preConditions>
+        <dropTable tableName="eventstream" cascadeConstraints="true"/>
+    </changeSet>
+</databaseChangeLog>

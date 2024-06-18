@@ -2,8 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import io.cucumber.java.Before;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -21,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DcatViewRepositorySteps extends SpringIntegrationTest {
 
     private final static String COLLECTION_NAME = "collectionName";
+    public static final String OTHER_COLLECTION_NAME = "other-" + COLLECTION_NAME;
     private final static String VIEW = "view";
     private final static ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
     private Model model;
@@ -28,9 +31,9 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
     private DcatView dcatView;
     private DcatView resultDcatView;
 
-    @Before
+    @After
     public void teardown() {
-        dcatViewPostgresRepository.findAll().stream().map(DcatView::getViewName).forEach(dcatViewPostgresRepository::delete);
+        eventStreamRepository.deleteEventStream(COLLECTION_NAME);
     }
 
     @Given("I have a dcatView with a viewName and model")
@@ -58,11 +61,11 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
         resultDcatView = dcatViewOpt.get();
     }
 
-	@And("The retrieved dcatView will be the same as the saved dcatView")
-	public void theRetrievedDcatViewWillBeTheSameAsTheSavedDcatView() {
+    @And("The retrieved dcatView will be the same as the saved dcatView")
+    public void theRetrievedDcatViewWillBeTheSameAsTheSavedDcatView() {
         assertThat(dcatView.getDcat()).matches(actualDcat -> resultDcatView.getDcat().isIsomorphicWith(actualDcat));
         assertThat(dcatView.getViewName()).isEqualTo(resultDcatView.getViewName());
-	}
+    }
 
     @Then("I can delete the dcatView")
     public void iCanDeleteTheDcatView() {
@@ -77,10 +80,12 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 
     @Given("the database contains multiple dcatViews")
     public void theDatabaseContainsMultipleDcatViews() {
+        final ViewName secondViewName = new ViewName(COLLECTION_NAME, "view2");
+        viewRepository.saveView(new ViewSpecification(secondViewName, List.of(), List.of(), 150));
         Model model1 = RDFParser.source("features/view/dataservice.ttl").lang(Lang.TURTLE).build().toModel();
         Model model2 = RDFParser.source("features/view/dataservice2.ttl").lang(Lang.TURTLE).build().toModel();
-        dcatViewPostgresRepository.save(DcatView.from(new ViewName("col1", "view1"), model1));
-        dcatViewPostgresRepository.save(DcatView.from(new ViewName("col1", "view2"), model2));
+        dcatViewPostgresRepository.save(DcatView.from(VIEW_NAME, model1));
+        dcatViewPostgresRepository.save(DcatView.from(secondViewName, model2));
     }
 
     @Then("I can find all dcatViews")
@@ -91,22 +96,33 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
                 .hasSize(2)
                 .map(DcatView::getViewName)
                 .map(ViewName::getViewName)
-                .containsExactlyInAnyOrder("view1", "view2");
+                .containsExactlyInAnyOrder(VIEW, "view2");
     }
 
     @When("I delete the corresponding eventstream")
     public void iDeleteTheCorrespondingEventstream() {
-        dcatViewPostgresRepository.deleteByCollectionName(COLLECTION_NAME);
+        eventStreamRepository.deleteEventStream(OTHER_COLLECTION_NAME);
     }
 
     @And("the database already contains another dcatView")
     public void theDatabaseAlreadyContainsAnotherDcatView() {
-        final var otherDcatView = DcatView.from(new ViewName("other-" + COLLECTION_NAME, VIEW), ModelFactory.createDefaultModel());
+        final ViewName otherViewName = new ViewName(OTHER_COLLECTION_NAME, VIEW);
+        eventStreamRepository.saveEventStream(new EventStream(OTHER_COLLECTION_NAME, "", "", false, false));
+        viewRepository.saveView(new ViewSpecification(otherViewName, List.of(), List.of(), 150));
+        final var otherDcatView = DcatView.from(otherViewName, ModelFactory.createDefaultModel());
         dcatViewPostgresRepository.save(otherDcatView);
     }
 
     @Then("the repository contains exactly {int} dcatViews")
     public void theRepositoryContainsExactlyDcatView(int expectedNumberOfDcatViews) {
         assertThat(dcatViewPostgresRepository.findAll()).hasSize(expectedNumberOfDcatViews);
+    }
+
+    @Given("I have an eventstream with a view")
+    public void iHaveAnEventstreamWithAView() {
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "", "", false, false);
+        final ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of(), 250);
+        eventStreamRepository.saveEventStream(eventStream);
+        viewRepository.saveView(viewSpecification);
     }
 }

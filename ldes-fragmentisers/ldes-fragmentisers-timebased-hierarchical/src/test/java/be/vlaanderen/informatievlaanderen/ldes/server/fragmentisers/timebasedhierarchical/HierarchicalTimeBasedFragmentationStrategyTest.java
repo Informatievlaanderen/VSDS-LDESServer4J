@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -55,35 +55,35 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	@Test
 	void when_FragmentationCalled_Then_FunctionsAreCalled() {
 		Model model = loadModel("member_with_created_property.nq");
-		Member member = new Member("1", model, 1L);
+		FragmentationMember member = new FragmentationMember("1", model, 1L);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
 		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR))
 				.thenReturn(CHILD_FRAGMENT);
 
-		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member,
 				mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(fragmentFinder).getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
-						any(), any(Observation.class));
+						any(Observation.class));
 	}
 
 	@Test
 	void when_FragmentationCalledForMemberWithMissingTimestamp_Then_FunctionsAreCalled() {
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
 				.thenReturn(CHILD_FRAGMENT);
 
-		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member,
 				mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(fragmentFinder).getDefaultFragment(PARENT_FRAGMENT);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
-				any(), any(Observation.class));
+				any(Observation.class));
 	}
 
 }

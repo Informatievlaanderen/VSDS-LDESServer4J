@@ -70,7 +70,7 @@ By defining a SHACL shape for the LDES, data producers can ensure that the membe
 they add to the LDES adhere to the required structure, while data consumers can use
 the shape to validate and reason about the data they receive.
 
-Defining a shape can be done through the `/admin/api/eventstreams/{collectionName}/shape` endpoint.
+Defining a shape can be done through the `/admin/api/v1/eventstreams/{collectionName}/shape` endpoint.
 
 For more info, visit the [Swagger API documentation.](./admin-api)
 

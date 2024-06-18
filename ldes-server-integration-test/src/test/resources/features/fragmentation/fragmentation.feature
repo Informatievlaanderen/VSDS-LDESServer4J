@@ -127,3 +127,19 @@ Feature: LDES Server Fragmentation
       | eventStreamDescriptionFile                                             | template                                           | collection            |
       | "data/input/eventstreams/fragmentation/mobility-hindrances.by-loc.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" |
       | "data/input/eventstreams/fragmentation/observations/by-loc.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        |
+
+  Scenario Outline: Server can close an event stream
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 317 members of template <template> to the collection <collection>
+    Then the following fragment URL <fragmentUrl> contains member with ID <memberId>
+    When I close the collection <collection>
+    And I fetch the root "paged" fragment of <collection>
+    Then this fragment is immutable
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment is immutable
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment is immutable
+
+    Examples:
+      | eventStreamDescriptionFile                                            | template                                   | collection            | fragmentUrl                               | memberId                                    |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.paged.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | "/mobility-hindrances/paged?pageNumber=2" | "http://test-data/mobility-hindrance/1/316" |

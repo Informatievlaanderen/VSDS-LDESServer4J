@@ -12,7 +12,7 @@ public class MemberAllocationEntityMapper {
 	}
 
 	public MemberAllocationEntity toMemberAllocationEntity(MemberAllocation memberAllocation) {
-		return new MemberAllocationEntity(memberAllocation.getId(), memberAllocation.getCollectionName(),
-				memberAllocation.getViewName(), memberAllocation.getFragmentId(), memberAllocation.getMemberId());
+		return new MemberAllocationEntity(memberAllocation.id(), memberAllocation.collectionName(),
+				memberAllocation.viewName(), memberAllocation.fragmentId(), memberAllocation.memberId());
 	}
 }

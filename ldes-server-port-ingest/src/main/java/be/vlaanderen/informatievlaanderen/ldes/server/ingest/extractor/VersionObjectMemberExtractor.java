@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberIdNotFoundException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -24,12 +24,12 @@ public class VersionObjectMemberExtractor implements MemberExtractor {
     }
 
     @Override
-    public List<Member> extractMembers(Model ingestedModel) {
+    public List<IngestedMember> extractMembers(Model ingestedModel) {
         final String memberId = extractMemberId(ingestedModel);
         final String transactionId = UUID.randomUUID().toString();
         final String versionOf = extractVersionOf(ingestedModel);
         final LocalDateTime timestamp = extractTimestamp(ingestedModel);
-        final Member member = new Member(memberId, collectionName, versionOf, timestamp, null, true, transactionId, ingestedModel);
+        final IngestedMember member = new IngestedMember(memberId, collectionName, versionOf, timestamp, null, true, transactionId, ingestedModel);
         return List.of(member);
     }
 

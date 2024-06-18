@@ -26,9 +26,9 @@ public class CompactionScheduler {
 	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
 	public CompactionScheduler(ViewCollection viewCollection, FragmentRepository fragmentRepository,
-							   PaginationCompactionService paginationCompactionService,
-							   CompactionCandidateService compactionCandidateService,
-							   RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
+	                           PaginationCompactionService paginationCompactionService,
+	                           CompactionCandidateService compactionCandidateService,
+	                           RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.viewCollection = viewCollection;
 		this.fragmentRepository = fragmentRepository;
 		this.paginationCompactionService = paginationCompactionService;
@@ -39,7 +39,7 @@ public class CompactionScheduler {
 	@SuppressWarnings("java:S6857")
 	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
-		if(retentionPolicyEmptinessChecker.isEmpty()) {
+		if (retentionPolicyEmptinessChecker.isEmpty()) {
 			LOGGER.info("Compaction skipped: no retention policies found.");
 			return;
 		}

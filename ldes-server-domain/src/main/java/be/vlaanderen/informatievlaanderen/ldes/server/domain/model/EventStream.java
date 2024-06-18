@@ -8,12 +8,25 @@ public class EventStream {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final boolean versionCreationEnabled;
+	private final boolean isClosed;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled) {
+	public EventStream(String collection,
+					   String timestampPath,
+					   String versionOfPath,
+					   boolean versionCreationEnabled) {
+		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false);
+	}
+
+	public EventStream(String collection,
+					   String timestampPath,
+					   String versionOfPath,
+					   boolean versionCreationEnabled,
+					   boolean isClosed) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
+        this.isClosed = isClosed;
     }
 
 	public String getCollection() {
@@ -30,6 +43,10 @@ public class EventStream {
 
 	public boolean isVersionCreationEnabled() {
 		return versionCreationEnabled;
+	}
+
+	public boolean isClosed() {
+		return isClosed;
 	}
 
 	@Override

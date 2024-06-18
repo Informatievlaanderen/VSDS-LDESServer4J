@@ -38,10 +38,10 @@ public class EventStreamController implements OpenApiEventStreamController {
 
 	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "{collectionname}")
+	@GetMapping(value = "{collectionName}")
 	public ResponseEntity<EventStreamTO> retrieveLdesFragment(
 			@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
-			@PathVariable("collectionname") String collectionName) {
+			@PathVariable String collectionName) {
 		EventStreamTO eventStream = eventStreamService.retrieveEventStream(collectionName);
 
 		return ResponseEntity

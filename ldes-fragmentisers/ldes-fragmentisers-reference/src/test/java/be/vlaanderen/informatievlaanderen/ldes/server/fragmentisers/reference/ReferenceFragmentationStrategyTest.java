@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
@@ -50,7 +50,7 @@ class ReferenceFragmentationStrategyTest {
 
     @Test
     void when_MemberIsAddedToFragment_ThenReferenceFragmentationIsApplied() {
-        Member member = mock(Member.class);
+        FragmentationMember member = mock(FragmentationMember.class);
 
         final var typePerceel = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
         final var typeGebouw = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
@@ -63,17 +63,17 @@ class ReferenceFragmentationStrategyTest {
         Fragment referenceFragmentThree = mockCreationReferenceFragment(typeAdres);
 
         referenceFragmentationStrategy
-                .addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(), mock(Observation.class));
+                .addMemberToFragment(PARENT_FRAGMENT, member, mock(Observation.class));
 
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentOne),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentTwo),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentThree),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verifyNoMoreInteractions(decoratedFragmentationStrategy);
     }
 

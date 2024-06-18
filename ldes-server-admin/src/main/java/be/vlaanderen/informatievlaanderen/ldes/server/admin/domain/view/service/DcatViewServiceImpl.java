@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
@@ -67,10 +66,6 @@ public class DcatViewServiceImpl implements DcatViewService {
 		delete(event.getViewName());
 	}
 
-	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		dcatViewRepository.deleteByCollectionName(event.collectionName());
-	}
 
 	/**
 	 * Initializes the dcatViews.

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
@@ -40,10 +40,10 @@ public class MemberIngesterImpl implements MemberIngester {
 
     @Override
     public boolean ingest(String collectionName, Model ingestedModel) {
-        final List<Member> members = extractMembersFromModel(collectionName, ingestedModel);
+        final List<IngestedMember> members = extractMembersFromModel(collectionName, ingestedModel);
 
         members.forEach(validator::validate);
-        members.forEach(Member::removeTreeMember);
+        members.forEach(IngestedMember::removeTreeMember);
 
         int ingestedMembersCount = memberRepository.insertAll(members).size();
 
@@ -57,14 +57,14 @@ public class MemberIngesterImpl implements MemberIngester {
         return true;
     }
 
-    private List<Member> extractMembersFromModel(String collectionName, Model model) {
+    private List<IngestedMember> extractMembersFromModel(String collectionName, Model model) {
         final MemberExtractor memberExtractor = memberExtractorCollection
                 .getMemberExtractor(collectionName)
                 .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
         return memberExtractor.extractMembers(model);
     }
 
-    private void publishIngestedEvent(String collectionName, List<Member> members) {
+    private void publishIngestedEvent(String collectionName, List<IngestedMember> members) {
         final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
                 .map(member -> new MembersIngestedEvent.MemberProperties(member.getId(), member.getVersionOf(), member.getTimestamp()))
                 .toList();

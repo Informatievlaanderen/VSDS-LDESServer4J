@@ -20,7 +20,7 @@ public class RestConfig {
 
 	public static final int DEFAULT_MAX_AGE = 60;
 	private int maxAge = DEFAULT_MAX_AGE;
-	private int maxAgeImmutable = 604800;
+	private int maxAgeImmutable = 31536000;
 
 	public void setMaxAge(int maxAge) {
 		this.maxAge = maxAge;

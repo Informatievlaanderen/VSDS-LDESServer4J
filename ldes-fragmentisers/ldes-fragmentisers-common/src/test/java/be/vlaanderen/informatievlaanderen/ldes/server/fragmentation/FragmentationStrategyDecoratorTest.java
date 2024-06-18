@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,13 +51,12 @@ class FragmentationStrategyDecoratorTest {
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
 		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 		Observation span = mock(Observation.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member.id(), member.model(),
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,
 				span);
 		verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member.id(),
-						member.model(), span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends

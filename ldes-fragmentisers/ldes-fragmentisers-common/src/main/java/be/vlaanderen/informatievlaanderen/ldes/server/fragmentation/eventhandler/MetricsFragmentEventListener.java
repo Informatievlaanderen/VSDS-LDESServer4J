@@ -7,13 +7,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl.PAGINATION_FRAGMENTATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
 
 @Component
 public class MetricsFragmentEventListener {
-
+	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 	private static final String LDES_SERVER_DELETED_FRAGMENTS_COUNT = "ldes_server_deleted_fragments_count";
 
 	@EventListener

@@ -27,9 +27,10 @@ spring:
     username: admin
     password: admin
   jpa:
-    hibernate:
-      ddl-auto: update
     database: postgresql
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
+
 #server:
 #  servlet:
 #    context-path: /ldes

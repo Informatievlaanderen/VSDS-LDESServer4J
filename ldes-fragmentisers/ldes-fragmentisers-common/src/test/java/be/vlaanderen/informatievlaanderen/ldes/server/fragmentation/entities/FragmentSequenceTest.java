@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.junit.jupiter.api.Test;
 

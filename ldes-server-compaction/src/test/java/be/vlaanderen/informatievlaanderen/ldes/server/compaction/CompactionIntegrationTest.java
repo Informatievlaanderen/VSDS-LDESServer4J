@@ -1,14 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.eventhandlers.ViewCapacityCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateService;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionScheduler;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.PaginationCompactionService;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.SchedulingConfigCompaction;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import io.cucumber.spring.CucumberContextConfiguration;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,9 +28,10 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import static org.mockito.Mockito.mock;
 
 @CucumberContextConfiguration
-@EnableAutoConfiguration
+//@EnableAutoConfiguration
 @RecordApplicationEvents
-@ContextConfiguration(classes = {SchedulingConfigCompaction.class})
+@ContextConfiguration(classes = {SchedulingConfigCompaction.class, CompactionScheduler.class, ViewCollectionImpl.class, PaginationCompactionService.class,
+        CompactionCandidateService.class, CompactionIntegrationTest.CompactionIntegrationTestConfiguration.class, ViewCapacityCreator.class })
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.compaction"},
         excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = {
                 "be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentationConfigCompaction"}))
@@ -45,8 +50,6 @@ public class CompactionIntegrationTest {
     @Autowired
     @MockBean
     AllocationRepository allocationRepository;
-    @Autowired
-    FragmentationStrategyImpl fragmentationStrategy;
 
     @TestComponent
     protected static class EventConsumer {
@@ -58,9 +61,9 @@ public class CompactionIntegrationTest {
     @TestConfiguration
     public static class CompactionIntegrationTestConfiguration {
 
-        @Bean("compactionFragmentation")
-        public FragmentationStrategyImpl fragmentationStrategy() {
-            return mock(FragmentationStrategyImpl.class);
+        @Bean
+        public ObservationRegistry observationRegistry() {
+            return ObservationRegistry.NOOP;
         }
 
         @Bean
