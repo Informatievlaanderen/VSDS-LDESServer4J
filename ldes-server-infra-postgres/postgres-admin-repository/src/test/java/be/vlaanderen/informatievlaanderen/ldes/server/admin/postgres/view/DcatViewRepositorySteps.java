@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.SpringIntegrationTest;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import io.cucumber.java.After;
@@ -107,8 +107,9 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
     @And("the database already contains another dcatView")
     public void theDatabaseAlreadyContainsAnotherDcatView() {
         final ViewName otherViewName = new ViewName(OTHER_COLLECTION_NAME, VIEW);
-        eventStreamRepository.saveEventStream(new EventStream(OTHER_COLLECTION_NAME, "", "", false, false));
-        viewRepository.saveView(new ViewSpecification(otherViewName, List.of(), List.of(), 150));
+        final ViewSpecification view = new ViewSpecification(otherViewName, List.of(), List.of(), 150);
+        final EventStreamTO eventStreamTO = new EventStreamTO(OTHER_COLLECTION_NAME, "", "", false, List.of(view), ModelFactory.createDefaultModel(), List.of());
+        eventStreamRepository.saveEventStream(eventStreamTO);
         final var otherDcatView = DcatView.from(otherViewName, ModelFactory.createDefaultModel());
         dcatViewPostgresRepository.save(otherDcatView);
     }
@@ -120,9 +121,8 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 
     @Given("I have an eventstream with a view")
     public void iHaveAnEventstreamWithAView() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "", "", false, false);
         final ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of(), 250);
-        eventStreamRepository.saveEventStream(eventStream);
-        viewRepository.saveView(viewSpecification);
+        final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION_NAME, "", "", false, List.of(viewSpecification), ModelFactory.createDefaultModel(), List.of());
+        eventStreamRepository.saveEventStream(eventStreamTO);
     }
 }

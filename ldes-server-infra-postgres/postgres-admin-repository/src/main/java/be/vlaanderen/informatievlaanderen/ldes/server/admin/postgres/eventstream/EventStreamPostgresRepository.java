@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstrea
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.mapper.EventStreamMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,13 @@ public class EventStreamPostgresRepository implements EventStreamRepository {
 
     @Override
     public List<EventStream> retrieveAllEventStreams() {
+        return repository.findAllPropertiesBy().stream()
+                .map(EventStreamMapper::fromPropertiesProjection)
+                .toList();
+    }
+
+    @Override
+    public List<EventStreamTO> retrieveAllEventStreamTOs() {
         return repository.findAll().stream()
                 .map(EventStreamMapper::fromEntity)
                 .toList();
@@ -28,20 +36,24 @@ public class EventStreamPostgresRepository implements EventStreamRepository {
     @Override
     public Optional<EventStream> retrieveEventStream(String collectionName) {
         return repository
-                .findByName(collectionName)
-                .map(EventStreamMapper::fromEntity);
+                .findPropertiesByName(collectionName)
+                .map(EventStreamMapper::fromPropertiesProjection);
+    }
+
+    @Override
+    public Optional<EventStreamTO> retrieveEventStreamTO(String collectionName) {
+        return repository.findByName(collectionName).map(EventStreamMapper::fromEntity);
     }
 
     @Override
     @Transactional
-    public EventStream saveEventStream(EventStream eventStream) {
-        repository.save(EventStreamMapper.toEntity(eventStream));
-        return eventStream;
+    public void saveEventStream(EventStreamTO eventStreamTO) {
+        repository.save(EventStreamMapper.toEntity(eventStreamTO));
     }
 
     @Override
     @Transactional
-    public void deleteEventStream(String collectionName) {
-        repository.deleteByName(collectionName);
+    public int deleteEventStream(String collectionName) {
+        return repository.deleteByName(collectionName);
     }
 }
