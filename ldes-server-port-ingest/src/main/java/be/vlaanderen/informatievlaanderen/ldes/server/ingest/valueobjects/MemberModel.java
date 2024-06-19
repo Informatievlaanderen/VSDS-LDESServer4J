@@ -30,7 +30,6 @@ public class MemberModel {
                 collectionName,
                 subjectUri,
                 ingestedTimestamp,
-                null,
                 true,
                 txId,
                 model

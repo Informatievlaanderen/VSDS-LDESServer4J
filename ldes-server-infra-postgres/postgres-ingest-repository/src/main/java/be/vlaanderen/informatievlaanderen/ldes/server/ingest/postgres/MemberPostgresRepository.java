@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
@@ -32,25 +31,20 @@ public class MemberPostgresRepository implements MemberRepository {
 		this.mapper = mapper;
         this.modelConverter = modelConverter;
         this.entityManager = entityManager;
-		MemberEntityListener.repository = repository;
-	}
-
-	public boolean memberExists(String memberId) {
-		return repository.existsById(memberId);
 	}
 
 	@Override
 	@Transactional
 	public List<IngestedMember> insertAll(List<IngestedMember> members) {
 		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, sequence_nr, transaction_id, is_in_event_source, member_model, old_id) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), CASE WHEN o.seq = NULL THEN (SELECT MAX(sequence_nr)+1 FROM members WHERE collection_id = c.collection_id) ELSE cast(o.seq as BIGINT) END AS new_seq, transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA) o.oldId FROM collections c, (VALUES ";
+			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, is_in_event_source, member_model, old_id) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA), o.oldId FROM collections c, (VALUES ";
 
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < members.size(); i++) {
-				sb.append("(?, ?, ?, ?, ?, ?, ?, ?, ?),");
+				sb.append("(?, ?, ?, ?, ?, ?, ?, ?),");
 			}
 			sql += sb.substring(0, sb.length() - 1);
-			sql += ") AS o(subject, version, timestamp, seq, transaction, eventSource, model, collectionName, oldId) WHERE c.name = o.collectionName";
+			sql += ") AS o(subject, version, timestamp, transaction, eventSource, model, collectionName, oldId) WHERE c.name = o.collectionName";
 
 			Query query = entityManager.createNativeQuery(sql);
 
@@ -59,7 +53,6 @@ public class MemberPostgresRepository implements MemberRepository {
 				query.setParameter(index++, member.getSubject());
 				query.setParameter(index++, member.getVersionOf());
 				query.setParameter(index++, member.getTimestamp());
-				query.setParameter(index++, member.getSequenceNr());
 				query.setParameter(index++, member.getTransactionId());
 				query.setParameter(index++, member.isInEventSource());
 				query.setParameter(index++, modelConverter.convertToDatabaseColumn(member.getModel()));
@@ -95,31 +88,23 @@ public class MemberPostgresRepository implements MemberRepository {
 
 	@Override
 	@Transactional
-	public void deleteMembersByCollection(String collectionName) {
-		repository.deleteAllByCollectionName(collectionName);
-	}
-
-	@Override
-	public Stream<IngestedMember> getMemberStreamOfCollection(String collectionName) {
-		return repository
-				.getAllByCollectionNameOrderBySequenceNrAsc(collectionName)
-				.stream()
-				.map(mapper::toMember);
-	}
-
-	@Override
-	@Transactional
-	public void deleteMembers(List<String> memberIds) {
-		repository.deleteAllById(memberIds);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(memberIds.size());
+	public void deleteMembers(List<String> oldIds) {
+		repository.deleteAllByOldIdIn(oldIds);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(oldIds.size());
 	}
 
 	@Override
 	@Transactional
 	public void removeFromEventSource(List<String> ids) {
 		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
-		                                        "WHERE m.subject IN :memberIds");
+		                                        "WHERE m.old_id IN :memberIds");
 		query.setParameter("memberIds", ids);
 		query.executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public List<IngestedMember> getMembersOfCollection(String collectionName) {
+		return repository.findAllByCollectionName(collectionName).stream().map(mapper::toMember).toList();
 	}
 }

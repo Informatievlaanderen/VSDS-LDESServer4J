@@ -12,7 +12,6 @@ public class MemberEntityMapper {
 				memberEntity.getCollection().getName(),
 				memberEntity.getVersionOf(),
 				memberEntity.getTimestamp(),
-				memberEntity.getSequenceNr(),
 				memberEntity.isInEventSource(),
 				memberEntity.getTransactionId(),
 				memberEntity.getModel()

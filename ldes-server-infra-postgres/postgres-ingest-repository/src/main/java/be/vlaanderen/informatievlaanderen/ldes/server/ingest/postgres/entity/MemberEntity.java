@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.DatabaseColumnModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
 import jakarta.persistence.*;
 import org.apache.jena.rdf.model.Model;
 import org.hibernate.annotations.Fetch;
@@ -13,7 +12,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Entity
-@EntityListeners(MemberEntityListener.class)
 @Table(name = "members", indexes = {
         @Index(columnList = "id, timestamp")
 })
@@ -26,8 +24,8 @@ public class MemberEntity {
     private String oldId;
     @Column(name = "subject", nullable = false)
     private String subject;
-    @ManyToOne(cascade=CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "collection_id", nullable = false)
     private EventStreamEntity collection;
@@ -35,8 +33,6 @@ public class MemberEntity {
     private String versionOf;
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
-    @Column(name = "sequence_nr", nullable = false)
-    private Long sequenceNr;
     @Column(name = "transaction_id", nullable = false)
     private String transactionId;
     @Column(name = "is_in_event_source", nullable = false)
@@ -46,12 +42,11 @@ public class MemberEntity {
     private Model model;
 
     @SuppressWarnings("java:S107")
-    public MemberEntity(String subject, EventStreamEntity collection, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, boolean isInEventSource, Model model) {
+    public MemberEntity(String subject, EventStreamEntity collection, String versionOf, LocalDateTime timestamp, String transactionId, boolean isInEventSource, Model model) {
         this.subject = subject;
         this.collection = collection;
         this.versionOf = versionOf;
         this.timestamp = timestamp;
-        this.sequenceNr = sequenceNr;
         this.transactionId = transactionId;
         this.isInEventSource = isInEventSource;
         this.model = model;
@@ -78,10 +73,6 @@ public class MemberEntity {
         return timestamp;
     }
 
-    public Long getSequenceNr() {
-        return sequenceNr;
-    }
-
     public String getTransactionId() {
         return transactionId;
     }
@@ -92,9 +83,5 @@ public class MemberEntity {
 
     public Model getModel() {
         return model;
-    }
-
-    public void setSequenceNr(long sequenceNr) {
-        this.sequenceNr = sequenceNr;
     }
 }

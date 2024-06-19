@@ -16,7 +16,7 @@ public class MemberMapper {
     }
 
     public FragmentationMember mapToFragmentationMember(IngestedMember ingestMember) {
-        return new FragmentationMember(ingestMember.getSubject(), enrichModel(ingestMember), ingestMember.getSequenceNr());
+        return new FragmentationMember(ingestMember.getCollectionName() + "/" + ingestMember.getSubject(), enrichModel(ingestMember));
     }
 
     private Model enrichModel(IngestedMember ingestMember) {

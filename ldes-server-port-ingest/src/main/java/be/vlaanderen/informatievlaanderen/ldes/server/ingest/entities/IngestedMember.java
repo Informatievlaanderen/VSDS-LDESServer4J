@@ -20,18 +20,16 @@ public class IngestedMember {
     private final String collectionName;
     private final String versionOf;
     private final LocalDateTime timestamp;
-    private final Long sequenceNr;
     private final boolean inEventSource;
     private final String transactionId;
     private final Model model;
 
     @SuppressWarnings("java:S107")
-    public IngestedMember(String subject, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean inEventSource, String transactionId, Model model) {
+    public IngestedMember(String subject, String collectionName, String versionOf, LocalDateTime timestamp, boolean inEventSource, String transactionId, Model model) {
         this.subject = subject;
         this.collectionName = collectionName;
         this.versionOf = versionOf;
         this.timestamp = timestamp;
-        this.sequenceNr = sequenceNr;
         this.inEventSource = inEventSource;
         this.transactionId = transactionId;
         this.model = model;
@@ -63,10 +61,6 @@ public class IngestedMember {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
-    }
-
-    public Long getSequenceNr() {
-        return sequenceNr;
     }
 
     public boolean isInEventSource() {

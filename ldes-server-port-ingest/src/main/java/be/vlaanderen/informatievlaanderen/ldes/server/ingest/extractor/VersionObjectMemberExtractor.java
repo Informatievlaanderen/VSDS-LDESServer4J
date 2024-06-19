@@ -29,7 +29,7 @@ public class VersionObjectMemberExtractor implements MemberExtractor {
         final String transactionId = UUID.randomUUID().toString();
         final String versionOf = extractVersionOf(ingestedModel);
         final LocalDateTime timestamp = extractTimestamp(ingestedModel);
-        final IngestedMember member = new IngestedMember(memberSubject, collectionName, versionOf, timestamp, null, true, transactionId, ingestedModel);
+        final IngestedMember member = new IngestedMember(memberSubject, collectionName, versionOf, timestamp, true, transactionId, ingestedModel);
         return List.of(member);
     }
 

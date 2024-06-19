@@ -14,7 +14,7 @@ public class MemberRowMapper implements RowMapper<IngestedMember> {
 	public IngestedMember mapRow(ResultSet rs, int rowNum) throws SQLException {
 		return new IngestedMember(rs.getString(2), rs.getString(10),
 				rs.getString(9), rs.getTimestamp(7).toLocalDateTime(),
-				rs.getLong(6), rs.getBoolean(4), rs.getString(8),
-				RDFParser.source(new ByteArrayInputStream(rs.getBytes(5))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel());
+				rs.getBoolean(5), rs.getString(8),
+				RDFParser.source(new ByteArrayInputStream(rs.getBytes(6))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel());
 	}
 }

@@ -254,7 +254,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
 		await().atMost(POLLING_RATE, SECONDS)
-				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
+				.until(() -> memberRepository.getMembersOfCollection(collection).size() == expectedMemberCount);
 	}
 
 	@After
