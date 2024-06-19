@@ -8,7 +8,5 @@
     <include file="/db/changelog/3_1_0/admin-data-model/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
     <include file="/db/changelog/3_1_0/admin-data-model/event-source/add-fk-to-event-source.xml"/>
     <include file="/db/changelog/3_1_0/admin-data-model/dcat-dataservice/add-fk-to-dcat-dataservice.xml"/>
-    <include file="/db/changelog/3_1_0/member-data-model/member-new-datamodel.xml" />
-    <include file="/db/changelog/3_1_0/member-data-model/drop-old-member-table.xml" />
 
 </databaseChangeLog>
