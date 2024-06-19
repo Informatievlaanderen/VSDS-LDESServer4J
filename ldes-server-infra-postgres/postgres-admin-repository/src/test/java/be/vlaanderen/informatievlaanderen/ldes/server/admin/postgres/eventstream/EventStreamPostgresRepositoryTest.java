@@ -5,8 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.projection.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +34,7 @@ class EventStreamPostgresRepositoryTest {
     private static final String VERSION_OF_PATH = "versionOfPath";
     private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false);
     private static final EventStreamTO EVENT_STREAM_TO = new EventStreamTO(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, List.of(), ModelFactory.createDefaultModel(), List.of());
-    private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
+    private static final EventStreamEntity EVENT_STREAM_ENTITY = createEventStreamEntity(COLLECTION_NAME);
     private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
     private EventStreamPostgresRepository repository;
 
@@ -44,8 +47,8 @@ class EventStreamPostgresRepositoryTest {
     }
 
     @Test
-    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
-    void when_dbHasEntities_then_returnAll() {
+    @DisplayName("test retrieval of all eventstreams projections of a non-empty collection")
+    void when_dbHasEntities_then_returnAllProjections() {
         final EventStreamProperties projection2 = new EventStreamPropertiesTestImpl(
                 OTHER_COLLECTION_NAME,
                 "created",
@@ -62,6 +65,33 @@ class EventStreamPostgresRepositoryTest {
                 new EventStream(OTHER_COLLECTION_NAME, "created", "version", false));
 
         final List<EventStream> eventStreams = repository.retrieveAllEventStreams();
+
+        assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
+    }
+
+    @Test
+    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
+    void when_dbHasEntities_then_returnAll() {
+        final String viewName = "view-name";
+        final EventStreamEntity otherEventStreamEntity = createEventStreamEntity(OTHER_COLLECTION_NAME);
+        otherEventStreamEntity.setViews(List.of(
+                new ViewEntity(viewName, List.of(), List.of(), 250){{
+                    setEventStream(otherEventStreamEntity);
+                }}
+        ));
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
+                EVENT_STREAM_ENTITY,
+                otherEventStreamEntity
+        ));
+        final List<ViewSpecification> expectedViews = List.of(new ViewSpecification(
+                new ViewName(OTHER_COLLECTION_NAME, viewName), List.of(), List.of(), 250
+        ));
+        final List<EventStreamTO> expectedEventStreams = List.of(
+                EVENT_STREAM_TO,
+                new EventStreamTO(OTHER_COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false,
+                        expectedViews, ModelFactory.createDefaultModel(), List.of()));
+
+        final List<EventStreamTO> eventStreams = repository.retrieveAllEventStreamTOs();
 
         assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
     }
@@ -86,7 +116,7 @@ class EventStreamPostgresRepositoryTest {
     }
 
     @Test
-    void when_dbIsEmpty_then_returnEmptyList() {
+    void when_dbIsEmpty_then_returnEmptyPropertiesList() {
         when(eventStreamEntityRepository.findAllPropertiesBy()).thenReturn(List.of());
 
         List<EventStream> eventStreams = repository.retrieveAllEventStreams();
@@ -95,12 +125,38 @@ class EventStreamPostgresRepositoryTest {
     }
 
     @Test
-    void when_singleEventStreamQueried() {
+    void when_dbIsEmpty_then_returnEmptyList() {
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of());
+
+        List<EventStreamTO> eventStreams = repository.retrieveAllEventStreamTOs();
+
+        assertThat(eventStreams).isEmpty();
+    }
+
+    @Test
+    void when_singleEventStreamPropertiesQueried() {
         when(eventStreamEntityRepository.findPropertiesByName(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_PROPERTIES));
 
         Optional<EventStream> eventStream = repository.retrieveEventStream(COLLECTION_NAME);
 
         assertThat(eventStream).contains(EVENT_STREAM);
+    }
+
+    @Test
+    void when_singleEventStreamQueried() {
+        when(eventStreamEntityRepository.findByName(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_ENTITY));
+
+        Optional<EventStreamTO> eventStream = repository.retrieveEventStreamTO(COLLECTION_NAME);
+
+        assertThat(eventStream).contains(EVENT_STREAM_TO);
+    }
+
+    @Test
+    void when_emptyDbQueried_then_returnEmptyPropertiesOptional() {
+        Optional<EventStreamTO> eventStream = repository.retrieveEventStreamTO(OTHER_COLLECTION_NAME);
+
+        verify(eventStreamEntityRepository).findByName(OTHER_COLLECTION_NAME);
+        assertThat(eventStream).isEmpty();
     }
 
     @Test
@@ -113,7 +169,7 @@ class EventStreamPostgresRepositoryTest {
 
     @Test
     void test_insertion() {
-        final EventStreamEntity expectedEntity = createEventStreamEntity();
+        final EventStreamEntity expectedEntity = createEventStreamEntity(COLLECTION_NAME);
 
         repository.saveEventStream(EVENT_STREAM_TO);
 
@@ -130,9 +186,9 @@ class EventStreamPostgresRepositoryTest {
         verify(eventStreamEntityRepository).deleteByName(OTHER_COLLECTION_NAME);
     }
 
-    private EventStreamEntity createEventStreamEntity() {
+    private static EventStreamEntity createEventStreamEntity(String collection) {
         final EventStreamEntity eventStreamEntity = new EventStreamEntity(
-                COLLECTION_NAME,
+                collection,
                 TIMESTAMP_PATH,
                 VERSION_OF_PATH,
                 false,
