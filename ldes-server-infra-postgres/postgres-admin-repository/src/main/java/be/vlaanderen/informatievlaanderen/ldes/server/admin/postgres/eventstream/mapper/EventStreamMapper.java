@@ -5,9 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.projection.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.mapper.ViewSpecificationMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+
+import java.util.List;
 
 public class EventStreamMapper {
     private EventStreamMapper() {
@@ -30,21 +33,20 @@ public class EventStreamMapper {
         return new EventStream(projection.getName(), projection.getTimestampPath(), projection.getVersionOfPath(), projection.isVersionCreationEnabled(), projection.isClosed());
     }
 
-    public static EventStreamEntity toEntity(EventStream eventStream) {
-        return new EventStreamEntity(eventStream.getCollection(),
-                eventStream.getTimestampPath(),
-                eventStream.getVersionOfPath(),
-                eventStream.isVersionCreationEnabled(),
-                eventStream.isClosed());
-    }
-
     public static EventStreamEntity toEntity(EventStreamTO eventStream) {
         final EventStreamEntity entity = new EventStreamEntity(eventStream.getCollection(),
                 eventStream.getTimestampPath(),
                 eventStream.getVersionOfPath(),
                 eventStream.isVersionCreationEnabled(),
                 false);
-        entity.setViews(eventStream.getViews().stream().map(ViewSpecificationMapper::toEntity).toList());
+        final List<ViewEntity> views = eventStream.getViews().stream()
+                .map(viewSpec -> {
+                    final var viewEntity = ViewSpecificationMapper.toEntity(viewSpec);
+                    viewEntity.setEventStream(entity);
+                    return viewEntity;
+                })
+                .toList();
+        entity.setViews(views);
         entity.setEventSourceEntity(new EventSourceEntity(entity, eventStream.getEventSourceRetentionPolicies()));
         entity.setShaclShapeEntity(new ShaclShapeEntity(entity, eventStream.getShacl()));
         return entity;

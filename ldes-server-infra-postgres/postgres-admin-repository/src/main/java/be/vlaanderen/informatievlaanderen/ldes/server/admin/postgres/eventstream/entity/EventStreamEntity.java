@@ -33,7 +33,7 @@ public class EventStreamEntity {
     @Column(name = "is_closed", nullable = false)
     private Boolean closed;
 
-    @OneToMany(mappedBy = "eventStream", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "eventStream", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ViewEntity> views;
 
     @OneToOne(mappedBy = "eventStream")

@@ -1,9 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource.entity.EventSourceEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.projection.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +30,7 @@ class EventStreamPostgresRepositoryTest {
     private static final String TIMESTAMP_PATH = "timestampPath";
     private static final String VERSION_OF_PATH = "versionOfPath";
     private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false);
+    private static final EventStreamTO EVENT_STREAM_TO = new EventStreamTO(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, List.of(), ModelFactory.createDefaultModel(), List.of());
     private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
     private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
     private EventStreamPostgresRepository repository;
@@ -108,10 +113,14 @@ class EventStreamPostgresRepositoryTest {
 
     @Test
     void test_insertion() {
-        EventStream savedEventStream = repository.saveEventStream(EVENT_STREAM);
+        final EventStreamEntity expectedEntity = createEventStreamEntity();
 
-        verify(eventStreamEntityRepository).save(any());
-        assertThat(savedEventStream).isEqualTo(EVENT_STREAM);
+        repository.saveEventStream(EVENT_STREAM_TO);
+
+        verify(eventStreamEntityRepository).save(assertArg(entity -> assertThat(entity)
+                .usingRecursiveComparison()
+                .ignoringFieldsOfTypes(EventStreamEntity.class) // to prevent cycles
+                .isEqualTo(expectedEntity)));
     }
 
     @Test
@@ -119,5 +128,19 @@ class EventStreamPostgresRepositoryTest {
         repository.deleteEventStream(OTHER_COLLECTION_NAME);
 
         verify(eventStreamEntityRepository).deleteByName(OTHER_COLLECTION_NAME);
+    }
+
+    private EventStreamEntity createEventStreamEntity() {
+        final EventStreamEntity eventStreamEntity = new EventStreamEntity(
+                COLLECTION_NAME,
+                TIMESTAMP_PATH,
+                VERSION_OF_PATH,
+                false,
+                false
+        );
+        eventStreamEntity.setShaclShapeEntity(new ShaclShapeEntity(eventStreamEntity, ModelFactory.createDefaultModel()));
+        eventStreamEntity.setViews(List.of());
+        eventStreamEntity.setEventSourceEntity(new EventSourceEntity(eventStreamEntity, List.of()));
+        return eventStreamEntity;
     }
 }

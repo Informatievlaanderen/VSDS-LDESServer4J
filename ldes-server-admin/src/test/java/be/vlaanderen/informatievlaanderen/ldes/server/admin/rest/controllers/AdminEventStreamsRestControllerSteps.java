@@ -133,8 +133,6 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 	}
 
 	@And("I verify the event stream in the response body to file (.*)$")
