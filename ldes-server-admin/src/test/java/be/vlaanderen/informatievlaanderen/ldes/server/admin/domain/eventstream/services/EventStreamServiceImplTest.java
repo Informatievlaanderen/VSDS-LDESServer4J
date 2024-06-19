@@ -5,10 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
@@ -23,10 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InOrder;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -35,7 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +55,7 @@ class EventStreamServiceImplTest {
     @Captor
     ArgumentCaptor<EventStreamDeletedEvent> deletedEventArgumentCaptor;
     @Mock
-    private ViewService viewService;
+    private ViewValidator viewValidator;
     @Mock
     private ShaclShapeService shaclShapeService;
     @Mock
@@ -67,14 +64,11 @@ class EventStreamServiceImplTest {
     private DcatServerService dcatServerService;
     @Mock
     private EventSourceService eventSourceService;
-
-    private EventStreamService service;
+    @InjectMocks
+    private EventStreamServiceImpl service;
 
     @BeforeEach
     void setUp() throws URISyntaxException {
-        service = new EventStreamServiceImpl(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService,
-                dcatServerService, eventSourceService, eventPublisher);
-
         dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
         eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
                 VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of(), dataset);
@@ -83,86 +77,52 @@ class EventStreamServiceImplTest {
     @Test
     void when_retrieveAllEventStream_then_returnList() {
         final String otherCollection = "other";
-        EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false);
         List<ViewSpecification> views = List
                 .of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
         EventStreamTO otherEventStreamTO = new EventStreamTO(otherCollection, "created", "versionOf", false,
                 views, ModelFactory.createDefaultModel(), List.of(), dataset);
 
-        when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
-        when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
-        when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
-
-        when(shaclShapeService.retrieveShaclShape(COLLECTION))
-                .thenReturn(new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
-        when(shaclShapeService.retrieveShaclShape(otherCollection))
-                .thenReturn(new ShaclShape(otherCollection, ModelFactory.createDefaultModel()));
-
-        when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
-        when(dcatDatasetService.retrieveDataset(otherCollection)).thenReturn(Optional.of(dataset));
+        when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(eventStreamTOWithDataset, otherEventStreamTO));
 
         List<EventStreamTO> eventStreams = service.retrieveAllEventStreams();
 
         assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamTO);
-        InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
-        inOrder.verify(eventStreamRepository).retrieveAllEventStreams();
-        inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
-        inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
-        inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
-        inOrder.verify(viewService).getViewsByCollectionName(otherCollection);
-        inOrder.verify(shaclShapeService).retrieveShaclShape(otherCollection);
-        inOrder.verify(dcatDatasetService).retrieveDataset(otherCollection);
+        verify(eventStreamRepository).retrieveAllEventStreamTOs();
+        verifyNoInteractions(shaclShapeService, dcatDatasetService);
 
     }
 
     @Test
     void when_collectionExists_then_retrieveEventStream() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-        when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
-        when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(
-                new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
-        when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
+        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
 
         EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
         assertThat(eventStreamTO).isEqualTo(EVENT_STREAM_RESPONSE);
-        InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
-        inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
-        inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
-        inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
+        verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
+        verifyNoInteractions(shaclShapeService, dcatDatasetService);
     }
 
     @Test
     void when_collectionAndDatasetExists_then_retrieveEventStreamWithDataset() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-        when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
-        when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(
-                new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
-        when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.of(dataset));
-
+        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
 
         EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
         assertThat(eventStreamTO).isEqualTo(eventStreamTOWithDataset);
-        InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
-        inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
-        inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
-        inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
     }
 
     @Test
     void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
                 .isInstanceOf(MissingResourceException.class)
                 .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 
-        verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verifyNoInteractions(viewService, shaclShapeService);
+        verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
+        verifyNoInteractions(dcatDatasetService, shaclShapeService);
     }
 
     @Test
@@ -181,19 +141,14 @@ class EventStreamServiceImplTest {
 
         @Test
         void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
-            ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
-            when(eventStreamRepository.saveEventStream(EVENT_STREAM)).thenReturn(EVENT_STREAM);
-            when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
             EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
                     VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 
             EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
 
-            assertThat(createdEventStream).isEqualTo(eventStreamTO);
-            InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
-            inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-            inOrder.verify(eventStreamRepository).saveEventStream(EVENT_STREAM);
-            inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+            assertThat(createdEventStream).isSameAs(eventStreamTO);
+            verify(eventStreamRepository).saveEventStream(eventStreamTO);
+            verifyNoInteractions(shaclShapeService);
         }
 
         @Test
@@ -206,7 +161,7 @@ class EventStreamServiceImplTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("This collection already exists!");
 
-            InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+            InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService);
             inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
             inOrder.verifyNoMoreInteractions();
         }
@@ -215,8 +170,8 @@ class EventStreamServiceImplTest {
         void given_NonExistingEventStream_when_errorOccursWhileCreation_then_DeleteAgainAndThrowException() {
             final String byPage = "by-page";
             final String byLocation = "by-location";
-            ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
             when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+            doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(any());
             ViewSpecification byPageView = new ViewSpecification(new ViewName(COLLECTION, byPage), List.of(), List.of(), 100);
             ViewSpecification byLocationView = new ViewSpecification(new ViewName(COLLECTION, byLocation), List.of(), List.of(), 100);
             EventStreamTO eventStreamTO = new EventStreamTO(
@@ -228,41 +183,25 @@ class EventStreamServiceImplTest {
                     ModelFactory.createDefaultModel(),
                     List.of());
 
-
-            doNothing().when(viewService).addView(byPageView);
-            doThrow(new DuplicateRetentionException()).when(viewService).addView(byLocationView);
-
             assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
                     .isInstanceOf(DuplicateRetentionException.class);
-            InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService, eventPublisher);
-            inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-            inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
-            inOrder.verify(viewService).addView(byPageView);
-            inOrder.verify(viewService).addView(byLocationView);
-            inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
-            inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
-            assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
+            verify(eventStreamRepository).retrieveEventStream(COLLECTION);
         }
     }
 
 
     @Test
     void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+        when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(0);
 
         assertThatThrownBy(() -> service.deleteEventStream(COLLECTION))
                 .isInstanceOf(MissingResourceException.class)
                 .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
-
-        verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verifyNoMoreInteractions(eventStreamRepository);
-        verifyNoInteractions(viewService, shaclShapeService, eventPublisher);
     }
 
     @Test
     void when_collectionExists_and_triesToDeleteEventStream_then_throwExceptionWithRetrieval() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM))
-                .thenReturn(Optional.empty());
+        when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(1).thenReturn(0);
 
         service.deleteEventStream(COLLECTION);
 

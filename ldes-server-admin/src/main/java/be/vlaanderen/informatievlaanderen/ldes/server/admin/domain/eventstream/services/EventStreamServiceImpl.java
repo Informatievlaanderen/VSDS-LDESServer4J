@@ -1,21 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventSource;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,67 +17,54 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventStreamServiceImpl implements EventStreamService {
+	public static final String RESOURCE_TYPE = "eventstream";
 	private final EventStreamRepository eventStreamRepository;
-	private final ViewService viewService;
-	private final ShaclShapeService shaclShapeService;
 	private final DcatServerService dcatServerService;
-	private final DcatDatasetService dcatDatasetService;
 	private final EventSourceService eventSourceService;
 	private final ApplicationEventPublisher eventPublisher;
+	private final ViewValidator viewValidator;
 
-	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository, ViewService viewService,
-                                  ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService,
-                                  DcatServerService dcatServerService, EventSourceService eventSourceService, ApplicationEventPublisher eventPublisher) {
+	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository,
+	                              DcatServerService dcatServerService, EventSourceService eventSourceService, ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
 		this.eventStreamRepository = eventStreamRepository;
-		this.viewService = viewService;
-		this.shaclShapeService = shaclShapeService;
 		this.dcatServerService = dcatServerService;
-		this.dcatDatasetService = dcatDatasetService;
-        this.eventSourceService = eventSourceService;
-        this.eventPublisher = eventPublisher;
+		this.eventSourceService = eventSourceService;
+		this.eventPublisher = eventPublisher;
+		this.viewValidator = viewValidator;
 	}
 
 	@Override
 	public List<EventStreamTO> retrieveAllEventStreams() {
-		return eventStreamRepository.retrieveAllEventStreams().stream().map(this::mapToEventStreamTO).toList();
+		return eventStreamRepository.retrieveAllEventStreamTOs();
 	}
 
 	@Override
 	public EventStreamTO retrieveEventStream(String collectionName) {
-		EventStream eventStream = getEventStream(collectionName);
-		return mapToEventStreamTO(eventStream);
+		return eventStreamRepository.retrieveEventStreamTO(collectionName)
+				.orElseThrow(() -> new MissingResourceException(RESOURCE_TYPE, collectionName));
 	}
 
 	@Override
 	public void deleteEventStream(String collectionName) {
-		if (eventStreamRepository.retrieveEventStream(collectionName).isEmpty()) {
-			throw new MissingResourceException("eventstream", collectionName);
+		final int deletedRows = eventStreamRepository.deleteEventStream(collectionName);
+		if (deletedRows == 0) {
+			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
-
-		delete(collectionName);
+		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
 	@Override
 	public EventStreamTO createEventStream(EventStreamTO eventStreamTO) {
 		EventStream eventStream = mapToEventStream(eventStreamTO);
-		ShaclShape shaclShape = new ShaclShape(eventStreamTO.getCollection(), eventStreamTO.getShacl());
 
-		checkCollectionDoesNotYetExist(eventStream.getCollection());
+		checkCollectionDoesNotYetExist(eventStreamTO.getCollection());
+		eventStreamTO.getViews().forEach(viewValidator::validateView);
 
-		try {
-			eventStreamRepository.saveEventStream(eventStream);
-			shaclShapeService.updateShaclShape(shaclShape);
-			eventSourceService.saveEventSource(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies());
-			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
-			eventStreamTO.getViews().forEach(viewService::addView);
-		} catch (RuntimeException e) {
-			delete(eventStreamTO.getCollection());
-			throw e;
-		}
+		eventStreamRepository.saveEventStream(eventStreamTO);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
 		return eventStreamTO;
 	}
@@ -99,26 +80,9 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventPublisher.publishEvent(new EventStreamClosedEvent(eventStream.getCollection()));
 	}
 
-	private EventStreamTO mapToEventStreamTO(EventStream eventStream) {
-		List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
-		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
-		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
-		Optional<EventSource> eventSource = eventSourceService.getEventSource(eventStream.getCollection());
-		return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(),
-				views, shaclShape.getModel(),
-				eventSource.map(EventSource::getRetentionPolicies).orElse(List.of()),
-				dataset.orElse(null));
-	}
-
 	private EventStream getEventStream(String collectionName) {
 		return eventStreamRepository.retrieveEventStream(collectionName)
-				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
-	}
-
-	private void delete(String collectionName) {
-		eventStreamRepository.deleteEventStream(collectionName);
-		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
+				.orElseThrow(() -> new MissingResourceException(RESOURCE_TYPE, collectionName));
 	}
 
 	private void checkCollectionDoesNotYetExist(String collectionName) {

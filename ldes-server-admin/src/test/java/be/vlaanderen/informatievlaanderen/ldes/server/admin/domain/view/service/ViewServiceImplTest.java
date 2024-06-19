@@ -14,8 +14,11 @@ import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -27,14 +30,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ViewServiceImplTest {
-
-	private final DcatViewService dcatViewService = Mockito.mock(DcatViewService.class);
-	private final ViewRepository viewRepository = mock(ViewRepository.class);
-	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 	private static final String COLLECTION = "collection";
 	private static final String NOT_EXISTING_COLLECTION = "not_existing_collection";
-	private final ViewServiceImpl viewService = new ViewServiceImpl(dcatViewService, viewRepository, eventPublisher);
+
+	@Mock
+	private DcatViewService dcatViewService;
+	@Mock
+	private ViewRepository viewRepository;
+	@Mock
+	private ApplicationEventPublisher eventPublisher;
+	@Mock
+	private ViewValidator viewValidator;
+	@InjectMocks
+	private ViewServiceImpl viewService;
 
 	@BeforeEach
 	void setUp() {
@@ -69,30 +79,12 @@ class ViewServiceImplTest {
 		@Test
 		void given_ViewWithDuplicateRetentionPolicy_when_AddView_then_ThrowException() {
 			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+			doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(view);
 
-			view.getRetentionConfigs().add(sixMonthDurationRetention);
-
-			assertThatThrownBy(() -> viewService.addView(view))
-					.isInstanceOf(DuplicateRetentionException.class)
-					.hasMessage("More than one retention policy of type <https://w3id.org/ldes#DurationAgoPolicy> found");
+			assertThatThrownBy(() -> viewService.addView(view)).isInstanceOf(DuplicateRetentionException.class);
 
 			verify(viewRepository).getViewByViewName(view.getName());
 			verifyNoMoreInteractions(viewRepository, eventPublisher);
-		}
-
-		@Test
-		void given_ViewWithTwoDifferentRetentionPolicies_when_AddView_then_ViewIsAdded() {
-			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
-
-			view.getRetentionConfigs().add(versionBasedRetention);
-
-			viewService.addView(view);
-
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verify(viewRepository).getViewByViewName(view.getName());
-			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
-			inOrder.verify(viewRepository).saveView(view);
-			inOrder.verifyNoMoreInteractions();
 		}
 
 		@Test
@@ -135,9 +127,6 @@ class ViewServiceImplTest {
 
 		@Test
 		void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
-			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
-			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(viewSpecification));
-
 			viewService.deleteViewByViewName(viewName);
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
@@ -236,11 +225,12 @@ class ViewServiceImplTest {
 		ViewSpecification secondViewSpecification = new ViewSpecification(view2, List.of(), List.of(), 100);
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION))
 				.thenReturn(List.of(firstViewSpecification, secondViewSpecification));
+		viewService.initViews();
+
+		assertThat(viewService.getViewsByCollectionName(COLLECTION)).hasSize(2);
 
 		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
-		verify(viewRepository).deleteViewByViewName(view);
-		verify(viewRepository).deleteViewByViewName(view2);
 		assertThatThrownBy(() -> viewService.getViewsByCollectionName(COLLECTION))
 				.isInstanceOf(MissingResourceException.class);
 	}

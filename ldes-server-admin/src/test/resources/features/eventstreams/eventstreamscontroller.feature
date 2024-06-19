@@ -48,13 +48,13 @@ Feature: event streams can be configured at runtime
       | eventstream/streams/ldes-with-duplicate-retention.ttl |
 
   Scenario: delete an existing event stream
-    Given a db containing one event stream
+    Given a db containing one deletable event stream
     When the client deletes the event stream
     Then the client receives HTTP status 200
-    And I verify the db interactions
+    And I verify the event stream deletion interaction
 
   Scenario: delete an non-existing event stream
     Given an empty db
     When the client deletes the event stream
     Then the client receives HTTP status 404
-    And I verify the event stream retrieval interaction
+    And I verify the event stream deletion interaction

@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcatdataset.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetServiceImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
@@ -118,16 +117,6 @@ class DcatDatasetServiceImplTest {
 		List<DcatDataset> result = repository.findAll();
 
 		assertEquals(datasets, result);
-	}
-
-	@Test
-	void should_DeleteDataset_when_EventStreamDeletedEventIsReceived() {
-		String collectionName = "collectionName";
-		when(repository.exitsByCollectionName(collectionName)).thenReturn(true);
-
-		datasetService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
-
-		verify(repository).deleteDataset(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

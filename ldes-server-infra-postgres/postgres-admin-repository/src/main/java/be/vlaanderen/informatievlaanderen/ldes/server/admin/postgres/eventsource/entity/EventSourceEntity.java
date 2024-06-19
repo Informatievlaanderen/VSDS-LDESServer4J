@@ -33,6 +33,11 @@ public class EventSourceEntity {
         this.eventStream = eventStream;
     }
 
+    public EventSourceEntity(EventStreamEntity eventStream, List<Model> retentionPolicies) {
+        this.eventStream = eventStream;
+        this.retentionPolicies = retentionPolicies;
+    }
+
     public String getCollectionName() {
         return eventStream.getName();
     }
