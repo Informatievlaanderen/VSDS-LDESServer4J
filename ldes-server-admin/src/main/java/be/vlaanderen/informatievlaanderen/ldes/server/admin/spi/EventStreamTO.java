@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
@@ -89,5 +90,9 @@ public class EventStreamTO {
 	@Override
 	public int hashCode() {
 		return Objects.hash(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, dcatDataset);
+	}
+
+	public EventStream extractEventStreamProperties() {
+		return new EventStream(collection, timestampPath, versionOfPath, versionCreationEnabled);
 	}
 }

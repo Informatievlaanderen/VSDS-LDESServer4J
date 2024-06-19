@@ -5,9 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.s
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.rdf.model.Model;
@@ -58,15 +56,20 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 	@Override
 	public EventStreamTO createEventStream(EventStreamTO eventStreamTO) {
-		EventStream eventStream = mapToEventStream(eventStreamTO);
-
 		checkCollectionDoesNotYetExist(eventStreamTO.getCollection());
 		eventStreamTO.getViews().forEach(viewValidator::validateView);
 
 		eventStreamRepository.saveEventStream(eventStreamTO);
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		publishEventStreamTOCreatedEvents(eventStreamTO);
 
 		return eventStreamTO;
+	}
+
+	private void checkCollectionDoesNotYetExist(String collectionName) {
+		boolean exists = eventStreamRepository.retrieveEventStream(collectionName).isPresent();
+		if (exists) {
+			throw new IllegalArgumentException("This collection already exists!");
+		}
 	}
 
 	@Override
@@ -85,22 +88,6 @@ public class EventStreamServiceImpl implements EventStreamService {
 				.orElseThrow(() -> new MissingResourceException(RESOURCE_TYPE, collectionName));
 	}
 
-	private void checkCollectionDoesNotYetExist(String collectionName) {
-		boolean exists = eventStreamRepository.retrieveEventStream(collectionName).isPresent();
-		if (exists) {
-			throw new IllegalArgumentException("This collection already exists!");
-		}
-	}
-
-	private EventStream mapToEventStream(EventStreamTO eventStreamTO) {
-		return new EventStream(
-				eventStreamTO.getCollection(),
-				eventStreamTO.getTimestampPath(),
-				eventStreamTO.getVersionOfPath(),
-				eventStreamTO.isVersionCreationEnabled()
-		);
-	}
-
 	@Override
 	public Model getComposedDcat() {
 		return dcatServerService.getComposedDcat();
@@ -116,6 +103,12 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventStreamRepository.retrieveAllEventStreams().stream()
 				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
+	}
+
+	private void publishEventStreamTOCreatedEvents(EventStreamTO eventStreamTO) {
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
+		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);
+		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
 	}
 
 }
