@@ -4,8 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.DatabaseColumnModelConverter;
 import jakarta.persistence.*;
 import org.apache.jena.rdf.model.Model;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "members", indexes = {
-        @Index(columnList = "id, timestamp")
+        @Index(columnList = "id, timestamp"),
+        @Index(columnList = "old_id")
 })
 public class MemberEntity {
     @Id
@@ -24,9 +23,8 @@ public class MemberEntity {
     private String oldId;
     @Column(name = "subject", nullable = false)
     private String subject;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "collection_id", nullable = false)
     private EventStreamEntity collection;
     @Column(name = "version_of", nullable = false)

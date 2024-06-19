@@ -18,7 +18,7 @@
             <column name="old_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="collection_id" type="SMALLINT">
+            <column name="collection_id" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="is_in_event_source" type="BOOLEAN">
