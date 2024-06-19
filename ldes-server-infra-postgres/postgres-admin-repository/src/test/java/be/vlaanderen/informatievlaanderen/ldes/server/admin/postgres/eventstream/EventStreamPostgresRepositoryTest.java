@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.projection.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +23,11 @@ import static org.mockito.Mockito.when;
 class EventStreamPostgresRepositoryTest {
     private static final String COLLECTION_NAME = "collection-name";
     private static final String OTHER_COLLECTION_NAME = "other-collection";
-    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
-    private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "timestampPath", "versionOfPath", false, false);
+    private static final String TIMESTAMP_PATH = "timestampPath";
+    private static final String VERSION_OF_PATH = "versionOfPath";
+    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false);
+    private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
+    private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false);
     private EventStreamPostgresRepository repository;
 
     @Mock
@@ -37,13 +41,20 @@ class EventStreamPostgresRepositoryTest {
     @Test
     @DisplayName("test retrieval of all eventstreams of a non-empty collection")
     void when_dbHasEntities_then_returnAll() {
-        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
-                EVENT_STREAM_ENTITY,
-                new EventStreamEntity("other_collection", "created", "version", false, false)
+        final EventStreamProperties projection2 = new EventStreamPropertiesTestImpl(
+                OTHER_COLLECTION_NAME,
+                "created",
+                "version",
+                false,
+                false
+        );
+        when(eventStreamEntityRepository.findAllPropertiesBy()).thenReturn(List.of(
+                EVENT_STREAM_PROPERTIES,
+                projection2
         ));
         final List<EventStream> expectedEventStreams = List.of(
                 EVENT_STREAM,
-                new EventStream("other_collection", "created", "version", false));
+                new EventStream(OTHER_COLLECTION_NAME, "created", "version", false));
 
         final List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
@@ -59,9 +70,9 @@ class EventStreamPostgresRepositoryTest {
                 EVENT_STREAM,
                 new EventStream(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false)
         );
-        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
-                EVENT_STREAM_ENTITY,
-                new EventStreamEntity(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false)
+        when(eventStreamEntityRepository.findAllPropertiesBy()).thenReturn(List.of(
+                EVENT_STREAM_PROPERTIES,
+                new EventStreamPropertiesTestImpl(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false)
         ));
 
         List<EventStream> eventStreams = repository.retrieveAllEventStreams();
@@ -71,7 +82,7 @@ class EventStreamPostgresRepositoryTest {
 
     @Test
     void when_dbIsEmpty_then_returnEmptyList() {
-        when(eventStreamEntityRepository.findAll()).thenReturn(List.of());
+        when(eventStreamEntityRepository.findAllPropertiesBy()).thenReturn(List.of());
 
         List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
@@ -80,7 +91,7 @@ class EventStreamPostgresRepositoryTest {
 
     @Test
     void when_singleEventStreamQueried() {
-        when(eventStreamEntityRepository.findByName(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_ENTITY));
+        when(eventStreamEntityRepository.findPropertiesByName(COLLECTION_NAME)).thenReturn(Optional.of(EVENT_STREAM_PROPERTIES));
 
         Optional<EventStream> eventStream = repository.retrieveEventStream(COLLECTION_NAME);
 
@@ -91,7 +102,7 @@ class EventStreamPostgresRepositoryTest {
     void when_emptyDbQueried_then_returnEmptyOptional() {
         Optional<EventStream> eventStream = repository.retrieveEventStream(OTHER_COLLECTION_NAME);
 
-        verify(eventStreamEntityRepository).findByName(OTHER_COLLECTION_NAME);
+        verify(eventStreamEntityRepository).findPropertiesByName(OTHER_COLLECTION_NAME);
         assertThat(eventStream).isEmpty();
     }
 
