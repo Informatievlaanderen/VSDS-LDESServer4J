@@ -66,7 +66,7 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private void publishIngestedEvent(String collectionName, List<IngestedMember> members) {
         final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
-                .map(member -> new MembersIngestedEvent.MemberProperties(member.getSubject(), member.getVersionOf(), member.getTimestamp()))
+                .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
                 .toList();
         eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
     }

@@ -103,7 +103,6 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	@Override
-	@Transactional
 	public List<IngestedMember> getMembersOfCollection(String collectionName) {
 		return repository.findAllByCollectionName(collectionName).stream().map(mapper::toMember).toList();
 	}
