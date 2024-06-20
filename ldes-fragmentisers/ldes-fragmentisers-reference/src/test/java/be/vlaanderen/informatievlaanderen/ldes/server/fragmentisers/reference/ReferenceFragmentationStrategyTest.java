@@ -44,7 +44,7 @@ class ReferenceFragmentationStrategyTest {
         when(fragmentCreator.getOrCreateRootFragment(PARENT_FRAGMENT, FRAGMENT_KEY_REFERENCE_ROOT))
                 .thenReturn(ROOT_TILE_FRAGMENT);
         referenceFragmentationStrategy = new ReferenceFragmentationStrategy(decoratedFragmentationStrategy,
-                referenceBucketiser, fragmentCreator, ObservationRegistry.create(),
+                referenceBucketiser, fragmentCreator, mock(), ObservationRegistry.create(),
                 treeRelationsRepository);
     }
 

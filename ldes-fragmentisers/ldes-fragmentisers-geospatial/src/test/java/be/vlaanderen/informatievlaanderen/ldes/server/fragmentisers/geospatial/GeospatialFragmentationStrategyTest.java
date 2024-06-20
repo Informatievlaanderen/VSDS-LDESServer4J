@@ -45,7 +45,7 @@ class GeospatialFragmentationStrategyTest {
 				FRAGMENT_KEY_TILE_ROOT))
 				.thenReturn(ROOT_TILE_FRAGMENT);
 		geospatialFragmentationStrategy = new GeospatialFragmentationStrategy(decoratedFragmentationStrategy,
-				geospatialBucketiser, fragmentCreator, ObservationRegistry.create(),
+				geospatialBucketiser, fragmentCreator, mock(), ObservationRegistry.create(),
 				treeRelationsRepository);
 	}
 

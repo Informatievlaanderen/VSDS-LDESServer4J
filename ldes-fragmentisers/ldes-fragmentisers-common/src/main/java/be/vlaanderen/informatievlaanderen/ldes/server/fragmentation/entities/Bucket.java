@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
@@ -23,12 +21,16 @@ public class Bucket {
 		this.memberCount = memberCount;
 	}
 
-	public BucketDescriptor getBucketDescriptor() {
-		return bucketDescriptor;
+	public ViewName getViewName() {
+		return viewName;
 	}
 
 	public List<BucketDescriptorPair> getBucketDescriptorPairs() {
 		return bucketDescriptor.getDescriptorPairs();
+	}
+
+	public String getBucketDescriptorAsString() {
+		return bucketDescriptor.asDecodedString();
 	}
 
 	public Bucket createChild(BucketDescriptorPair descriptorPair) {

@@ -19,10 +19,10 @@ public class BucketEntity {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "view_id", nullable = false, columnDefinition = "INT")
-	private ViewEntity viewEntity;
+	private ViewEntity view;
 
 	@Column(name = "bucket", columnDefinition = "VARCHAR(255)")
-	private String bucket;
+	private String bucketDescriptor;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -33,4 +33,8 @@ public class BucketEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<MemberEntity> members;
 
+	public BucketEntity(ViewEntity view, String bucketDescriptor) {
+		this.view = view;
+		this.bucketDescriptor = bucketDescriptor;
+	}
 }

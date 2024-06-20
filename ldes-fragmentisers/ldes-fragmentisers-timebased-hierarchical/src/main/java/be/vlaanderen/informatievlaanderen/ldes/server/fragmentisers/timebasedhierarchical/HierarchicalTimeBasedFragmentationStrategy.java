@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
@@ -10,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedBucketFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -28,16 +30,18 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 
 	private final ObservationRegistry observationRegistry;
 	private final TimeBasedFragmentFinder fragmentFinder;
+	private final TimeBasedBucketFinder bucketFinder;
 	private final TimeBasedConfig config;
 
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			ObservationRegistry observationRegistry,
-			TimeBasedFragmentFinder fragmentFinder,
-			FragmentRepository fragmentRepository,
-			TimeBasedConfig config) {
+	                                                  ObservationRegistry observationRegistry,
+	                                                  TimeBasedFragmentFinder fragmentFinder,
+	                                                  FragmentRepository fragmentRepository, TimeBasedBucketFinder bucketFinder,
+	                                                  TimeBasedConfig config) {
 		super(fragmentationStrategy, fragmentRepository);
 		this.observationRegistry = observationRegistry;
 		this.fragmentFinder = fragmentFinder;
+		this.bucketFinder = bucketFinder;
 		this.config = config;
 	}
 
@@ -52,6 +56,19 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 
 		List<BucketisedMember> members = super.addMemberToFragment(fragment, member, fragmentationObservation);
 		fragmentationObservation.stop();
+		return members;
+	}
+
+	@Override
+	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
+
+		Bucket bucket = getFragmentationTimestamp(member.id(), member.model())
+				.map(timestamp -> bucketFinder.getLowestFragment(parentBucket, timestamp, Granularity.YEAR))
+				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
+
+		List<BucketisedMember> members = super.addMemberToBucket(bucket, member, parentObservation);
+		bucketisationObservation.stop();
 		return members;
 	}
 

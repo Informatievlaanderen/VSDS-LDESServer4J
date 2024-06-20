@@ -11,13 +11,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "members", indexes = {
-        @Index(columnList = "id, timestamp"),
-        @Index(columnList = "old_id")
+		@Index(columnList = "member_id, timestamp"),
+		@Index(columnList = "old_id"),
+		@Index(columnList = "subject, collection_id", unique = true)
 })
 public class MemberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial")
+    @Column(name = "member_id", columnDefinition = "BIGINT", nullable = false)
     private long id;
     @Column(name = "old_id", nullable = false)
     private String oldId;
@@ -39,47 +40,49 @@ public class MemberEntity {
     @Column(name = "member_model", nullable = false, columnDefinition = "bytea")
     private Model model;
 
-    @SuppressWarnings("java:S107")
-    public MemberEntity(String subject, EventStreamEntity collection, String versionOf, LocalDateTime timestamp, String transactionId, boolean isInEventSource, Model model) {
-        this.subject = subject;
-        this.collection = collection;
-        this.versionOf = versionOf;
-        this.timestamp = timestamp;
-        this.transactionId = transactionId;
-        this.isInEventSource = isInEventSource;
-        this.model = model;
-    }
-    protected MemberEntity() {}
+	@SuppressWarnings("java:S107")
+	public MemberEntity(String subject, EventStreamEntity collection, String versionOf, LocalDateTime timestamp, String transactionId, boolean isInEventSource, Model model) {
+		this.subject = subject;
+		this.collection = collection;
+		this.versionOf = versionOf;
+		this.timestamp = timestamp;
+		this.transactionId = transactionId;
+		this.isInEventSource = isInEventSource;
+		this.model = model;
+	}
 
-    public long getId() {
-        return id;
-    }
+	protected MemberEntity() {
+	}
 
-    public String getSubject() {
-        return subject;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public EventStreamEntity getCollection() {
-        return collection;
-    }
+	public String getSubject() {
+		return subject;
+	}
 
-    public String getVersionOf() {
-        return versionOf;
-    }
+	public EventStreamEntity getCollection() {
+		return collection;
+	}
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+	public String getVersionOf() {
+		return versionOf;
+	}
 
-    public String getTransactionId() {
-        return transactionId;
-    }
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
 
-    public boolean isInEventSource() {
-        return isInEventSource;
-    }
+	public String getTransactionId() {
+		return transactionId;
+	}
 
-    public Model getModel() {
-        return model;
-    }
+	public boolean isInEventSource() {
+		return isInEventSource;
+	}
+
+	public Model getModel() {
+		return model;
+	}
 }

@@ -49,7 +49,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
-				ObservationRegistry.create(), fragmentFinder, fragmentRepository, config);
+				ObservationRegistry.create(), fragmentFinder, fragmentRepository, mock(), config);
 	}
 
 	@Test

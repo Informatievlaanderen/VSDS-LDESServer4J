@@ -1,10 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -39,9 +37,10 @@ public class TimeBasedBucketCreator {
 	                                    Granularity granularity) {
 		Bucket childBucket = parentBucket.createChild(new BucketDescriptorPair(granularity.getValue(), timeValue));
 		return bucketRepository
-				.retrieveBucket(childBucket.getBucketDescriptor())
+				.retrieveBucket(childBucket.getBucketDescriptorAsString())
 				.orElseGet(() -> {
 					bucketRepository.saveBucket(childBucket);
+					// TODO addRelationToParent
 //					logFragmentation(parentBucket, child);
 					return childBucket;
 				});
