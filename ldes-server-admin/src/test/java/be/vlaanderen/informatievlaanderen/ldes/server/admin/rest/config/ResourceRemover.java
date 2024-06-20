@@ -7,15 +7,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class ResourceRemover {
     private final ApplicationEventPublisher applicationEventPublisher;
-    private List<String> usedStreams = new ArrayList<>();
+    private final List<String> usedStreams = new ArrayList<>();
 
-    private ResourceRemover(ApplicationEventPublisher applicationEventPublisher) {
+    protected ResourceRemover(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 

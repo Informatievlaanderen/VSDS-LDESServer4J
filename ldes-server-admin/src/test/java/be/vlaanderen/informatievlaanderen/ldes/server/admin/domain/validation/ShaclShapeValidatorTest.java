@@ -13,7 +13,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.*;

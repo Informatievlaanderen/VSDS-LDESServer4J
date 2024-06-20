@@ -25,13 +25,12 @@ class TimeBasedFragmentFinderTest {
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.DAY);
-	private TimeBasedConfig config;
-	private TimeBasedFragmentCreator fragmentCreator;
+    private TimeBasedFragmentCreator fragmentCreator;
 	private TimeBasedFragmentFinder fragmentFinder;
 
 	@BeforeEach
 	void setUp() {
-		config = new TimeBasedConfig(".*", "", Granularity.DAY, false);
+        TimeBasedConfig config = new TimeBasedConfig(".*", "", Granularity.DAY, false);
 		fragmentCreator = mock(TimeBasedFragmentCreator.class);
 		fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator, config);
 
@@ -54,8 +53,8 @@ class TimeBasedFragmentFinderTest {
 
 	@Test
 	void when_GetDefaultIsCalled_Then_ReturnExpectedFragment() {
-		Fragment actual = fragmentFinder.getDefaultFragment(PARENT);
+		fragmentFinder.getDefaultFragment(PARENT);
 
-		verify(fragmentCreator, times(1)).getOrCreateFragment(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		verify(fragmentCreator).getOrCreateFragment(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 }

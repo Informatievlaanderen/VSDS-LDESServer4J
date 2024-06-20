@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -38,11 +37,6 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 	public void deleteShaclShape(String collectionName) {
 		shaclShapeRepository.deleteShaclShape(collectionName);
 		eventPublisher.publishEvent(new ShaclDeletedEvent(collectionName));
-	}
-
-	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		deleteShaclShape(event.collectionName());
 	}
 
 	/**

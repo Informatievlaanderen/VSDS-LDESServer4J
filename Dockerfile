@@ -23,6 +23,7 @@ COPY --from=app-stage ldes-server-infra-postgres/postgres-retention-repository/t
 COPY --from=app-stage ldes-server-infra-postgres/postgres-fragmentation-repository/target/postgres-fragmentation-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-postgres/postgres-pagination-repository/target/postgres-pagination-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-postgres/postgres-admin-repository/target/postgres-admin-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-liquibase/target/postgres-liquibase-jar-with-dependencies.jar ./lib/
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/
