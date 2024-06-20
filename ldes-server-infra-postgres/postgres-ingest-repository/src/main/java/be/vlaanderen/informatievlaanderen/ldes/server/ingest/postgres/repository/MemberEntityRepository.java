@@ -16,7 +16,7 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	List<MemberEntity> findAllByOldIdIn(List<String> oldIds);
 
-	@Query("SELECT m FROM MemberEntity m LEFT JOIN EventStreamEntity e WHERE e.name = :collectionName")
+	@Query("SELECT m FROM MemberEntity m LEFT JOIN EventStreamEntity e ON m.collection = e WHERE e.name = :collectionName")
 	List<MemberEntity> findAllByCollectionName(String collectionName);
 
 	void deleteAllByOldIdIn(List<String> oldIds);
