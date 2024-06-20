@@ -30,9 +30,9 @@
     <changeSet id="migrate-event-sources-data" author="vsds">
         <preConditions>
             <changeSetExecuted id="create-new-event-sources-table" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/admin-data-model/event-source/add-fk-to-event-source.xml"/>
+                               changeLogFile="db/changelog/3_1_0/event-source/add-fk-to-event-source.xml"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_0/admin-data-model/event-source/migrate-event-source-data.sql"/>
+        <sqlFile path="db/changelog/3_1_0/event-source/migrate-event-source-data.sql"/>
         <rollback>
             <delete tableName="eventsources"/>
         </rollback>
@@ -40,7 +40,7 @@
     <changeSet id="drop-old-event-sources-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate-event-sources-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/admin-data-model/event-source/add-fk-to-event-source.xml"/>
+                               changeLogFile="db/changelog/3_1_0/event-source/add-fk-to-event-source.xml"/>
         </preConditions>
         <dropTable tableName="eventsource" cascadeConstraints="true"/>
     </changeSet>

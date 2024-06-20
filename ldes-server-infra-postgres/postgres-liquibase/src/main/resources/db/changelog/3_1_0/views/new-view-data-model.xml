@@ -48,7 +48,7 @@
         <preConditions>
             <tableExists tableName="views"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_0/admin-data-model/views/migrate-view-data.sql" />
+        <sqlFile path="db/changelog/3_1_0/views/migrate-view-data.sql" />
         <rollback>
             <delete tableName="views"/>
         </rollback>
@@ -56,7 +56,7 @@
     <changeSet id="drop-old-view-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate-view-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/admin-data-model/views/new-view-data-model.xml"/>
+                               changeLogFile="db/changelog/3_1_0/views/new-view-data-model.xml"/>
         </preConditions>
         <dropTable tableName="view" cascadeConstraints="true"/>
     </changeSet>

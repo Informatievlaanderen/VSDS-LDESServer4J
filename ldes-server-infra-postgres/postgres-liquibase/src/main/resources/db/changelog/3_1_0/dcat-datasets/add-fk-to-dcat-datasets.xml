@@ -30,9 +30,9 @@
     <changeSet id="migrate-dcat-datasets-data" author="vsds">
         <preConditions>
             <changeSetExecuted id="create-new-dcat-datasets-table" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/admin-data-model/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
+                               changeLogFile="db/changelog/3_1_0/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_0/admin-data-model/dcat-datasets/migrate-dcat-datasets-data.sql"/>
+        <sqlFile path="db/changelog/3_1_0/dcat-datasets/migrate-dcat-datasets-data.sql"/>
         <rollback>
             <delete tableName="dcat_datasets"/>
         </rollback>
@@ -40,7 +40,7 @@
     <changeSet id="drop-old-dcat-datasets-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate-dcat-datasets-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/admin-data-model/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
+                               changeLogFile="db/changelog/3_1_0/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
         </preConditions>
         <dropTable tableName="dcat_dataset" cascadeConstraints="true"/>
     </changeSet>
