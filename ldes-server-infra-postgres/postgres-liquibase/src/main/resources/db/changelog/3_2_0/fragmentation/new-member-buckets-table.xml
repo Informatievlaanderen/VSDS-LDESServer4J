@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-member-buckets-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="member_buckets"/>
+            </not>
+        </preConditions>
+        <createTable tableName="member_buckets">
+            <column name="bucket_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="member_buckets" columnNames="bucket_id,member_id"/>
+        <addForeignKeyConstraint baseTableName="member_buckets" baseColumnNames="bucket_id"
+                                 constraintName="fk_member_buckets_buckets_id"
+                                 referencedTableName="buckets"
+                                 referencedColumnNames="bucket_id"/>
+        <addForeignKeyConstraint baseTableName="member_buckets" baseColumnNames="member_id"
+                                 constraintName="fk_member_buckets_members_id"
+                                 referencedTableName="members"
+                                 referencedColumnNames="member_id"/>
+        <rollback>
+            <delete tableName="member_buckets" />
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-into-new-member-buckets-table" author="vsds">
+        <preConditions>
+            <tableExists tableName="member_buckets" />
+        </preConditions>
+        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-member-buckets-table.sql" />
+        <rollback>
+            <delete tableName="member_buckets" />
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

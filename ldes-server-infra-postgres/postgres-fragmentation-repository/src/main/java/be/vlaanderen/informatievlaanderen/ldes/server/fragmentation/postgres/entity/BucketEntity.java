@@ -9,19 +9,19 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.util.List;
 
 @Entity
-@Table(name = "buckets")
+@Table(name = "buckets", indexes = @Index(unique = true, columnList = "view_id,bucket"))
 public class BucketEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "bucket_id", nullable = false, unique = true)
+	@Column(name = "bucket_id", nullable = false, unique = true, columnDefinition = "BIGINT")
 	private Long bucketId;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "view_id", nullable = false)
+	@JoinColumn(name = "view_id", nullable = false, columnDefinition = "INT")
 	private ViewEntity viewEntity;
 
-	@Column(name = "bucket", nullable = false, columnDefinition = "VARCHAR(255)")
+	@Column(name = "bucket", columnDefinition = "VARCHAR(255)")
 	private String bucket;
 
 	@ManyToMany(fetch = FetchType.LAZY)
