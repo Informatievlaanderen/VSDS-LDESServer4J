@@ -4,11 +4,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFWriter;
 
-public class MemberIdNotFoundException extends RuntimeException {
+public class MemberSubjectNotFoundException extends RuntimeException {
 
 	private final transient Model model;
 
-	public MemberIdNotFoundException(Model model) {
+	public MemberSubjectNotFoundException(Model model) {
 		this.model = model;
 	}
 

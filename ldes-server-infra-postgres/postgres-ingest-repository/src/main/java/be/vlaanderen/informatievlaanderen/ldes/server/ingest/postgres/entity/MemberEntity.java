@@ -1,77 +1,85 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity;
 
-
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.DatabaseColumnModelConverter;
 import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
 @Entity
-@EntityListeners(MemberEntityListener.class)
-@Table(name = "ingest_ldesmember", indexes = {
-		@Index(columnList = "collectionName"),
-		@Index(columnList = "collectionName, sequenceNr")
+@Table(name = "members", indexes = {
+        @Index(columnList = "id, timestamp"),
+        @Index(columnList = "old_id")
 })
 public class MemberEntity {
-	@Id
-	private String id;
-	private String collectionName;
-	private String versionOf;
-	private LocalDateTime timestamp;
-	private Long sequenceNr;
-	private String transactionId;
-	private boolean isInEventSource;
-	@Column(columnDefinition = "bytea")
-	private byte[] model;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial")
+    private long id;
+    @Column(name = "old_id", nullable = false)
+    private String oldId;
+    @Column(name = "subject", nullable = false)
+    private String subject;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private EventStreamEntity collection;
+    @Column(name = "version_of", nullable = false)
+    private String versionOf;
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;
+    @Column(name = "transaction_id", nullable = false)
+    private String transactionId;
+    @Column(name = "is_in_event_source", nullable = false)
+    private boolean isInEventSource;
+    @Convert(converter = DatabaseColumnModelConverter.class)
+    @Column(name = "member_model", nullable = false, columnDefinition = "bytea")
+    private Model model;
 
-	protected MemberEntity() {}
+    @SuppressWarnings("java:S107")
+    public MemberEntity(String subject, EventStreamEntity collection, String versionOf, LocalDateTime timestamp, String transactionId, boolean isInEventSource, Model model) {
+        this.subject = subject;
+        this.collection = collection;
+        this.versionOf = versionOf;
+        this.timestamp = timestamp;
+        this.transactionId = transactionId;
+        this.isInEventSource = isInEventSource;
+        this.model = model;
+    }
+    protected MemberEntity() {}
 
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr,
-	                    boolean isInEventSource, String transactionId, byte[] model) {
-		this.id = id;
-		this.collectionName = collectionName;
-		this.versionOf = versionOf;
-		this.timestamp = timestamp;
-		this.sequenceNr = sequenceNr;
-		this.isInEventSource = isInEventSource;
-		this.transactionId = transactionId;
-		this.model = model;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public String getCollectionName() {
-		return collectionName;
-	}
+    public EventStreamEntity getCollection() {
+        return collection;
+    }
 
-	public String getVersionOf() {
-		return versionOf;
-	}
+    public String getVersionOf() {
+        return versionOf;
+    }
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
-	public Long getSequenceNr() {
-		return sequenceNr;
-	}
+    public String getTransactionId() {
+        return transactionId;
+    }
 
-	public boolean isInEventSource() {
-		return isInEventSource;
-	}
+    public boolean isInEventSource() {
+        return isInEventSource;
+    }
 
-	public void setSequenceNr(Long sequenceNr) {
-		this.sequenceNr = sequenceNr;
-	}
-
-	public String getTransactionId() {
-		return transactionId;
-	}
-
-	public byte[] getModel() {
-		return model;
-	}
-
+    public Model getModel() {
+        return model;
+    }
 }

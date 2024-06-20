@@ -10,11 +10,11 @@ public class MemberBucketEntityMapper {
 
     public MemberBucketEntity toMemberBucketisationEntity(BucketisedMember member) {
         return new MemberBucketEntity(member.viewName().asString(), member.fragmentId(),
-                member.memberId(), member.sequenceNr());
+                member.memberId(), 0L);
     }
 
     public BucketisedMember toBucketisedMember(MemberBucketEntity entity) {
         return new BucketisedMember(entity.getMemberId(), ViewName.fromString(entity.getViewName()),
-                entity.getFragmentId(), entity.getSequenceNr());
+                entity.getFragmentId());
     }
 }

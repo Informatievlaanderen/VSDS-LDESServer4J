@@ -75,7 +75,7 @@ class PaginationProcessorTest {
 	@Test
 	void processMembers_noPaginationService() {
 		ViewName v1 = viewName("v1");
-		List<BucketisedMember> bucketisedMembers = List.of(new BucketisedMember("x/1", v1, v1.asString(), 0L));
+		List<BucketisedMember> bucketisedMembers = List.of(new BucketisedMember("x/1", v1, v1.asString()));
 
 		assertThrows(NoSuchElementException.class, ()-> processor.process(bucketisedMembers));
 	}
@@ -86,7 +86,7 @@ class PaginationProcessorTest {
 		MemberPaginationService paginationService = mock(MemberPaginationService.class);
 		processor.paginationServices.put(v1.asString(), paginationService);
 
-		List<BucketisedMember> bucketisedMembers = List.of(new BucketisedMember("x/1", v1, v1.asString(), 0L));
+		List<BucketisedMember> bucketisedMembers = List.of(new BucketisedMember("x/1", v1, v1.asString()));
 
 		processor.process(bucketisedMembers);
 

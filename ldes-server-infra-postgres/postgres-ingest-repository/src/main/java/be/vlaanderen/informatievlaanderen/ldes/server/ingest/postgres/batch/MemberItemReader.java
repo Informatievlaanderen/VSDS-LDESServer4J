@@ -51,8 +51,8 @@ public class MemberItemReader {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("i.*");
-		queryProvider.setFromClause("ingest_ldesmember i LEFT JOIN fragmentation_bucketisation fb on i.id = fb.member_id");
+		queryProvider.setSelectClause("m.*, c.name");
+		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id LEFT JOIN collections c on m.collection_id = c.collection_id");
 		queryProvider.setWhereClause("fb.id IS NULL");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
@@ -62,9 +62,10 @@ public class MemberItemReader {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("i.*");
-		queryProvider.setFromClause("ingest_ldesmember i LEFT JOIN fragmentation_bucketisation fb on i.id = fb.member_id " +
-		                            "AND fb.view_name = :viewName");
+		queryProvider.setSelectClause("m.*, c.name");
+		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id " +
+				"AND fb.view_name = :viewName " +
+				"LEFT JOIN collections c on m.collection_id = c.collection_id");
 		queryProvider.setWhereClause("fb.id IS NULL");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;

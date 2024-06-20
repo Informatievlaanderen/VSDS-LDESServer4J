@@ -79,10 +79,10 @@ class FragmentationServiceTest {
 	@Test
 	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() throws Exception {
 		List<IngestedMember> members = List.of(
-				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null)
+				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), true, "", null)
 		);
 
 		MemberMapper memberMapper = mock(MemberMapper.class);
@@ -115,7 +115,7 @@ class FragmentationServiceTest {
 		for (int i = 1; i <= count; i++) {
 			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
 			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i, 0L)));
+					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i)));
 			fragmentationExecutors.add(executor);
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}

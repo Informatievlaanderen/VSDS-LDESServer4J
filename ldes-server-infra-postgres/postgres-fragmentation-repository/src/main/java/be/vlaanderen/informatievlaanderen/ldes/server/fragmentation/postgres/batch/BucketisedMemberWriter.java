@@ -36,7 +36,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				ps.setString(1, bucket.viewName().asString());
 				ps.setString(2, bucket.fragmentId());
 				ps.setString(3, bucket.memberId());
-				ps.setLong(4, bucket.sequenceNr());
+				ps.setLong(4, 0L);
 				// Add it to the batch
 				ps.addBatch();
 			}
