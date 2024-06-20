@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import jakarta.persistence.EntityListeners;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
