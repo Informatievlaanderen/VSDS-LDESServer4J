@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberIngesterImplTest {
     private static final String COLLECTION_NAME = "hindrances";
-    private static final String MEMBER_ID = "hindrances/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483";
+    private static final String MEMBER_SUBJECT = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483";
     private static final String VERSION_OF = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622";
     private static final LocalDateTime TIMESTAMP = ZonedDateTime.parse("2020-12-28T09:36:37.127Z").toLocalDateTime();
 
@@ -62,9 +62,9 @@ class MemberIngesterImplTest {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
 
         IngestedMember member = new IngestedMember(
-                MEMBER_ID, COLLECTION_NAME,
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, true, "txId", model);
+                MEMBER_SUBJECT, COLLECTION_NAME,
+                VERSION_OF, TIMESTAMP,
+                true, "txId", model);
 
         doThrow(new RuntimeException("testException")).when(validator).validate(member);
 
@@ -79,9 +79,9 @@ class MemberIngesterImplTest {
     void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
         IngestedMember member = new IngestedMember(
-                MEMBER_ID, COLLECTION_NAME,
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, true, "txId", model);
+                MEMBER_SUBJECT, COLLECTION_NAME,
+                VERSION_OF, TIMESTAMP,
+                true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
@@ -96,9 +96,9 @@ class MemberIngesterImplTest {
     void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQ).toModel();
         IngestedMember member = new IngestedMember(
-                MEMBER_ID, COLLECTION_NAME,
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, true, "txId", model);
+                MEMBER_SUBJECT, COLLECTION_NAME,
+                VERSION_OF, TIMESTAMP,
+                true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);

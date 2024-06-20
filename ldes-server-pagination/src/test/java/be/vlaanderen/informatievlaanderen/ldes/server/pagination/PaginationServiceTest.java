@@ -122,10 +122,10 @@ class PaginationServiceTest {
 
 	private List<BucketisedMember> bucketisedMembers() {
 		return List.of(
-				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1", 0L)
+				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1")
 		);
 	}
 }

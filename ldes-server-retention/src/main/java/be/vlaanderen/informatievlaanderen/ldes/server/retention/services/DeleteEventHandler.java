@@ -29,7 +29,6 @@ public class DeleteEventHandler {
 		log.atInfo().log("STARTED deleting members of view {} in the background", viewName.asString());
 		memberRemover.removeView(viewName.asString());
         log.atInfo().log("FINISHED deleting members of view {} in the background", viewName.asString());
-
     }
 
 	@Async

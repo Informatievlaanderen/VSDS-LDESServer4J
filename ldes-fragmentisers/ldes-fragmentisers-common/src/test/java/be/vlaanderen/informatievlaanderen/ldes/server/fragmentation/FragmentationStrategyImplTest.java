@@ -27,7 +27,6 @@ class FragmentationStrategyImplTest {
 		Fragment fragment = new Fragment(FRAGMENT_ID);
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.id()).thenReturn(MEMBER_ID);
-		when(member.sequenceNr()).thenReturn(SEQ_NR);
 
 		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(fragment, member, mock(Observation.class));
 
@@ -35,6 +34,5 @@ class FragmentationStrategyImplTest {
 		assertEquals(MEMBER_ID, members.getFirst().memberId());
 		assertEquals(VIEW_NAME, members.getFirst().viewName());
 		assertEquals(FRAGMENT_ID.asDecodedFragmentId(), members.getFirst().fragmentId());
-		assertEquals(SEQ_NR, members.getFirst().sequenceNr());
 	}
 }

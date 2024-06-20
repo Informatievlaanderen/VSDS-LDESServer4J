@@ -53,7 +53,7 @@ public class MemberIngesterImpl implements MemberIngester {
         }
         publishIngestedEvent(collectionName, members);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment(ingestedMembersCount);
-        members.forEach(member -> logSuccessfulMemberIngestion(member.getId()));
+        members.forEach(member -> logSuccessfulMemberIngestion(member.getSubject()));
         return true;
     }
 
@@ -66,11 +66,10 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private void publishIngestedEvent(String collectionName, List<IngestedMember> members) {
         final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
-                .map(member -> new MembersIngestedEvent.MemberProperties(member.getId(), member.getVersionOf(), member.getTimestamp()))
+                .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
                 .toList();
         eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
     }
-
 
     private void logSuccessfulMemberIngestion(String memberId) {
         final String loggableMemberId = memberId.replaceAll("[\n\r\t]", "_");
