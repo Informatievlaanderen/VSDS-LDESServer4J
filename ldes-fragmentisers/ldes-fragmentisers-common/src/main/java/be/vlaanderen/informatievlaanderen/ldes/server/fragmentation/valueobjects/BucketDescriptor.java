@@ -14,6 +14,10 @@ public class BucketDescriptor {
 		this.descriptorPairs = descriptorPairs;
 	}
 
+	public static BucketDescriptor empty() {
+		return new BucketDescriptor(List.of());
+	}
+
 	public List<BucketDescriptorPair> getDescriptorPairs() {
 		return descriptorPairs;
 	}
