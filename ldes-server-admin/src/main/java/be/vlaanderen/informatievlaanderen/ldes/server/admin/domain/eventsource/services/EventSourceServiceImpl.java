@@ -37,7 +37,7 @@ public class EventSourceServiceImpl implements EventSourceService {
     /**
      * Initializes the eventSources.
      * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
-     * to give db migrations such as mongock time before this init.
+     * to give db migrations time before this init.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void initViews() {
