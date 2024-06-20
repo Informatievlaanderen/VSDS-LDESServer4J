@@ -57,7 +57,7 @@
         <preConditions>
             <tableExists tableName="members"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_0/member-data-model/migrate-members.sql"/>
+        <sqlFile path="db/changelog/3_2_0/member-data-model/migrate-members.sql"/>
         <rollback>
             <delete tableName="members"/>
         </rollback>

@@ -5,7 +5,7 @@
     <changeSet id="drop-old-members-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate_members" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/member-data-model/member-new-datamodel.xml"/>
+                               changeLogFile="db/changelog/3_2_0/member-data-model/member-new-datamodel.xml"/>
         </preConditions>
         <dropTable tableName="ingest_ldesmember" cascadeConstraints="true"/>
     </changeSet>
