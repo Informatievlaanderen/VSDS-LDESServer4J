@@ -38,7 +38,7 @@ public class BucketProcessor implements ItemProcessor<IngestedMember, List<Bucke
 					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(memberMapper.mapToFragmentationMember(item)))
 					.orElse(null);
 		} else {
-			return fragmentationCollections.getFragmentationStrategyExecutors(item.getCollectionName())
+			return fragmentationCollections.getAllFragmentationStrategyExecutors(item.getCollectionName())
 					.parallelStream()
 					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(memberMapper.mapToFragmentationMember(item)))
 					.flatMap(List::stream)

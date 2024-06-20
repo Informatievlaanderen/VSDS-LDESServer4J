@@ -120,7 +120,7 @@ class FragmentationServiceTest {
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}
 
-		when(strategyCollection.getFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
+		when(strategyCollection.getAllFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
 	}
 
 	private void mockReader(List<IngestedMember> members) throws Exception {

@@ -13,8 +13,9 @@ import java.util.List;
 @Component
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
 
-	private static final String SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
+	private static final String OLD_SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
 	                                  "values (?, ?, ?, ?)";
+	private static final String SQL = "INSERT INTO member_buckets (";
 
 	private final DataSource dataSource;
 
@@ -30,7 +31,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				.toList());
 
 		try(Connection connection = dataSource.getConnection();
-		    PreparedStatement ps = connection.prepareStatement(SQL)) {
+		    PreparedStatement ps = connection.prepareStatement(OLD_SQL)) {
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());

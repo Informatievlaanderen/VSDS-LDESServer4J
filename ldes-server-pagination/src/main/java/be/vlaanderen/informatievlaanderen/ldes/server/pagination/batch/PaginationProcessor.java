@@ -36,7 +36,7 @@ public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>
 		if (bucketisedMembers.isEmpty()) {
 			return null;
 		}
-		String viewName = bucketisedMembers.getFirst().getViewName();
+		String viewName = bucketisedMembers.getFirst().viewNameAsString();
 
 		MemberPaginationService memberPaginationService = paginationServices.get(viewName);
 		if (memberPaginationService == null) {

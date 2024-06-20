@@ -1,13 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -39,6 +37,8 @@ public class FragmentationService {
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private static final String BUCKETISATION_JOB = "bucketisation";
 	private static final String REBUCKETISATION_JOB = "rebucketisation";
+	public static final String BUCKETISE_MEMBERS_STEP_NAME = "bucketiseMembers";
+	public static final String REBUCKETISE_MEMBERS_STEP_NAME = "rebucketiseMembers";
 	private final JobLauncher jobLauncher;
 	private final JobExplorer jobExplorer;
 	private final JobRepository jobRepository;
@@ -48,17 +48,15 @@ public class FragmentationService {
 	private final BucketProcessor processor;
 	private final ItemWriter<List<BucketisedMember>> bucketWriter;
 	private final ApplicationEventPublisher eventPublisher;
-	private AtomicBoolean shouldTriggerBucketisation = new AtomicBoolean(false);
-
-	private final FragmentRepository fragmentRepository;
+	private final AtomicBoolean shouldTriggerBucketisation = new AtomicBoolean(false);
 
 	public FragmentationService(JobLauncher jobLauncher, JobExplorer jobExplorer, JobRepository jobRepository,
 	                            PlatformTransactionManager transactionManager,
 	                            @Qualifier("newMemberReader") ItemReader<IngestedMember> newMemberReader,
 	                            @Qualifier("refragmentEventStream") ItemReader<IngestedMember> rebucketiseMemberReader,
 	                            BucketProcessor processor,
-	                            ItemWriter<List<BucketisedMember>> bucketWriter, ApplicationEventPublisher eventPublisher,
-	                            FragmentRepository fragmentRepository) {
+	                            ItemWriter<List<BucketisedMember>> bucketWriter,
+	                            ApplicationEventPublisher eventPublisher) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.jobRepository = jobRepository;
@@ -68,7 +66,6 @@ public class FragmentationService {
 		this.processor = processor;
 		this.bucketWriter = bucketWriter;
 		this.eventPublisher = eventPublisher;
-		this.fragmentRepository = fragmentRepository;
 	}
 
 	@EventListener(MembersIngestedEvent.class)
@@ -92,11 +89,6 @@ public class FragmentationService {
 		}
 	}
 
-	@EventListener
-	public void markFragmentsImmutableInCollection(EventStreamClosedEvent event) {
-		fragmentRepository.markFragmentsImmutableInCollection(event.collectionName());
-	}
-
 	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		jobLauncher.run(job, jobParameters);
 		if (job.getName().equals(BUCKETISATION_JOB)) {
@@ -113,30 +105,20 @@ public class FragmentationService {
 
 	private Job bucketiseJob() {
 		return new JobBuilder(BUCKETISATION_JOB, jobRepository)
-				.start(bucketiseMembers())
+				.start(createBucketisationStep(BUCKETISE_MEMBERS_STEP_NAME, newMemberReader))
 				.build();
 	}
 
 	private Job rebucketiseJob() {
 		return new JobBuilder(REBUCKETISATION_JOB, jobRepository)
-				.start(rebucketiseMembers())
+				.start(createBucketisationStep(REBUCKETISE_MEMBERS_STEP_NAME, rebucketiseMemberReader))
 				.build();
 	}
 
-	private Step bucketiseMembers() {
-		return new StepBuilder("bucketiseMembers", jobRepository)
+	private Step createBucketisationStep(String stepName, ItemReader<IngestedMember> memberReader) {
+		return new StepBuilder(stepName, jobRepository)
 				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(newMemberReader)
-				.processor(processor)
-				.writer(bucketWriter)
-				.allowStartIfComplete(true)
-				.build();
-	}
-
-	private Step rebucketiseMembers() {
-		return new StepBuilder("rebucketiseMembers", jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(rebucketiseMemberReader)
+				.reader(memberReader)
 				.processor(processor)
 				.writer(bucketWriter)
 				.allowStartIfComplete(true)

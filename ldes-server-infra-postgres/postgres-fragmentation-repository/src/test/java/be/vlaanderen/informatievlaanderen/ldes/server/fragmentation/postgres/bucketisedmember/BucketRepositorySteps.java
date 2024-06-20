@@ -58,7 +58,7 @@ public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest 
     public void membersArePresent() {
         members.forEach(bucketisedMember -> {
             assertTrue(memberBucketEntityRepository
-                    .findUnprocessedBuckets(bucketisedMember.getViewName(), bucketisedMember.viewName().getCollectionName(), Pageable.ofSize(1000)).isEmpty());
+                    .findUnprocessedBuckets(bucketisedMember.viewNameAsString(), bucketisedMember.viewName().getCollectionName(), Pageable.ofSize(1000)).isEmpty());
         });
     }
 
@@ -66,7 +66,7 @@ public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest 
     public void membersOfCollectionAreNotPresent(String collection) {
         members.forEach(bucketisedMember -> {
             assertTrue(memberBucketEntityRepository
-                    .findUnprocessedBuckets(bucketisedMember.getViewName(), collection, Pageable.ofSize(1000)).isEmpty());
+                    .findUnprocessedBuckets(bucketisedMember.viewNameAsString(), collection, Pageable.ofSize(1000)).isEmpty());
         });
     }
 
