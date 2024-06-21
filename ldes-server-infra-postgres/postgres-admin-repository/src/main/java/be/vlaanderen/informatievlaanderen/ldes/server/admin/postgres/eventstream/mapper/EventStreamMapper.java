@@ -22,6 +22,7 @@ public class EventStreamMapper {
                 entity.getTimestampPath(),
                 entity.getVersionOfPath(),
                 entity.isVersionCreationEnabled(),
+                entity.isClosed(),
                 entity.getViews().stream().map(ViewSpecificationMapper::fromEntity).toList(),
                 entity.getShaclShapeEntity().getModel(),
                 entity.getEventSourceEntity().getRetentionPolicies(),
