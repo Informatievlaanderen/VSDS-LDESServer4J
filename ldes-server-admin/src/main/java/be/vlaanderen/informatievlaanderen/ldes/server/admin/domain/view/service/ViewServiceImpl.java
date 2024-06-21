@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,13 @@ public class ViewServiceImpl implements ViewService {
     private static final String VIEW_TYPE = "view";
     private final DcatViewService dcatViewService;
     private final ViewRepository viewRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventMulticaster eventPublisher;
     private final ViewValidator viewValidator;
 
     private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 
     public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
-                           ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
+                           ApplicationEventMulticaster eventPublisher, ViewValidator viewValidator) {
         this.dcatViewService = dcatViewService;
         this.viewRepository = viewRepository;
         this.eventPublisher = eventPublisher;
@@ -48,7 +48,7 @@ public class ViewServiceImpl implements ViewService {
         checkIfViewAlreadyExists(viewSpecification);
         viewValidator.validateView(viewSpecification);
 
-        eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
+        eventPublisher.multicastEvent(new ViewAddedEvent(this, viewSpecification));
         viewRepository.saveView(viewSpecification);
         log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
     }
@@ -95,7 +95,7 @@ public class ViewServiceImpl implements ViewService {
         log.atInfo().log("START deleting view  {}", viewName.asString());
         viewRepository.deleteViewByViewName(viewName);
         log.atInfo().log("FINISHED deleting view {}", viewName.asString());
-        eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
+        eventPublisher.multicastEvent(new ViewDeletedEvent(this, viewName));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ViewServiceImpl implements ViewService {
         viewRepository
                 .retrieveAllViews()
                 .forEach(viewSpecification -> eventPublisher
-                        .publishEvent(new ViewInitializationEvent(viewSpecification)));
+                        .multicastEvent(new ViewInitializationEvent(this, viewSpecification)));
     }
 
     @EventListener

@@ -46,7 +46,7 @@ class MemberExtractorCollectionImplTest {
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .isPresent();
 
-        memberExtractorCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+        memberExtractorCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION_NAME));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .isEmpty();
@@ -56,7 +56,7 @@ class MemberExtractorCollectionImplTest {
     void test_HandleVersionObjectEventStreamCreatedEvent() {
         final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
 
-        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .containsInstanceOf(VersionObjectMemberExtractor.class);
@@ -66,7 +66,7 @@ class MemberExtractorCollectionImplTest {
     void test_HandleStateObjectEventStreamCreatedEvent() {
         final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
 
-        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .containsInstanceOf(StateObjectMemberExtractor.class);

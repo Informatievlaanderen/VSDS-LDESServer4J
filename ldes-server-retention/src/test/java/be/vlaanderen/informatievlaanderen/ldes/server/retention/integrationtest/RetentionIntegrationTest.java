@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.RecordApplicationEvents;
@@ -26,7 +26,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 public class RetentionIntegrationTest {
 
 	@Autowired
-	ApplicationEventPublisher applicationEventPublisher;
+	ApplicationEventMulticaster eventPublisher;
 
 	@Autowired
 	MemberPropertiesRepository memberPropertiesRepository;

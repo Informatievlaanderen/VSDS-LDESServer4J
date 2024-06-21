@@ -32,9 +32,9 @@ class MemberIngestValidatorTest {
     @BeforeEach
     void setup() {
         validator = new MemberIngestValidator(List.of(new BlankNodesValidator(), new PathsValidator()));
-        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(this,
                 new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, true)));
-        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(this,
                 new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, false)));
     }
 
@@ -55,7 +55,7 @@ class MemberIngestValidatorTest {
     @ParameterizedTest
     @ArgumentsSource(CorrectMemberArgumentsProvider.class)
     void when_EventStreamClosedEvent_validationThrowsException(Model model, String collectionName) {
-        EventStreamClosedEvent eventStreamClosedEvent = new EventStreamClosedEvent(collectionName);
+        EventStreamClosedEvent eventStreamClosedEvent = new EventStreamClosedEvent(this, collectionName);
         validator.handleEventStreamClosedEvent(eventStreamClosedEvent);
 
         assertThatThrownBy(() -> validator.validate(model, collectionName))

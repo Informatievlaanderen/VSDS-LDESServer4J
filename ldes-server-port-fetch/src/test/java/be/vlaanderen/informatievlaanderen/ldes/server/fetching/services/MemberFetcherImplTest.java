@@ -39,7 +39,7 @@ class MemberFetcherImplTest {
     void given_StateObjectEventStream_test_FetchAllByIds() {
         when(memberRepository.findAllByIds(MEMBER_IDS)).thenReturn(createIngestMembers());
 
-        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true)));
+        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true)));
 
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members need to have two additional statements added")
@@ -52,7 +52,7 @@ class MemberFetcherImplTest {
     void given_VersionObjectEventStream_test_FetchAllByIds() {
         when(memberRepository.findAllByIds(MEMBER_IDS)).thenReturn(createIngestMembers());
 
-        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, false)));
+        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, false)));
 
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members should not be altered")

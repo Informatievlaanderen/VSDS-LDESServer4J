@@ -61,23 +61,23 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp"))
 		);
-		return new MembersIngestedEvent(row.get("collectionName"), List.of(member));
+		return new MembersIngestedEvent(this, row.get("collectionName"), List.of(member));
 	}
 
 	@Given("an EventStream with the following properties")
 	public void anEventStreamWithTheFollowingProperties(EventStream eventStream) {
-		applicationEventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStream));
 	}
 
 	@And("the following Members are ingested")
 	public void theFollowingMembersAreIngested(List<MembersIngestedEvent> ingestedMembers) {
-		ingestedMembers.forEach(applicationEventPublisher::publishEvent);
+		ingestedMembers.forEach(eventPublisher::multicastEvent);
 	}
 
 	@When("a view with the following properties is created")
 	public void aViewWithTheFollowingPropertiesIsCreated(ViewSpecification viewSpecification) {
-		ViewAddedEvent viewAddedEvent = new ViewAddedEvent(viewSpecification);
-		applicationEventPublisher.publishEvent(viewAddedEvent);
+		ViewAddedEvent viewAddedEvent = new ViewAddedEvent(this, viewSpecification);
+		eventPublisher.multicastEvent(viewAddedEvent);
 	}
 
 	@When("wait for {int} seconds until the scheduler has executed at least once")
@@ -90,7 +90,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 
 	@And("the following members are allocated to the view {string}")
 	public void theFollowingMembersAreAllocatedToTheView(String viewName, List<String> members) {
-		members.forEach(member -> applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member,
+		members.forEach(member -> eventPublisher.multicastEvent(new MemberAllocatedEvent(this, member,
 				ViewName.fromString(viewName).getCollectionName(), ViewName.fromString(viewName).getViewName(), "")));
 	}
 

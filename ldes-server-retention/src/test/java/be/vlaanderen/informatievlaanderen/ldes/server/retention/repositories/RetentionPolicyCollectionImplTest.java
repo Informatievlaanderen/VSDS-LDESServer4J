@@ -34,10 +34,10 @@ class RetentionPolicyCollectionImplTest {
                 .thenReturn(Optional.of(mock(RetentionPolicy.class)));
 
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).doesNotContainKey(viewSpecification.getName());
-        retentionPolicyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
+        retentionPolicyCollection.handleViewAddedEvent(new ViewAddedEvent(this, viewSpecification));
 
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).containsKey(viewSpecification.getName());
-        retentionPolicyCollection.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
+        retentionPolicyCollection.handleViewDeletedEvent(new ViewDeletedEvent(this, viewSpecification.getName()));
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).doesNotContainKey(viewSpecification.getName());
     }
 
@@ -50,7 +50,7 @@ class RetentionPolicyCollectionImplTest {
                 .thenReturn(Optional.of(mock(RetentionPolicy.class)));
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).doesNotContainKey(viewSpecification.getName());
 
-        retentionPolicyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
+        retentionPolicyCollection.handleViewInitializationEvent(new ViewInitializationEvent(this, viewSpecification));
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).containsKey(viewSpecification.getName());
     }
 
@@ -62,10 +62,10 @@ class RetentionPolicyCollectionImplTest {
                         new ViewSpecification(new ViewName(collectionName, "view1"), List.of(), List.of(), 100),
                         new ViewSpecification(new ViewName(collectionName, "view2"), List.of(), List.of(), 100)
                 )
-                .map(ViewInitializationEvent::new)
+                .map(view -> new ViewInitializationEvent(this, view))
                 .forEach(retentionPolicyCollection::handleViewInitializationEvent);
 
-        retentionPolicyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+        retentionPolicyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, collectionName));
 
         assertThat(retentionPolicyCollection.getRetentionPolicyMap()).isEmpty();
     }

@@ -54,8 +54,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		final String collection2 = "name2";
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
+		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStream));
+		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStream2));
 		Model shape1 = readModelFromFile("shacl/shape-name1.ttl");
 		Model shape2 = readModelFromFile("shacl/shape-name2.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
@@ -103,7 +103,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		Model shape = readModelFromFile("shacl/server-shape.ttl");
 		final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), shape, List.of());
 		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTO));
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStream));
 	}
 
 	@And("the client receives a single event stream")

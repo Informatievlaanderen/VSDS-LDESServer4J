@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,12 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final EventStreamRepository eventStreamRepository;
 	private final DcatServerService dcatServerService;
 	private final EventSourceService eventSourceService;
-	private final ApplicationEventPublisher eventPublisher;
+	private final ApplicationEventMulticaster eventPublisher;
 	private final ViewValidator viewValidator;
 
 	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository,
-	                              DcatServerService dcatServerService, EventSourceService eventSourceService, ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
+	                              DcatServerService dcatServerService, EventSourceService eventSourceService,
+	                              ApplicationEventMulticaster eventPublisher, ViewValidator viewValidator) {
 		this.eventStreamRepository = eventStreamRepository;
 		this.dcatServerService = dcatServerService;
 		this.eventSourceService = eventSourceService;
@@ -51,7 +52,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		if (deletedRows == 0) {
 			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
-		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
+		eventPublisher.multicastEvent(new EventStreamDeletedEvent(this, collectionName));
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public void closeEventStream(String collectionName) {
 		EventStream eventStream = getEventStream(collectionName);
-		eventPublisher.publishEvent(new EventStreamClosedEvent(eventStream.getCollection()));
+		eventPublisher.multicastEvent(new EventStreamClosedEvent(this, eventStream.getCollection()));
 	}
 
 	private EventStream getEventStream(String collectionName) {
@@ -101,14 +102,14 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@EventListener(ApplicationReadyEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
-				.map(EventStreamCreatedEvent::new)
-				.forEach(eventPublisher::publishEvent);
+				.map(eventStream -> new EventStreamCreatedEvent(this, eventStream))
+				.forEach(eventPublisher::multicastEvent);
 	}
 
 	private void publishEventStreamTOCreatedEvents(EventStreamTO eventStreamTO) {
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
-		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);
-		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
+		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStreamTO.extractEventStreamProperties()));
+		eventStreamTO.getViews().stream().map(view -> new ViewAddedEvent(this, view)).forEach(eventPublisher::multicastEvent);
+		eventPublisher.multicastEvent(new DeletionPolicyChangedEvent(this, eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
 	}
 
 }
