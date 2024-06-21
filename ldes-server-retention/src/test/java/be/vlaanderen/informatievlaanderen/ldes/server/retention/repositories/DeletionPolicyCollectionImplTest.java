@@ -37,7 +37,7 @@ class DeletionPolicyCollectionImplTest {
         when(retentionPolicyFactory.extractRetentionPolicy(retentionPolicies))
                 .thenReturn(Optional.of(new TimeBasedRetentionPolicy(Duration.ZERO)));
 
-        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
+        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(this, COLLECTION_NAME, retentionPolicies));
 
         assertThat(deletionPolicyCollection.getEventSourceRetentionPolicyMap())
                 .matches(map -> map.containsKey(COLLECTION_NAME));
@@ -47,11 +47,11 @@ class DeletionPolicyCollectionImplTest {
     void when_SavePoliciesAreEmpty_Then_PoliciesAreRemoved() {
         retentionPolicies = List.of(ModelFactory.createDefaultModel());
 
-        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
+        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(this, COLLECTION_NAME, retentionPolicies));
 
         retentionPolicies = List.of();
 
-        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
+        deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(this, COLLECTION_NAME, retentionPolicies));
 
         assertThat(deletionPolicyCollection.getEventSourceRetentionPolicyMap())
                 .matches(map -> !map.containsKey(COLLECTION_NAME));

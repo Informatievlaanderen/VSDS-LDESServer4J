@@ -39,7 +39,7 @@ class FragmentationStrategyBatchCollectionTest {
 		InitViewAddedResult initResult = initAddView();
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(this, initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
 		verify(viewBucketisationService).setHasView(initResult.viewName, FRAGMENTATION);
@@ -48,10 +48,10 @@ class FragmentationStrategyBatchCollectionTest {
 	@Test
 	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
 		InitViewAddedResult initResult = initAddView();
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(this, initResult.viewSpecification()));
 		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
+		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(this, initResult.viewName()));
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
@@ -68,7 +68,7 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(this, viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
 		verify(viewBucketisationService).setHasView(initViewAddedResult.viewName, FRAGMENTATION);
@@ -77,11 +77,11 @@ class FragmentationStrategyBatchCollectionTest {
 	@Test
 	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {
 		InitViewAddedResult initResult = initAddView();
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(this, initResult.viewSpecification()));
 		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleEventStreamDeletedEvent(
-				new EventStreamDeletedEvent(initResult.viewName.getCollectionName()));
+				new EventStreamDeletedEvent(this, initResult.viewName.getCollectionName()));
 
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 

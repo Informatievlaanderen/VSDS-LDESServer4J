@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.Deleti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventSource;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,9 @@ import java.util.Optional;
 @Service
 public class EventSourceServiceImpl implements EventSourceService {
     private final EventSourceRepository repository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventMulticaster eventPublisher;
 
-    public EventSourceServiceImpl(EventSourceRepository repository, ApplicationEventPublisher eventPublisher) {
+    public EventSourceServiceImpl(EventSourceRepository repository, ApplicationEventMulticaster eventPublisher) {
         this.repository = repository;
         this.eventPublisher = eventPublisher;
     }
@@ -30,7 +30,7 @@ public class EventSourceServiceImpl implements EventSourceService {
     @Override
     public void saveEventSource(String collectionName, List<Model> retentionPolicies) {
         repository.saveEventSource(new EventSource(collectionName, retentionPolicies));
-        eventPublisher.publishEvent(new DeletionPolicyChangedEvent(collectionName, retentionPolicies));
+        eventPublisher.multicastEvent(new DeletionPolicyChangedEvent(this, collectionName, retentionPolicies));
     }
 
 
@@ -44,6 +44,6 @@ public class EventSourceServiceImpl implements EventSourceService {
         repository
                 .getAllEventSources()
                 .forEach(eventSource -> eventPublisher
-                        .publishEvent(new DeletionPolicyChangedEvent(eventSource.getCollectionName(), eventSource.getRetentionPolicies())));
+                        .multicastEvent(new DeletionPolicyChangedEvent(this, eventSource.getCollectionName(), eventSource.getRetentionPolicies())));
     }
 }

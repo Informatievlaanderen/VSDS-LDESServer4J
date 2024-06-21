@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -51,9 +51,11 @@ class EventStreamServiceImplTest {
     @Mock
     private EventStreamRepository eventStreamRepository;
     @Mock
-    private ApplicationEventPublisher eventPublisher;
+    private ApplicationEventMulticaster eventPublisher;
     @Captor
     ArgumentCaptor<EventStreamDeletedEvent> deletedEventArgumentCaptor;
+    @Captor
+    ArgumentCaptor<EventStreamClosedEvent> closedEventArgumentCaptor;
     @Mock
     private ViewValidator viewValidator;
     @Mock
@@ -207,8 +209,9 @@ class EventStreamServiceImplTest {
 
         InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
         inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
-        inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
-        assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
+        inOrder.verify(eventPublisher).multicastEvent(deletedEventArgumentCaptor.capture());
+        assertThat(deletedEventArgumentCaptor.getValue().collectionName()).isEqualTo(COLLECTION);
+        assertThat(deletedEventArgumentCaptor.getValue().getClass()).isEqualTo(EventStreamDeletedEvent.class);
         assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
                 .isInstanceOf(MissingResourceException.class)
                 .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
@@ -235,7 +238,9 @@ class EventStreamServiceImplTest {
         service.closeEventStream(COLLECTION);
 
         verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verify(eventPublisher).publishEvent(new EventStreamClosedEvent(COLLECTION));
+        verify(eventPublisher).multicastEvent(closedEventArgumentCaptor.capture());
+        assertThat(closedEventArgumentCaptor.getValue().collectionName()).isEqualTo(COLLECTION);
+        assertThat(closedEventArgumentCaptor.getValue().getClass()).isEqualTo(EventStreamClosedEvent.class);
     }
 
     @Test
@@ -247,7 +252,7 @@ class EventStreamServiceImplTest {
 				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 
         verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verify(eventPublisher, never()).publishEvent(new EventStreamClosedEvent(COLLECTION));
+        verify(eventPublisher, never()).multicastEvent(new EventStreamClosedEvent(this, COLLECTION));
     }
 
     private Model readModelFromFile(String fileName) throws URISyntaxException {

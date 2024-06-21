@@ -53,7 +53,7 @@ class MemberMapperCollectionImplTest {
         memberMapperCollection.addMemberMapper(COLLECTION_NAME, memberMapper);
         assertThat(memberMapperCollection.getMemberMapper(COLLECTION_NAME)).isPresent();
 
-        memberMapperCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+        memberMapperCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION_NAME));
 
         assertThat(memberMapperCollection.getMemberMapper(COLLECTION_NAME)).isEmpty();
     }
@@ -62,7 +62,7 @@ class MemberMapperCollectionImplTest {
     void test_HandleEventStreamCreatedEvent() {
         final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
 
-        memberMapperCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+        memberMapperCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, eventStream));
 
         assertThat(memberMapperCollection.getMemberMapper(COLLECTION_NAME))
                 .hasValueSatisfying(actualMemberMapper -> assertThat(actualMemberMapper)

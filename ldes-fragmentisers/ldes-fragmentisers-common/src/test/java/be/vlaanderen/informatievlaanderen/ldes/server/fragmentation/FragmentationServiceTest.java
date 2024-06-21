@@ -140,7 +140,7 @@ class FragmentationServiceTest {
 
 	@Test
 	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
-		EventStreamClosedEvent event = new EventStreamClosedEvent("collectionName");
+		EventStreamClosedEvent event = new EventStreamClosedEvent(this, "collectionName");
 
 		fragmentationService.markFragmentsImmutableInCollection(event);
 

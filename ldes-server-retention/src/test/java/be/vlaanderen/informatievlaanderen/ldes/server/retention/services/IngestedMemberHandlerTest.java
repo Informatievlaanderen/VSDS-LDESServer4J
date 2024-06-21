@@ -35,7 +35,7 @@ class IngestedMemberHandlerTest {
         final ViewCollection viewCollection = mock(ViewCollection.class);
 		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, viewCollection);
         final MembersIngestedEvent.MemberProperties memberProperties = new MembersIngestedEvent.MemberProperties(MEMBER_ID, "version", ZonedDateTime.parse("2022-09-28T07:14:00.000Z").toLocalDateTime());
-		event = new MembersIngestedEvent(COLLECTION, List.of(memberProperties));
+		event = new MembersIngestedEvent(this, COLLECTION, List.of(memberProperties));
 	}
 
 	@Test

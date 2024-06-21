@@ -13,7 +13,7 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +32,7 @@ class EventSourceServiceImplTest {
     @Mock
     private EventSourceRepository eventSourceRepository;
     @Mock
-    private ApplicationEventPublisher eventPublisher;
+    private ApplicationEventMulticaster eventPublisher;
     @Captor
     ArgumentCaptor<EventSource> eventSourceArgumentCaptor;
 
@@ -49,7 +49,7 @@ class EventSourceServiceImplTest {
 
         InOrder inOrder = inOrder(eventSourceRepository, eventPublisher);
         inOrder.verify(eventSourceRepository).saveEventSource(eventSourceArgumentCaptor.capture());
-        inOrder.verify(eventPublisher).publishEvent(any(DeletionPolicyChangedEvent.class));
+        inOrder.verify(eventPublisher).multicastEvent(any(DeletionPolicyChangedEvent.class));
         inOrder.verifyNoMoreInteractions();
         assertThat(eventSourceArgumentCaptor.getValue())
                 .hasFieldOrPropertyWithValue("collectionName", COLLECTION_NAME)

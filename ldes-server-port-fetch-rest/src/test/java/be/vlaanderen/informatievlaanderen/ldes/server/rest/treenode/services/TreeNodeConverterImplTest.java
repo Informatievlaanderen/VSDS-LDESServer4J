@@ -45,7 +45,7 @@ class TreeNodeConverterImplTest {
                 "http://purl.org/dc/terms/isVersionOf", false);
 
         treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
-        treeNodeStatementCreator.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+        treeNodeStatementCreator.handleEventStreamInitEvent(new EventStreamCreatedEvent(this, eventStream));
         treeNodeStatementCreator.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }
 
@@ -201,7 +201,7 @@ class TreeNodeConverterImplTest {
         final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
                 COLLECTION_NAME, null);
 
-        treeNodeStatementCreator.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+        treeNodeStatementCreator.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION_NAME));
 
         assertThatThrownBy(() -> treeNodeConverter.toModel(treeNode)).isInstanceOf(MissingResourceException.class);
     }

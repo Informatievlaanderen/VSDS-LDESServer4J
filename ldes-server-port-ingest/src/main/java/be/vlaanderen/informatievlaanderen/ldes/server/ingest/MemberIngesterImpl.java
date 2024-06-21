@@ -11,7 +11,7 @@ import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,13 +25,13 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private final MemberIngestValidator validator;
     private final MemberRepository memberRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventMulticaster eventPublisher;
     private final MemberExtractorCollection memberExtractorCollection;
 
     private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
     public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-                              ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection) {
+                              ApplicationEventMulticaster eventPublisher, MemberExtractorCollection memberExtractorCollection) {
         this.validator = validator;
         this.memberRepository = memberRepository;
         this.eventPublisher = eventPublisher;
@@ -68,7 +68,7 @@ public class MemberIngesterImpl implements MemberIngester {
         final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
                 .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
                 .toList();
-        eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
+        eventPublisher.multicastEvent(new MembersIngestedEvent(this, collectionName, memberProperties));
     }
 
     private void logSuccessfulMemberIngestion(String memberId) {
