@@ -4,4 +4,4 @@ FROM fragmentation_bucketisation fb
          JOIN members m
               ON fb.member_id = m.old_id
          JOIN buckets b
-              ON fb.fragment_id = b.bucket;
+              ON SPLIT_PART(fb.fragment_id, '?', 2) = b.bucket;

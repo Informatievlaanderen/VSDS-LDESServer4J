@@ -8,14 +8,19 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
 
 	private static final String OLD_SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
-	                                  "values (?, ?, ?, ?)";
-	private static final String SQL = "INSERT INTO member_buckets (";
+			"values (?, ?, ?, ?)";
+	private static final String SQL = """
+			INSERT INTO member_buckets (bucket_id, member_id)
+			SELECT (SELECT bucket_id FROM buckets WHERE bucket = ?),
+			       (SELECT member_id FROM members  WHERE subject = ?);
+			""";
 
 	private final DataSource dataSource;
 
@@ -30,8 +35,27 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				.flatMap(List::stream)
 				.toList());
 
-		try(Connection connection = dataSource.getConnection();
-		    PreparedStatement ps = connection.prepareStatement(OLD_SQL)) {
+		temporaryOldSaving(buckets);
+
+		try (Connection connection = dataSource.getConnection();
+		     PreparedStatement ps = connection.prepareStatement(SQL)) {
+			for (BucketisedMember bucket : buckets) {
+				final String[] idParts = bucket.fragmentId().split("\\?");
+				if(idParts.length != 2) {
+					continue;
+				}
+				final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
+				ps.setString(1, idParts[1]);
+				ps.setString(2, memberId);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void temporaryOldSaving(Chunk<BucketisedMember> buckets) throws SQLException {
+		try (Connection connection = dataSource.getConnection();
+		     PreparedStatement ps = connection.prepareStatement(OLD_SQL)) {
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
@@ -43,6 +67,5 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			}
 			ps.executeBatch();
 		}
-
 	}
 }
