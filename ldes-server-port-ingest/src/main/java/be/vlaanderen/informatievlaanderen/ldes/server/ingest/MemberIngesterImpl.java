@@ -52,7 +52,7 @@ public class MemberIngesterImpl implements MemberIngester {
             return false;
         }
         publishIngestedEvent(collectionName, members);
-        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment(ingestedMembersCount);
+        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT, "collection", collectionName).increment(ingestedMembersCount);
         members.forEach(member -> logSuccessfulMemberIngestion(member.getSubject()));
         return true;
     }

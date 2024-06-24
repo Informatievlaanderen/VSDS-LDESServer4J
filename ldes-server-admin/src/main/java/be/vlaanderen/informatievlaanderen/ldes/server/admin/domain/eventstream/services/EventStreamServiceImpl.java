@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 public class EventStreamServiceImpl implements EventStreamService {
+	private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
 	public static final String RESOURCE_TYPE = "eventstream";
 	private final EventStreamRepository eventStreamRepository;
 	private final DcatServerService dcatServerService;
@@ -52,6 +54,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		if (deletedRows == 0) {
 			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
+		Metrics.globalRegistry.remove(Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT, "collection", collectionName));
 		eventPublisher.multicastEvent(new EventStreamDeletedEvent(this, collectionName));
 	}
 
