@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.BucketDescriptorParseException;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +14,7 @@ public class BucketDescriptor {
 	private final List<BucketDescriptorPair> descriptorPairs;
 
 	public BucketDescriptor(List<BucketDescriptorPair> descriptorPairs) {
-		this.descriptorPairs = descriptorPairs;
+		this.descriptorPairs = List.copyOf(descriptorPairs);
 	}
 
 	public static BucketDescriptor empty() {
@@ -24,11 +26,18 @@ public class BucketDescriptor {
 	}
 
 	public static BucketDescriptor fromString(String descriptor) {
-		final List<BucketDescriptorPair> descriptorPairs = Arrays.stream(descriptor.split("&"))
-				.map(pair -> pair.split("=", -1))
-				.map(pairArray -> new BucketDescriptorPair(pairArray[0], pairArray[1]))
-				.toList();
-		return new BucketDescriptor(descriptorPairs);
+		if(descriptor.isEmpty()) {
+			return BucketDescriptor.empty();
+		}
+		try {
+			final List<BucketDescriptorPair> descriptorPairs = Arrays.stream(descriptor.split("&"))
+					.map(pair -> pair.split("=", -1))
+					.map(pairArray -> new BucketDescriptorPair(pairArray[0], pairArray[1]))
+					.toList();
+			return new BucketDescriptor(descriptorPairs);
+		} catch (Exception e) {
+			throw new BucketDescriptorParseException(descriptor);
+		}
 	}
 
 	public static BucketDescriptor of(BucketDescriptorPair... pairs) {

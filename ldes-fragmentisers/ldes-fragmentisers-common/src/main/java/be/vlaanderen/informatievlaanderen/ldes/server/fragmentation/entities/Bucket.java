@@ -22,7 +22,6 @@ public class Bucket {
 		this.memberCount = memberCount;
 	}
 
-
 	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
 		this(bucketDescriptor, viewName, 0);
 	}
@@ -60,11 +59,13 @@ public class Bucket {
 		if (this == o) return true;
 		if (!(o instanceof Bucket bucket)) return false;
 
-		return Objects.equals(bucketDescriptor, bucket.bucketDescriptor);
+		return Objects.equals(bucketDescriptor, bucket.bucketDescriptor) && Objects.equals(viewName, bucket.viewName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(bucketDescriptor);
+		int result = Objects.hashCode(bucketDescriptor);
+		result = 31 * result + Objects.hashCode(viewName);
+		return result;
 	}
 }

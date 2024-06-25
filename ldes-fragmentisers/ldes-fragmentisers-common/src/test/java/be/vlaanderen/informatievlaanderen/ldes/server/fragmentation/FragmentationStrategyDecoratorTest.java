@@ -4,9 +4,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,15 @@ class FragmentationStrategyDecoratorTest {
 				span);
 		verify(fragmentationStrategy,
 				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
+	}
+
+	@Test
+	void when_DecoratorAddsMemberToBucket_WrappedFragmentationStrategyIsCalled() {
+		Bucket parentBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		FragmentationMember member = mock(FragmentationMember.class);
+		Observation span = mock(Observation.class);
+		fragmentationStrategyDecorator.addMemberToBucket(parentBucket, member, span);
+		verify(fragmentationStrategy).addMemberToBucket(parentBucket, member, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends

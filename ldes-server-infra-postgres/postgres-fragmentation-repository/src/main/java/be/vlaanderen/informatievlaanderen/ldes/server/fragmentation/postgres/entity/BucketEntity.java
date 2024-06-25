@@ -32,9 +32,4 @@ public class BucketEntity {
 	)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<MemberEntity> members;
-
-	public BucketEntity(ViewEntity view, String bucketDescriptor) {
-		this.view = view;
-		this.bucketDescriptor = bucketDescriptor;
-	}
 }
