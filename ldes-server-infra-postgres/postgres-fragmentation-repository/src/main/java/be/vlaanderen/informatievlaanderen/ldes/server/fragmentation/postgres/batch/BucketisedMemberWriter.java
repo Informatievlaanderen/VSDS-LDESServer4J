@@ -42,14 +42,27 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 		final List<Object[]> batchArgs = new ArrayList<>();
 		for (BucketisedMember bucket : buckets) {
-			final String[] idParts = bucket.fragmentId().split("\\?");
-			if (idParts.length != 2) {
-				continue;
-			}
-			final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
-			batchArgs.add(new Object[]{idParts[1], memberId});
+			tempOldMemberSaver(bucket, batchArgs);
+//			addMemberPropertiesToBatchArgs(bucket, batchArgs);
+
 		}
 		jdbcTemplate.batchUpdate(SQL, batchArgs);
+	}
+
+	private static void tempOldMemberSaver(BucketisedMember bucket, List<Object[]> batchArgs) {
+		final String[] idParts = bucket.fragmentId().split("\\?");
+		if (idParts.length != 2) {
+			return;
+		}
+		final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
+		batchArgs.add(new Object[]{idParts[1], memberId});
+	}
+
+	private static void addMemberPropertiesToBatchArgs(BucketisedMember member, List<Object[]> batchArgs) {
+		if(!member.fragmentId().isEmpty()) {
+			final String memberId = member.memberId().substring(member.memberId().indexOf('/') + 1);
+			batchArgs.add(new Object[]{member.fragmentId(), memberId});
+		}
 	}
 
 	private void temporaryOldSaving(Chunk<BucketisedMember> buckets) throws SQLException {
