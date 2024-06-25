@@ -38,7 +38,7 @@ public class FragmentationStrategyBatchExecutor {
 		final var rootBucket = new Bucket(BucketDescriptor.empty(), viewName, 0);
 		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
-		return members;
+		return bucketisedMembers;
 	}
 
 	public boolean isPartOfCollection(String collectionName) {
