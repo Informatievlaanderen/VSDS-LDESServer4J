@@ -54,7 +54,29 @@ class BucketPostgresRepositoryTest {
 		verify(bucketEntityRepository).insertBucketEntity(BUCKET_DESCRIPTOR, VIEW_NAME.asString());
 	}
 
-	private record BucketProjectionImpl(String bucketDescriptor, String viewName,
-	                                    Long memberCount) implements BucketProjection {
+	private static class BucketProjectionImpl implements BucketProjection {
+		private final String bucketDescriptor, viewName;
+		private final Long memberCount;
+
+		public BucketProjectionImpl(String bucketDescriptor, String viewName, Long memberCount) {
+			this.bucketDescriptor = bucketDescriptor;
+			this.viewName = viewName;
+			this.memberCount = memberCount;
+		}
+
+		@Override
+		public String getBucketDescriptor() {
+			return bucketDescriptor;
+		}
+
+		@Override
+		public String getViewName() {
+			return viewName;
+		}
+
+		@Override
+		public Long getMemberCount() {
+			return memberCount;
+		}
 	}
 }

@@ -11,9 +11,9 @@ public class BucketMapper {
 
 	public static Bucket fromProjection(BucketProjection projection) {
 		return new Bucket(
-				BucketDescriptor.fromString(projection.bucketDescriptor()),
-				ViewName.fromString(projection.viewName()),
-				projection.memberCount().intValue()
+				BucketDescriptor.fromString(projection.getBucketDescriptor()),
+				ViewName.fromString(projection.getViewName()),
+				projection.getMemberCount().intValue()
 		);
 	}
 
