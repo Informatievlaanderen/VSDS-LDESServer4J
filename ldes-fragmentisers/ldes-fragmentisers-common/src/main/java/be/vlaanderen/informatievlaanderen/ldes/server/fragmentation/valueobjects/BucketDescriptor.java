@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobject
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.net.URLEncoder.encode;
@@ -56,4 +57,16 @@ public class BucketDescriptor {
 		return stringBuilder.toString();
 	}
 
+	@Override
+	public final boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BucketDescriptor that)) return false;
+
+		return Objects.equals(descriptorPairs, that.descriptorPairs);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(descriptorPairs);
+	}
 }

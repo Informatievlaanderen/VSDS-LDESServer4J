@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Bucket {
 
@@ -52,5 +53,18 @@ public class Bucket {
 				.stream()
 				.map(BucketDescriptorPair::key)
 				.anyMatch(key -> key.equals(descriptorPair.key()));
+	}
+
+	@Override
+	public final boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Bucket bucket)) return false;
+
+		return Objects.equals(bucketDescriptor, bucket.bucketDescriptor);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(bucketDescriptor);
 	}
 }
