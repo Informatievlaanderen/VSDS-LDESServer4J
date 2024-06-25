@@ -17,6 +17,7 @@ import io.micrometer.observation.ObservationRegistry;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -31,44 +32,45 @@ import static org.mockito.Mockito.mock;
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
+@EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class, BucketisedMemberPostgresRepository.class,
-        MemberBucketEntityMapper.class, MemberBucketJpaRepository.class, MemberBucketEntityRepository.class,
-        BucketisationPartitioner.class, ViewBucketisationPartitioner.class, BucketisedMemberWriter.class})
+		MemberBucketEntityMapper.class, MemberBucketJpaRepository.class, MemberBucketEntityRepository.class,
+		BucketisationPartitioner.class, ViewBucketisationPartitioner.class, BucketisedMemberWriter.class})
 @Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresFragmentationIntegrationTest {
 
-    @Autowired
-    public FragmentRepository fragmentRepository;
+	@Autowired
+	public FragmentRepository fragmentRepository;
 
-    @Autowired
-    public BucketisedMemberRepository bucketisedMemberRepository;
+	@Autowired
+	public BucketisedMemberRepository bucketisedMemberRepository;
 
-    @Autowired
-    public MemberBucketEntityMapper mapper;
+	@Autowired
+	public MemberBucketEntityMapper mapper;
 
-    @Autowired
-    public MemberBucketEntityRepository memberBucketEntityRepository;
+	@Autowired
+	public MemberBucketEntityRepository memberBucketEntityRepository;
 
-    @Autowired
-    public MemberBucketJpaRepository memberBucketJpaRepository;
+	@Autowired
+	public MemberBucketJpaRepository memberBucketJpaRepository;
 
-    @TestConfiguration
-    public static class EventStreamControllerTestConfiguration {
+	@TestConfiguration
+	public static class EventStreamControllerTestConfiguration {
 
-        @Bean
-        public ObservationRegistry observationRegistry() {
-            return ObservationRegistry.NOOP;
-        }
+		@Bean
+		public ObservationRegistry observationRegistry() {
+			return ObservationRegistry.NOOP;
+		}
 
-        @Bean
-        public MemberRepository memberRepository() {
-            return mock(MemberRepository.class);
-        }
+		@Bean
+		public MemberRepository memberRepository() {
+			return mock(MemberRepository.class);
+		}
 
-        @Bean
-        public MemberPropertiesRepository memberPropertiesRepository() {
-            return mock(MemberPropertiesRepository.class);
-        }
-    }
+		@Bean
+		public MemberPropertiesRepository memberPropertiesRepository() {
+			return mock(MemberPropertiesRepository.class);
+		}
+	}
 }

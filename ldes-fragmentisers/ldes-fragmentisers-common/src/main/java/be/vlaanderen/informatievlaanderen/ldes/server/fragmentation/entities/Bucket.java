@@ -21,6 +21,11 @@ public class Bucket {
 		this.memberCount = memberCount;
 	}
 
+
+	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
+		this(bucketDescriptor, viewName, 0);
+	}
+
 	public ViewName getViewName() {
 		return viewName;
 	}

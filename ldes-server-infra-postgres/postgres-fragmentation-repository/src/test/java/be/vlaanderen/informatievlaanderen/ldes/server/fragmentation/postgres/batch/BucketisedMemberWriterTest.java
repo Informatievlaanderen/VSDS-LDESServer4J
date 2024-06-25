@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.PostgresFragmentationIntegrationTest;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.MemberBucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.Chunk;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 	@Autowired
@@ -31,8 +32,11 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 
 		var members = repository.findAll(Pageable.unpaged()).get().toList();
 
-		assertEquals(4, members.size());
-		assertEquals("4", members.getLast().getMemberId());
+		assertThat(members)
+				.hasSize(4)
+				.map(MemberBucketEntity::getMemberId)
+				.last()
+				.isEqualTo("4");
 	}
 
 	BucketisedMember bucketisedMember() {
