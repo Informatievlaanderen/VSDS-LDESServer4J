@@ -39,7 +39,7 @@ public class TimeBasedBucketCreator {
 		return bucketRepository
 				.retrieveBucket(childBucket.getBucketDescriptorAsString())
 				.orElseGet(() -> {
-					bucketRepository.saveBucket(childBucket);
+					bucketRepository.insertBucket(childBucket);
 					// TODO addRelationToParent
 //					logFragmentation(parentBucket, child);
 					return childBucket;

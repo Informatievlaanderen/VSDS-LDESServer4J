@@ -8,5 +8,5 @@ public interface BucketRepository {
 
 	Optional<Bucket> retrieveBucket(String bucketDescriptor);
 
-	void saveBucket(Bucket bucket);
+	void insertBucket(Bucket bucket);
 }

@@ -3,13 +3,16 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
@@ -22,10 +25,10 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			       (SELECT member_id FROM members  WHERE subject = ?);
 			""";
 
-	private final DataSource dataSource;
+	private final JdbcTemplate jdbcTemplate;
 
 	public BucketisedMemberWriter(DataSource dataSource) {
-		this.dataSource = dataSource;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -37,31 +40,27 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 		temporaryOldSaving(buckets);
 
-		try (Connection connection = dataSource.getConnection();
-		     PreparedStatement ps = connection.prepareStatement(SQL)) {
-			for (BucketisedMember bucket : buckets) {
-				final String[] idParts = bucket.fragmentId().split("\\?");
-				if(idParts.length != 2) {
-					continue;
-				}
-				final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
-				ps.setString(1, idParts[1]);
-				ps.setString(2, memberId);
-				ps.addBatch();
+		final List<Object[]> batchArgs = new ArrayList<>();
+		for (BucketisedMember bucket : buckets) {
+			final String[] idParts = bucket.fragmentId().split("\\?");
+			if (idParts.length != 2) {
+				continue;
 			}
-			ps.executeBatch();
+			final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
+			batchArgs.add(new Object[]{idParts[1], memberId});
 		}
+		jdbcTemplate.batchUpdate(SQL, batchArgs);
 	}
 
 	private void temporaryOldSaving(Chunk<BucketisedMember> buckets) throws SQLException {
-		try (Connection connection = dataSource.getConnection();
+		try (Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
 		     PreparedStatement ps = connection.prepareStatement(OLD_SQL)) {
+			ps.setLong(4, 0L);
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
 				ps.setString(2, bucket.fragmentId());
 				ps.setString(3, bucket.memberId());
-				ps.setLong(4, 0L);
 				// Add it to the batch
 				ps.addBatch();
 			}

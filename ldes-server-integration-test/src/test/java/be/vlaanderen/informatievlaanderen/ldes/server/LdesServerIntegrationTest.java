@@ -20,10 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES,
-		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD)
+		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD,
+		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
+@ContextConfiguration(classes = {MemberEntityRepository.class})
+@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
 	@Autowired

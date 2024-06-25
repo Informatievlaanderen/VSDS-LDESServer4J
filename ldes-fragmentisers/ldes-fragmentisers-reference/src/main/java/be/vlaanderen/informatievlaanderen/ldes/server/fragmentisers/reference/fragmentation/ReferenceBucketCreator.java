@@ -35,7 +35,7 @@ public class ReferenceBucketCreator {
 		return fragmentRepository
 				.retrieveBucket(child.getBucketDescriptorAsString())
 				.orElseGet(() -> {
-					fragmentRepository.saveBucket(child);
+					fragmentRepository.insertBucket(child);
 					if (reference.equals(DEFAULT_BUCKET_STRING)) {
 //						relationsAttributer.addDefaultRelation(parentBucket, child);
 					} else {
@@ -51,7 +51,7 @@ public class ReferenceBucketCreator {
 		return fragmentRepository
 				.retrieveBucket(child.getBucketDescriptorAsString())
 				.orElseGet(() -> {
-					fragmentRepository.saveBucket(child);
+					fragmentRepository.insertBucket(child);
 					logBucketation(parentBucket, child);
 					return child;
 				});

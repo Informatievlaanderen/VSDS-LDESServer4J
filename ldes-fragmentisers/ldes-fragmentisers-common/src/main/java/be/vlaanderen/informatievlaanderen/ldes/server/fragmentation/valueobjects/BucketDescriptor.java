@@ -30,6 +30,10 @@ public class BucketDescriptor {
 		return new BucketDescriptor(descriptorPairs);
 	}
 
+	public static BucketDescriptor of(BucketDescriptorPair... pairs) {
+		return new BucketDescriptor(Arrays.asList(pairs));
+	}
+
 	public String asDecodedString() {
 		return asString(false);
 	}

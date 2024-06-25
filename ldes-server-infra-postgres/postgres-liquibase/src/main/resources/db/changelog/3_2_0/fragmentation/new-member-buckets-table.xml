@@ -22,22 +22,24 @@
         <addForeignKeyConstraint baseTableName="member_buckets" baseColumnNames="bucket_id"
                                  constraintName="fk_member_buckets_buckets_id"
                                  referencedTableName="buckets"
-                                 referencedColumnNames="bucket_id"/>
+                                 referencedColumnNames="bucket_id"
+                                 onDelete="CASCADE"/>
         <addForeignKeyConstraint baseTableName="member_buckets" baseColumnNames="member_id"
                                  constraintName="fk_member_buckets_members_id"
                                  referencedTableName="members"
-                                 referencedColumnNames="member_id"/>
+                                 referencedColumnNames="member_id"
+                                 onDelete="CASCADE"/>
         <rollback>
-            <delete tableName="member_buckets" />
+            <delete tableName="member_buckets"/>
         </rollback>
     </changeSet>
     <changeSet id="migrate-into-new-member-buckets-table" author="vsds">
         <preConditions>
-            <tableExists tableName="member_buckets" />
+            <tableExists tableName="member_buckets"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-member-buckets-table.sql" />
+        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-member-buckets-table.sql"/>
         <rollback>
-            <delete tableName="member_buckets" />
+            <delete tableName="member_buckets"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
