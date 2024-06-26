@@ -12,7 +12,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,9 +25,6 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 	MemberBucketEntityRepository repository;
 	@Autowired
 	DataSource dataSource;
-
-	private final AtomicInteger atomicInteger = new AtomicInteger();
-	private final ViewName viewName = new ViewName("es", "v1");
 
 	@Test
 	@Sql("./init-writer-test.sql")
