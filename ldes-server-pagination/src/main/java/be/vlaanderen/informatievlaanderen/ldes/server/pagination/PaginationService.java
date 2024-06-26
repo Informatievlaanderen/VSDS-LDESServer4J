@@ -32,6 +32,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
+
 @Component
 @EnableScheduling
 public class PaginationService {
@@ -81,7 +83,7 @@ public class PaginationService {
 				.toJobParameters());
 	}
 
-	@Scheduled(fixedRate = 1500)
+	@Scheduled(fixedRate = POLLING_RATE)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		if (shouldTriggerPagination && noJobRunning(PAGINATION_JOB) && noJobRunning(NEW_VIEW_PAGINATION_JOB)) {
 			shouldTriggerPagination = false;

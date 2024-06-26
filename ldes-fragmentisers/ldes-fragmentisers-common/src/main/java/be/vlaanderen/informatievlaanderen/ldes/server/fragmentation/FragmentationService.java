@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 @EnableScheduling
 public class FragmentationService {
-	public static final int POLLING_RATE = 1500;
+	public static final int POLLING_RATE = 15000;
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private static final String BUCKETISATION_JOB = "bucketisation";
 	private static final String REBUCKETISATION_JOB = "rebucketisation";
@@ -108,13 +108,15 @@ public class FragmentationService {
 	}
 
 	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		jobLauncher.run(job, jobParameters);
-		if (job.getName().equals(BUCKETISATION_JOB)) {
-			eventPublisher.publishEvent(new MembersBucketisedEvent());
-		} else if (job.getName().equals(REBUCKETISATION_JOB)) {
-			eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
-		}
+		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 
+		if (jobExecution.getStepExecutions().stream().toList().getFirst().getWriteCount() != 0) {
+			if (job.getName().equals(BUCKETISATION_JOB)) {
+				eventPublisher.publishEvent(new MembersBucketisedEvent());
+			} else if (job.getName().equals(REBUCKETISATION_JOB)) {
+				eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
+			}
+		}
 	}
 
 	private boolean isJobRunning(String jobName) {
