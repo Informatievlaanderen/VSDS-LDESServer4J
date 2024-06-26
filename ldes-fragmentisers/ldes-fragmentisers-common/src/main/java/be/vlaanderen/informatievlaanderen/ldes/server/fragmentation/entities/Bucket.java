@@ -14,16 +14,10 @@ public class Bucket {
 
 	private final BucketDescriptor bucketDescriptor;
 	private final ViewName viewName;
-	private final int memberCount;
-
-	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName, int memberCount) {
-		this.bucketDescriptor = bucketDescriptor;
-		this.viewName = viewName;
-		this.memberCount = memberCount;
-	}
 
 	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
-		this(bucketDescriptor, viewName, 0);
+		this.bucketDescriptor = bucketDescriptor;
+		this.viewName = viewName;
 	}
 
 	public ViewName getViewName() {
@@ -44,7 +38,7 @@ public class Bucket {
 			throw new DuplicateFragmentPairException(bucketDescriptor.asDecodedString(), descriptorPair.key());
 		}
 		childFragmentPairs.add(descriptorPair);
-		return new Bucket(new BucketDescriptor(childFragmentPairs), viewName, 0);
+		return new Bucket(new BucketDescriptor(childFragmentPairs), viewName);
 	}
 
 	private static boolean hasChildWithSameDescriptorKey(BucketDescriptorPair descriptorPair, List<BucketDescriptorPair> childFragmentPairs) {

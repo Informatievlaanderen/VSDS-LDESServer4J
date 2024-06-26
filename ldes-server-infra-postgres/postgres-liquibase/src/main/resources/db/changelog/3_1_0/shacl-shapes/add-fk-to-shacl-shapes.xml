@@ -28,9 +28,8 @@
         </rollback>
     </changeSet>
     <changeSet id="migrate-shacl-shapes-data" author="vsds">
-        <preConditions>
-            <changeSetExecuted id="create-new-shacl-shapes-table" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <tableExists tableName="shacl_shape" />
         </preConditions>
         <sqlFile path="db/changelog/3_1_0/shacl-shapes/migrate-shacl-shapes-data.sql"/>
         <rollback>
@@ -38,9 +37,8 @@
         </rollback>
     </changeSet>
     <changeSet id="drop-old-shacl-shapes-table" author="vsds">
-        <preConditions>
-            <changeSetExecuted id="migrate-shacl-shapes-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <tableExists tableName="shacl_shape" />
         </preConditions>
         <dropTable tableName="shacl_shape" cascadeConstraints="true"/>
     </changeSet>

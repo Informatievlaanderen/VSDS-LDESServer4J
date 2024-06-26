@@ -1,12 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.util.List;
 
 @Entity
 @Table(name = "buckets", indexes = @Index(unique = true, columnList = "view_id,bucket"))
@@ -23,13 +20,4 @@ public class BucketEntity {
 
 	@Column(name = "bucket", columnDefinition = "VARCHAR(255)")
 	private String bucketDescriptor;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "member_buckets",
-			joinColumns = @JoinColumn(name = "bucket_id"),
-			inverseJoinColumns = @JoinColumn(name = "member_id")
-	)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private List<MemberEntity> members;
 }

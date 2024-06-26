@@ -16,7 +16,7 @@ public class PageEntity {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "bucket_id", nullable = false, columnDefinition = "BIGINT")
+	@JoinColumn(name = "bucket_id", columnDefinition = "BIGINT")
 	private BucketEntity bucket;
 
 	@Column(name = "expiration", columnDefinition = "TIMESTAMP")
@@ -24,9 +24,6 @@ public class PageEntity {
 
 	@Column(name = "partial_url", nullable = false, unique = true)
 	private String partialUrl;
-
-	@OneToMany(mappedBy = "relation_id")
-	private List<RelationEntity> relations;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(

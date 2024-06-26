@@ -22,7 +22,7 @@ class TimeBasedBucketFinderTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final List<FragmentPair> timePairs = List.of(new FragmentPair(Granularity.YEAR.getValue(), "2023"),
 			new FragmentPair(Granularity.MONTH.getValue(), "01"), new FragmentPair(Granularity.DAY.getValue(), "01"));
-	private static final Bucket PARENT = new Bucket(BucketDescriptor.empty(), VIEW_NAME, 0);
+	private static final Bucket PARENT = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.DAY);
 	private TimeBasedBucketCreator bucketCreator;
@@ -43,7 +43,7 @@ class TimeBasedBucketFinderTest {
 				new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"),
 				new BucketDescriptorPair(Granularity.DAY.getValue(), "01")
 		);
-		Bucket expected = new Bucket(expectedBucketDescriptor, VIEW_NAME, 0);
+		Bucket expected = new Bucket(expectedBucketDescriptor, VIEW_NAME);
 		Bucket yearBucket = PARENT.createChild(new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023"));
 		Bucket monthBucket = yearBucket.createChild(new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"));
 		Bucket dayBucket = monthBucket.createChild(new BucketDescriptorPair(Granularity.DAY.getValue(), "01"));

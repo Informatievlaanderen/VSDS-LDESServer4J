@@ -10,10 +10,9 @@ import java.util.Optional;
 
 public interface BucketEntityRepository extends JpaRepository<BucketEntity, Long> {
 
-	@Query("SELECT b.bucketDescriptor AS bucketDescriptor, CONCAT(b.view.eventStream.name, '/', b.view.name) AS viewName, COUNT(m) AS memberCount " +
-			"FROM BucketEntity b LEFT JOIN b.members m " +
-			"WHERE b.bucketDescriptor = :bucketDescriptor " +
-			"GROUP BY b.bucketDescriptor, b.view.eventStream.name, b.view.name")
+	@Query("SELECT b.bucketDescriptor AS bucketDescriptor, CONCAT(b.view.eventStream.name, '/', b.view.name) AS viewName " +
+			"FROM BucketEntity b " +
+			"WHERE b.bucketDescriptor = :bucketDescriptor ")
 	Optional<BucketProjection> findBucketEntityByBucketDescriptor(String bucketDescriptor);
 
 	@Modifying

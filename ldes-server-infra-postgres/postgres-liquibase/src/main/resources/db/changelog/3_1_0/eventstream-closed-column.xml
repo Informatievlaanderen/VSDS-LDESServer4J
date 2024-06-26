@@ -7,6 +7,7 @@
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="eventstream" columnName="is_closed"/>
+                <tableExists tableName="collections" />
             </not>
         </preConditions>
         <addColumn tableName="eventstream">

@@ -6,6 +6,7 @@
     <include file="/db/changelog/3_2_0/member-data-model/member-new-datamodel.xml" />
     <include file="/db/changelog/3_2_0/member-data-model/drop-old-member-table.xml" />
     <include file="/db/changelog/3_2_0/fragmentation/new-buckets-table.xml" />
-    <include file="/db/changelog/3_2_0/fragmentation/new-member-buckets-table.xml" />
+    <include file="/db/changelog/3_2_0/fragmentation/new-pages-table.xml" />
+    <include file="/db/changelog/3_2_0/fragmentation/new-page-members-table.xml" />
 
 </databaseChangeLog>

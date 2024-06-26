@@ -36,8 +36,8 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static Fragment PARENT_FRAGMENT;
 	private static Fragment CHILD_FRAGMENT;
-	private static final Bucket PARENT_BUCKET = new Bucket(BucketDescriptor.empty(), VIEW_NAME, 0);
-	private static final Bucket CHILD_BUCKET = new Bucket(new BucketDescriptor(List.of(new BucketDescriptorPair("is", "child"))), VIEW_NAME, 0);
+	private static final Bucket PARENT_BUCKET = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+	private static final Bucket CHILD_BUCKET = new Bucket(new BucketDescriptor(List.of(new BucketDescriptorPair("is", "child"))), VIEW_NAME);
 	private static LocalDateTime TIME;
 	private static Granularity GRANULARITY;
 	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;

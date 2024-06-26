@@ -3,5 +3,4 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.pr
 public interface BucketProjection {
 	String getBucketDescriptor();
 	String getViewName();
-	Long getMemberCount();
 }

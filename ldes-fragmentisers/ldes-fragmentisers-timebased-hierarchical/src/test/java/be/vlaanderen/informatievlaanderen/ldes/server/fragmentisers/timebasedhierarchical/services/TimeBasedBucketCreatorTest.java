@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class TimeBasedBucketCreatorTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final BucketDescriptorPair timePair = new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023");
-	private static final Bucket PARENT = new Bucket(new BucketDescriptor(List.of(timePair)), VIEW_NAME, 0);
+	private static final Bucket PARENT = new Bucket(new BucketDescriptor(List.of(timePair)), VIEW_NAME);
 	private static final Fragment ROOT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.MONTH);
@@ -61,7 +61,7 @@ class TimeBasedBucketCreatorTest {
 				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
 		when(bucketRepository.retrieveBucket(expectedBucketDescriptor.asDecodedString())).thenReturn(Optional.empty());
 
-		Bucket child = bucketCreator.getOrCreateFragment(new Bucket(BucketDescriptor.empty(), VIEW_NAME, 0), DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		Bucket child = bucketCreator.getOrCreateFragment(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
 
 		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedBucketDescriptor.asDecodedString());
 		verify(bucketRepository).retrieveBucket(expectedBucketDescriptor.asDecodedString());

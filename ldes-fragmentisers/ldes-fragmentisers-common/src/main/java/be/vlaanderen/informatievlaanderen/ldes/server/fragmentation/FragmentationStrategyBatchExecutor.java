@@ -35,7 +35,7 @@ public class FragmentationStrategyBatchExecutor {
 //		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
 //		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView,
 //				member, parentObservation);
-		final var rootBucket = new Bucket(BucketDescriptor.empty(), viewName, 0);
+		final var rootBucket = new Bucket(BucketDescriptor.empty(), viewName);
 		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
 		return bucketisedMembers;

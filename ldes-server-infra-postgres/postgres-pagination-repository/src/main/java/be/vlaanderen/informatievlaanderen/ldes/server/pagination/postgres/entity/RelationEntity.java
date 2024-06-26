@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "page_relations")
@@ -9,11 +11,15 @@ public class RelationEntity {
 	private RelationId relationId;
 
 	@ManyToOne
-	@MapsId("fromPage")
+	@MapsId("fromPageId")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "from_page_id", nullable = false, columnDefinition = "BIGINT")
 	private PageEntity fromPage;
 
 	@ManyToOne
-	@MapsId("toPage")
+	@MapsId("toPageId")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "to_page_id", nullable = false, columnDefinition = "BIGINT")
 	private PageEntity toPage;
 
 	@Column(name = "value", nullable = false, columnDefinition = "VARCHAR(255)")

@@ -23,6 +23,7 @@
                                  referencedTableName="views"
                                  referencedColumnNames="view_id"
                                  onDelete="CASCADE"/>
+        <addUniqueConstraint tableName="buckets" columnNames="bucket,view_id" />
         <rollback>
             <dropTable tableName="buckets" cascadeConstraints="true" />
         </rollback>

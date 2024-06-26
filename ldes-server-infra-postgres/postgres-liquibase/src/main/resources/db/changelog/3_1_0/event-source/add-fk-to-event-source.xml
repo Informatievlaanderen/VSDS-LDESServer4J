@@ -28,9 +28,8 @@
         </rollback>
     </changeSet>
     <changeSet id="migrate-event-sources-data" author="vsds">
-        <preConditions>
-            <changeSetExecuted id="create-new-event-sources-table" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/event-source/add-fk-to-event-source.xml"/>
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <tableExists tableName="eventsource" />
         </preConditions>
         <sqlFile path="db/changelog/3_1_0/event-source/migrate-event-source-data.sql"/>
         <rollback>
@@ -38,9 +37,8 @@
         </rollback>
     </changeSet>
     <changeSet id="drop-old-event-sources-table" author="vsds">
-        <preConditions>
-            <changeSetExecuted id="migrate-event-sources-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_0/event-source/add-fk-to-event-source.xml"/>
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <tableExists tableName="eventsource" />
         </preConditions>
         <dropTable tableName="eventsource" cascadeConstraints="true"/>
     </changeSet>

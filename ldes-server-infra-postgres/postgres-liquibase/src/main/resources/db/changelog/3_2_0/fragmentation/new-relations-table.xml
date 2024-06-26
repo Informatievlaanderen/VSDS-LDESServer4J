@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-page-relations-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="page_relations" />
+            </not>
+        </preConditions>
+        <createTable tableName="page_relations">
+            <column name="from_page_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to_page_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="relation_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="value_type" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="path" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="from_page_id"
+                                 baseTableName="page_relations"
+                                 constraintName="fk_from_page"
+                                 referencedColumnNames="page_id"
+                                 referencedTableName="pages"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseColumnNames="to_page_id"
+                                 baseTableName="page_relations"
+                                 constraintName="fk_to_page"
+                                 referencedColumnNames="page_id"
+                                 referencedTableName="pages"
+                                 onDelete="CASCADE"/>
+
+        <createIndex tableName="page_relations" indexName="page_relations_from-page-id_to-page-id">
+            <column name="to_page_id" />
+            <column name="from_page_id" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
