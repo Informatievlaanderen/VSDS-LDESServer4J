@@ -18,7 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -41,7 +41,7 @@ class MemberIngesterImplTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private ApplicationEventMulticaster eventPublisher;
+    private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private MemberIngestValidator validator;
@@ -106,7 +106,7 @@ class MemberIngesterImplTest {
         assertThat(memberIngested).isTrue();
         InOrder inOrder = inOrder(memberRepository, eventPublisher);
         inOrder.verify(memberRepository, times(1)).insertAll(List.of(member));
-        inOrder.verify(eventPublisher).multicastEvent(any(MembersIngestedEvent.class));
+        inOrder.verify(eventPublisher).publishEvent(any(MembersIngestedEvent.class));
         inOrder.verifyNoMoreInteractions();
     }
 

@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.MemberPaginationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.MemberPaginationServiceCreator;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = { PaginationProcessor.class, MemberPaginationServiceCreator.class, ViewBucketisationService.class })
+@ContextConfiguration(classes = { PaginationProcessor.class, MemberPaginationServiceCreator.class })
 class PaginationProcessorTest {
 	@MockBean
 	FragmentRepository fragmentRepository;
@@ -45,17 +44,17 @@ class PaginationProcessorTest {
 		ViewName v1 = viewName("v1");
 		ViewName v2 = viewName("v2");
 
-		eventPublisher.publishEvent(new ViewInitializationEvent(this, viewSpecification(v1)));
+		eventPublisher.publishEvent(new ViewInitializationEvent(viewSpecification(v1)));
 
 		assertTrue(processor.getPaginationServices().containsKey(v1.asString()));
-		eventPublisher.publishEvent(new ViewAddedEvent(this, viewSpecification(v2)));
+		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification(v2)));
 		assertTrue(processor.getPaginationServices().containsKey(v2.asString()));
 
-		eventPublisher.publishEvent(new ViewDeletedEvent(this, v1));
+		eventPublisher.publishEvent(new ViewDeletedEvent(v1));
 		assertFalse(processor.getPaginationServices().containsKey(v1.asString()));
 		assertEquals(1, processor.getPaginationServices().size());
 
-		eventPublisher.publishEvent(new ViewDeletedEvent(this, v1));
+		eventPublisher.publishEvent(new ViewDeletedEvent(v1));
 		assertFalse(processor.getPaginationServices().containsKey(v1.asString()));
 		assertEquals(1, processor.getPaginationServices().size());
 	}

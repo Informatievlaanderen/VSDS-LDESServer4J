@@ -281,13 +281,6 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertThat(size).isEqualTo(statementCount);
 	}
 
-	@And("The prometheus value for key {string} is {string}")
-	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String value) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
-				.andReturn().getResponse();
-		assertTrue(response.getContentAsString().contains(message + " " + value));
-	}
-
 	@When("I ingest {int} files of state objects from folder {string} to the collection {string}")
 	public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfStateFiles; i++) {
@@ -345,5 +338,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			return null;
 		}
 		return new ResponseToModelConverter(response).convert();
+	}
+
+	@And("The prometheus value for key {string} in my collection {string} is {string}")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String collection, String value) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
+				.andReturn().getResponse();
+		assertTrue(response.getContentAsString().contains("%s{collection=\"%s\"} %s".formatted(message, collection, value)));
 	}
 }

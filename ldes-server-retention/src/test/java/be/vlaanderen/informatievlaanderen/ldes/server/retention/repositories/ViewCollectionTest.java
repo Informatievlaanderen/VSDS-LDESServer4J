@@ -41,8 +41,8 @@ class ViewCollectionTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
-                    Arguments.of(new ViewInitializationEvent(this, viewSpecification)),
-                    Arguments.of(new ViewAddedEvent(this, viewSpecification)));
+                    Arguments.of(new ViewInitializationEvent(viewSpecification)),
+                    Arguments.of(new ViewAddedEvent(viewSpecification)));
         }
 
     }
@@ -54,12 +54,12 @@ class ViewCollectionTest {
         final ViewName viewNameB = ViewName.fromString("col/viewB");
         final ViewSpecification viewSpecificationB = new ViewSpecification(viewNameB, List.of(), List.of(), 10);
 
-        viewCollection.handle(new ViewAddedEvent(this, viewSpecificationA));
-        viewCollection.handle(new ViewAddedEvent(this, viewSpecificationB));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationA));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationB));
 
         assertThat(viewCollection.getViews()).hasSize(2);
 
-        viewCollection.handle(new ViewDeletedEvent(this, viewNameA));
+        viewCollection.handle(new ViewDeletedEvent(viewNameA));
 
         assertThat(viewCollection.getViews()).hasSize(1);
         assertThat(viewCollection.getViews()).contains(viewSpecificationB);
@@ -75,13 +75,13 @@ class ViewCollectionTest {
         final ViewName viewNameBC = ViewName.fromString("colB/viewC");
         final ViewSpecification viewSpecificationC = new ViewSpecification(viewNameBC, List.of(), List.of(), 10);
 
-        viewCollection.handle(new ViewAddedEvent(this, viewSpecificationA));
-        viewCollection.handle(new ViewAddedEvent(this, viewSpecificationB));
-        viewCollection.handle(new ViewAddedEvent(this, viewSpecificationC));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationA));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationB));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationC));
 
         assertThat(viewCollection.getViews()).hasSize(3);
 
-        viewCollection.handle(new EventStreamDeletedEvent(this, collectionNameA));
+        viewCollection.handle(new EventStreamDeletedEvent(collectionNameA));
 
         assertThat(viewCollection.getViews()).hasSize(1);
         assertThat(viewCollection.getViews()).contains(viewSpecificationC);

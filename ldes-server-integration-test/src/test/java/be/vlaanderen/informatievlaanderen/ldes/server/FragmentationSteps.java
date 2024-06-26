@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+import org.awaitility.Awaitility;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.net.URI;
@@ -36,11 +37,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	@When("I fetch the root {string} fragment of {string}")
 	public void iFetchTheRootFragment(String view, String collection) throws Exception {
 		currentPath = "/%s/%s".formatted(collection, view);
-		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
-				.andReturn()
-				.getResponse();
-		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = new ResponseToModelConverter(response).convert();
+		fetchFragment(currentPath);
 	}
 
 	private void fetchFragment(String path) throws Exception {
@@ -60,7 +57,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("I fetch the next fragment through the first {string}")
 	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
+		await().atMost(60, TimeUnit.SECONDS)
+				.timeout(POLLING_RATE, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
@@ -73,7 +71,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
 				.next().getObject().toString();
 
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
+		await().atMost(60, TimeUnit.SECONDS)
+				.timeout(POLLING_RATE, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
@@ -94,9 +93,14 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("this fragment is immutable")
 	public void thisFragmentIsImmutable() {
-		assertThat(currentFragmentCacheControl)
-				.contains("immutable")
-				.contains("max-age=31536000");
+		Awaitility.await().untilAsserted(() -> {
+			fetchFragment(currentPath);
+
+			assertThat(currentFragmentCacheControl)
+					.contains("immutable")
+					.contains("max-age=31536000");
+		});
+
 	}
 
 	@And("this fragment contains {int} members")

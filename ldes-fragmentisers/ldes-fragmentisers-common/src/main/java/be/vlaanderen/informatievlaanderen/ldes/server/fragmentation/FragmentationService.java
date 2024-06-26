@@ -1,6 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
@@ -23,6 +26,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -95,6 +99,12 @@ public class FragmentationService {
 	@EventListener
 	public void markFragmentsImmutableInCollection(EventStreamClosedEvent event) {
 		fragmentRepository.markFragmentsImmutableInCollection(event.collectionName());
+	}
+
+	@EventListener({ViewAddedEvent.class, ViewInitializationEvent.class})
+	@Order
+	public void handleViewAddedEvent(ViewSupplier event) {
+		eventPublisher.publishEvent(new ViewNeedsRebucketisationEvent(event.viewSpecification().getName()));
 	}
 
 	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {

@@ -19,7 +19,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -40,7 +41,7 @@ class ViewServiceImplTest {
 	@Mock
 	private ViewRepository viewRepository;
 	@Mock
-	private ApplicationEventMulticaster eventPublisher;
+	private ApplicationEventPublisher eventPublisher;
 	@Mock
 	private ViewValidator viewValidator;
 	@InjectMocks
@@ -49,7 +50,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamCreatedEvent(this, new EventStream(COLLECTION, null, null, false)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, false)));
 	}
 
 	@Nested
@@ -64,19 +65,6 @@ class ViewServiceImplTest {
 				List.of(), 100);
 
 		@Test
-		void when_ViewDoesNotExist_then_ViewIsAdded() {
-			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
-
-			viewService.addView(view);
-
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verify(viewRepository).getViewByViewName(view.getName());
-			inOrder.verify(eventPublisher).multicastEvent(any(ViewAddedEvent.class));
-			inOrder.verify(viewRepository).saveView(view);
-			inOrder.verifyNoMoreInteractions();
-		}
-
-		@Test
 		void given_ViewWithDuplicateRetentionPolicy_when_AddView_then_ThrowException() {
 			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
 			doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(view);
@@ -85,6 +73,20 @@ class ViewServiceImplTest {
 
 			verify(viewRepository).getViewByViewName(view.getName());
 			verifyNoMoreInteractions(viewRepository, eventPublisher);
+		}
+
+		@Test
+		void when_ViewDoesNotExist_then_ViewIsAdded() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+
+			viewService.addView(view);
+
+			InOrder inOrder = inOrder(viewRepository);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verifyNoMoreInteractions();
+
+			await().untilAsserted(() -> verify(eventPublisher).publishEvent(any(ViewAddedEvent.class)));
 		}
 
 		@Test
@@ -131,7 +133,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
 			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
-			inOrder.verify(eventPublisher).multicastEvent(any(ViewDeletedEvent.class));
+			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -212,7 +214,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).retrieveAllViews();
-			inOrder.verify(eventPublisher, times(2)).multicastEvent(any(ViewInitializationEvent.class));
+			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewInitializationEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -229,7 +231,7 @@ class ViewServiceImplTest {
 
 		assertThat(viewService.getViewsByCollectionName(COLLECTION)).hasSize(2);
 
-		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION));
+		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		assertThatThrownBy(() -> viewService.getViewsByCollectionName(COLLECTION))
 				.isInstanceOf(MissingResourceException.class);
