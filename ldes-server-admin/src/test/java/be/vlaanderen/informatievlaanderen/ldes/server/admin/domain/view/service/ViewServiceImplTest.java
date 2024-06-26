@@ -19,7 +19,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ class ViewServiceImplTest {
 	@Mock
 	private ViewRepository viewRepository;
 	@Mock
-	private ApplicationEventMulticaster eventPublisher;
+	private ApplicationEventPublisher eventPublisher;
 	@Mock
 	private ViewValidator viewValidator;
 	@InjectMocks
@@ -49,7 +49,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamCreatedEvent(this, new EventStream(COLLECTION, null, null, false)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, false)));
 	}
 
 	@Nested
@@ -71,7 +71,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(view.getName());
-			inOrder.verify(eventPublisher).multicastEvent(any(ViewAddedEvent.class));
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
 			inOrder.verify(viewRepository).saveView(view);
 			inOrder.verifyNoMoreInteractions();
 		}
@@ -131,7 +131,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
 			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
-			inOrder.verify(eventPublisher).multicastEvent(any(ViewDeletedEvent.class));
+			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -212,7 +212,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).retrieveAllViews();
-			inOrder.verify(eventPublisher, times(2)).multicastEvent(any(ViewInitializationEvent.class));
+			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewInitializationEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -229,7 +229,7 @@ class ViewServiceImplTest {
 
 		assertThat(viewService.getViewsByCollectionName(COLLECTION)).hasSize(2);
 
-		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION));
+		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		assertThatThrownBy(() -> viewService.getViewsByCollectionName(COLLECTION))
 				.isInstanceOf(MissingResourceException.class);

@@ -11,7 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +24,11 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final EventStreamRepository eventStreamRepository;
 	private final DcatServerService dcatServerService;
 	private final EventSourceService eventSourceService;
-	private final ApplicationEventMulticaster eventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 	private final ViewValidator viewValidator;
 
 	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository,
-	                              DcatServerService dcatServerService, EventSourceService eventSourceService,
-	                              ApplicationEventMulticaster eventPublisher, ViewValidator viewValidator) {
+	                              DcatServerService dcatServerService, EventSourceService eventSourceService, ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
 		this.eventStreamRepository = eventStreamRepository;
 		this.dcatServerService = dcatServerService;
 		this.eventSourceService = eventSourceService;
@@ -55,7 +54,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
 		Metrics.globalRegistry.remove(Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT, "collection", collectionName));
-		eventPublisher.multicastEvent(new EventStreamDeletedEvent(this, collectionName));
+		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
 	@Override
@@ -84,7 +83,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public void closeEventStream(String collectionName) {
 		EventStream eventStream = getEventStream(collectionName);
-		eventPublisher.multicastEvent(new EventStreamClosedEvent(this, eventStream.getCollection()));
+		eventPublisher.publishEvent(new EventStreamClosedEvent(eventStream.getCollection()));
 	}
 
 	private EventStream getEventStream(String collectionName) {
@@ -105,14 +104,14 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@EventListener(ApplicationReadyEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
-				.map(eventStream -> new EventStreamCreatedEvent(this, eventStream))
-				.forEach(eventPublisher::multicastEvent);
+				.map(EventStreamCreatedEvent::new)
+				.forEach(eventPublisher::publishEvent);
 	}
 
 	private void publishEventStreamTOCreatedEvents(EventStreamTO eventStreamTO) {
-		eventPublisher.multicastEvent(new EventStreamCreatedEvent(this, eventStreamTO.extractEventStreamProperties()));
-		eventStreamTO.getViews().stream().map(view -> new ViewAddedEvent(this, view)).forEach(eventPublisher::multicastEvent);
-		eventPublisher.multicastEvent(new DeletionPolicyChangedEvent(this, eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
+		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);
+		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
 	}
 
 }

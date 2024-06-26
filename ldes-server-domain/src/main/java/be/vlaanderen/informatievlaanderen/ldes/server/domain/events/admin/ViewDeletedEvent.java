@@ -1,13 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import org.springframework.context.ApplicationEvent;
 
-public class ViewDeletedEvent extends ApplicationEvent {
+public class ViewDeletedEvent {
 	private final ViewName viewName;
 
-	public ViewDeletedEvent(Object source, ViewName viewName) {
-		super(source);
+	public ViewDeletedEvent(ViewName viewName) {
 		this.viewName = viewName;
 	}
 

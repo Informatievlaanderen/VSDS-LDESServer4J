@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 @Component
 public class ResourceRemover {
-    private final ApplicationEventMulticaster applicationEventPublisher;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final List<String> usedStreams = new ArrayList<>();
 
-    protected ResourceRemover(ApplicationEventMulticaster applicationEventPublisher) {
+    protected ResourceRemover(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -29,7 +29,6 @@ public class ResourceRemover {
     }
 
     public void removeUsedResources() {
-        List.copyOf(usedStreams).forEach(name -> applicationEventPublisher.multicastEvent(
-                new EventStreamDeletedEvent(this, name)));
+        List.copyOf(usedStreams).forEach(name -> applicationEventPublisher.publishEvent(new EventStreamDeletedEvent(name)));
     }
 }

@@ -28,7 +28,7 @@ class ViewAddedHandlerTest {
         ViewName viewName = ViewName.fromString("col/view");
         ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 10);
 
-        viewAddedHandler.handle(new ViewAddedEvent(this, viewSpecification));
+        viewAddedHandler.handle(new ViewAddedEvent(viewSpecification));
 
         verify(memberPropertiesRepository).addViewToAll(viewName);
     }

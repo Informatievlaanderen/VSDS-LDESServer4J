@@ -11,10 +11,11 @@ import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
@@ -25,13 +26,13 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private final MemberIngestValidator validator;
     private final MemberRepository memberRepository;
-    private final ApplicationEventMulticaster eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
     private final MemberExtractorCollection memberExtractorCollection;
 
     private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
     public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-                              ApplicationEventMulticaster eventPublisher, MemberExtractorCollection memberExtractorCollection) {
+                              ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection) {
         this.validator = validator;
         this.memberRepository = memberRepository;
         this.eventPublisher = eventPublisher;
@@ -65,10 +66,12 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void publishIngestedEvent(String collectionName, List<IngestedMember> members) {
-        final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
-                .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
-                .toList();
-        eventPublisher.multicastEvent(new MembersIngestedEvent(this, collectionName, memberProperties));
+        CompletableFuture.runAsync(() -> {
+            final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
+                    .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
+                    .toList();
+            eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
+        });
     }
 
     private void logSuccessfulMemberIngestion(String memberId) {

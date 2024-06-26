@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAl
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,7 @@ import static org.mockito.Mockito.*;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
-		MemberPaginationServiceCreator.class, ViewBucketisationService.class})
+		MemberPaginationServiceCreator.class })
 class PaginationServiceTest {
 	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
 	@MockBean(name = "bucketisationPartitioner")
@@ -64,7 +63,7 @@ class PaginationServiceTest {
 	@Test
 	void when_MemberBucketised_Then_CorrectServiceCalled() throws Exception {
 		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
-		eventPublisher.publishEvent(new ViewInitializationEvent(this, new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
+		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
 		mockBucketisationPartitioner();
 		mockReader();
@@ -81,7 +80,7 @@ class PaginationServiceTest {
 	@Test
 	void when_ViewDeleted_Then_ServiceRemoved() throws Exception {
 		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
-		eventPublisher.publishEvent(new ViewInitializationEvent(this, new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
+		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
 		mockViewBucketisationPartitioner();
 		mockReader();
