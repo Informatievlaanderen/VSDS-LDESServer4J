@@ -2,9 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +36,22 @@ class FragmentationStrategyImplTest {
 		assertEquals(MEMBER_ID, members.getFirst().memberId());
 		assertEquals(VIEW_NAME, members.getFirst().viewName());
 		assertEquals(FRAGMENT_ID.asDecodedFragmentId(), members.getFirst().fragmentId());
+	}
+
+	@Test
+	void when_memberIsAddedToBucket_FragmentationStrategyImplSavesUpdatedFragment() {
+		BucketisedMember expectedBucketisedMember = new BucketisedMember(MEMBER_ID, VIEW_NAME, "");
+		Bucket bucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		FragmentationMember member = mock(FragmentationMember.class);
+		when(member.id()).thenReturn(MEMBER_ID);
+
+		List<BucketisedMember> members = fragmentationStrategy.addMemberToBucket(bucket, member, mock(Observation.class));
+
+		assertThat(members).hasSize(1);
+		assertThat(members)
+				.hasSize(1)
+				.first()
+				.usingRecursiveComparison()
+				.isEqualTo(expectedBucketisedMember);
 	}
 }

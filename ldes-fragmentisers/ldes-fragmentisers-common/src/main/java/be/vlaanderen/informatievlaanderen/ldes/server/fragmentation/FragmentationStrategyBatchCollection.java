@@ -40,7 +40,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	}
 
 	@Override
-	public List<FragmentationStrategyBatchExecutor> getFragmentationStrategyExecutors(String collectionName) {
+	public List<FragmentationStrategyBatchExecutor> getAllFragmentationStrategyExecutors(String collectionName) {
 		return fragmentationStrategySet
 				.stream()
 				.filter(executor -> executor.isPartOfCollection(collectionName))

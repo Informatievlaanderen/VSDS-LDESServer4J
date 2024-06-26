@@ -109,14 +109,7 @@ public class PaginationService {
 	private Step paginationStep() {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketisationPartitioner)
-				.step(new StepBuilder("paginationStep", jobRepository)
-						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
-						.reader(reader)
-						.processor(processor)
-						.writer(writer)
-						.allowStartIfComplete(true)
-						.build()
-				)
+				.step(createPaginationSubStep())
 				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
@@ -125,17 +118,19 @@ public class PaginationService {
 	private Step newViewPaginationStep() {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", viewBucketisationPartitioner)
-				.step(new StepBuilder("paginationStep", jobRepository)
-						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
-						.reader(reader)
-						.processor(processor)
-						.writer(writer)
-						.allowStartIfComplete(true)
-						.build()
-				)
+				.step(createPaginationSubStep())
 				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
 	}
 
+	private Step createPaginationSubStep() {
+		return new StepBuilder("paginationStep", jobRepository)
+				.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
+				.reader(reader)
+				.processor(processor)
+				.writer(writer)
+				.allowStartIfComplete(true)
+				.build();
+	}
 }

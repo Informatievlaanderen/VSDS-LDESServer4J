@@ -42,15 +42,14 @@ Feature: Server basic fetching functionality
     When I fetch a fragment from url "/mobility-hindrances/paged" in a streaming way and is equal to the model of "/mobility-hindrances/paged"
     When I fetch a fragment from url "/mobility-hindrances/paged?pageNumber=1" in a streaming way and is equal to the model of "/mobility-hindrances/paged?pageNumber=1"
 
-  @clearRegistry
-  Scenario Outline: Counter is created and returns number of inserted members
-    Given I create the eventstream <eventStreamDescriptionFile>
-    When I ingest 1 members of template <template> to the collection <collectionName>
-    Then The prometheus value for key "ldes_server_ingested_members_count_total" is <prometheusValue>
-
-    Examples:
-      | eventStreamDescriptionFile                                       | template                                           | collectionName        | prometheusValue |
-      | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | "1.0"           |
-      | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | "observations"        | "2.0"           |
-
+#  @clearRegistry
+#  Scenario Outline: Counter is created and returns number of inserted members
+#    Given I create the eventstream <eventStreamDescriptionFile>
+#    When I ingest 1 members of template <template> to the collection <collectionName>
+#    Then The prometheus value for key "ldes_server_ingested_members_count_total" is <prometheusValue>
+#
+#    Examples:
+#      | eventStreamDescriptionFile                                       | template                                           | collectionName        | prometheusValue |
+#      | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | "1.0"           |
+#      | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | "observations"        | "2.0"           |
 

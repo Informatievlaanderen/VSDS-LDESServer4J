@@ -1,0 +1,71 @@
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
+
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class Bucket {
+
+	private final BucketDescriptor bucketDescriptor;
+	private final ViewName viewName;
+	private final int memberCount;
+
+	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName, int memberCount) {
+		this.bucketDescriptor = bucketDescriptor;
+		this.viewName = viewName;
+		this.memberCount = memberCount;
+	}
+
+	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
+		this(bucketDescriptor, viewName, 0);
+	}
+
+	public ViewName getViewName() {
+		return viewName;
+	}
+
+	public List<BucketDescriptorPair> getBucketDescriptorPairs() {
+		return bucketDescriptor.getDescriptorPairs();
+	}
+
+	public String getBucketDescriptorAsString() {
+		return bucketDescriptor.asDecodedString();
+	}
+
+	public Bucket createChild(BucketDescriptorPair descriptorPair) {
+		List<BucketDescriptorPair> childFragmentPairs = new ArrayList<>(this.bucketDescriptor.getDescriptorPairs());
+		if (hasChildWithSameDescriptorKey(descriptorPair, childFragmentPairs)) {
+			throw new DuplicateFragmentPairException(bucketDescriptor.asDecodedString(), descriptorPair.key());
+		}
+		childFragmentPairs.add(descriptorPair);
+		return new Bucket(new BucketDescriptor(childFragmentPairs), viewName, 0);
+	}
+
+	private static boolean hasChildWithSameDescriptorKey(BucketDescriptorPair descriptorPair, List<BucketDescriptorPair> childFragmentPairs) {
+		return childFragmentPairs
+				.stream()
+				.map(BucketDescriptorPair::key)
+				.anyMatch(key -> key.equals(descriptorPair.key()));
+	}
+
+	@Override
+	public final boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Bucket bucket)) return false;
+
+		return Objects.equals(bucketDescriptor, bucket.bucketDescriptor) && Objects.equals(viewName, bucket.viewName);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hashCode(bucketDescriptor);
+		result = 31 * result + Objects.hashCode(viewName);
+		return result;
+	}
+}

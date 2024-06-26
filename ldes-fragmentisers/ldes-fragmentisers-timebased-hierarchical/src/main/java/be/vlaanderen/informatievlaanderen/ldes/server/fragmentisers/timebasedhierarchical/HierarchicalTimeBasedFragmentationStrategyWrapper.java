@@ -3,12 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedRelationsAttributer;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.*;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
@@ -19,6 +18,7 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
+		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);
@@ -28,9 +28,11 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 				relationsAttributer);
 		TimeBasedFragmentFinder fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator,
 				config);
+		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(bucketRepository, relationsAttributer);
+		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, fragmentFinder,
-				fragmentRepository, config);
+				fragmentRepository, bucketFinder, config);
 	}
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {

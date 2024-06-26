@@ -50,6 +50,7 @@ class FragmentationStrategyBatchExecutorTest {
 
 			verify(rootFragmentRetriever).retrieveRootFragmentOfView(eq(viewName), any());
 			verify(fragmentationStrategy).addMemberToFragment(any(), eq(member), any());
+			verify(fragmentationStrategy).addMemberToBucket(any(), eq(member), any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever);
 		}
 	}

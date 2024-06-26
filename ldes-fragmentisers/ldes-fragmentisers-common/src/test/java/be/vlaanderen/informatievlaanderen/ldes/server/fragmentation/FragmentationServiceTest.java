@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -120,7 +119,7 @@ class FragmentationServiceTest {
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}
 
-		when(strategyCollection.getFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
+		when(strategyCollection.getAllFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
 	}
 
 	private void mockReader(List<IngestedMember> members) throws Exception {
@@ -136,14 +135,5 @@ class FragmentationServiceTest {
 			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
 			return null;
 		}).when(itemWriter).write(any());
-	}
-
-	@Test
-	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
-		EventStreamClosedEvent event = new EventStreamClosedEvent(this, "collectionName");
-
-		fragmentationService.markFragmentsImmutableInCollection(event);
-
-		verify(fragmentRepository).markFragmentsImmutableInCollection("collectionName");
 	}
 }
