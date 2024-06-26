@@ -22,7 +22,8 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	private static final String SQL = """
 			INSERT INTO member_buckets (bucket_id, member_id)
 			SELECT (SELECT bucket_id FROM buckets WHERE bucket = ?),
-			       (SELECT member_id FROM members  WHERE subject = ?);
+			       (SELECT member_id FROM members  WHERE subject = ?)
+			ON CONFLICT DO NOTHING;
 			""";
 
 	private final JdbcTemplate jdbcTemplate;
@@ -42,22 +43,11 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 		final List<Object[]> batchArgs = new ArrayList<>();
 		for (BucketisedMember bucket : buckets) {
-//			tempOldMemberSaver(bucket, batchArgs);
-			if(!bucket.fragmentId().isEmpty()) {
-				final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
-				batchArgs.add(new Object[]{bucket.fragmentId(), memberId});
+			if (!bucket.fragmentId().isEmpty()) {
+				batchArgs.add(new Object[]{bucket.fragmentId(), bucket.memberId()});
 			}
 		}
 		jdbcTemplate.batchUpdate(SQL, batchArgs);
-	}
-
-	private static void tempOldMemberSaver(BucketisedMember bucket, List<Object[]> batchArgs) {
-		final String[] idParts = bucket.fragmentId().split("\\?");
-		if (idParts.length != 2) {
-			return;
-		}
-		final String memberId = bucket.memberId().substring(bucket.memberId().indexOf('/') + 1);
-		batchArgs.add(new Object[]{idParts[1], memberId});
 	}
 
 	private void temporaryOldSaving(Chunk<BucketisedMember> buckets) throws SQLException {
@@ -67,8 +57,8 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
-				ps.setString(2, bucket.fragmentId());
-				ps.setString(3, bucket.memberId());
+				ps.setString(2, bucket.viewNameAsString() + '?' + bucket.fragmentId());
+				ps.setString(3, bucket.viewName().getCollectionName() + '/' + bucket.memberId());
 				// Add it to the batch
 				ps.addBatch();
 			}
