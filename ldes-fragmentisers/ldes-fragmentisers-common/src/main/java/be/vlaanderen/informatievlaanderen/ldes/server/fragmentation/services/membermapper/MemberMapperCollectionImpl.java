@@ -3,12 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.me
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,8 +15,6 @@ public class MemberMapperCollectionImpl implements MemberMapperCollection {
     private final Map<String, MemberMapper> memberMappers = new HashMap<>();
     @Override
     public Optional<MemberMapper> getMemberMapper(String collectionName) {
-        Logger logger = LoggerFactory.getLogger(MemberMapperCollection.class);
-        logger.info(Arrays.toString(memberMappers.keySet().toArray()));
         return Optional.ofNullable(memberMappers.get(collectionName));
     }
 
