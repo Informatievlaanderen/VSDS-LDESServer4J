@@ -71,8 +71,8 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(view.getName());
-			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
 			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 
