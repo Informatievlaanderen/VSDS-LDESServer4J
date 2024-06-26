@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -64,19 +65,6 @@ class ViewServiceImplTest {
 				List.of(), 100);
 
 		@Test
-		void when_ViewDoesNotExist_then_ViewIsAdded() {
-			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
-
-			viewService.addView(view);
-
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verify(viewRepository).getViewByViewName(view.getName());
-			inOrder.verify(viewRepository).saveView(view);
-			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
-			inOrder.verifyNoMoreInteractions();
-		}
-
-		@Test
 		void given_ViewWithDuplicateRetentionPolicy_when_AddView_then_ThrowException() {
 			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
 			doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(view);
@@ -85,6 +73,20 @@ class ViewServiceImplTest {
 
 			verify(viewRepository).getViewByViewName(view.getName());
 			verifyNoMoreInteractions(viewRepository, eventPublisher);
+		}
+
+		@Test
+		void when_ViewDoesNotExist_then_ViewIsAdded() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+
+			viewService.addView(view);
+
+			InOrder inOrder = inOrder(viewRepository);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verifyNoMoreInteractions();
+
+			await().untilAsserted(() -> verify(eventPublisher).publishEvent(any(ViewAddedEvent.class)));
 		}
 
 		@Test
