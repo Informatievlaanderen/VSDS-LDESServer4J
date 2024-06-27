@@ -37,8 +37,8 @@
         </rollback>
     </changeSet>
     <changeSet id="migrate-eventstream-data" author="vsds">
-        <preConditions onFail="MARK_RAN" onError="HALT">
-            <tableExists tableName="eventstream"/>
+        <preConditions>
+            <tableExists tableName="collections"/>
         </preConditions>
         <sqlFile path="db/changelog/3_1_0/event-stream/migrate-eventstream-data.sql"/>
         <rollback>
@@ -46,8 +46,9 @@
         </rollback>
     </changeSet>
     <changeSet id="drop-old-eventstream-table" author="vsds">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="eventstream" />
+        <preConditions>
+            <changeSetExecuted id="migrate-eventstream-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_0/event-stream/new-eventstream-data-model.xml"/>
         </preConditions>
         <dropTable tableName="eventstream" cascadeConstraints="true"/>
     </changeSet>

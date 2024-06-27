@@ -45,8 +45,8 @@
         </rollback>
     </changeSet>
     <changeSet id="migrate-view-data" author="vsds">
-        <preConditions onFail="MARK_RAN" onError="HALT">
-            <tableExists tableName="view" />
+        <preConditions>
+            <tableExists tableName="views"/>
         </preConditions>
         <sqlFile path="db/changelog/3_1_0/views/migrate-view-data.sql" />
         <rollback>
@@ -54,8 +54,9 @@
         </rollback>
     </changeSet>
     <changeSet id="drop-old-view-table" author="vsds">
-        <preConditions onFail="MARK_RAN" onError="HALT">
-            <tableExists tableName="view" />
+        <preConditions>
+            <changeSetExecuted id="migrate-view-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_0/views/new-view-data-model.xml"/>
         </preConditions>
         <dropTable tableName="view" cascadeConstraints="true"/>
     </changeSet>
