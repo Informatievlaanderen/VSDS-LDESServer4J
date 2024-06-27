@@ -70,7 +70,7 @@ class MemberIngestValidatorTest {
     void when_EventStreamInit_Then_EventstreamAddedToMap() {
         EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, false);
 
-        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(this, stream));
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 
         assertThat(validator)
                 .extracting("eventstreams", InstanceOfAssertFactories.collection(EventStream.class))
@@ -81,7 +81,7 @@ class MemberIngestValidatorTest {
     void when_ClosedEventStreamInit_Then_EventstreamAddedToMap() {
         EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, false, true);
 
-        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(this, stream));
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 
         assertThat(validator)
                 .extracting("eventstreams", InstanceOfAssertFactories.collection(EventStream.class))
