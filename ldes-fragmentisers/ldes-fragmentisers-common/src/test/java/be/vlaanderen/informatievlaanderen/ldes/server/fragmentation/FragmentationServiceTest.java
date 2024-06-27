@@ -43,6 +43,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
 @TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class FragmentationServiceTest {
+	private static final int FRAGMENTATION_INTERVAL = 1000;
 
 	@MockBean(name = "newMemberReader")
 	ItemReader<IngestedMember> newMemberItemReader;
@@ -95,7 +96,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation();
 
-		await().atMost(1500, TimeUnit.SECONDS)
+		await().atMost(FRAGMENTATION_INTERVAL, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
@@ -105,7 +106,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
-		await().atMost(1500, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
+		await().atMost(FRAGMENTATION_INTERVAL, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 		verify(memberMapper, times(members.size() * 3))
 				.mapToFragmentationMember(any());
 	}

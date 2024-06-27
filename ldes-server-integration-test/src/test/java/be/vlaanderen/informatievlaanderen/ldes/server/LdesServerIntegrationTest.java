@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
-	final int FRAGMENTATION_POLLING_RATE = 1000;
+	static final int FRAGMENTATION_POLLING_RATE = 1000;
 
 	@Autowired
 	MockMvc mockMvc;

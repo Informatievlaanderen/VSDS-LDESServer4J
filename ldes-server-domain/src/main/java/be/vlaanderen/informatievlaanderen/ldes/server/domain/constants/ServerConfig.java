@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
 	private static final String DEFAULT_BACKGROUND_CRON = "0 0 0 * * *";
-	private static final String DEFAULT_FRAGMENTATION_CRON = "0 0 0 * * *";
+	private static final String DEFAULT_FRAGMENTATION_CRON = "*/15 * * * * *";
 	private static final String DEFAULT_USE_RELATIVE_URL = "false";
 	private static final String DEFAULT_MAX_JSONLD_CACHE_CAPACITY = "100";
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
