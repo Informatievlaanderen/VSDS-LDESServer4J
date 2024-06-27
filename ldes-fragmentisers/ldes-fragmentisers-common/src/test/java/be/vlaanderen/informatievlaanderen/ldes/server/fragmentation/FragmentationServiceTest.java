@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -41,7 +41,9 @@ import static org.mockito.Mockito.*;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class FragmentationServiceTest {
+	private static final int FRAGMENTATION_INTERVAL = 1000;
 
 	@MockBean(name = "newMemberReader")
 	ItemReader<IngestedMember> newMemberItemReader;
@@ -94,7 +96,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation();
 
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
+		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
@@ -104,7 +106,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
+		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 		verify(memberMapper, times(members.size() * 3))
 				.mapToFragmentationMember(any());
 	}

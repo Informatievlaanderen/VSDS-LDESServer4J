@@ -23,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
 		MemberPaginationServiceCreator.class })
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class PaginationServiceTest {
 	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
 	@MockBean(name = "bucketisationPartitioner")
