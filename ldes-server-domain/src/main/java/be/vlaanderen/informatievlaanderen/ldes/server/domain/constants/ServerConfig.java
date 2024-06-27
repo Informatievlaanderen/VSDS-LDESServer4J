@@ -75,8 +75,6 @@ public class ServerConfig {
 		this.compactionCron = compactionCron;
 	}
 
-	public v
-
 	public void setUseRelativeUrl(Boolean useRelativeUrl) {
 		this.useRelativeUrl = useRelativeUrl;
 	}
