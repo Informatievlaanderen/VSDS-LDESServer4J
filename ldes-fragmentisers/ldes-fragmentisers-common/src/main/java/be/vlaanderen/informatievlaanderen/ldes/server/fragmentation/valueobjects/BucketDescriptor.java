@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.B
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.net.URLEncoder.encode;
@@ -64,6 +65,13 @@ public class BucketDescriptor {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public Optional<String> getValueForKey(String key) {
+		return descriptorPairs.stream()
+				.filter(pair -> pair.key().equals(key))
+				.findFirst()
+				.map(BucketDescriptorPair::value);
 	}
 
 	@Override

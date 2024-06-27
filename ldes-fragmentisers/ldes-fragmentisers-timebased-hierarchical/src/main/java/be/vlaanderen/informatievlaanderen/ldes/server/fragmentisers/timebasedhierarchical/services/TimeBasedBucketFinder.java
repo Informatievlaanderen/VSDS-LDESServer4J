@@ -22,12 +22,12 @@ public class TimeBasedBucketFinder {
 			return parentFragment;
 		}
 		return getLowestFragment(
-				bucketCreator.getOrCreateFragment(parentFragment, fragmentationTimestamp, granularity),
+				bucketCreator.getOrCreateBucket(parentFragment, fragmentationTimestamp, granularity),
 				fragmentationTimestamp, granularity.getChild());
 	}
 
 	public Bucket getDefaultFragment(Bucket rootFragment) {
-		return bucketCreator.getOrCreateFragment(rootFragment, DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		return bucketCreator.getOrCreateBucket(rootFragment, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 
 	private boolean isLowest(Bucket bucket) {

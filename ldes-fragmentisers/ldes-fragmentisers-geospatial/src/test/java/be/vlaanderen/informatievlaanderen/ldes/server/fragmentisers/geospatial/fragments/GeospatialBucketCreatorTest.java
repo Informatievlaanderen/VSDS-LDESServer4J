@@ -5,9 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class GeospatialBucketCreatorTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final BucketDescriptorPair timebasedPair = new BucketDescriptorPair("year", "2023");
@@ -30,8 +32,7 @@ class GeospatialBucketCreatorTest {
 	@BeforeEach
 	void setUp() {
 		bucketRepository = mock(BucketRepository.class);
-		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = mock(TileFragmentRelationsAttributer.class);
-		geospatialBucketCreator = new GeospatialBucketCreator(bucketRepository, tileFragmentRelationsAttributer);
+		geospatialBucketCreator = new GeospatialBucketCreator(bucketRepository, mock());
 	}
 
 	@Test

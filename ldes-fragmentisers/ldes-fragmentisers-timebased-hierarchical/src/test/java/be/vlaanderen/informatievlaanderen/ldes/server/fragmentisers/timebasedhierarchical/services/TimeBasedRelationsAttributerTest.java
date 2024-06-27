@@ -34,7 +34,7 @@ class TimeBasedRelationsAttributerTest {
 		parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
 		fragmentRepository = mock(FragmentRepository.class);
 		config = new TimeBasedConfig(".*", "", Granularity.SECOND, false);
-		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, config);
+		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, mock(), config);
 	}
 
 	@Test
@@ -57,7 +57,7 @@ class TimeBasedRelationsAttributerTest {
 	@Test
 	void when_RelationNotPresent_AndCachingEnabled_ThenRelationIsAdded_NextUpdateTsIsSet_AndChildrenBecomeImmutable() {
 		config = new TimeBasedConfig(".*", "", Granularity.SECOND, true);
-		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, config);
+		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, mock(), config);
 
 		Fragment child = parentFragment.createChild(monthPair);
 		TreeRelation gteRelation = new TreeRelation(config.getFragmentationPath(),

@@ -11,10 +11,10 @@
             </not>
         </preConditions>
         <createTable tableName="page_relations">
-            <column name="from_page_id" type="VARCHAR(255)">
+            <column name="from_page_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="to_page_id" type="VARCHAR(255)">
+            <column name="to_page_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="relation_type" type="VARCHAR(255)">
@@ -49,5 +49,11 @@
             <column name="to_page_id" />
             <column name="from_page_id" />
         </createIndex>
+    </changeSet>
+    <changeSet id="migrate-into-new-page-relations-table" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="create-new-page-relations-table" author="vsds" changeLogFile="db/changelog/3_2_0/fragmentation/new-relations-table.xml" />
+        </preConditions>
+        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-page-relations-table.sql" />
     </changeSet>
 </databaseChangeLog>

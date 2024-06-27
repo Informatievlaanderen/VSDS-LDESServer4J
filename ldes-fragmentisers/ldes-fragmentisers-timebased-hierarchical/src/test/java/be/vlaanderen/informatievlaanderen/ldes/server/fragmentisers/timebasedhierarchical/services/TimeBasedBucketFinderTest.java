@@ -47,9 +47,9 @@ class TimeBasedBucketFinderTest {
 		Bucket yearBucket = PARENT.createChild(new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023"));
 		Bucket monthBucket = yearBucket.createChild(new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"));
 		Bucket dayBucket = monthBucket.createChild(new BucketDescriptorPair(Granularity.DAY.getValue(), "01"));
-		when(bucketCreator.getOrCreateFragment(PARENT, TIME, Granularity.YEAR)).thenReturn(yearBucket);
-		when(bucketCreator.getOrCreateFragment(yearBucket, TIME, Granularity.MONTH)).thenReturn(monthBucket);
-		when(bucketCreator.getOrCreateFragment(monthBucket, TIME, Granularity.DAY)).thenReturn(dayBucket);
+		when(bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.YEAR)).thenReturn(yearBucket);
+		when(bucketCreator.getOrCreateBucket(yearBucket, TIME, Granularity.MONTH)).thenReturn(monthBucket);
+		when(bucketCreator.getOrCreateBucket(monthBucket, TIME, Granularity.DAY)).thenReturn(dayBucket);
 
 		Bucket actual = bucketFinder.getLowestFragment(PARENT, TIME, Granularity.YEAR);
 
@@ -60,7 +60,7 @@ class TimeBasedBucketFinderTest {
 	void when_GetDefaultIsCalled_Then_ReturnExpectedFragment() {
 		bucketFinder.getDefaultFragment(PARENT);
 
-		verify(bucketCreator).getOrCreateFragment(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		verify(bucketCreator).getOrCreateBucket(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 
 

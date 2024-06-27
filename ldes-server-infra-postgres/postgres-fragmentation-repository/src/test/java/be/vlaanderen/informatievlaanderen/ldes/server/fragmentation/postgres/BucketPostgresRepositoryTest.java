@@ -31,7 +31,7 @@ class BucketPostgresRepositoryTest {
 	void test_BucketRetrieval() {
 		final Bucket expectedBucket = new Bucket(BucketDescriptor.fromString(BUCKET_DESCRIPTOR), VIEW_NAME);
 		when(bucketEntityRepository.findBucketEntityByBucketDescriptor(BUCKET_DESCRIPTOR))
-				.thenReturn(Optional.of(new BucketProjectionImpl(BUCKET_DESCRIPTOR, VIEW_NAME.asString(), 0L)));
+				.thenReturn(Optional.of(new BucketProjectionImpl(BUCKET_DESCRIPTOR, VIEW_NAME.asString())));
 
 		final Optional<Bucket> retrievedBucket = bucketPostgresRepository.retrieveBucket(BUCKET_DESCRIPTOR);
 
@@ -56,12 +56,15 @@ class BucketPostgresRepositoryTest {
 
 	private static class BucketProjectionImpl implements BucketProjection {
 		private final String bucketDescriptor, viewName;
-		private final Long memberCount;
 
-		public BucketProjectionImpl(String bucketDescriptor, String viewName, Long memberCount) {
+		public BucketProjectionImpl(String bucketDescriptor, String viewName) {
 			this.bucketDescriptor = bucketDescriptor;
 			this.viewName = viewName;
-			this.memberCount = memberCount;
+		}
+
+		@Override
+		public Long getBucketId() {
+			return 0L;
 		}
 
 		@Override
@@ -72,11 +75,6 @@ class BucketPostgresRepositoryTest {
 		@Override
 		public String getViewName() {
 			return viewName;
-		}
-
-		@Override
-		public Long getMemberCount() {
-			return memberCount;
 		}
 	}
 }

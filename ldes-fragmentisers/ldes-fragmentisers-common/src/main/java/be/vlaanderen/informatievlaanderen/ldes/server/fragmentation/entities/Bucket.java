@@ -9,15 +9,29 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Bucket {
-
+	private final long bucketId;
 	private final BucketDescriptor bucketDescriptor;
 	private final ViewName viewName;
 
-	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
+	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName) {
+		this.bucketId = bucketId;
 		this.bucketDescriptor = bucketDescriptor;
 		this.viewName = viewName;
+	}
+
+	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
+		this(0, bucketDescriptor, viewName);
+	}
+
+	public static Bucket createRootBucketForView(ViewName viewName) {
+		return new Bucket(BucketDescriptor.empty(), viewName);
+	}
+
+	public long getBucketId() {
+		return bucketId;
 	}
 
 	public ViewName getViewName() {
@@ -41,6 +55,10 @@ public class Bucket {
 		return new Bucket(new BucketDescriptor(childFragmentPairs), viewName);
 	}
 
+	public String createPartialUrl() {
+		return "/" + viewName.asString() + "?" + bucketDescriptor.asDecodedString();
+	}
+
 	private static boolean hasChildWithSameDescriptorKey(BucketDescriptorPair descriptorPair, List<BucketDescriptorPair> childFragmentPairs) {
 		return childFragmentPairs
 				.stream()
@@ -61,5 +79,9 @@ public class Bucket {
 		int result = Objects.hashCode(bucketDescriptor);
 		result = 31 * result + Objects.hashCode(viewName);
 		return result;
+	}
+
+	public Optional<String> getValueForKey(String key) {
+		return bucketDescriptor.getValueForKey(key);
 	}
 }

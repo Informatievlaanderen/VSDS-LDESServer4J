@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -34,6 +35,8 @@ class ReferenceFragmentRelationsAttributerTest {
 
     @Mock
     private FragmentRepository fragmentRepository;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final String fragmentationPath = RDF.type.getURI();
 
@@ -42,7 +45,7 @@ class ReferenceFragmentRelationsAttributerTest {
     @BeforeEach
     void setUp() {
         relationsAttributer =
-                new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath, DEFAULT_FRAGMENTATION_KEY);
+                new ReferenceFragmentRelationsAttributer(applicationEventPublisher, fragmentRepository, fragmentationPath, DEFAULT_FRAGMENTATION_KEY);
     }
 
     @Test

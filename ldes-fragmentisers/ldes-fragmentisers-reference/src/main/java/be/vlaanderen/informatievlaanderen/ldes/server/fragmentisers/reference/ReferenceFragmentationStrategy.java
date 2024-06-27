@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fr
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,8 +33,9 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                                           ReferenceFragmentCreator fragmentCreator,
                                           ReferenceBucketCreator bucketCreator,
                                           ObservationRegistry observationRegistry,
-                                          FragmentRepository fragmentRepository) {
-        super(fragmentationStrategy, fragmentRepository);
+                                          FragmentRepository fragmentRepository,
+                                          ApplicationEventPublisher applicationEventPublisher) {
+        super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
         this.referenceBucketiser = referenceBucketiser;
         this.fragmentCreator = fragmentCreator;
         this.bucketCreator = bucketCreator;
@@ -94,7 +96,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
 
     private Bucket getOrCreateRootBucket(Bucket parentBucket) {
         Bucket referenceRootFragment = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_REFERENCE_ROOT);
-//        super.addRelationFromParentToChild(parentBucket, referenceRootFragment);
+        super.addRelationFromParentToChild(parentBucket, referenceRootFragment);
         return referenceRootFragment;
     }
 

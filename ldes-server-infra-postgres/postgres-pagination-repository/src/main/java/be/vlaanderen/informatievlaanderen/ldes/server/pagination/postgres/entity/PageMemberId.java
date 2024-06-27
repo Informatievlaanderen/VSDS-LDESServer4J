@@ -12,4 +12,19 @@ public class PageMemberId implements Serializable {
 
 	@Column(name = "bucket_id", nullable = false, columnDefinition = "BIGINT")
 	private Long bucketId;
+
+	@Override
+	public final boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof PageMemberId that)) return false;
+
+		return memberId.equals(that.memberId) && bucketId.equals(that.bucketId);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = memberId.hashCode();
+		result = 31 * result + bucketId.hashCode();
+		return result;
+	}
 }

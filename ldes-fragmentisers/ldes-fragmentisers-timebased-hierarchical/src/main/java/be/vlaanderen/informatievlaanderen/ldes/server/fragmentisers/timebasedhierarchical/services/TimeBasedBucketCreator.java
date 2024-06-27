@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -26,45 +25,43 @@ public class TimeBasedBucketCreator {
 		this.relationsAttributer = relationsAttributer;
 	}
 
-	public Bucket getOrCreateFragment(Bucket parentFragment,
-	                                    FragmentationTimestamp fragmentationTimestamp,
-	                                    Granularity granularity) {
-		return getOrCreateFragment(parentFragment, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
+	public Bucket getOrCreateBucket(Bucket parentFragment,
+	                                FragmentationTimestamp fragmentationTimestamp,
+	                                Granularity granularity) {
+		return getOrCreateBucket(parentFragment, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
 	}
 
-	public Bucket getOrCreateFragment(Bucket parentBucket,
-	                                    String timeValue,
-	                                    Granularity granularity) {
+	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
 		Bucket childBucket = parentBucket.createChild(new BucketDescriptorPair(granularity.getValue(), timeValue));
 		return bucketRepository
 				.retrieveBucket(childBucket.getBucketDescriptorAsString())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(childBucket);
-					// TODO addRelationToParent
-//					logFragmentation(parentBucket, child);
+					addRelationToParent(parentBucket, childBucket);
+					logBucketisation(parentBucket, childBucket);
 					return childBucket;
 				});
 	}
 
-	// TODO
-	private void addRelationToParent(Fragment parentFragment, Fragment child) {
-		if (isDefaultBucket(child)) {
-			relationsAttributer.addDefaultRelation(parentFragment, child);
+	private void addRelationToParent(Bucket parentBucket, Bucket childBucket) {
+		if(isDefaultBucket(childBucket)) {
+			relationsAttributer.addDefaultRelation(parentBucket, childBucket);
 		} else {
-			relationsAttributer.addInBetweenRelation(parentFragment, child);
+			relationsAttributer.addInBetweenRelation(parentBucket, childBucket);
 		}
 	}
 
-	private boolean isDefaultBucket(Fragment fragment) {
-		return fragment.getValueOfKey(Granularity.YEAR.getValue()).orElse("").equals(DEFAULT_BUCKET_STRING);
+
+	private boolean isDefaultBucket(Bucket bucket) {
+		return bucket.getValueForKey(Granularity.YEAR.getValue()).orElse("").equals(DEFAULT_BUCKET_STRING);
 	}
 
-	private void logFragmentation(Fragment parentFragment, Fragment child) {
-		String viewName = parentFragment.getViewName().asString();
+	private void logBucketisation(Bucket parentBucket, Bucket child) {
+		String viewName = parentBucket.getViewName().asString();
 		Metrics
 				.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, TIMEBASED_FRAGMENTATION_HIERARCHICAL)
 				.increment();
-		LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
+		LOGGER.debug("Timebased fragment created with id: {}", child.getBucketDescriptorAsString());
 	}
 
 

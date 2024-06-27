@@ -33,8 +33,7 @@ public class GeospatialFragmentCreator {
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
 					fragmentRepository.saveFragment(child);
-					tileFragmentRelationsAttributer
-							.addRelationsFromRootToBottom(rootTileFragment, child);
+					tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, child);
 					String viewName = parentFragment.getViewName().asString();
 					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
 					LOGGER.debug("Geospatial fragment created with id: {}", child.getFragmentId());

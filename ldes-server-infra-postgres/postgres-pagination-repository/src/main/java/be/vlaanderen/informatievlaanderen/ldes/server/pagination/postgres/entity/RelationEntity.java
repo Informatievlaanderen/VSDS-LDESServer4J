@@ -22,23 +22,28 @@ public class RelationEntity {
 	@JoinColumn(name = "to_page_id", nullable = false, columnDefinition = "BIGINT")
 	private PageEntity toPage;
 
-	@Column(name = "value", nullable = false, columnDefinition = "VARCHAR(255)")
-	private String treeValue;
-
-	@Column(name = "value_type", nullable = false, columnDefinition = "VARCHAR(255)")
-	private String treeValueType;
-
 	@Column(name = "relation_type", nullable = false, columnDefinition = "VARCHAR(255)")
 	private String treeRelationType;
+
+	@Column(name = "value", columnDefinition = "VARCHAR(255)")
+	private String treeValue;
+
+	@Column(name = "value_type", columnDefinition = "VARCHAR(255)")
+	private String treeValueType;
+
+	@Column(name = "path", columnDefinition = "VARCHAR(255)")
+	private String treePath;
+
 
 	public RelationEntity() {
 	}
 
-	public RelationEntity(PageEntity fromPage, PageEntity toPage, String treeValue, String treeValueType, String treeRelationType) {
+	public RelationEntity(PageEntity fromPage, PageEntity toPage, String treeRelationType, String treeValue, String treeValueType, String treePath) {
 		this.fromPage = fromPage;
 		this.toPage = toPage;
+		this.treeRelationType = treeRelationType;
 		this.treeValue = treeValue;
 		this.treeValueType = treeValueType;
-		this.treeRelationType = treeRelationType;
+		this.treePath = treePath;
 	}
 }

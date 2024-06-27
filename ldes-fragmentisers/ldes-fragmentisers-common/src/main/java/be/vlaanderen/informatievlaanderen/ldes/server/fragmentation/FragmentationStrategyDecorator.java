@@ -6,7 +6,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import io.micrometer.observation.Observation;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -17,11 +20,14 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	private final FragmentationStrategy fragmentationStrategy;
 
 	private final FragmentRepository fragmentRepository;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
-			FragmentRepository fragmentRepository) {
+	                                         FragmentRepository fragmentRepository,
+	                                         ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.fragmentRepository = fragmentRepository;
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	@Override
@@ -41,6 +47,11 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 			parentFragment.addRelation(treeRelation);
 			fragmentRepository.saveFragment(parentFragment);
 		}
+	}
+
+	protected void addRelationFromParentToChild(Bucket parentBucket, Bucket childBucket) {
+		BucketRelation bucketRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
+		applicationEventPublisher.publishEvent(new BucketCreatedEvent(bucketRelation));
 	}
 
 }

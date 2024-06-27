@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.f
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,10 +32,13 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	private Bucket rootTileBucket = null;
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-	                                       GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
+	                                       GeospatialBucketiser geospatialBucketiser,
+	                                       GeospatialFragmentCreator fragmentCreator,
 	                                       GeospatialBucketCreator bucketCreator,
-	                                       ObservationRegistry observationRegistry, FragmentRepository fragmentRepository) {
-		super(fragmentationStrategy, fragmentRepository);
+	                                       ObservationRegistry observationRegistry,
+	                                       FragmentRepository fragmentRepository,
+	                                       ApplicationEventPublisher applicationEventPublisher) {
+		super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
 		this.bucketCreator = bucketCreator;
@@ -64,8 +68,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 		List<BucketisedMember> members = fragments
 				.parallelStream()
-				.map(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
-						geospatialFragmentationObservation))
+				.map(ldesFragment -> super.addMemberToFragment(ldesFragment, member, geospatialFragmentationObservation))
 				.flatMap(Collection::stream)
 				.toList();
 		geospatialFragmentationObservation.stop();
@@ -75,8 +78,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	@Override
 	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member,
 	                                                Observation parentObservation) {
-		Observation geospatialFragmentationObservation = Observation.createNotStarted("geospatial bucketisation",
-						observationRegistry)
+		Observation geospatialFragmentationObservation = Observation
+				.createNotStarted("geospatial bucketisation", observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
 		getRootTileBucket(parentBucket);
@@ -104,18 +107,16 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	private void getRootTileFragment(Fragment parentFragment) {
 		if (rootTileFragment == null) {
-			Fragment tileRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment,
-					FRAGMENT_KEY_TILE_ROOT);
+			Fragment tileRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment, FRAGMENT_KEY_TILE_ROOT);
 			super.addRelationFromParentToChild(parentFragment, tileRootFragment);
 			rootTileFragment = tileRootFragment;
 		}
 	}
 
 	private void getRootTileBucket(Bucket parentBucket) {
-		if (rootTileFragment == null) {
-			Bucket tileRootBucket = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT);
-//			super.addRelationFromParentToChild(parentFragment, tileRootFragment);
-			rootTileBucket = tileRootBucket;
+		if (rootTileBucket == null) {
+			rootTileBucket = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT);
+			super.addRelationFromParentToChild(parentBucket, rootTileBucket);
 		}
 	}
 }

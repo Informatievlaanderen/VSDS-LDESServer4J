@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.*;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedProperties.*;
 
@@ -19,11 +20,13 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
+		ApplicationEventPublisher applicationEventPublisher = applicationContext.getBean(ApplicationEventPublisher.class);
+
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);
 		TimeBasedRelationsAttributer relationsAttributer = new TimeBasedRelationsAttributer(
-				fragmentRepository, config);
+				fragmentRepository, applicationEventPublisher, config);
 		TimeBasedFragmentCreator fragmentCreator = new TimeBasedFragmentCreator(fragmentRepository,
 				relationsAttributer);
 		TimeBasedFragmentFinder fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator,
@@ -32,7 +35,7 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, fragmentFinder,
-				fragmentRepository, bucketFinder, config);
+				fragmentRepository, bucketFinder, applicationEventPublisher, config);
 	}
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {

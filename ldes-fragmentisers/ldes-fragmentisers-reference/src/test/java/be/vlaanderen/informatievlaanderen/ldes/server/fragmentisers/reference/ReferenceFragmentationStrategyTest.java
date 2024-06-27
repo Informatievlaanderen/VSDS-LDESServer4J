@@ -55,7 +55,7 @@ class ReferenceFragmentationStrategyTest {
 				.thenReturn(ROOT_TILE_BUCKET);
 		referenceFragmentationStrategy = new ReferenceFragmentationStrategy(decoratedFragmentationStrategy,
 				referenceBucketiser, fragmentCreator, bucketCreator, ObservationRegistry.create(),
-				treeRelationsRepository);
+				treeRelationsRepository, mock());
 	}
 
 	@Test

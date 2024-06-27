@@ -44,7 +44,7 @@ class TimeBasedBucketCreatorTest {
 		final BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
 		when(bucketRepository.retrieveBucket(expectedBucketDescriptor.asDecodedString())).thenReturn(Optional.empty());
 
-		Bucket child = bucketCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);
+		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
 
 		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedBucketDescriptor.asDecodedString());
 		verify(bucketRepository,
@@ -61,7 +61,7 @@ class TimeBasedBucketCreatorTest {
 				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
 		when(bucketRepository.retrieveBucket(expectedBucketDescriptor.asDecodedString())).thenReturn(Optional.empty());
 
-		Bucket child = bucketCreator.getOrCreateFragment(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		Bucket child = bucketCreator.getOrCreateBucket(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
 
 		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedBucketDescriptor.asDecodedString());
 		verify(bucketRepository).retrieveBucket(expectedBucketDescriptor.asDecodedString());
@@ -76,7 +76,7 @@ class TimeBasedBucketCreatorTest {
 		Bucket expectedChild = PARENT.createChild(new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"));
 		when(bucketRepository.retrieveBucket(expectedChild.getBucketDescriptorAsString())).thenReturn(Optional.of(expectedChild));
 
-		Bucket child = bucketCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);
+		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
 
 		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedChild.getBucketDescriptorAsString());
 //		verify(bucketRepository,

@@ -18,6 +18,7 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,9 +37,11 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 	                                                  ObservationRegistry observationRegistry,
 	                                                  TimeBasedFragmentFinder fragmentFinder,
-	                                                  FragmentRepository fragmentRepository, TimeBasedBucketFinder bucketFinder,
+	                                                  FragmentRepository fragmentRepository,
+	                                                  TimeBasedBucketFinder bucketFinder,
+													  ApplicationEventPublisher applicationEventPublisher,
 	                                                  TimeBasedConfig config) {
-		super(fragmentationStrategy, fragmentRepository);
+		super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
 		this.observationRegistry = observationRegistry;
 		this.fragmentFinder = fragmentFinder;
 		this.bucketFinder = bucketFinder;

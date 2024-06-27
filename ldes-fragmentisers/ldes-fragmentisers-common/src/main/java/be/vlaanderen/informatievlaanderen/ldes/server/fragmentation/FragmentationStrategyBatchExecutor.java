@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import io.micrometer.observation.ObservationRegistry;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class FragmentationStrategyBatchExecutor {
 //		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
 //		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView,
 //				member, parentObservation);
-		final var rootBucket = new Bucket(BucketDescriptor.empty(), viewName);
+		final var rootBucket = Bucket.createRootBucketForView(viewName);
 		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
 		return bucketisedMembers;

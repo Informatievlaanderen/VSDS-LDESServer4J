@@ -13,6 +13,7 @@ import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -29,8 +30,7 @@ class FragmentationStrategyDecoratorTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
-				fragmentRepository);
+		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy, fragmentRepository, mock());
 	}
 
 	@Test
@@ -70,12 +70,11 @@ class FragmentationStrategyDecoratorTest {
 		verify(fragmentationStrategy).addMemberToBucket(parentBucket, member, span);
 	}
 
-	static class FragmentationStrategyDecoratorTestImpl extends
-			FragmentationStrategyDecorator {
+	static class FragmentationStrategyDecoratorTestImpl extends FragmentationStrategyDecorator {
 		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
-				FragmentRepository fragmentRepository) {
-			super(fragmentationStrategy,
-					fragmentRepository);
+		                                                 FragmentRepository fragmentRepository,
+		                                                 ApplicationEventPublisher applicationEventPublisher) {
+			super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
 		}
 	}
 }

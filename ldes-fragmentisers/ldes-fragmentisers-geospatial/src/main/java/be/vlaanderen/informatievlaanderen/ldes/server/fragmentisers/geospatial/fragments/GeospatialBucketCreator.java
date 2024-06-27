@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileBucketRelationsAttributer;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +17,21 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 public class GeospatialBucketCreator {
 
 	private final BucketRepository bucketRepository;
-	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
+	private final TileBucketRelationsAttributer tileBucketRelationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeospatialBucketCreator.class);
 
-	public GeospatialBucketCreator(BucketRepository bucketRepository,
-	                               TileFragmentRelationsAttributer tileFragmentRelationsAttributer) {
+	public GeospatialBucketCreator(BucketRepository bucketRepository, TileBucketRelationsAttributer tileBucketRelationsAttributer) {
 		this.bucketRepository = bucketRepository;
-		this.tileFragmentRelationsAttributer = tileFragmentRelationsAttributer;
+		this.tileBucketRelationsAttributer = tileBucketRelationsAttributer;
 	}
 
-	public Bucket getOrCreateTileFragment(Bucket parentBucket, String tile,
-	                                        Bucket rootTileFragment) {
+	public Bucket getOrCreateTileFragment(Bucket parentBucket, String tile, Bucket rootTileFragment) {
 		Bucket child = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
 		return bucketRepository
 				.retrieveBucket(child.getBucketDescriptorAsString())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(child);
-//					tileFragmentRelationsAttributer
-//							.addRelationsFromRootToBottom(rootTileFragment, child);
+					tileBucketRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, child);
 					String viewName = parentBucket.getViewName().asString();
 					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
 					LOGGER.debug("Geospatial fragment created with id: {}", child.getBucketDescriptorAsString());
@@ -48,6 +45,7 @@ public class GeospatialBucketCreator {
 				.retrieveBucket(child.getBucketDescriptorAsString())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(child);
+					
 					String viewName = parentBucket.getViewName().asString();
 					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
 					LOGGER.debug("Geospatial rootfragment created with id: {}", child.getBucketDescriptorAsString());
