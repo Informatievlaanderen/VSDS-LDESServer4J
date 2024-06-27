@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,7 +57,6 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	@And("I fetch the next fragment through the first {string}")
 	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
 		await().atMost(60, TimeUnit.SECONDS)
-				.timeout(POLLING_RATE, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
@@ -72,7 +70,6 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.next().getObject().toString();
 
 		await().atMost(60, TimeUnit.SECONDS)
-				.timeout(POLLING_RATE, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
@@ -81,7 +78,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@Then("this fragment only has {int} {string} relation")
 	public void thisFragmentOnlyHasOne(int expectedRelationCount, String relation) {
-		await().atMost(Duration.of(POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(FRAGMENTATION_POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();
@@ -105,7 +102,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("this fragment contains {int} members")
 	public void thisFragmentContainsMembers(int expectedMemberCount) {
-		await().atMost(Duration.of(POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(FRAGMENTATION_POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
 			return MemberCounter.countMembers(expectedMemberCount).matches(currentFragment);
 		});
@@ -118,7 +115,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("this fragment has no relations")
 	public void thisFragmentHasNoRelations() {
-		await().atMost(Duration.of(POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(FRAGMENTATION_POLLING_RATE, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
 			return !currentFragment.listObjectsOfProperty(createProperty(TREE + "relation")).hasNext();
 		});

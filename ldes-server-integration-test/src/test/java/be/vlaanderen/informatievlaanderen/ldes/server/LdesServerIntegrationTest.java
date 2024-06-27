@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureObservability
@@ -24,8 +25,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = { MemberEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
+	final int FRAGMENTATION_POLLING_RATE = 1000;
+
 	@Autowired
 	MockMvc mockMvc;
 

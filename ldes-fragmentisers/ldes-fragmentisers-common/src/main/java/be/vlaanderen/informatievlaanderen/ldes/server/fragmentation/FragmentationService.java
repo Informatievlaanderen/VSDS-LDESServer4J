@@ -36,10 +36,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
+
 @Service
 @EnableScheduling
 public class FragmentationService {
-	public static final int POLLING_RATE = 15000;
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private static final String BUCKETISATION_JOB = "bucketisation";
 	private static final String REBUCKETISATION_JOB = "rebucketisation";
@@ -88,7 +89,7 @@ public class FragmentationService {
 				.toJobParameters());
 	}
 
-	@Scheduled(fixedRate = POLLING_RATE)
+	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		if (shouldTriggerBucketisation.get() && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
 			shouldTriggerBucketisation.set(false);
