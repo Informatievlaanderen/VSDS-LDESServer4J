@@ -30,6 +30,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -60,8 +61,8 @@ public class FragmentationService {
 		this.eventPublisher = eventPublisher;
 		this.fragmentRepository = fragmentRepository;
 
-		bucketisationJob = bucketiseJob(jobRepository, transactionManager, newMemberReader, processor, bucketWriter);
-		rebucketiseJob = rebucketiseJob(jobRepository, transactionManager, rebucketiseMemberReader, processor, bucketWriter);
+		this.bucketisationJob = bucketiseJob(jobRepository, transactionManager, newMemberReader, processor, bucketWriter);
+		this.rebucketiseJob = rebucketiseJob(jobRepository, transactionManager, rebucketiseMemberReader, processor, bucketWriter);
 	}
 
 	@EventListener(MembersIngestedEvent.class)
@@ -73,6 +74,7 @@ public class FragmentationService {
 	public void handleViewInitializationEvent(ViewNeedsRebucketisationEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		launchJob(rebucketiseJob, new JobParametersBuilder()
 				.addString("viewName", event.viewName().asString())
+				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
 	}
 

@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions.newViewPaginationJob;
@@ -43,9 +44,9 @@ public class PaginationService {
 	                         ItemReader<List<BucketisedMember>> reader, PaginationProcessor processor,
 	                         ItemWriter<List<MemberAllocation>> writer, TaskExecutor taskExecutor) {
 		this.jobLauncher = jobLauncher;
-		newViewPaginationJob = newViewPaginationJob(jobRepository, transactionManager, viewBucketisationPartitioner,
+		this.newViewPaginationJob = newViewPaginationJob(jobRepository, transactionManager, viewBucketisationPartitioner,
 				reader, processor, writer, taskExecutor);
-		paginationJob = paginationJob(jobRepository, transactionManager, bucketisationPartitioner, reader, processor,
+		this.paginationJob = paginationJob(jobRepository, transactionManager, bucketisationPartitioner, reader, processor,
 				writer, taskExecutor);
 	}
 
@@ -54,6 +55,7 @@ public class PaginationService {
 	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		jobLauncher.run(newViewPaginationJob, new JobParametersBuilder()
 				.addString("viewName", event.viewName())
+				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
 	}
 
