@@ -20,8 +20,8 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
-		ApplicationEventPublisher applicationEventPublisher = applicationContext.getBean(ApplicationEventPublisher.class);
-
+//		ApplicationEventPublisher applicationEventPublisher = applicationContext.getBean(ApplicationEventPublisher.class);
+		ApplicationEventPublisher applicationEventPublisher = System.out::println;
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);

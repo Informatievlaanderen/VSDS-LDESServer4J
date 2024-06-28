@@ -20,4 +20,24 @@ public class BucketEntity {
 
 	@Column(name = "bucket", columnDefinition = "VARCHAR(255)")
 	private String bucketDescriptor;
+
+	public BucketEntity() {}
+
+	public BucketEntity(Long bucketId, ViewEntity view, String bucketDescriptor) {
+		this.bucketId = bucketId;
+		this.view = view;
+		this.bucketDescriptor = bucketDescriptor;
+	}
+
+	public Long getBucketId() {
+		return bucketId;
+	}
+
+	public ViewEntity getView() {
+		return view;
+	}
+
+	public String getBucketDescriptor() {
+		return bucketDescriptor;
+	}
 }

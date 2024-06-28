@@ -12,8 +12,7 @@ public class OpenPageProvider {
 	private final FragmentRepository fragmentRepository;
 	private final Long memberLimit;
 
-	public OpenPageProvider(PageCreator pageCreator,
-			FragmentRepository fragmentRepository, Long memberLimit) {
+	public OpenPageProvider(PageCreator pageCreator, FragmentRepository fragmentRepository, Long memberLimit) {
 		this.pageCreator = pageCreator;
 		this.fragmentRepository = fragmentRepository;
 		this.memberLimit = memberLimit;

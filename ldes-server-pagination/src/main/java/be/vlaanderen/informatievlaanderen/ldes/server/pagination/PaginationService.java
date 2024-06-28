@@ -53,7 +53,8 @@ public class PaginationService {
 	                         PlatformTransactionManager transactionManager,
 	                         @Qualifier("bucketisationPartitioner") Partitioner bucketisationPartitioner,
 	                         @Qualifier("viewBucketisationPartitioner") Partitioner viewBucketisationPartitioner,
-	                         ItemReader<List<BucketisedMember>> reader, PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer, TaskExecutor taskExecutor, JobExplorer jobExplorer) {
+	                         ItemReader<List<BucketisedMember>> reader,
+	                         PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer, TaskExecutor taskExecutor, JobExplorer jobExplorer) {
 		this.jobLauncher = jobLauncher;
 		this.jobRepository = jobRepository;
 		this.transactionManager = transactionManager;
@@ -73,7 +74,7 @@ public class PaginationService {
 	}
 
 	@EventListener
-	@SuppressWarnings("java:S2629")
+//	@SuppressWarnings("java:S2629")
 	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		jobLauncher.run(newViewPaginationJob(), new JobParametersBuilder()
 				.addString("viewName", event.viewName())

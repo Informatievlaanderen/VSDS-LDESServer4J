@@ -20,7 +20,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	private static final String OLD_SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
 			"values (?, ?, ?, ?)";
 	private static final String SQL = """
-			INSERT INTO member_buckets (bucket_id, member_id)
+			INSERT INTO page_members (bucket_id, member_id)
 			SELECT (SELECT bucket_id FROM buckets WHERE bucket = ?),
 			       (SELECT member_id FROM members  WHERE subject = ?)
 			ON CONFLICT DO NOTHING;

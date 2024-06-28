@@ -29,7 +29,8 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	public FragmentationStrategyBatchCollection(
 			FragmentRepository fragmentRepository,
 			BucketisedMemberRepository bucketisedMemberRepository,
-			FragmentationStrategyCreator fragmentationStrategyCreator, ViewBucketisationService viewBucketisationService,
+			FragmentationStrategyCreator fragmentationStrategyCreator,
+			ViewBucketisationService viewBucketisationService,
 			ObservationRegistry observationRegistry) {
 		this.fragmentRepository = fragmentRepository;
 		this.bucketisedMemberRepository = bucketisedMemberRepository;

@@ -2,8 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 public interface FragmentationStrategyWrapper {
 	FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
-			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties);
+	                                                FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties);
 }

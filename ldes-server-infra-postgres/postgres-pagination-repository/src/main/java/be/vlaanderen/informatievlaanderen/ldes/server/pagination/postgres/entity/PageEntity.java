@@ -42,4 +42,24 @@ public class PageEntity {
 		this.expiration = expiration;
 		this.partialUrl = partialUrl;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public BucketEntity getBucket() {
+		return bucket;
+	}
+
+	public LocalDateTime getExpiration() {
+		return expiration;
+	}
+
+	public String getPartialUrl() {
+		return partialUrl;
+	}
+
+	public List<MemberEntity> getMembers() {
+		return members;
+	}
 }

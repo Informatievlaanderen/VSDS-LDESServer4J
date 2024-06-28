@@ -69,13 +69,13 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				XSD_DATETIME,
 				config.getFragmentationPath()
 		);
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentGteRelation));
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentLtRelation));
+//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentGteRelation));
+//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentLtRelation));
 	}
 
 	public void addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
 		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(defaultRelation));
+//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(defaultRelation));
 	}
 
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
