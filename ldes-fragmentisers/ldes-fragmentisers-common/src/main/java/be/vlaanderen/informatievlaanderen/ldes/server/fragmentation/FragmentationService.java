@@ -14,13 +14,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,30 +30,23 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.*;
 
 @Service
 @EnableScheduling
 public class FragmentationService {
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
-	private static final String BUCKETISATION_JOB = "bucketisation";
-	private static final String REBUCKETISATION_JOB = "rebucketisation";
 	private final JobLauncher jobLauncher;
 	private final JobExplorer jobExplorer;
-	private final JobRepository jobRepository;
-	private final PlatformTransactionManager transactionManager;
-	private final ItemReader<IngestedMember> newMemberReader;
-	private final ItemReader<IngestedMember> rebucketiseMemberReader;
-	private final BucketProcessor processor;
-	private final ItemWriter<List<BucketisedMember>> bucketWriter;
 	private final ApplicationEventPublisher eventPublisher;
-	private AtomicBoolean shouldTriggerBucketisation = new AtomicBoolean(false);
-
+	private final AtomicBoolean shouldTriggerBucketisation = new AtomicBoolean(false);
 	private final FragmentRepository fragmentRepository;
+	private final Job bucketisationJob;
+	private final Job rebucketiseJob;
 
 	public FragmentationService(JobLauncher jobLauncher, JobExplorer jobExplorer, JobRepository jobRepository,
 	                            PlatformTransactionManager transactionManager,
@@ -66,14 +57,11 @@ public class FragmentationService {
 	                            FragmentRepository fragmentRepository) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
-		this.jobRepository = jobRepository;
-		this.transactionManager = transactionManager;
-		this.newMemberReader = newMemberReader;
-		this.rebucketiseMemberReader = rebucketiseMemberReader;
-		this.processor = processor;
-		this.bucketWriter = bucketWriter;
 		this.eventPublisher = eventPublisher;
 		this.fragmentRepository = fragmentRepository;
+
+		bucketisationJob = bucketiseJob(jobRepository, transactionManager, newMemberReader, processor, bucketWriter);
+		rebucketiseJob = rebucketiseJob(jobRepository, transactionManager, rebucketiseMemberReader, processor, bucketWriter);
 	}
 
 	@EventListener(MembersIngestedEvent.class)
@@ -83,9 +71,8 @@ public class FragmentationService {
 
 	@EventListener
 	public void handleViewInitializationEvent(ViewNeedsRebucketisationEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		launchJob(rebucketiseJob(), new JobParametersBuilder()
+		launchJob(rebucketiseJob, new JobParametersBuilder()
 				.addString("viewName", event.viewName().asString())
-				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
 	}
 
@@ -93,7 +80,7 @@ public class FragmentationService {
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		if (shouldTriggerBucketisation.get() && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
 			shouldTriggerBucketisation.set(false);
-			launchJob(bucketiseJob(), new JobParameters());
+			launchJob(bucketisationJob, new JobParameters());
 		}
 	}
 
@@ -122,38 +109,6 @@ public class FragmentationService {
 
 	private boolean isJobRunning(String jobName) {
 		return !jobExplorer.findRunningJobExecutions(jobName).isEmpty();
-	}
-
-	private Job bucketiseJob() {
-		return new JobBuilder(BUCKETISATION_JOB, jobRepository)
-				.start(bucketiseMembers())
-				.build();
-	}
-
-	private Job rebucketiseJob() {
-		return new JobBuilder(REBUCKETISATION_JOB, jobRepository)
-				.start(rebucketiseMembers())
-				.build();
-	}
-
-	private Step bucketiseMembers() {
-		return new StepBuilder("bucketiseMembers", jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(newMemberReader)
-				.processor(processor)
-				.writer(bucketWriter)
-				.allowStartIfComplete(true)
-				.build();
-	}
-
-	private Step rebucketiseMembers() {
-		return new StepBuilder("rebucketiseMembers", jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(rebucketiseMemberReader)
-				.processor(processor)
-				.writer(bucketWriter)
-				.allowStartIfComplete(true)
-				.build();
 	}
 
 }
