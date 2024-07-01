@@ -17,6 +17,7 @@ import java.util.List;
 
 @Component
 public class BucketJobDefinitions {
+	private BucketJobDefinitions() {}
 	public static final String BUCKETISATION_JOB = "bucketisation";
 	public static final String REBUCKETISATION_JOB = "rebucketisation";
 

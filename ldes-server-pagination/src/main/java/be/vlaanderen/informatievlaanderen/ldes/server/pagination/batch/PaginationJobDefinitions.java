@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.List;
 
 public class PaginationJobDefinitions {
+	private PaginationJobDefinitions() {}
 	private static final String PAGINATION_JOB = "pagination";
 	private static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
 
