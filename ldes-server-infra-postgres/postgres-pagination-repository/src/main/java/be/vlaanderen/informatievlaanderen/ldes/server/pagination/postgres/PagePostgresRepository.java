@@ -17,7 +17,7 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	public Page insertPage(Page page) {
-		final PageEntity insertedPage = pageEntityRepository.insert(page.bucket().getBucketId(), page.expiration(), page.partialUrl());
+		final PageEntity insertedPage = pageEntityRepository.insert(page.getBucket().getBucketId(), page.getExpiration(), page.partialUrl());
 		return PageMapper.fromEntity(insertedPage);
 	}
 

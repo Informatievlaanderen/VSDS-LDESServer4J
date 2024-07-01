@@ -46,4 +46,40 @@ public class RelationEntity {
 		this.treeValueType = treeValueType;
 		this.treePath = treePath;
 	}
+
+	public RelationEntity(RelationId relationId, String treeRelationType, String treeValue, String treeValueType, String treePath) {
+		this.relationId = relationId;
+		this.treeRelationType = treeRelationType;
+		this.treeValue = treeValue;
+		this.treeValueType = treeValueType;
+		this.treePath = treePath;
+	}
+
+	public RelationId getRelationId() {
+		return relationId;
+	}
+
+	public PageEntity getFromPage() {
+		return fromPage;
+	}
+
+	public PageEntity getToPage() {
+		return toPage;
+	}
+
+	public String getTreeRelationType() {
+		return treeRelationType;
+	}
+
+	public String getTreeValue() {
+		return treeValue;
+	}
+
+	public String getTreeValueType() {
+		return treeValueType;
+	}
+
+	public String getTreePath() {
+		return treePath;
+	}
 }

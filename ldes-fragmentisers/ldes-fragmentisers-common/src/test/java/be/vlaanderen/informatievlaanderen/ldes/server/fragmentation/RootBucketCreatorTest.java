@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RootFragmentRetrieverTest {
+class RootBucketCreatorTest {
 
 	@Mock
 	private FragmentRepository fragmentRepository;
 
 	private Observation observation;
-	private RootFragmentRetriever rootFragmentRetriever;
+	private RootBucketCreator rootBucketCreator;
 	private Fragment rootFragment;
 
 	private static final ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
@@ -37,14 +37,14 @@ class RootFragmentRetrieverTest {
 	void setUp() {
 		observation = Observation.createNotStarted("observation", observationRegistry).start();
 
-		rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
+		rootBucketCreator = new RootBucketCreator(mock(), fragmentRepository, observationRegistry);
 		rootFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.of(rootFragment));
 	}
 
 	@Test
 	void should_FetchRootFragment_when_NotYetInMemory() {
-		final Fragment result = rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		final Fragment result = rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
 
 		assertEquals(rootFragment, result);
 		verify(fragmentRepository).retrieveRootFragment(VIEW_NAME.asString());
@@ -52,10 +52,10 @@ class RootFragmentRetrieverTest {
 
 	@Test
 	void should_ReturnFragmentFromMemory_when_FetchedEarlier() {
-		rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		final Fragment result = rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		final Fragment result = rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
 
 		assertEquals(rootFragment, result);
 		verify(fragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
@@ -66,6 +66,6 @@ class RootFragmentRetrieverTest {
 		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.empty());
 
 		assertThrows(MissingRootFragmentException.class,
-				() -> rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation));
+				() -> rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation));
 	}
 }

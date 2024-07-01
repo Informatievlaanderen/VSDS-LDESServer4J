@@ -37,9 +37,9 @@ public class ReferenceBucketCreator {
 				.orElseGet(() -> {
 					fragmentRepository.insertBucket(child);
 					if (reference.equals(DEFAULT_BUCKET_STRING)) {
-//						relationsAttributer.addDefaultRelation(parentBucket, child);
+						relationsAttributer.addDefaultRelation(parentBucket, child);
 					} else {
-//						relationsAttributer.addRelationsFromRootToBottom(rootBucket, child);
+						relationsAttributer.addRelationFromRootToBottom(rootBucket, child);
 					}
 					logBucketation(parentBucket, child);
 					return child;

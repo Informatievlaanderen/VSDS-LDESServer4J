@@ -37,7 +37,7 @@ public class TimeBasedBucketCreator {
 				.retrieveBucket(childBucket.getBucketDescriptorAsString())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(childBucket);
-//					addRelationToParent(parentBucket, childBucket);
+					addRelationToParent(parentBucket, childBucket);
 					logBucketisation(parentBucket, childBucket);
 					return childBucket;
 				});

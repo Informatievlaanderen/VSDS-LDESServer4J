@@ -18,7 +18,7 @@ public class PageRelationServiceImpl implements PageRelationService {
 
 	@Override
 	public void createGenericRelation(Page page) {
-		final Page relatedPage = pageRepository.insertPage(page.createRelatedPage());
+		final Page relatedPage = pageRepository.insertPage(page.createChildPage());
 		final PageRelation pageRelation = PageRelation.createGenericRelation(page, relatedPage);
 		pageRelationRepository.insertPageRelation(pageRelation);
 	}

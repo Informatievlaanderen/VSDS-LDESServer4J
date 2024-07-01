@@ -15,6 +15,12 @@ public interface BucketEntityRepository extends JpaRepository<BucketEntity, Long
 			"WHERE b.bucketDescriptor = :bucketDescriptor ")
 	Optional<BucketProjection> findBucketEntityByBucketDescriptor(String bucketDescriptor);
 
+
+	@Query("SELECT b.bucketDescriptor AS bucketDescriptor, CONCAT(b.view.eventStream.name, '/', b.view.name) AS viewName " +
+			"FROM BucketEntity b " +
+			"WHERE b.bucketDescriptor = :bucketDescriptor AND CONCAT(b.view.eventStream.name, '/', b.view.name) = :viewName")
+	Optional<BucketProjection> findBucketEntityByBucketDescriptor(String viewName, String bucketDescriptor);
+
 	@Modifying
 	@Query(value = """
 			WITH view_names AS (SELECT v.view_id, concat(c.name, '/' , v.name) AS view_name FROM views v JOIN collections c ON v.collection_id = c.collection_id)

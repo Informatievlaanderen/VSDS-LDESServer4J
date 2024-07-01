@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,8 +20,9 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			"values (?, ?, ?, ?)";
 	private static final String SQL = """
 			INSERT INTO page_members (bucket_id, member_id)
-			SELECT (SELECT bucket_id FROM buckets WHERE bucket = ?),
-			       (SELECT member_id FROM members  WHERE subject = ?)
+			WITH view_names (view_id, view_name) AS (SELECT v.view_id, c.name || '/' || v.name FROM views v JOIN collections c ON v.collection_id = c.collection_id)
+			SELECT (SELECT b.bucket_id FROM buckets b JOIN view_names v ON b.view_id = v.view_id WHERE b.bucket = ? AND v.view_name = ?),
+			       (SELECT member_id FROM members WHERE subject = ?)
 			ON CONFLICT DO NOTHING;
 			""";
 
@@ -41,12 +41,10 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 		temporaryOldSaving(buckets);
 
-		final List<Object[]> batchArgs = new ArrayList<>();
-		for (BucketisedMember bucket : buckets) {
-			if (!bucket.fragmentId().isEmpty()) {
-				batchArgs.add(new Object[]{bucket.fragmentId(), bucket.memberId()});
-			}
-		}
+		final List<Object[]> batchArgs = buckets.getItems().stream()
+				.map(bucket -> new Object[]{bucket.fragmentId(), bucket.viewNameAsString(), bucket.memberId()})
+				.toList();
+
 		jdbcTemplate.batchUpdate(SQL, batchArgs);
 	}
 
@@ -57,7 +55,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
-				ps.setString(2, bucket.viewNameAsString() + '?' + bucket.fragmentId());
+				ps.setString(2, bucket.viewNameAsString() + (bucket.fragmentId().isEmpty() ? "" : '?' + bucket.fragmentId()));
 				ps.setString(3, bucket.viewName().getCollectionName() + '/' + bucket.memberId());
 				// Add it to the batch
 				ps.addBatch();

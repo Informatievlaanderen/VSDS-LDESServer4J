@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.List;
 public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCreator {
 	private final ApplicationContext applicationContext;
 	private final RootFragmentCreator rootFragmentCreator;
-	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-	                                        RootFragmentCreator rootFragmentCreator, ApplicationEventPublisher applicationEventPublisher) {
+	                                        RootFragmentCreator rootFragmentCreator) {
 		this.applicationContext = applicationContext;
 		this.rootFragmentCreator = rootFragmentCreator;
-		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {

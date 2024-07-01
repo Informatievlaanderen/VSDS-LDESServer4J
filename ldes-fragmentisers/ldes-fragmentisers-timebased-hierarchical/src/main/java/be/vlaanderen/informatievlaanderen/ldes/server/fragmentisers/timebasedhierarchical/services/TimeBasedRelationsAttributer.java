@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -69,20 +69,20 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				XSD_DATETIME,
 				config.getFragmentationPath()
 		);
-//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentGteRelation));
-//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(parentLtRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(parentGteRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(parentLtRelation));
 	}
 
 	public void addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
 		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
-//		applicationEventPublisher.publishEvent(new BucketCreatedEvent(defaultRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(defaultRelation));
 	}
 
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
 		saveRelation(parentFragment, getDefaultRelation(childFragment), null);
 	}
 
-	// TODO: move this to pagination
+	// TODO: move this to pagination OR publish event
 	private void saveRelation(Fragment fragment, TreeRelation relation, LocalDateTime nextUpdateTs) {
 		if (!fragment.containsRelation(relation)) {
 			if (config.isLinearTimeCachingEnabled()) {

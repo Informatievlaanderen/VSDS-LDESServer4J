@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
@@ -19,6 +20,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.servi
 @Component
 public class FragmentationStrategyBatchCollection implements FragmentationStrategyCollection {
 
+	private final BucketRepository bucketRepository;
 	private final FragmentRepository fragmentRepository;
 	private final Set<FragmentationStrategyBatchExecutor> fragmentationStrategySet;
 	private final BucketisedMemberRepository bucketisedMemberRepository;
@@ -27,11 +29,13 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyBatchCollection(
+			BucketRepository bucketRepository,
 			FragmentRepository fragmentRepository,
 			BucketisedMemberRepository bucketisedMemberRepository,
 			FragmentationStrategyCreator fragmentationStrategyCreator,
 			ViewBucketisationService viewBucketisationService,
 			ObservationRegistry observationRegistry) {
+		this.bucketRepository = bucketRepository;
 		this.fragmentRepository = fragmentRepository;
 		this.bucketisedMemberRepository = bucketisedMemberRepository;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
@@ -90,11 +94,10 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 				.forEach(fragmentationStrategySet::remove);
 	}
 
-	private FragmentationStrategyBatchExecutor createExecutor(ViewName viewName,
-	                                                    ViewSpecification viewSpecification) {
+	private FragmentationStrategyBatchExecutor createExecutor(ViewName viewName, ViewSpecification viewSpecification) {
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
-		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
+		final var rootFragmentRetriever = new RootBucketCreator(bucketRepository, fragmentRepository, observationRegistry);
 		return new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootFragmentRetriever, observationRegistry);
 	}
 }

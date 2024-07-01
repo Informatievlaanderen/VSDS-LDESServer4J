@@ -6,8 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import io.micrometer.observation.Observation;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -51,7 +51,7 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 
 	protected void addRelationFromParentToChild(Bucket parentBucket, Bucket childBucket) {
 		BucketRelation bucketRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(bucketRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
 	}
 
 }

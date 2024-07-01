@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import io.micrometer.observation.ObservationRegistry;
@@ -15,15 +14,15 @@ public class FragmentationStrategyBatchExecutor {
 
 	private final FragmentationStrategy fragmentationStrategy;
 	private final ViewName viewName;
-	private final RootFragmentRetriever rootFragmentRetriever;
+	private final RootBucketCreator rootBucketCreator;
 	private final ObservationRegistry observationRegistry;
 
 	@SuppressWarnings("java:S107")
 	public FragmentationStrategyBatchExecutor(ViewName viewName,
 	                                          FragmentationStrategy fragmentationStrategy,
-	                                          RootFragmentRetriever rootFragmentRetriever,
+	                                          RootBucketCreator rootBucketCreator,
 	                                          ObservationRegistry observationRegistry) {
-		this.rootFragmentRetriever = rootFragmentRetriever;
+		this.rootBucketCreator = rootBucketCreator;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
@@ -31,10 +30,7 @@ public class FragmentationStrategyBatchExecutor {
 
 	public List<BucketisedMember> bucketise(FragmentationMember member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-//		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
-//		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView,
-//				member, parentObservation);
-		final var rootBucket = Bucket.createRootBucketForView(viewName);
+		final var rootBucket = rootBucketCreator.getOrCreateRootBucket(viewName, parentObservation);
 		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
 		return bucketisedMembers;

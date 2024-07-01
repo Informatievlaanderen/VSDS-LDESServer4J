@@ -7,8 +7,9 @@ BEGIN
                        JOIN collections c ON v.collection_id = c.collection_id)
     INSERT
     INTO pages (bucket_id, expiration, partial_url)
-    SELECT NEW.bucket_id, NULL, '/' || v.view_name || NULLIF('?' || NEW.bucket, '?')
-    FROM view_names v WHERE v.view_id = NEW.view_id;
+    SELECT NEW.bucket_id, NULL, CONCAT('/', v.view_name, NULLIF('?' || NEW.bucket, '?'))
+    FROM view_names v
+    WHERE v.view_id = NEW.view_id;
     RETURN NEW;
 END;
 

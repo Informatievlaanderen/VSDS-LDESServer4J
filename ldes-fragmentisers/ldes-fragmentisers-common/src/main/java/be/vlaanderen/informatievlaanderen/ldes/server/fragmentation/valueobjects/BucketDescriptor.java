@@ -41,6 +41,10 @@ public class BucketDescriptor {
 		}
 	}
 
+	public boolean isEmpty() {
+		return descriptorPairs.isEmpty();
+	}
+
 	public static BucketDescriptor of(BucketDescriptorPair... pairs) {
 		return new BucketDescriptor(Arrays.asList(pairs));
 	}

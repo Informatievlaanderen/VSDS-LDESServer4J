@@ -6,8 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -41,7 +41,7 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 				getTreeValue(referenceBucket),
 				fragmentationPath
 		);
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(bucketRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
 	}
 
 	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment referenceFragments) {
@@ -54,7 +54,7 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 
 	public void addDefaultRelation(Bucket rootBucket, Bucket referenceBucket) {
 		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(rootBucket, referenceBucket);
-		applicationEventPublisher.publishEvent(new BucketCreatedEvent(defaultRelation));
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(defaultRelation));
 	}
 
 	private void saveRelation(Fragment fragment, TreeRelation relation) {

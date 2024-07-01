@@ -10,6 +10,13 @@ public class BucketMapper {
 	private BucketMapper() {
 	}
 
+//	public static BucketEntity toEntity(Bucket bucket) {
+//		return new BucketEntity(
+//				bucket.getBucketId(),
+//
+//		)
+//	}
+
 	public static Bucket fromProjection(BucketProjection projection) {
 		return new Bucket(
 				BucketDescriptor.fromString(projection.getBucketDescriptor()),

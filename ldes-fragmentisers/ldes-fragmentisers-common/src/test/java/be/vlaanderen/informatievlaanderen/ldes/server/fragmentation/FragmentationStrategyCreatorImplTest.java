@@ -34,8 +34,7 @@ class FragmentationStrategyCreatorImplTest {
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
 		rootFragmentCreator = mock(RootFragmentCreator.class);
-		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, rootFragmentCreator, mock());
+		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext, rootFragmentCreator);
 	}
 
 	@Test

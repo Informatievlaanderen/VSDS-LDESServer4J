@@ -56,7 +56,7 @@ public class Bucket {
 	}
 
 	public String createPartialUrl() {
-		return "/" + viewName.asString() + "?" + bucketDescriptor.asDecodedString();
+		return "/" + viewName.asString() + (bucketDescriptor.isEmpty() ? "" : "?" + bucketDescriptor.asDecodedString());
 	}
 
 	private static boolean hasChildWithSameDescriptorKey(BucketDescriptorPair descriptorPair, List<BucketDescriptorPair> childFragmentPairs) {

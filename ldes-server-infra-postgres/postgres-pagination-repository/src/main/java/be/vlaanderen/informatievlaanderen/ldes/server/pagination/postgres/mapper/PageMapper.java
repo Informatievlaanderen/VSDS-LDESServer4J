@@ -7,13 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity
 public class PageMapper {
 	private PageMapper() {}
 
-//	public static PageEntity toEntity(Page page) {
-//		return new PageEntity(
-//				page.pageId(),
-//
-//		)
-//	}
-
 	public static Page fromEntity(PageEntity entity) {
 		return Page.createPageWithPartialUrl(
 				entity.getId(),

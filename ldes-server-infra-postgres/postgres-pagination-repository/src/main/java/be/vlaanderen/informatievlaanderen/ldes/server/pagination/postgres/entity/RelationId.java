@@ -12,6 +12,22 @@ public class RelationId implements Serializable {
 	@Column(name = "to_page_id", nullable = false, columnDefinition = "BIGINT")
 	private Long toPageId;
 
+	public RelationId() {
+	}
+
+	public RelationId(Long fromPageId, Long toPageId) {
+		this.fromPageId = fromPageId;
+		this.toPageId = toPageId;
+	}
+
+	public Long getFromPageId() {
+		return fromPageId;
+	}
+
+	public Long getToPageId() {
+		return toPageId;
+	}
+
 	@Override
 	public final boolean equals(Object o) {
 		if (this == o) return true;

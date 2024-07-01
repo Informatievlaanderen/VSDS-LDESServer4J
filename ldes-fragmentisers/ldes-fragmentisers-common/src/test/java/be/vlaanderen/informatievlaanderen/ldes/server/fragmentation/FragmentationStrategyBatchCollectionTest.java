@@ -31,7 +31,7 @@ class FragmentationStrategyBatchCollectionTest {
 	private final BucketisedMemberRepository bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
 	private final ViewBucketisationService viewBucketisationService = mock(ViewBucketisationService.class);
 
-	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(
+	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(mock(),
 			fragmentRepository, bucketisedMemberRepository, fragmentationStrategyCreator, viewBucketisationService, observationRegistry);
 
 	@Test
@@ -103,7 +103,7 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
-		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
+		final var rootFragmentRetriever = new RootBucketCreator(mock(), fragmentRepository, observationRegistry);
 		FragmentationStrategyBatchExecutor fragmentationStrategyExecutor =
 				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootFragmentRetriever, observationRegistry);
 
