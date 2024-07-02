@@ -31,12 +31,12 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 		try(Connection connection = dataSource.getConnection();
 		    PreparedStatement ps = connection.prepareStatement(SQL)) {
+			ps.setLong(4, 0L);
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
 				ps.setString(2, bucket.fragmentId());
 				ps.setString(3, bucket.memberId());
-				ps.setLong(4, 0L);
 				// Add it to the batch
 				ps.addBatch();
 			}

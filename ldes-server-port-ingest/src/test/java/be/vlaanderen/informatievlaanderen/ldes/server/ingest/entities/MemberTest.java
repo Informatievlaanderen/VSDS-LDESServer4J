@@ -68,14 +68,14 @@ class MemberTest {
 
     static class EqualityTestProvider implements ArgumentsProvider {
 
-        private static final String id = "idA";
-        private static final IngestedMember memberA = new IngestedMember(id, null, null, null, true, null, null);
+        private static final String ID = "idA";
+        private static final IngestedMember memberA = new IngestedMember(ID, null, null, null, true, null, null);
 
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     Arguments.of(equals(), memberA, memberA),
-                    Arguments.of(equals(), new IngestedMember(id, "otherCollection", "other", LocalDateTime.now(), true, "txId", ModelFactory.createDefaultModel()),
+                    Arguments.of(equals(), new IngestedMember(ID, "otherCollection", "other", LocalDateTime.now(), true, "txId", ModelFactory.createDefaultModel()),
                             memberA),
                     Arguments.of(notEquals(),
                             new IngestedMember("idB", "otherCollection", "other", LocalDateTime.now(), true, "txId", ModelFactory.createDefaultModel()), memberA),
