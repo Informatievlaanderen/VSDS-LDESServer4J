@@ -16,7 +16,6 @@ open module ldes.fragmentation.domain {
 	exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects;
 
 }

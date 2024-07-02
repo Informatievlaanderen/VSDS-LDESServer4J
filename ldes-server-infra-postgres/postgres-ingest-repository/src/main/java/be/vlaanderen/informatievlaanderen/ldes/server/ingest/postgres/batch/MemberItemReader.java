@@ -52,8 +52,8 @@ public class MemberItemReader {
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
-		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id LEFT JOIN collections c on m.collection_id = c.collection_id");
-		queryProvider.setWhereClause("fb.id IS NULL");
+		queryProvider.setFromClause("members m JOIN views v USING (collection_id) JOIN collections c USING (collection_id)");
+		queryProvider.setWhereClause("(member_id, view_id) NOT IN (SELECT member_id, b.view_id FROM page_members JOIN buckets b USING (bucket_id))");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
