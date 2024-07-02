@@ -22,10 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DcatViewRepositorySteps extends SpringIntegrationTest {
 
-    private final static String COLLECTION_NAME = "collectionName";
+    private static final String COLLECTION_NAME = "collectionName";
     public static final String OTHER_COLLECTION_NAME = "other-" + COLLECTION_NAME;
-    private final static String VIEW = "view";
-    private final static ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
+    private static final String VIEW = "view";
+    private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
     private Model model;
 
     private DcatView dcatView;
