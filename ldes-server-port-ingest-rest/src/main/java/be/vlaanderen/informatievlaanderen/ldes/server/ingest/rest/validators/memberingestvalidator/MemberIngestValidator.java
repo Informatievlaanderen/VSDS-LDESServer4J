@@ -35,6 +35,8 @@ public class MemberIngestValidator implements IngestValidator {
     public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
         if (!event.eventStream().isClosed()) {
             addEventStream(event.eventStream());
+        } else {
+            closedEventstreams.add(event.eventStream().getCollection());
         }
     }
 

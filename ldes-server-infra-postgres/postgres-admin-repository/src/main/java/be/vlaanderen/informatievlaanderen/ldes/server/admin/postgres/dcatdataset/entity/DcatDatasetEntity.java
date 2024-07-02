@@ -30,6 +30,11 @@ public class DcatDatasetEntity {
         this.eventStream = eventStream;
     }
 
+    public DcatDatasetEntity(EventStreamEntity eventStream, Model model) {
+        this.eventStream = eventStream;
+        this.model = model;
+    }
+
     public String getCollectionName() {
         return eventStream.getName();
     }

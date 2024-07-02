@@ -22,12 +22,12 @@ class PartitionerTest extends PostgresFragmentationIntegrationTest {
 	private ViewBucketisationPartitioner viewPartitioner;
 
 	List<MemberBucketEntity> buckets = List.of(
-			new MemberBucketEntity("es/v1", "v1/x", "1", 0),
-			new MemberBucketEntity("es/v1", "v1/x", "2", 0),
-			new MemberBucketEntity("es/v2", "v2/x", "1", 0),
-			new MemberBucketEntity("es/v2", "v2/x", "2", 0),
-			new MemberBucketEntity("es/v2", "v2/y", "1", 0),
-			new MemberBucketEntity("es/v2", "v2/y", "2", 0)
+			new MemberBucketEntity("es/v1", "v1/x", "1", 0L),
+			new MemberBucketEntity("es/v1", "v1/x", "2", 0L),
+			new MemberBucketEntity("es/v2", "v2/x", "1", 0L),
+			new MemberBucketEntity("es/v2", "v2/x", "2", 0L),
+			new MemberBucketEntity("es/v2", "v2/y", "1", 0L),
+			new MemberBucketEntity("es/v2", "v2/y", "2", 0L)
 	);
 
 	@Test

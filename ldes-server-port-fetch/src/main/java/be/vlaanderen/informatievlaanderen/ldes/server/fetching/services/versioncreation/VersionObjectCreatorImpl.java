@@ -16,7 +16,7 @@ public class VersionObjectCreatorImpl implements VersionObjectCreator {
     @Override
     public Model createFromMember(IngestedMember member) {
         return VersionObjectModelBuilder.create()
-                .withMemberId(member.getId())
+                .withMemberSubject(member.getSubject())
                 .withVersionOfProperties(versionOfPath, member.getVersionOf())
                 .withTimestampProperties(timestampPath, member.getTimestamp())
                 .withModel(member.getModel())

@@ -1,9 +1,12 @@
 spring:
-  data:
-    mongodb:
-      auto-index-creation: true
-mongock:
-  migration-scan-package: VSDS
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: admin
+    password: admin
+  batch:
+    jdbc:
+      initialize-schema: always
+
 springdoc:
   swagger-ui:
     path: /v1/swagger

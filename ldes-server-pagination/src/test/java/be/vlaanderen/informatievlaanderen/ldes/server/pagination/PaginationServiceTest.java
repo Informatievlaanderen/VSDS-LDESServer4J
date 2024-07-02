@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAl
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -42,9 +42,10 @@ import static org.mockito.Mockito.*;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
-		MemberPaginationServiceCreator.class, ViewBucketisationService.class})
+		MemberPaginationServiceCreator.class })
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class PaginationServiceTest {
-	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
+	private static final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
 	@MockBean(name = "bucketisationPartitioner")
 	private Partitioner bucketisationPartitioner;
 	@MockBean(name = "viewBucketisationPartitioner")
@@ -122,10 +123,10 @@ class PaginationServiceTest {
 
 	private List<BucketisedMember> bucketisedMembers() {
 		return List.of(
-				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1", 0L),
-				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1", 0L)
+				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1"),
+				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1")
 		);
 	}
 }

@@ -32,7 +32,7 @@ class MemberTest {
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
                 LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, true, UUID.randomUUID().toString(), model);
+                true, UUID.randomUUID().toString(), model);
 
         member.removeTreeMember();
         Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
@@ -48,11 +48,10 @@ class MemberTest {
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
                 LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, true, UUID.randomUUID().toString(), model);
+                true, UUID.randomUUID().toString(), model);
 
         assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-                member.getId());
-        assertEquals(0L, member.getSequenceNr());
+                member.getSubject());
         assertEquals("collectionName", member.getCollectionName());
         assertTrue(member.getModel().isIsomorphicWith(model));
     }
@@ -69,18 +68,18 @@ class MemberTest {
 
     static class EqualityTestProvider implements ArgumentsProvider {
 
-        private static final String idA = "idA";
-        private static final IngestedMember memberA = new IngestedMember(idA, null, null, null, null, true, null, null);
+        private static final String ID = "idA";
+        private static final IngestedMember memberA = new IngestedMember(ID, null, null, null, true, null, null);
 
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     Arguments.of(equals(), memberA, memberA),
-                    Arguments.of(equals(), new IngestedMember(idA, "otherCollection", "other", LocalDateTime.now(), 10L, true, "txId", ModelFactory.createDefaultModel()),
+                    Arguments.of(equals(), new IngestedMember(ID, "otherCollection", "other", LocalDateTime.now(), true, "txId", ModelFactory.createDefaultModel()),
                             memberA),
                     Arguments.of(notEquals(),
-                            new IngestedMember("idB", "otherCollection", "other", LocalDateTime.now(), 10L, true, "txId", ModelFactory.createDefaultModel()), memberA),
-                    Arguments.of(notEquals(), new IngestedMember("idB", null, null, null, null, true, null, null), memberA));
+                            new IngestedMember("idB", "otherCollection", "other", LocalDateTime.now(), true, "txId", ModelFactory.createDefaultModel()), memberA),
+                    Arguments.of(notEquals(), new IngestedMember("idB", null, null, null, true, null, null), memberA));
         }
 
         private static BiConsumer<Object, Object> equals() {

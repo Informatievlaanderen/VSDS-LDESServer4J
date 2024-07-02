@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -134,7 +133,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
-				.atMost(POLLING_RATE, SECONDS)
+				.atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
 				.untilAsserted(() -> {
 					responseModel = fetchFragment(url);
 					assertNotNull(responseModel);
@@ -242,7 +241,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).next().toString();
 
 
-		await().atMost(POLLING_RATE, SECONDS)
+		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
 				.until(() -> {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
@@ -253,8 +252,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-		await().atMost(POLLING_RATE, SECONDS)
-				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
+		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+				.until(() -> memberRepository.getMembersOfCollection(collection).size() == expectedMemberCount);
 	}
 
 	@After
@@ -281,13 +280,6 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertThat(size).isEqualTo(statementCount);
 	}
 
-	@And("The prometheus value for key {string} is {string}")
-	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String value) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
-				.andReturn().getResponse();
-		assertTrue(response.getContentAsString().contains(message + " " + value));
-	}
-
 	@When("I ingest {int} files of state objects from folder {string} to the collection {string}")
 	public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfStateFiles; i++) {
@@ -304,7 +296,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
 	public void iFetchAStreamingFragment(String url, String compareUrl) {
-		await().atMost(POLLING_RATE, SECONDS)
+		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
 				.untilAsserted(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
@@ -345,5 +337,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			return null;
 		}
 		return new ResponseToModelConverter(response).convert();
+	}
+
+	@And("The prometheus value for key {string} in my collection {string} is {string}")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String collection, String value) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
+				.andReturn().getResponse();
+		assertTrue(response.getContentAsString().contains("%s{collection=\"%s\"} %s".formatted(message, collection, value)));
 	}
 }

@@ -36,7 +36,6 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 	}
 
 	BucketisedMember bucketisedMember() {
-		return new BucketisedMember(String.valueOf(atomicInteger.incrementAndGet()), viewName, viewName.asString(),
-				atomicInteger.longValue());
+		return new BucketisedMember(String.valueOf(atomicInteger.incrementAndGet()), viewName, viewName.asString());
 	}
 }

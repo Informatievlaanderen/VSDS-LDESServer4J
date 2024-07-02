@@ -34,12 +34,12 @@ class StateObjectMemberExtractorTest {
         assertThat(ingestedTimestamps).hasSize(1);
 
         final List<String> expectedMemberIds = Stream.of("bart", "lisa", "homer")
-                .map(memberIdPart -> "simpsons/http://temporary.org#%s/%s".formatted(memberIdPart, ingestedTimestamps.getFirst().toString()))
+                .map(memberIdPart -> "http://temporary.org#%s/%s".formatted(memberIdPart, ingestedTimestamps.getFirst().toString()))
                 .toList();
 
 
         assertThat(members)
-                .map(IngestedMember::getId)
+                .map(IngestedMember::getSubject)
                 .containsExactlyInAnyOrderElementsOf(expectedMemberIds);
 
     }

@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -40,15 +39,10 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 		eventPublisher.publishEvent(new ShaclDeletedEvent(collectionName));
 	}
 
-	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		deleteShaclShape(event.collectionName());
-	}
-
 	/**
 	 * Initializes the shapes config.
 	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
-	 * to give db migrations such as mongock time before this init.
+	 * to give db migrations time before this init.
 	 */
 	@EventListener(ApplicationReadyEvent.class)
 	public void initShapes() {

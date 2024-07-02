@@ -194,7 +194,7 @@ class EventStreamConverterImplTest {
 		void when_eventStreamHasViewsAndDataset_Then_ConvertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-                    true, views, shacl, eventSourceRetentionModels,
+                    true, false, views, shacl, eventSourceRetentionModels,
 					new DcatDataset("collectionName1", dataSetModel));
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static org.apache.jena.rdf.model.ResourceFactory.createTypedLiteral;
 
 public class VersionObjectModelBuilder {
-    private String memberId;
+    private String memberSubject;
     private String versionOfPath;
     private String versionOf;
     private String timestampPath;
@@ -28,8 +28,8 @@ public class VersionObjectModelBuilder {
         return new VersionObjectModelBuilder();
     }
 
-    public VersionObjectModelBuilder withMemberId(String memberId) {
-        this.memberId = memberId;
+    public VersionObjectModelBuilder withMemberSubject(String memberSubject) {
+        this.memberSubject = memberSubject;
         return this;
     }
 
@@ -38,7 +38,6 @@ public class VersionObjectModelBuilder {
         this.versionOf = versionOf;
         return this;
     }
-
 
     public VersionObjectModelBuilder withTimestampProperties(String timestampPath, LocalDateTime timestamp) {
         this.timestampPath = timestampPath;
@@ -53,7 +52,7 @@ public class VersionObjectModelBuilder {
 
     public Model buildVersionObjectModel() {
         final Model versionObjectModel = ModelFactory.createDefaultModel();
-        final Resource subject = createSubject(memberId);
+        final Resource subject = createSubject(memberSubject);
 
         Map<Boolean, List<Statement>> partitionedStatements = model.listStatements().toList().stream()
                 .collect(Collectors.partitioningBy(statement -> statement.getSubject().equals(ResourceFactory.createProperty(versionOf))));
@@ -68,11 +67,11 @@ public class VersionObjectModelBuilder {
         return versionObjectModel;
     }
 
-    private Resource createSubject(String memberId) {
-        if(memberId.startsWith("http")) {
-            return ResourceFactory.createProperty(memberId);
+    private Resource createSubject(String memberSubject) {
+        if(memberSubject.startsWith("http")) {
+            return ResourceFactory.createProperty(memberSubject);
         }
-        return ResourceFactory.createProperty(memberId.substring(memberId.indexOf("/") + 1));
+        return ResourceFactory.createProperty(memberSubject.substring(memberSubject.indexOf("/") + 1));
     }
 
     private Literal createTimestampLiteral() {

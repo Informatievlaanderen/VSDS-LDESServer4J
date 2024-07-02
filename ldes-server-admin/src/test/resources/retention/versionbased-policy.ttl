@@ -1,6 +1,0 @@
-@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
-@prefix ldes:   <https://w3id.org/ldes#> .
-
-ldes:retentionPolicy
-  a ldes:LatestVersionSubset  ;
-  ldes:amount 2 .

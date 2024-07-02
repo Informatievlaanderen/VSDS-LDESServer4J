@@ -46,7 +46,7 @@ Feature: Server basic fetching functionality
   Scenario Outline: Counter is created and returns number of inserted members
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 1 members of template <template> to the collection <collectionName>
-    Then The prometheus value for key "ldes_server_ingested_members_count_total" is <prometheusValue>
+    Then The prometheus value for key "ldes_server_ingested_members_count_total" in my collection <collectionName> is <prometheusValue>
 
     Examples:
       | eventStreamDescriptionFile                                       | template                                           | collectionName        | prometheusValue |

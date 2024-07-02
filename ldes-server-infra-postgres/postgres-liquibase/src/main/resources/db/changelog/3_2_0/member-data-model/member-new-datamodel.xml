@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="member-new-datamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="members"/>
+            </not>
+        </preConditions>
+        <createTable tableName="members">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="members_pkey"/>
+            </column>
+            <column name="subject" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="old_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="collection_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_in_event_source" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_model" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version_of" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="members" baseColumnNames="collection_id"
+                                 constraintName="fk_collection_id"
+                                 referencedTableName="collections"
+                                 referencedColumnNames="collection_id"
+                                 onDelete="CASCADE"/>
+        <createIndex indexName="idx3mw3hkmk4pkhm5hg5plm4bdqs" tableName="members">
+            <column name="id"/>
+            <column name="timestamp"/>
+        </createIndex>
+        <createIndex indexName="idx3mw3hkmk4phlm5hg3vsm4bzes" tableName="members">
+            <column name="old_id"/>
+        </createIndex>
+        <rollback>
+            <dropTable tableName="members" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate_members" author="vsds">
+        <preConditions>
+            <tableExists tableName="members"/>
+        </preConditions>
+        <sqlFile path="db/changelog/3_2_0/member-data-model/migrate-members.sql"/>
+        <rollback>
+            <delete tableName="members"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -13,6 +13,7 @@ open module ldes.fragmentation.domain {
     requires org.apache.jena.arq;
     requires org.jetbrains.annotations;
 	requires spring.tx;
+	requires spring.core;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;

@@ -38,9 +38,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/test
     username: admin
     password: admin
-  jpa:
-    hibernate:
-      ddl-auto: update
+  batch:
+    jdbc:
+      initialize-schema: always
+      
 rest:
   max-age: 120
   max-age-immutable: 604800
@@ -115,6 +116,13 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>spring.datasource.password</td>
     <td>Password to log into provided PostgreSQL instance</td>
     <td></td>
+    <td></td>
+  </tr>
+<tr><td colspan="4"><b>Bucketisation & pagination batching</b></td></tr>
+  <tr>
+    <td>spring.batch.jdbc.initialize-schema</td>
+    <td>Indicates whether the database should be initialized with the tables required for the batching process. This can be either `always`, `embedded` (embedded databases) or `never`</td>
+    <td>Yes (to let the bucketisation and pagination process run)</td>
     <td></td>
   </tr>
   <tr><td colspan="4"><b><a href="./features/compaction">Fragment Compaction</a></b></td></tr>

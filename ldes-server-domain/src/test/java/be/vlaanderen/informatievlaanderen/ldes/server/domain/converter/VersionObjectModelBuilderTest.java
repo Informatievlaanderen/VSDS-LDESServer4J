@@ -26,7 +26,7 @@ class VersionObjectModelBuilderTest {
                 .lang(Lang.NQ)
                 .toModel();
         final Model actualVersionObject = VersionObjectModelBuilder.create()
-                .withMemberId(MEMBER_ID)
+                .withMemberSubject(MEMBER_ID)
                 .withVersionOfProperties(DC_TERMS + "isVersionOf", VERSION_OF)
                 .withTimestampProperties(DC_TERMS + "created", LocalDateTime.parse(TIMESTAMP_STRING))
                 .withModel(startingModel)

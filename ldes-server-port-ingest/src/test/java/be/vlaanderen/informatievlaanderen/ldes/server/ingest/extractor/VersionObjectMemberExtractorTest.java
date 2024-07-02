@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberIdNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -33,13 +33,12 @@ class VersionObjectMemberExtractorTest {
     @Test
     void given_ValidModel_when_ExtractMembers_then_ReturnSingleMember() throws IOException {
         final Model model = readValidModel();
-        final String memberId = "%s/%s".formatted(COLLECTION, "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483");
+        final String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483";
         final IngestedMember expectedMember = new IngestedMember(
                 memberId,
                 COLLECTION,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622",
                 ZonedDateTime.parse("2020-12-28T09:36:37.127Z").toLocalDateTime(),
-                null,
                 true,
                 "txId",
                 model
@@ -65,7 +64,7 @@ class VersionObjectMemberExtractorTest {
         final Model model = readModelWithTwoVersionOfPaths();
 
         assertThatThrownBy(() -> memberExtractor.extractMembers(model))
-                .isInstanceOf(MemberIdNotFoundException.class);
+                .isInstanceOf(MemberSubjectNotFoundException.class);
     }
 
     @Test
@@ -73,7 +72,7 @@ class VersionObjectMemberExtractorTest {
         final Model model = readModelWithoutSpecifiedPath(VERSION_OF_PATH);
 
         assertThatThrownBy(() -> memberExtractor.extractMembers(model))
-                .isInstanceOf(MemberIdNotFoundException.class);
+                .isInstanceOf(MemberSubjectNotFoundException.class);
     }
 
     @Test

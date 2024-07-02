@@ -14,6 +14,4 @@ public interface ViewService {
 	List<ViewSpecification> getViewsByCollectionName(String collectionName);
 
 	void deleteViewByViewName(ViewName viewName);
-
-	void deleteAllViewsByViewName(List<ViewName> viewNames);
 }

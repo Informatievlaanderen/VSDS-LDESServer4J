@@ -76,7 +76,7 @@ class MemberIngestValidatorImplTest {
     }
 
     private IngestedMember createBasicMember() {
-        return new IngestedMember("id", "myCollection", "versionOf", LocalDateTime.now(), 0L, true, "txId", null);
+        return new IngestedMember("id", "myCollection", "versionOf", LocalDateTime.now(), true, "txId", null);
     }
 
 }

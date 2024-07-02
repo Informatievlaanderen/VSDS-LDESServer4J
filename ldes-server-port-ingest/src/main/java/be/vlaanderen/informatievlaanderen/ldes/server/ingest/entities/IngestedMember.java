@@ -16,22 +16,20 @@ public class IngestedMember {
     public static final String TREE = "https://w3id.org/tree#";
     public static final Property TREE_MEMBER = createProperty(TREE, "member");
 
-    private final String id;
+    private final String subject;
     private final String collectionName;
     private final String versionOf;
     private final LocalDateTime timestamp;
-    private final Long sequenceNr;
     private final boolean inEventSource;
     private final String transactionId;
     private final Model model;
 
     @SuppressWarnings("java:S107")
-    public IngestedMember(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean inEventSource, String transactionId, Model model) {
-        this.id = id;
+    public IngestedMember(String subject, String collectionName, String versionOf, LocalDateTime timestamp, boolean inEventSource, String transactionId, Model model) {
+        this.subject = subject;
         this.collectionName = collectionName;
         this.versionOf = versionOf;
         this.timestamp = timestamp;
-        this.sequenceNr = sequenceNr;
         this.inEventSource = inEventSource;
         this.transactionId = transactionId;
         this.model = model;
@@ -41,8 +39,8 @@ public class IngestedMember {
         return model;
     }
 
-    public String getId() {
-        return id;
+    public String getSubject() {
+        return subject;
     }
 
     public void removeTreeMember() {
@@ -65,10 +63,6 @@ public class IngestedMember {
         return timestamp;
     }
 
-    public Long getSequenceNr() {
-        return sequenceNr;
-    }
-
     public boolean isInEventSource() {
         return inEventSource;
     }
@@ -84,12 +78,12 @@ public class IngestedMember {
         if (o == null || getClass() != o.getClass())
             return false;
         IngestedMember member = (IngestedMember) o;
-        return getId().equals(member.getId());
+        return getSubject().equals(member.getSubject());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getSubject());
     }
 
 }

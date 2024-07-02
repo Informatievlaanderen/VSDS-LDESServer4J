@@ -31,6 +31,11 @@ public class ShaclShapeEntity {
         this.eventStream = eventStream;
     }
 
+    public ShaclShapeEntity(EventStreamEntity eventStream, Model model) {
+        this.eventStream = eventStream;
+        this.model = model;
+    }
+
     public String getCollectionName() {
         return eventStream.getName();
     }

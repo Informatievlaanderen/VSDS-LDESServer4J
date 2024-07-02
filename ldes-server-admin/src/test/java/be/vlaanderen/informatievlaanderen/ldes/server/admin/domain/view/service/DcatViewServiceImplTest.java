@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -27,10 +26,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DcatViewServiceImplTest {
 
-	private final static String COLLECTION_NAME = "collectionName";
-	private final static String VIEW = "view";
-	private final static ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
-	private final static Model MODEL = ModelFactory.createDefaultModel();
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW = "view";
+	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
+	private static final Model MODEL = ModelFactory.createDefaultModel();
 
 	@Mock
 	private ApplicationEventPublisher eventPublisher;
@@ -63,15 +62,6 @@ class DcatViewServiceImplTest {
 	@Test
 	void should_CallRepositoryWithDcatView_when_DeleteIsCalled() {
 		dcatViewService.delete(VIEW_NAME);
-
-		verify(eventPublisher).publishEvent(new DcatViewDeletedEvent(VIEW_NAME));
-		verify(dcatViewRepository).delete(VIEW_NAME);
-		verifyNoMoreInteractions(dcatViewRepository);
-	}
-
-	@Test
-	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
-		dcatViewService.handleViewDeletedEvent(new ViewDeletedEvent(VIEW_NAME));
 
 		verify(eventPublisher).publishEvent(new DcatViewDeletedEvent(VIEW_NAME));
 		verify(dcatViewRepository).delete(VIEW_NAME);
