@@ -18,4 +18,6 @@ public interface EventStreamRepository {
 	void saveEventStream(EventStreamTO eventStreamTO);
 
 	int deleteEventStream(String collectionName);
+
+    void closeEventStream(String collectionName);
 }

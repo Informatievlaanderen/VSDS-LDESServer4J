@@ -8,6 +8,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExt
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -24,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.constants.IngestConstants.LDES_SERVER_INGESTED_MEMBERS_COUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,10 +51,15 @@ class MemberIngesterImplTest {
     @Mock
     private MemberIngestValidator validator;
 
+    private MeterRegistry meterRegistry;
+
     private MemberIngester memberIngestService;
 
     @BeforeEach
     void setUp() {
+        meterRegistry = new SimpleMeterRegistry();
+        Metrics.globalRegistry.add(meterRegistry);
+
         MemberExtractorCollection memberExtractorCollection = new MemberExtractorCollectionImpl();
         memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, memberExtractorCollection);
 
@@ -70,6 +80,8 @@ class MemberIngesterImplTest {
 
         var exception = assertThrows(RuntimeException.class, () -> memberIngestService.ingest(COLLECTION_NAME, model));
         assertEquals("testException", exception.getMessage());
+        var counter = meterRegistry.find(LDES_SERVER_INGESTED_MEMBERS_COUNT).counter();
+        assertThat(counter).isNull();
         verifyNoInteractions(memberRepository);
         verifyNoInteractions(eventPublisher);
     }
@@ -87,6 +99,8 @@ class MemberIngesterImplTest {
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isFalse();
+        var counter = meterRegistry.find(LDES_SERVER_INGESTED_MEMBERS_COUNT).counter();
+        assertThat(counter).isNull();
         verify(memberRepository, times(1)).insertAll(List.of(member));
         verifyNoInteractions(eventPublisher);
     }
@@ -104,6 +118,9 @@ class MemberIngesterImplTest {
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isTrue();
+        Counter counter = meterRegistry.find(LDES_SERVER_INGESTED_MEMBERS_COUNT).counter();
+        assertThat(counter).isNotNull();
+        assertThat(counter.count()).isEqualTo(1);
         InOrder inOrder = inOrder(memberRepository, eventPublisher);
         inOrder.verify(memberRepository, times(1)).insertAll(List.of(member));
         inOrder.verify(eventPublisher).publishEvent(any(MembersIngestedEvent.class));

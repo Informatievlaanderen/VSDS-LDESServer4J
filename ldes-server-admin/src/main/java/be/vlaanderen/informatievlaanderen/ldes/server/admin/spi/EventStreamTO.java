@@ -16,18 +16,20 @@ public class EventStreamTO {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final boolean versionCreationEnabled;
+	private final boolean closed;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
 	private final List<Model> eventSourceRetentionPolicies;
 	private final DcatDataset dcatDataset;
 
 	@SuppressWarnings("java:S107")
-	public EventStreamTO(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled,
+	public EventStreamTO(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled, boolean closed,
                          List<ViewSpecification> views, Model shacl, List<Model> eventSourceRetentionPolicies, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
+		this.closed = closed;
         this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
         this.eventSourceRetentionPolicies = eventSourceRetentionPolicies;
@@ -36,7 +38,7 @@ public class EventStreamTO {
 
 	public EventStreamTO(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled,
                          List<ViewSpecification> views, Model shacl, List<Model> eventSourceRetentionPolicies) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, eventSourceRetentionPolicies, null);
+		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, views, shacl, eventSourceRetentionPolicies, null);
 	}
 
 	public String getCollection() {
@@ -53,6 +55,10 @@ public class EventStreamTO {
 
 	public boolean isVersionCreationEnabled() {
 		return versionCreationEnabled;
+	}
+
+	public boolean isClosed() {
+		return closed;
 	}
 
 	public List<ViewSpecification> getViews() {

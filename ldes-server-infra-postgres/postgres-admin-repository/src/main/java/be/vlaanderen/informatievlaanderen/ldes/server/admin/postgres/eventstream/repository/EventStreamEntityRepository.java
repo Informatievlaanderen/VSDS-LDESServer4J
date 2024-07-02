@@ -21,4 +21,8 @@ public interface EventStreamEntityRepository extends JpaRepository<EventStreamEn
 	@Modifying
 	@Query("DELETE FROM EventStreamEntity e WHERE e.name = :name")
 	int deleteByName(String name);
+
+    @Modifying
+    @Query("update EventStreamEntity e set e.closed = true WHERE e.name = :name")
+    void closeEventStream(String name);
 }
