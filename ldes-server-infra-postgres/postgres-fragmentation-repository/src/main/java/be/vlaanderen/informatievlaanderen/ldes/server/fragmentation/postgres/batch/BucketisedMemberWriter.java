@@ -21,8 +21,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	private static final String SQL = """
 			INSERT INTO page_members (bucket_id, member_id)
 			WITH view_names (view_id, view_name) AS (SELECT v.view_id, c.name || '/' || v.name FROM views v JOIN collections c ON v.collection_id = c.collection_id)
-			SELECT (SELECT b.bucket_id FROM buckets b JOIN view_names v ON b.view_id = v.view_id WHERE b.bucket = ? AND v.view_name = ?),
-			       (SELECT member_id FROM members WHERE subject = ?)
+			SELECT (SELECT b.bucket_id FROM buckets b JOIN view_names v ON b.view_id = v.view_id WHERE b.bucket = ? AND v.view_name = ?), ?
 			ON CONFLICT DO NOTHING;
 			""";
 

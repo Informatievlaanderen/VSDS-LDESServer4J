@@ -49,7 +49,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
         final var rootFragment = getOrCreateRootFragment(parentFragment);
         var fragments =
                 referenceBucketiser
-                        .bucketise(member.id(), member.model())
+                        .bucketise(member.getSubject(), member.getVersionModel())
                         .stream()
                         .map(reference -> fragmentCreator.getOrCreateFragment(parentFragment, reference, rootFragment))
                         .toList();
@@ -69,7 +69,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
         final var rootFragment = getOrCreateRootBucket(parentBucket);
         var fragments =
                 referenceBucketiser
-                        .bucketise(member.id(), member.model())
+                        .bucketise(member.getSubject(), member.getVersionModel())
                         .stream()
                         .map(reference -> bucketCreator.getOrCreateBucket(parentBucket, reference, rootFragment))
                         .toList();

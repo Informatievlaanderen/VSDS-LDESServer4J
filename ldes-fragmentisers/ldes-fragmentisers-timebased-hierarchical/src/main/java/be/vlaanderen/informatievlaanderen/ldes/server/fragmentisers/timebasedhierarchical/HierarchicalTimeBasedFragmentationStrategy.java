@@ -53,7 +53,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 													  Observation parentObservation) {
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
 
-		Fragment fragment = getFragmentationTimestamp(member.id(), member.model())
+		Fragment fragment = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
 				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
 				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
 
@@ -66,7 +66,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
 		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
 
-		Bucket bucket = getFragmentationTimestamp(member.id(), member.model())
+		Bucket bucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
 				.map(timestamp -> bucketFinder.getLowestFragment(parentBucket, timestamp, Granularity.YEAR))
 				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
 
@@ -75,14 +75,14 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 		return members;
 	}
 
-	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String memberId, Model memberModel) {
+	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String subject, Model memberModel) {
 		try{
 			Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
 					config.getFragmenterSubjectFilter(),
 					config.getFragmentationPath());
 			return timeStamp.map(localDateTime -> new FragmentationTimestamp(localDateTime, config.getMaxGranularity()));
 		} catch (Exception exception) {
-			LOGGER.warn("Could not fragment member: {} Reason: {}", memberId, exception.getMessage());
+			LOGGER.warn("Could not fragment member: {} Reason: {}", subject, exception.getMessage());
 			return Optional.empty();
 		}
 	}

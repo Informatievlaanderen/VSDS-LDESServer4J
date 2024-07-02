@@ -54,7 +54,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.start();
 		getRootTileFragment(parentFragment);
 
-		Set<String> tiles = geospatialBucketiser.bucketise(member.id(), member.model());
+		Set<String> tiles = geospatialBucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		List<Fragment> fragments = tiles
 				.stream()
@@ -84,7 +84,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.start();
 		getRootTileBucket(parentBucket);
 
-		Set<String> tiles = geospatialBucketiser.bucketise(member.id(), member.model());
+		Set<String> tiles = geospatialBucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		List<Bucket> buckets = tiles
 				.stream()

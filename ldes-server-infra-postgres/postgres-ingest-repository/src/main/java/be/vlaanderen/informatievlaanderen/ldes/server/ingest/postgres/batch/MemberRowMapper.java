@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants;
 import org.apache.jena.riot.RDFParser;
 import org.springframework.jdbc.core.RowMapper;
@@ -8,13 +9,18 @@ import org.springframework.jdbc.core.RowMapper;
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
-public class MemberRowMapper implements RowMapper<IngestedMember> {
+public class MemberRowMapper implements RowMapper<FragmentationMember> {
 	@Override
-	public IngestedMember mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new IngestedMember(rs.getString(1), rs.getString(2),
-				rs.getString(3), rs.getTimestamp(4).toLocalDateTime(),
-				rs.getBoolean(5), rs.getString(6),
-				RDFParser.source(new ByteArrayInputStream(rs.getBytes(7))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel());
+	public FragmentationMember mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return new FragmentationMember(
+				rs.getLong("member_id"),
+				rs.getString("subject"),
+				rs.getString("version_of"),
+				rs.getObject("timestamp", LocalDateTime.class),
+				new EventStreamProperties(rs.getString("name"), rs.getString("version_of_path"), rs.getString("timestamp_path"), rs.getBoolean("create_versions")),
+				RDFParser.source(new ByteArrayInputStream(rs.getBytes("model"))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel()
+		);
 	}
 }

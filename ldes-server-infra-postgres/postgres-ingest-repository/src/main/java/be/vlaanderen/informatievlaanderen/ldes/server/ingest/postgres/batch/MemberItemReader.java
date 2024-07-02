@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -21,8 +21,8 @@ public class MemberItemReader {
 	Logger log = LoggerFactory.getLogger(MemberItemReader.class);
 
 	@Bean("newMemberReader")
-	public JdbcPagingItemReader<IngestedMember> newMemberReader(DataSource dataSource) {
-		return new JdbcPagingItemReaderBuilder<IngestedMember>()
+	public JdbcPagingItemReader<FragmentationMember> newMemberReader(DataSource dataSource) {
+		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(newMembersQuery())
@@ -34,9 +34,9 @@ public class MemberItemReader {
 
 	@Bean("refragmentEventStream")
 	@StepScope
-	public JdbcPagingItemReader<IngestedMember> refragmentEventStream(@Value("#{jobParameters}") Map<String, Object> jobParameters,
-	                                                                  DataSource dataSource) {
-		return new JdbcPagingItemReaderBuilder<IngestedMember>()
+	public JdbcPagingItemReader<FragmentationMember> refragmentEventStream(@Value("#{jobParameters}") Map<String, Object> jobParameters,
+	                                                                       DataSource dataSource) {
+		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(refragmentQuery())
@@ -51,8 +51,7 @@ public class MemberItemReader {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("m.subject, c.name, m.version_of, m.timestamp, m.is_in_event_source, " +
-		                              "m.transaction_id, m.member_model");
+		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
 		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id LEFT JOIN collections c on m.collection_id = c.collection_id");
 		queryProvider.setWhereClause("fb.id IS NULL");
 		queryProvider.setSortKeys(sortKeys);
@@ -63,8 +62,7 @@ public class MemberItemReader {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("m.subject, c.name, m.version_of, m.timestamp, m.is_in_event_source, " +
-		                              "m.transaction_id, m.member_model");
+		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
 		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id " +
 				"AND fb.view_name = :viewName " +
 				"LEFT JOIN collections c on m.collection_id = c.collection_id");

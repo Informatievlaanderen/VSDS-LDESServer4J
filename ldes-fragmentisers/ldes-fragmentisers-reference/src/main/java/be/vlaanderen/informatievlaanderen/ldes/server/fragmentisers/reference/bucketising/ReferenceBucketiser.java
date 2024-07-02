@@ -25,10 +25,10 @@ public class ReferenceBucketiser {
 		this.fragmentationPath = referenceConfig.fragmentationPath();
 	}
 
-	public Set<String> bucketise(@NotNull String memberId,
+	public Set<String> bucketise(@NotNull String subject,
 								 @NotNull Model memberModel) {
 		try {
-			final String memberSubject = memberId.substring(memberId.indexOf("/") + 1);
+			final String memberSubject = subject.substring(subject.indexOf("/") + 1);
 			Set<String> references = memberModel
 					.listObjectsOfProperty(createResource(memberSubject), createProperty(fragmentationPath))
 					.filterKeep(RDFNode::isURIResource)
@@ -40,7 +40,7 @@ public class ReferenceBucketiser {
 			}
 			return references;
 		} catch (Exception exception) {
-			LOGGER.warn("Could not fragment member {} Reason: {}", memberId, exception.getMessage());
+			LOGGER.warn("Could not fragment member {} Reason: {}", subject, exception.getMessage());
 			return Set.of(DEFAULT_BUCKET_STRING);
 		}
 	}

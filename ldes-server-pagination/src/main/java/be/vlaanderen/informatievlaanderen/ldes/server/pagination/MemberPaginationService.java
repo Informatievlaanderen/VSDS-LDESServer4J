@@ -50,8 +50,9 @@ public class MemberPaginationService {
 					}
 
 					String id = bucketisedMember.memberId() + "/" + activePage.get().getFragmentIdString();
+					// TODO
 					MemberAllocation memberAllocation = new MemberAllocation(id, activePage.get().getViewName().getCollectionName(),
-							viewName, activePage.get().getFragmentIdString(), bucketisedMember.memberId());
+							viewName, activePage.get().getFragmentIdString(), "bucketisedMember.memberId()");
 
 					activePage.get().incrementNrOfMembersAdded();
 					updatedPages.add(activePage.get());

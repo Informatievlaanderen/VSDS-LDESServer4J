@@ -21,7 +21,7 @@ public class BucketRepositorySteps extends PostgresFragmentationIntegrationTest 
 
     @DataTableType
     public BucketisedMember bucketisedMemberEntryTransformer(Map<String, String> row) {
-        return new BucketisedMember(row.get("memberId"), ViewName.fromString(row.get("viewName")),
+        return new BucketisedMember(Long.parseLong(row.get("memberId")), ViewName.fromString(row.get("viewName")),
                 row.get("fragmentId"));
     }
 

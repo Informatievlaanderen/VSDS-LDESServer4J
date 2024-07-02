@@ -1,11 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,31 +14,26 @@ import java.util.Map;
 
 @Component
 @StepScope
-public class BucketProcessor implements ItemProcessor<IngestedMember, List<BucketisedMember>> {
+public class BucketProcessor implements ItemProcessor<FragmentationMember, List<BucketisedMember>> {
 	private final FragmentationStrategyCollection fragmentationCollections;
-	private final MemberMapperCollection memberMappers;
 	private final Map<String, Object> jobParameters;
 
-	public BucketProcessor(FragmentationStrategyCollection fragmentationCollections, MemberMapperCollection memberMappers,
+	public BucketProcessor(FragmentationStrategyCollection fragmentationCollections,
 	                       @Value("#{jobParameters}") Map<String, Object> jobParameters) {
 		this.fragmentationCollections = fragmentationCollections;
-		this.memberMappers = memberMappers;
 		this.jobParameters = jobParameters;
 	}
 
 	@Override
-	public List<BucketisedMember> process(IngestedMember item) {
-		final MemberMapper memberMapper = memberMappers.getMemberMapper(item.getCollectionName())
-				.orElseThrow(() -> new MissingResourceException("eventstream", item.getCollectionName()));
-
+	public List<BucketisedMember> process(@NotNull FragmentationMember item) {
 		if (jobParameters.containsKey("viewName")) {
 			return fragmentationCollections.getFragmentationStrategyExecutor((String) jobParameters.get("viewName"))
-					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(memberMapper.mapToFragmentationMember(item)))
+					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(item))
 					.orElse(null);
 		} else {
 			return fragmentationCollections.getAllFragmentationStrategyExecutors(item.getCollectionName())
 					.parallelStream()
-					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(memberMapper.mapToFragmentationMember(item)))
+					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(item))
 					.flatMap(List::stream)
 					.toList();
 		}

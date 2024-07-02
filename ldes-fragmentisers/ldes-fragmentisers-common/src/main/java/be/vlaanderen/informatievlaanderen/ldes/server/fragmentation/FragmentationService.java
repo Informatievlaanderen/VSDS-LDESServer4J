@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -43,8 +43,8 @@ public class FragmentationService {
 	private final JobExplorer jobExplorer;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
-	private final ItemReader<IngestedMember> newMemberReader;
-	private final ItemReader<IngestedMember> rebucketiseMemberReader;
+	private final ItemReader<FragmentationMember> newMemberReader;
+	private final ItemReader<FragmentationMember> rebucketiseMemberReader;
 	private final BucketProcessor processor;
 	private final ItemWriter<List<BucketisedMember>> bucketWriter;
 	private final ApplicationEventPublisher eventPublisher;
@@ -52,8 +52,8 @@ public class FragmentationService {
 
 	public FragmentationService(JobLauncher jobLauncher, JobExplorer jobExplorer, JobRepository jobRepository,
 	                            PlatformTransactionManager transactionManager,
-	                            @Qualifier("newMemberReader") ItemReader<IngestedMember> newMemberReader,
-	                            @Qualifier("refragmentEventStream") ItemReader<IngestedMember> rebucketiseMemberReader,
+	                            @Qualifier("newMemberReader") ItemReader<FragmentationMember> newMemberReader,
+	                            @Qualifier("refragmentEventStream") ItemReader<FragmentationMember> rebucketiseMemberReader,
 	                            BucketProcessor processor,
 	                            ItemWriter<List<BucketisedMember>> bucketWriter,
 	                            ApplicationEventPublisher eventPublisher) {
@@ -115,9 +115,9 @@ public class FragmentationService {
 				.build();
 	}
 
-	private Step createBucketisationStep(String stepName, ItemReader<IngestedMember> memberReader) {
+	private Step createBucketisationStep(String stepName, ItemReader<FragmentationMember> memberReader) {
 		return new StepBuilder(stepName, jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
+				.<FragmentationMember, List<BucketisedMember>>chunk(150, transactionManager)
 				.reader(memberReader)
 				.processor(processor)
 				.writer(bucketWriter)

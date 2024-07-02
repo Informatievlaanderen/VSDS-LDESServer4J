@@ -13,11 +13,11 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	@Override
 	public List<BucketisedMember> addMemberToFragment(Fragment fragment, FragmentationMember member,
 													  Observation parentObservation) {
-		return List.of(new BucketisedMember(member.id(), fragment.getViewName(), fragment.getFragmentIdString()));
+		return List.of(new BucketisedMember(member.getMemberId(), fragment.getViewName(), fragment.getFragmentIdString()));
 	}
 
 	@Override
 	public List<BucketisedMember> addMemberToBucket(Bucket bucket, FragmentationMember member, Observation parentObservation) {
-		return List.of(new BucketisedMember(member.id(), bucket.getViewName(), bucket.getBucketDescriptorAsString()));
+		return List.of(new BucketisedMember(member.getMemberId(), bucket.getViewName(), bucket.getBucketDescriptorAsString()));
 	}
 }
