@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 		MemberPaginationServiceCreator.class })
 @TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class PaginationServiceTest {
-	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
+	private static final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
 	@MockBean(name = "bucketisationPartitioner")
 	private Partitioner bucketisationPartitioner;
 	@MockBean(name = "viewBucketisationPartitioner")

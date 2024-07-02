@@ -24,9 +24,9 @@ class MemberFetcherImplTest {
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
     private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
     private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
-    private final List<String> MEMBER_SUBJECTS = List
+    private static final List<String> MEMBER_SUBJECTS = List
             .of("http://example.org/observation/1", "http://example.org/measurements/2");
-    private final List<String> MEMBER_IDS = MEMBER_SUBJECTS.stream()
+    private static final List<String> MEMBER_IDS = MEMBER_SUBJECTS.stream()
             .map(id -> "%s/%s".formatted(COLLECTION, id))
             .toList();
 

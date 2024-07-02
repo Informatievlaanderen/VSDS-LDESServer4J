@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DcatViewServiceImplTest {
 
-	private final static String COLLECTION_NAME = "collectionName";
-	private final static String VIEW = "view";
-	private final static ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
-	private final static Model MODEL = ModelFactory.createDefaultModel();
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW = "view";
+	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
+	private static final Model MODEL = ModelFactory.createDefaultModel();
 
 	@Mock
 	private ApplicationEventPublisher eventPublisher;

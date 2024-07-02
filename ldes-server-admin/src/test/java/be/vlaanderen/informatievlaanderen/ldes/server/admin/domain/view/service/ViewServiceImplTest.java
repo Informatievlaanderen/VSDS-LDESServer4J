@@ -56,8 +56,6 @@ class ViewServiceImplTest {
 	@Nested
 	class AddView {
 		private final Model oneYearDurationRetention = RDFParser.source("retention/one-year-timebased-policy.ttl").lang(Lang.TURTLE).toModel();
-		private final Model sixMonthDurationRetention = RDFParser.source("retention/ten-minutes-timebased-policy.ttl").lang(Lang.TURTLE).toModel();
-		private final Model versionBasedRetention = RDFParser.source("retention/versionbased-policy.ttl").lang(Lang.TURTLE).toModel();
 		private final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION, "view"), new ArrayList<>(List.of(oneYearDurationRetention)),
 				List.of(), 100);
 		private final ViewSpecification viewOfNotExistingCollection = new ViewSpecification(
