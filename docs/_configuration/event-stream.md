@@ -106,18 +106,26 @@ For more info, visit the [Swagger API documentation.](./admin-api)
   ] .
 ````
 
-## Configuring the member deletion on a ldes stream
+## Configuring member deletion on an Event Stream
 
-To determine which members should be permanently deleted from the server, it is necessary to set an event source on each event stream.
-In this object, the retention policies for the event stream can be set. Each member that falls outside of each retention policy will be removed from the event source.
-These members will then be deleted, only if they not a part of any view.
-More information on which retention policies can be used can be found [here](./retention-policies/index)
+To determine which members should be permanently deleted from the Event Stream, it is necessary to set one or more rentention policies on the event source of the Event Stream.
+Definition of event source:
 
-The retention policies of an event source are the only part of an event stream that can be updated once the event stream is created.
-To do this, there is an endpoint on the admin api. More info can be found [here](./admin-api)
+> In Linked Data Event Streams, the ldes:EventSource class exists to indicate this fragmentation is designed to be the source for all derived views. The Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a retention policy on top of it.
 
-Older versions of the server deleted members the moment they were no longer part of any view, the event source prevents this.
-If this behaviour is wanted, it can be recreated by setting a retention policy which all members will fail.
+By default, no retention policy is set on the event source meaning that no data is removed from the Event Stream. Even when all views are deleted, the members will not be deleted from the Event Stream.
+
+When a retention policy is set on the event source of an Event Stream, every member that is not part of any view and which falls outside of the retention policy will be removed from the Event Stream.
+More information on which retention policies can be used can be found [here](./retention-policies/index).
+
+The event source is automatically created when creating an Event Stream but does not contain a retention policy by default.
+To add retention policies to the event source, the admin API can be used. More info on this can be found [here](./admin-api).
+It is only possible to add or edit retention policies of an event source, other properties cannot be changed.
+
+Before introduction of the event source in the LDES Server, members were directly deleted when they weren't part of any view anymore.
+With the event source, it is possible to delete all views of an Event Stream without losing members so that you can create new views without having to ingest data again.
+If members need to be deleted directly from the Event Stream when they aren't part of any view, a timebased retention policy of a few seconds can be set on the event source of the Event Stream. 
+
 Example:
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
