@@ -1,14 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects;
 
 public class PageNumber {
+	public static final String PAGE_NUMBER = "pageNumber";
 	private final int value;
 
 	public PageNumber(int value) {
 		this.value = value;
 	}
 
+	public String asString() {
+		return PAGE_NUMBER + "=" + value;
+	}
+
 	public String asUrlPart() {
-		return "&pageNumber=%d".formatted(value);
+		return "&%s=%d".formatted(PAGE_NUMBER, value);
 	}
 
 	public PageNumber increment() {

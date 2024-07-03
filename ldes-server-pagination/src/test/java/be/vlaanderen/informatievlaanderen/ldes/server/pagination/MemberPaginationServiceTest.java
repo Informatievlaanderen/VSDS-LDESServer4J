@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class MemberPaginationServiceTest {
     private final ViewName VIEW_NAME = new ViewName("collection", "view");
     private final LdesFragmentIdentifier FRAGMENT_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
-    private final BucketisedMember MEMBER = new BucketisedMember("id", VIEW_NAME,
+    private final BucketisedMember MEMBER = new BucketisedMember(1, VIEW_NAME,
             FRAGMENT_ID.asDecodedFragmentId());
     private final Fragment FRAGMENT = new Fragment(FRAGMENT_ID);
     private OpenPageProvider openPageProvider;

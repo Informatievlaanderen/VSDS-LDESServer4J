@@ -9,13 +9,11 @@ import java.util.Optional;
 public final class Page {
 	private final long pageId;
 	private final Bucket bucket;
-	private final LocalDateTime expiration;
 	private final PageNumber pageNumber;
 
 	public Page(long pageId, Bucket bucket, LocalDateTime expiration, PageNumber pageNumber) {
 		this.pageId = pageId;
 		this.bucket = bucket;
-		this.expiration = expiration;
 		this.pageNumber = pageNumber;
 	}
 
@@ -63,9 +61,6 @@ public final class Page {
 		return bucket;
 	}
 
-	public LocalDateTime getExpiration() {
-		return expiration;
-	}
 
 	public Optional<PageNumber> getPageNumber() {
 		return Optional.ofNullable(pageNumber);

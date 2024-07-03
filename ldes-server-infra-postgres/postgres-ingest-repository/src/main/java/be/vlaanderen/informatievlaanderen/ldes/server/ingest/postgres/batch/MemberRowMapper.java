@@ -20,7 +20,7 @@ public class MemberRowMapper implements RowMapper<FragmentationMember> {
 				rs.getString("version_of"),
 				rs.getObject("timestamp", LocalDateTime.class),
 				new EventStreamProperties(rs.getString("name"), rs.getString("version_of_path"), rs.getString("timestamp_path"), rs.getBoolean("create_versions")),
-				RDFParser.source(new ByteArrayInputStream(rs.getBytes("model"))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel()
+				RDFParser.source(new ByteArrayInputStream(rs.getBytes("member_model"))).lang(PostgresIngestMemberConstants.SERIALISATION_LANG).toModel()
 		);
 	}
 }

@@ -16,6 +16,7 @@
             <column name="partial_url" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
+            <column name="immutable" type="BOOLEAN" defaultValueBoolean="false" />
         </createTable>
 
         <!-- Add foreign key constraint -->

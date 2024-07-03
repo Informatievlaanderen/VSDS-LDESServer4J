@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,9 +55,6 @@ class FragmentationServiceTest {
 	@MockBean
 	FragmentationStrategyCollection strategyCollection;
 
-	@MockBean
-	MemberMapperCollection memberMappers;
-
 	@Autowired
 	private FragmentationService fragmentationService;
 
@@ -84,9 +79,6 @@ class FragmentationServiceTest {
 				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), true, "", null)
 		);
 
-		MemberMapper memberMapper = mock(MemberMapper.class);
-		when(memberMappers.getMemberMapper(collectionName)).thenReturn(Optional.of(memberMapper));
-
 		mockBasicViews(2);
 		mockReader(members);
 		mockWriter();
@@ -104,8 +96,6 @@ class FragmentationServiceTest {
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
 		await().atMost(POLLING_RATE, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
-		verify(memberMapper, times(members.size() * 3))
-				.mapToFragmentationMember(any());
 	}
 
 	private void mockBasicViews(int count) {
@@ -114,7 +104,7 @@ class FragmentationServiceTest {
 		for (int i = 1; i <= count; i++) {
 			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
 			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i)));
+					new BucketisedMember(1, new ViewName(collectionName, "v" + i), "v" + i)));
 			fragmentationExecutors.add(executor);
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}

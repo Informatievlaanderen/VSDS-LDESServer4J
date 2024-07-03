@@ -81,7 +81,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	@Test
 	void when_BucketisationCalled_Then_FunctionsAreCalled() {
 		Model model = loadModel("member_with_created_property.nq");
-		FragmentationMember member = new FragmentationMember("1", model);
+		FragmentationMember member = new FragmentationMember(1, model);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
 		when(bucketFinder.getLowestFragment(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR))
 				.thenReturn(CHILD_BUCKET);
