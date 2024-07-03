@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 
 class FragmentationStrategyImplTest {
 	private static final String MEMBER_ID = "memberId";
-	private static final long SEQ_NR = 5L;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final LdesFragmentIdentifier FRAGMENT_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl();
@@ -27,7 +26,6 @@ class FragmentationStrategyImplTest {
 		Fragment fragment = new Fragment(FRAGMENT_ID);
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.id()).thenReturn(MEMBER_ID);
-		when(member.sequenceNr()).thenReturn(SEQ_NR);
 
 		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(fragment, member, mock(Observation.class));
 
@@ -35,6 +33,5 @@ class FragmentationStrategyImplTest {
 		assertEquals(MEMBER_ID, members.getFirst().memberId());
 		assertEquals(VIEW_NAME, members.getFirst().viewName());
 		assertEquals(FRAGMENT_ID.asDecodedFragmentId(), members.getFirst().fragmentId());
-		assertEquals(SEQ_NR, members.getFirst().sequenceNr());
 	}
 }

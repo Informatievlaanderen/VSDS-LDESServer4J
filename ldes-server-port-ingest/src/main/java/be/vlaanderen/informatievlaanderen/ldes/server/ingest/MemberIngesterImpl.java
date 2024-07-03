@@ -15,14 +15,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.constants.IngestConstants.*;
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
-
-    private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
-    private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
-    private static final String DUPLICATE_MEMBERS_DETECTED = "Duplicate members detected. Member(s) are ignored";
-
     private final MemberIngestValidator validator;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -52,8 +50,8 @@ public class MemberIngesterImpl implements MemberIngester {
             return false;
         }
         publishIngestedEvent(collectionName, members);
-        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment(ingestedMembersCount);
-        members.forEach(member -> logSuccessfulMemberIngestion(member.getId()));
+        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT, "collection", collectionName).increment(ingestedMembersCount);
+        members.forEach(member -> logSuccessfulMemberIngestion(member.getSubject()));
         return true;
     }
 
@@ -65,12 +63,13 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void publishIngestedEvent(String collectionName, List<IngestedMember> members) {
-        final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
-                .map(member -> new MembersIngestedEvent.MemberProperties(member.getId(), member.getVersionOf(), member.getTimestamp()))
-                .toList();
-        eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
+        CompletableFuture.runAsync(() -> {
+            final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
+                    .map(member -> new MembersIngestedEvent.MemberProperties(member.getCollectionName() + "/" + member.getSubject(), member.getVersionOf(), member.getTimestamp()))
+                    .toList();
+            eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
+        });
     }
-
 
     private void logSuccessfulMemberIngestion(String memberId) {
         final String loggableMemberId = memberId.replaceAll("[\n\r\t]", "_");

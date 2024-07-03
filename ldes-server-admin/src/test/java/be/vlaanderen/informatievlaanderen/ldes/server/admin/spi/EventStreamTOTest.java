@@ -24,11 +24,12 @@ class EventStreamTOTest {
     private static final String TIMESTAMP_PATH = "generatedAt";
     private static final String VERSION_OF_PATH = "isVersionOf";
     private static final boolean VERSION_CREATION_ENABLED = false;
+    private static final boolean CLOSED = false;
     private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
             VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
     private static final EventStreamTO EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamTO(COLLECTION,
             TIMESTAMP_PATH,
-            VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(),
+            VERSION_OF_PATH, VERSION_CREATION_ENABLED, CLOSED, List.of(), ModelFactory.createDefaultModel(),
             List.of(), new DcatDataset(COLLECTION, ModelFactory.createDefaultModel().add(createResource("subject"),
                     createProperty("predicate"), "value")));
 
@@ -43,7 +44,7 @@ class EventStreamTOTest {
     @Test
     void test_equality_with_dataset() {
         EventStreamTO other = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED,
-                List.of(),
+                CLOSED, List.of(),
                 ModelFactory.createDefaultModel(), List.of(),
                 new DcatDataset(COLLECTION, ModelFactory.createDefaultModel().add(createResource("subject"),
                         createProperty("predicate"), "value")));

@@ -20,12 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class MemberPaginationServiceTest {
-    private final ViewName VIEW_NAME = new ViewName("collection", "view");
-    private final Long SEQ_NR = -1L;
-    private final LdesFragmentIdentifier FRAGMENT_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
-    private final BucketisedMember MEMBER = new BucketisedMember("id", VIEW_NAME,
-            FRAGMENT_ID.asDecodedFragmentId(), SEQ_NR);
-    private final Fragment FRAGMENT = new Fragment(FRAGMENT_ID);
+    private static final ViewName VIEW_NAME = new ViewName("collection", "view");
+    private static final LdesFragmentIdentifier FRAGMENT_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
+    private static final BucketisedMember MEMBER = new BucketisedMember("id", VIEW_NAME,
+            FRAGMENT_ID.asDecodedFragmentId());
+    private static final Fragment FRAGMENT = new Fragment(FRAGMENT_ID);
     private OpenPageProvider openPageProvider;
     private FragmentRepository fragmentRepository;
     private MemberPaginationService paginationService;

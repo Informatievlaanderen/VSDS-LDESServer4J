@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -18,10 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ViewServiceImpl implements ViewService {
@@ -31,14 +27,16 @@ public class ViewServiceImpl implements ViewService {
     private final DcatViewService dcatViewService;
     private final ViewRepository viewRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final ViewValidator viewValidator;
 
     private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 
     public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
-                           ApplicationEventPublisher eventPublisher) {
+                           ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
         this.dcatViewService = dcatViewService;
         this.viewRepository = viewRepository;
         this.eventPublisher = eventPublisher;
+	    this.viewValidator = viewValidator;
     }
 
     @Override
@@ -49,10 +47,10 @@ public class ViewServiceImpl implements ViewService {
         }
 
         checkIfViewAlreadyExists(viewSpecification);
-        checkViewForDuplicateRetentionPolicies(viewSpecification);
-
-        eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
+        viewValidator.validateView(viewSpecification);
         viewRepository.saveView(viewSpecification);
+
+        CompletableFuture.runAsync(() -> eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification)));
         log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
     }
 
@@ -60,21 +58,6 @@ public class ViewServiceImpl implements ViewService {
         Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
         if (view.isPresent()) {
             throw new ExistingResourceException(VIEW_TYPE, viewSpecification.getName().asString());
-        }
-    }
-
-    private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
-        List<String> duplicateRetentionPolicies = viewSpecification.getRetentionConfigs().stream()
-                .map(retentionPolicy -> retentionPolicy.listObjectsOfProperty(RdfConstants.RDF_SYNTAX_TYPE).nextNode())
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() > 1)
-                .map(Map.Entry::getKey)
-                .map(Object::toString)
-                .toList();
-
-        if (!duplicateRetentionPolicies.isEmpty()) {
-            throw new DuplicateRetentionException(duplicateRetentionPolicies);
         }
     }
 
@@ -110,23 +93,16 @@ public class ViewServiceImpl implements ViewService {
             throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
         }
 
-        deleteAllViewsByViewName(List.of(viewName));
+        log.atInfo().log("START deleting view  {}", viewName.asString());
+        viewRepository.deleteViewByViewName(viewName);
+        log.atInfo().log("FINISHED deleting view {}", viewName.asString());
         eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
-    }
-
-    @Override
-    public void deleteAllViewsByViewName(List<ViewName> viewNames) {
-        viewNames.forEach(viewName -> {
-            log.atInfo().log("START deleting view  {}", viewName.asString());
-            viewRepository.deleteViewByViewName(viewName);
-            log.atInfo().log("FINISHED deleting view {}", viewName.asString());
-        });
     }
 
     /**
      * Initializes the views config.
      * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
-     * to give db migrations such as mongock time before this init.
+     * to give db migrations time before this init.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void initViews() {
@@ -145,8 +121,6 @@ public class ViewServiceImpl implements ViewService {
     public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
         String collectionName = event.collectionName();
         eventStreams.remove(collectionName);
-        List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
-        deleteAllViewsByViewName(viewSpecifications.stream().map(ViewSpecification::getName).toList());
     }
 
 }

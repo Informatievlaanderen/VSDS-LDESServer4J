@@ -16,17 +16,17 @@ public class MemberMapper {
     }
 
     public FragmentationMember mapToFragmentationMember(IngestedMember ingestMember) {
-        return new FragmentationMember(ingestMember.getId(), enrichModel(ingestMember), ingestMember.getSequenceNr());
+        return new FragmentationMember(ingestMember.getCollectionName() + "/" + ingestMember.getSubject(), enrichModel(ingestMember));
     }
 
     private Model enrichModel(IngestedMember ingestMember) {
-        final String memberId = ingestMember.getId();
+        final String memberId = ingestMember.getSubject();
         final String subjectUri = memberId.startsWith("http") ? memberId : memberId.substring(memberId.indexOf("/") + 1);
         if(ingestMember.getModel().containsResource(ResourceFactory.createProperty(subjectUri))) {
             return ingestMember.getModel();
         }
         return VersionObjectModelBuilder.create()
-                .withMemberId(memberId)
+                .withMemberSubject(memberId)
                 .withVersionOfProperties(versionOfPath, ingestMember.getVersionOf())
                 .withTimestampProperties(timestampPath, ingestMember.getTimestamp())
                 .withModel(ingestMember.getModel())

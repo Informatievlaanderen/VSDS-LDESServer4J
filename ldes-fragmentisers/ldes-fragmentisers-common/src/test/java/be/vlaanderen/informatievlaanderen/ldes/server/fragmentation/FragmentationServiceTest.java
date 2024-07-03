@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -41,7 +41,9 @@ import static org.mockito.Mockito.*;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
 class FragmentationServiceTest {
+	private static final int FRAGMENTATION_INTERVAL = 1000;
 
 	@MockBean(name = "newMemberReader")
 	ItemReader<IngestedMember> newMemberItemReader;
@@ -79,10 +81,10 @@ class FragmentationServiceTest {
 	@Test
 	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() throws Exception {
 		List<IngestedMember> members = List.of(
-				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null),
-				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), 0L, true, "", null)
+				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), true, "", null),
+				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), true, "", null)
 		);
 
 		MemberMapper memberMapper = mock(MemberMapper.class);
@@ -94,7 +96,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation();
 
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS)
+		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
@@ -104,7 +106,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
-		await().atMost(POLLING_RATE, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
+		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 		verify(memberMapper, times(members.size() * 3))
 				.mapToFragmentationMember(any());
 	}
@@ -115,7 +117,7 @@ class FragmentationServiceTest {
 		for (int i = 1; i <= count; i++) {
 			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
 			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i, 0L)));
+					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i)));
 			fragmentationExecutors.add(executor);
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}

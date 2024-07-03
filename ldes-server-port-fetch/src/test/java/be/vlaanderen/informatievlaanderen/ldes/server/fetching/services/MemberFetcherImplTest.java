@@ -24,8 +24,9 @@ class MemberFetcherImplTest {
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
     private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
     private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
-    private final List<String> MEMBER_IDS = Stream
-            .of("http://example.org/observation/1", "http://example.org/measurements/2")
+    private static final List<String> MEMBER_SUBJECTS = List
+            .of("http://example.org/observation/1", "http://example.org/measurements/2");
+    private static final List<String> MEMBER_IDS = MEMBER_SUBJECTS.stream()
             .map(id -> "%s/%s".formatted(COLLECTION, id))
             .toList();
 
@@ -61,13 +62,12 @@ class MemberFetcherImplTest {
     }
 
     private Stream<IngestedMember> createIngestMembers() {
-        return MEMBER_IDS.stream()
-                .map(id -> new IngestedMember(
-                        id,
+        return MEMBER_SUBJECTS.stream()
+                .map(subject -> new IngestedMember(
+                        subject,
                         COLLECTION,
                         "http://example.org/verkeerspunt/meting",
                         TIMESTAMP,
-                        null,
                         true,
                         "txId",
                         ModelFactory.createDefaultModel()));

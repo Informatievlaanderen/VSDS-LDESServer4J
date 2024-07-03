@@ -26,10 +26,6 @@ spring:
     url: jdbc:postgresql://ldes-postgres:5432/test
     username: admin
     password: admin
-  jpa:
-    database: postgresql
-  liquibase:
-    change-log: classpath:/db/changelog/master.xml
 
 #server:
 #  servlet:

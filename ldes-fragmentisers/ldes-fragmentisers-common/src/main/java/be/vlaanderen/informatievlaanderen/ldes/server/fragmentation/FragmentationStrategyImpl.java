@@ -12,6 +12,6 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	@Override
 	public List<BucketisedMember> addMemberToFragment(Fragment fragment, FragmentationMember member,
 													  Observation parentObservation) {
-		return List.of(new BucketisedMember(member.id(), fragment.getViewName(), fragment.getFragmentIdString(), member.sequenceNr()));
+		return List.of(new BucketisedMember(member.id(), fragment.getViewName(), fragment.getFragmentIdString()));
 	}
 }

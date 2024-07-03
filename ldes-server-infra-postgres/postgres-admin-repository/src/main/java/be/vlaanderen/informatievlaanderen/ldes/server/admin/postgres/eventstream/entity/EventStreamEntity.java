@@ -1,6 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity.DcatDatasetEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource.entity.EventSourceEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
+
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "collections")
@@ -23,17 +31,29 @@ public class EventStreamEntity {
     private Boolean versionCreationEnabled;
 
     @Column(name = "is_closed", nullable = false)
-    private Boolean isClosed;
+    private Boolean closed;
+
+    @OneToMany(mappedBy = "eventStream", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<ViewEntity> views;
+
+    @OneToOne(mappedBy = "eventStream")
+    private DcatDatasetEntity datasetEntity;
+
+    @OneToOne(mappedBy = "eventStream", cascade = CascadeType.PERSIST)
+    private ShaclShapeEntity shaclShapeEntity;
+
+    @OneToOne(mappedBy = "eventStream", cascade = CascadeType.PERSIST)
+    private EventSourceEntity eventSourceEntity;
 
     public EventStreamEntity() {
     }
 
-    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean isClosed) {
+    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean closed) {
         this.name = name;
         this.timestampPath = timestampPath;
         this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
-        this.isClosed = isClosed;
+        this.closed = closed;
     }
 
     public Integer getId() {
@@ -52,11 +72,39 @@ public class EventStreamEntity {
         return versionOfPath;
     }
 
-    public Boolean getVersionCreationEnabled() {
+    public boolean isVersionCreationEnabled() {
         return versionCreationEnabled;
     }
 
     public boolean isClosed() {
-        return isClosed;
+        return closed;
+    }
+
+    public List<ViewEntity> getViews() {
+        return views;
+    }
+
+    public Optional<Model> getDcat() {
+        return Optional.ofNullable(datasetEntity).map(DcatDatasetEntity::getModel);
+    }
+
+    public ShaclShapeEntity getShaclShapeEntity() {
+        return shaclShapeEntity;
+    }
+
+    public EventSourceEntity getEventSourceEntity() {
+        return eventSourceEntity;
+    }
+
+    public void setViews(List<ViewEntity> views) {
+        this.views = views;
+    }
+
+    public void setShaclShapeEntity(ShaclShapeEntity shaclShapeEntity) {
+        this.shaclShapeEntity = shaclShapeEntity;
+    }
+
+    public void setEventSourceEntity(EventSourceEntity eventSourceEntity) {
+        this.eventSourceEntity = eventSourceEntity;
     }
 }

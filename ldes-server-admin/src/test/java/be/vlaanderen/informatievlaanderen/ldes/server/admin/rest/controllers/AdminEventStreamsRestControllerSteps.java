@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
@@ -75,13 +75,10 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 						List.of(),
 						List.of(fragmentationConfig), 100));
 
-		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
-		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);
-		when(viewRepository.retrieveAllViewsOfCollection(collection2)).thenReturn(List.of(singleView));
-		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape1)));
-		when(shaclShapeRepository.retrieveShaclShape(collection2))
-				.thenReturn(Optional.of(new ShaclShape(collection2, shape2)));
+		when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(
+				new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, views, shape1, List.of()),
+				new EventStreamTO(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(singleView), shape2, List.of())
+		));
 	}
 
 	@When("the client calls {string}")
@@ -98,17 +95,14 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("eventstream/streams/multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
-		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
 
 	@Given("a db containing one event stream")
 	public void aDbContainingOneEventStream() throws URISyntaxException {
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		Model shape = readModelFromFile("shacl/server-shape.ttl");
-		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
-		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
+		final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), shape, List.of());
+		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTO));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 	}
 
@@ -116,9 +110,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void theClientReceivesASingleEventStream() throws Exception {
 		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
-		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
 	}
 
 	@Given("an empty db")
@@ -135,14 +127,12 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("I verify the event stream retrieval interaction")
 	public void iVerifyTheEventStreamRetrievalInteraction() {
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
 	}
 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 	}
 
 	@And("I verify the event stream in the response body to file (.*)$")
@@ -150,8 +140,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		final Model expectedModel = readModelFromFile(filename);
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
-		verify(eventStreamRepository).saveEventStream(any());
-		verify(shaclShapeRepository).saveShaclShape(any());
+		verify(eventStreamRepository).saveEventStream(any(EventStreamTO.class));
 	}
 
 	@When("^the client posts model from file (.*)$")
@@ -206,5 +195,15 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 				.andExpect(content().string("Resource of type: eventstream with id: %s could not be found.".formatted(COLLECTION)))
 				.andExpect(status().isNotFound());
 
+	}
+
+	@And("I verify the event stream deletion interaction")
+	public void iVerifyTheEventStreamDeletionInteraction() {
+		verify(eventStreamRepository).deleteEventStream(COLLECTION);
+	}
+
+	@Given("a db containing one deletable event stream")
+	public void aDbContainingOneDeletableEventStream() {
+		when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(1);
 	}
 }
