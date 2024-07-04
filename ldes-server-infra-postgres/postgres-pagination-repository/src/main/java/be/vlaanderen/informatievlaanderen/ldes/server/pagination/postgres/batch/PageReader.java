@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PaginationPage;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
@@ -27,10 +27,10 @@ public class PageReader {
 
 	@Bean
 	@StepScope
-	public ItemReader<PaginationPage> pageItemReader(DataSource dataSource,
-	                                                 @Value("#{stepExecutionContext}") Map<String, Object> stepExecutionContext) {
+	public ItemReader<Page> pageItemReader(DataSource dataSource,
+	                                       @Value("#{stepExecutionContext}") Map<String, Object> stepExecutionContext) {
 		final ExecutionContext executionContext = new ExecutionContext(stepExecutionContext);
-		final var reader = new JdbcCursorItemReaderBuilder<PaginationPage>()
+		final var reader = new JdbcCursorItemReaderBuilder<Page>()
 				.dataSource(dataSource)
 				.sql(SELECT_PAGE_SQL)
 				.queryArguments(executionContext.getLong("bucketId"))

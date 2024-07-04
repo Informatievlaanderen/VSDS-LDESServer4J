@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PaginationPage;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 
 @Component
-public class PageAssigner implements ItemWriter<PaginationPage> {
+public class PageAssigner implements ItemWriter<Page> {
 	private static final String SQL = """
 			UPDATE page_members
 			SET page_id = ?
@@ -22,7 +22,7 @@ public class PageAssigner implements ItemWriter<PaginationPage> {
 	}
 
 	@Override
-	public void write(Chunk<? extends PaginationPage> chunk) throws Exception {
+	public void write(Chunk<? extends Page> chunk) throws Exception {
 		for (var page : chunk) {
 			jdbcTemplate.update(SQL, page.getId(), page.getBucketId(), page.getAvailableMemberSpace());
 		}

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PaginationPage;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.util.Objects;
 
 @Component
-public class PageRelationProcessor implements ItemProcessor<PaginationPage, PaginationPage> {
+public class PageRelationProcessor implements ItemProcessor<Page, Page> {
 	public static final String SELECT_PAGE_SIZE_SQL = "SELECT v.page_size FROM views v JOIN buckets b USING (view_id) WHERE bucket_id = ?";
 	public static final String INSERT_NEW_PAGE_SQL = "INSERT INTO pages (bucket_id, expiration, partial_url) VALUES (?, NULL, ?)";
 	public static final String MARK_PAGE_IMMUTABLE_SQL = "UPDATE pages SET immutable = true WHERE page_id = ?";
@@ -27,7 +27,7 @@ public class PageRelationProcessor implements ItemProcessor<PaginationPage, Pagi
 	}
 
 	@Override
-	public PaginationPage process(@NotNull PaginationPage page) throws Exception {
+	public Page process(@NotNull Page page) throws Exception {
 		if (page.isNumberLess() || page.isFull()) {
 			final Integer capacity = jdbcTemplate.queryForObject(SELECT_PAGE_SIZE_SQL, Integer.class, page.getBucketId());
 			final KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -40,7 +40,7 @@ public class PageRelationProcessor implements ItemProcessor<PaginationPage, Pagi
 			}, keyHolder);
 			jdbcTemplate.update(MARK_PAGE_IMMUTABLE_SQL, page.getId());
 			jdbcTemplate.update(INSERT_PAGE_RELATION_SQL, page.getId(), keyHolder.getKey(), RdfConstants.GENERIC_TREE_RELATION);
-			return PaginationPage.createWithPartialUrl(
+			return Page.createWithPartialUrl(
 					Objects.requireNonNull(keyHolder.getKeyAs(Long.class)),
 					page.getBucketId(),
 					childPagePartialUrl,

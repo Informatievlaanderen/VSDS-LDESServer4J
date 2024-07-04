@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PageRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,14 @@ public class PageRelationPostgresRepository implements PageRelationRepository {
 
 	@Override
 	@Transactional
-	public void insertPageRelation(PageRelation pageRelation) {
-		relationEntityRepository.insertRelation(pageRelation.fromPage().partialUrl(), pageRelation.toPage().partialUrl(), pageRelation.treeRelationType(), pageRelation.treeValue(), pageRelation.treeValueType(), pageRelation.treePath());
+	public void insertBucketRelation(BucketRelation bucketRelation) {
+		relationEntityRepository.insertRelation(
+				bucketRelation.fromBucket().createPartialUrl(),
+				bucketRelation.toBucket().createPartialUrl(),
+				bucketRelation.treeRelationType(),
+				bucketRelation.treeValue(),
+				bucketRelation.treeValueType(),
+				bucketRelation.treePath()
+		);
 	}
 }

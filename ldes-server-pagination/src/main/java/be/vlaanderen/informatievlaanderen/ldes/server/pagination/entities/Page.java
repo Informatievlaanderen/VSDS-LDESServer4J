@@ -1,94 +1,61 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber.PAGE_NUMBER;
 
-public final class Page {
-	private final long pageId;
+public class Page {
+	private final long id;
+	private final String viewNameUrlPrefix;
 	private final Bucket bucket;
 	private final PageNumber pageNumber;
+	private final int availableMemberSpace;
 
-	public Page(long pageId, Bucket bucket, LocalDateTime expiration, PageNumber pageNumber) {
-		this.pageId = pageId;
+	public Page(long id, String viewNameUrlPrefix, Bucket bucket, PageNumber pageNumber, int availableMemberSpace) {
+		this.id = id;
+		this.viewNameUrlPrefix = viewNameUrlPrefix;
 		this.bucket = bucket;
 		this.pageNumber = pageNumber;
+		this.availableMemberSpace = availableMemberSpace;
 	}
 
-	public Page(Bucket bucket, LocalDateTime expiration, PageNumber pageNumber) {
-		this(0, bucket, expiration, pageNumber);
+	public long getId() {
+		return id;
 	}
 
-	public long bucketId() {
-		return bucket.getBucketId();
+	public long getBucketId() {
+		return bucket.id();
 	}
 
-
-	public String partialUrl() {
-		return bucket.createPartialUrl() + getPageNumber().map(PageNumber::asUrlPart).orElse("");
+	public String getPartialUrl() {
+		return viewNameUrlPrefix + "?" + (bucket.descriptor().isEmpty() ? "" : bucket.descriptor() + "&") + pageNumber.asString();
 	}
 
-	public static Page createPageWithPartialUrl(long pageId, Bucket bucket, LocalDateTime expiration, String partialUrl) {
-		String pageNumberUrlPart = partialUrl.replace(bucket.createPartialUrl(), "");
-		if (!pageNumberUrlPart.isEmpty()) {
-			final int pageNumber = Integer.parseInt(pageNumberUrlPart.substring(1).replace("&pageNumber=", ""));
-			return new Page(pageId, bucket, expiration, new PageNumber(pageNumber));
-
-		}
-		return Page.createNumberLessPage(pageId, bucket, expiration);
-
+	public boolean isFull() {
+		return availableMemberSpace == 0;
 	}
 
-	public Page createChildPage() {
-		return new Page(bucket, null, getPageNumber().map(PageNumber::increment).orElseGet(PageNumber::startPageNumber));
+	public int getAvailableMemberSpace() {
+		return availableMemberSpace;
 	}
 
-	public static Page fromBucket(Bucket bucket, LocalDateTime expiration) {
-		return new Page(bucket, expiration, null);
-	}
-
-	public static Page fromBucket(Bucket bucket) {
-		return fromBucket(bucket, null);
-	}
-
-	public long getPageId() {
-		return pageId;
-	}
-
-	public Bucket getBucket() {
-		return bucket;
+	public static Page createWithPartialUrl(long id, long bucketId, String partialUrl, int availableMemberSpace) {
+		final String[] mainPartialUrlParts = partialUrl.split("\\?");
+		final String urlPrefix = mainPartialUrlParts[0];
+		final String extendedBucketDescriptor = mainPartialUrlParts.length == 2 ? mainPartialUrlParts[1] : "";
+		final String[] descriptorParts = extendedBucketDescriptor.split(PAGE_NUMBER + "=");
+		final PageNumber pageNumber = descriptorParts.length == 2 ? new PageNumber(Integer.parseInt(descriptorParts[1])) : null;
+		return new Page(id, urlPrefix, new Bucket(bucketId, descriptorParts[0]), pageNumber, availableMemberSpace);
 	}
 
 
-	public Optional<PageNumber> getPageNumber() {
-		return Optional.ofNullable(pageNumber);
+	public String createChildPartialUrl() {
+		final PageNumber childPageNumber = pageNumber == null ? new PageNumber(1) : pageNumber.increment();
+		return viewNameUrlPrefix + "?" + (bucket.descriptor().isEmpty() ? "" : bucket.descriptor() + "&") + childPageNumber.asString();
 	}
 
 	public boolean isNumberLess() {
-		return getPageNumber().isEmpty();
-	}
-
-	public static Page createNumberLessPage(long id, Bucket bucket, LocalDateTime expiration) {
-		return new Page(id, bucket, expiration, null);
-	}
-
-	public static Page createNumberLessPage(Bucket bucket, LocalDateTime expiration) {
-		return new Page(0L, bucket, expiration, null);
-	}
-
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Page page)) return false;
-
-		return pageId == page.pageId;
-	}
-
-	@Override
-	public int hashCode() {
-		return Long.hashCode(pageId);
+		return pageNumber == null;
 	}
 }

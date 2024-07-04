@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PageRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 
 public interface PageRelationRepository {
-	void insertPageRelation(PageRelation pageRelation);
+	void insertBucketRelation(BucketRelation bucketRelation);
 }

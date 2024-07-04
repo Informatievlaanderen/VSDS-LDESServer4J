@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.PaginationPage;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -21,7 +21,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -39,9 +38,9 @@ public class PaginationService {
 	private final TaskExecutor taskExecutor;
 	private final JobExplorer jobExplorer;
 	private final Partitioner bucketPartitioner;
-	private final ItemReader<PaginationPage> pageReader;
-	private final ItemProcessor<PaginationPage, PaginationPage> pageRelationsProcessor;
-	private final ItemWriter<PaginationPage> memberAssigner;
+	private final ItemReader<Page> pageReader;
+	private final ItemProcessor<Page, Page> pageRelationsProcessor;
+	private final ItemWriter<Page> memberAssigner;
 	private boolean shouldTriggerPagination = true;
 
 
@@ -51,9 +50,9 @@ public class PaginationService {
 	                         TaskExecutor taskExecutor,
 	                         JobExplorer jobExplorer,
 	                         Partitioner bucketPartitioner,
-	                         ItemReader<PaginationPage> pageReader,
-	                         ItemProcessor<PaginationPage, PaginationPage> pageRelationsProcessor,
-	                         ItemWriter<PaginationPage> memberAssigner
+	                         ItemReader<Page> pageReader,
+	                         ItemProcessor<Page, Page> pageRelationsProcessor,
+	                         ItemWriter<Page> memberAssigner
 	) {
 		this.jobLauncher = jobLauncher;
 		this.jobRepository = jobRepository;
@@ -69,7 +68,6 @@ public class PaginationService {
 	@Scheduled(fixedRate = 1500)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		if (shouldTriggerPagination && noJobRunning()) {
-//			shouldTriggerPagination = false;
 			jobLauncher.run(paginationJob(), new JobParametersBuilder().toJobParameters());
 		}
 	}
@@ -83,23 +81,6 @@ public class PaginationService {
 	private boolean noJobRunning() {
 		return jobExplorer.findRunningJobExecutions(PAGINATION_JOB).isEmpty();
 	}
-
-//	private Job paginationJob() {
-//		return new JobBuilder(PAGINATION_JOB, jobRepository)
-//				.start(paginationStep())
-//				.incrementer(new RunIdIncrementer())
-//				.build();
-//	}
-//
-//	private Step paginationStep() {
-//		return new StepBuilder("paginationStep", jobRepository)
-//				.<PaginationPage, PaginationPage>chunk(5, transactionManager)
-//				.reader(pageReader)
-//				.processor(pageRelationsProcessor)
-//				.writer(memberAssigner)
-//				.allowStartIfComplete(true)
-//				.build();
-//	}
 
 	private Job paginationJob() {
 		return new JobBuilder(PAGINATION_JOB, jobRepository)
@@ -127,13 +108,13 @@ public class PaginationService {
 		final TaskExecutorPartitionHandler taskExecutorPartitionHandler = new TaskExecutorPartitionHandler();
 		taskExecutorPartitionHandler.setStep(paginationStep());
 		taskExecutorPartitionHandler.setGridSize(5);
-		taskExecutorPartitionHandler.setTaskExecutor(new SimpleAsyncTaskExecutor());
+		taskExecutorPartitionHandler.setTaskExecutor(taskExecutor);
 		return taskExecutorPartitionHandler;
 	}
 
 	private Step paginationStep() {
 		return new StepBuilder("paginationStep", jobRepository)
-				.<PaginationPage, PaginationPage>chunk(150, transactionManager)
+				.<Page, Page>chunk(150, transactionManager)
 				.reader(pageReader)
 				.processor(pageRelationsProcessor)
 				.writer(memberAssigner)
