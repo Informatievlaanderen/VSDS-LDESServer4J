@@ -2,9 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repos
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.RelationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.RelationId;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeRelationProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface RelationEntityRepository extends JpaRepository<RelationEntity, RelationId> {
 
@@ -16,4 +19,6 @@ public interface RelationEntityRepository extends JpaRepository<RelationEntity, 
 			       :treeRelationType, :treeValue, :treeValueType, :treePath
 			""", nativeQuery = true)
 	void insertRelation(String fromPagePartialUrl, String toPagePartialUrl, String treeRelationType, String treeValue, String treeValueType, String treePath);
+
+	List<TreeRelationProjection> findAllByFromPageId(long pageId);
 }

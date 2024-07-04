@@ -36,7 +36,7 @@ public class TreeNodeStreamConverterImpl implements TreeNodeStreamConverter {
     @Override
     public Model getMemberStatements(Member member, String collectionName) {
         Model memberModel = member.model();
-        memberModel.add(createStatement(createResource(prefix + "/" + collectionName), TREE_MEMBER, createResource(member.getMemberIdWithoutPrefix())));
+        memberModel.add(createStatement(createResource(prefix + "/" + collectionName), TREE_MEMBER, createResource(member.id())));
         return memberModel;
     }
 

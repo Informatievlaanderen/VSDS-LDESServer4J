@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repositor
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.TreeMemberProjection;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,7 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	List<MemberEntity> findAllByCollectionName(String collectionName);
 
 	void deleteAllByOldIdIn(List<String> oldIds);
+
+	@Query("SELECT m.subject AS subject, m.model AS model FROM PageMemberEntity p JOIN p.member m WHERE p.page.id = :pageId")
+	List<TreeMemberProjection> findAllByPageId(long pageId);
 }

@@ -38,7 +38,9 @@ public class PageRelationProcessor implements ItemProcessor<Page, Page> {
 				ps.setString(2, childPagePartialUrl);
 				return ps;
 			}, keyHolder);
-			jdbcTemplate.update(MARK_PAGE_IMMUTABLE_SQL, page.getId());
+			if(!page.isNumberLess()) {
+				jdbcTemplate.update(MARK_PAGE_IMMUTABLE_SQL, page.getId());
+			}
 			jdbcTemplate.update(INSERT_PAGE_RELATION_SQL, page.getId(), keyHolder.getKey(), RdfConstants.GENERIC_TREE_RELATION);
 			return Page.createWithPartialUrl(
 					Objects.requireNonNull(keyHolder.getKeyAs(Long.class)),

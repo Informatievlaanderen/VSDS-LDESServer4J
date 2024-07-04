@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.BucketEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,19 +18,20 @@ public class PageEntity {
 	@JoinColumn(name = "bucket_id", columnDefinition = "BIGINT")
 	private BucketEntity bucket;
 
+	@Column(name = "immutable", nullable = false, columnDefinition = "BOOLEAN")
+	private boolean immutable;
+
 	@Column(name = "expiration", columnDefinition = "TIMESTAMP")
 	private LocalDateTime expiration;
+
+	@Column(name = "next_update_ts", columnDefinition = "TIMESTAMP")
+	private LocalDateTime nextUpdateTs;
 
 	@Column(name = "partial_url", nullable = false, unique = true)
 	private String partialUrl;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "page_members",
-			joinColumns = @JoinColumn(name = "page_id"),
-			inverseJoinColumns = @JoinColumn(name = "member_id")
-	)
-	private List<MemberEntity> members;
+	@OneToMany(mappedBy = "fromPage")
+	private List<RelationEntity> relations;
 
 	public PageEntity() {
 	}
@@ -51,15 +51,27 @@ public class PageEntity {
 		return bucket;
 	}
 
+	public boolean isImmutable() {
+		return immutable;
+	}
+
 	public LocalDateTime getExpiration() {
 		return expiration;
+	}
+
+	public LocalDateTime getNextUpdateTs() {
+		return nextUpdateTs;
 	}
 
 	public String getPartialUrl() {
 		return partialUrl;
 	}
 
-	public List<MemberEntity> getMembers() {
-		return members;
+	public List<RelationEntity> getRelations() {
+		return relations;
+	}
+
+	public boolean isView() {
+		return bucket.getView().getComposedViewName().equals("/%s".formatted(partialUrl));
 	}
 }

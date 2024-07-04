@@ -16,9 +16,13 @@ public class TreeNode {
 	private final String collectionName;
 	private final LocalDateTime nextUpdateTs;
 
-	public TreeNode(String encodedFragmentId, boolean immutable, boolean isView,
+	public TreeNode(String encodedFragmentId,
+	                boolean immutable,
+	                boolean isView,
 					List<TreeRelation> relations,
-					List<Member> members, String collectionName, LocalDateTime nextUpdateTs) {
+					List<Member> members,
+					String collectionName,
+					LocalDateTime nextUpdateTs) {
 		this.fragmentId = encodedFragmentId;
 		this.immutable = immutable;
 		this.isView = isView;
