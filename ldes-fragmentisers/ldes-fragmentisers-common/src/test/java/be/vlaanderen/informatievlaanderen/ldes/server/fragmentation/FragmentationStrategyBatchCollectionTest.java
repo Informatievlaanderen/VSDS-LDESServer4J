@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
@@ -26,9 +27,10 @@ class FragmentationStrategyBatchCollectionTest {
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 	private final BucketisedMemberRepository bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
+	private final BucketRepository bucketRepository = mock(BucketRepository.class);
 
 	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(
-			fragmentRepository, bucketisedMemberRepository, fragmentationStrategyCreator, observationRegistry);
+			bucketRepository, bucketisedMemberRepository, fragmentationStrategyCreator, observationRegistry);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {

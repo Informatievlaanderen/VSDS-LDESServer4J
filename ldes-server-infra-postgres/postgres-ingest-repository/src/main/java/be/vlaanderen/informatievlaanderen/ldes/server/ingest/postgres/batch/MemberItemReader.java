@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
@@ -18,28 +16,27 @@ import java.util.Map;
 
 @Configuration
 public class MemberItemReader {
-	Logger log = LoggerFactory.getLogger(MemberItemReader.class);
 
-	@Bean("newMemberReader")
+	@Bean
 	public JdbcPagingItemReader<FragmentationMember> newMemberReader(DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
-				.queryProvider(newMembersQuery())
+				.queryProvider(memberQuery())
 				.pageSize(150)
 				.fetchSize(150)
 				.saveState(false)
 				.build();
 	}
 
-	@Bean("refragmentEventStream")
+	@Bean
 	@StepScope
 	public JdbcPagingItemReader<FragmentationMember> refragmentEventStream(@Value("#{jobParameters}") Map<String, Object> jobParameters,
 	                                                                       DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
-				.queryProvider(refragmentQuery())
+				.queryProvider(memberQuery())
 				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
 				.pageSize(150)
 				.fetchSize(150)
@@ -47,26 +44,13 @@ public class MemberItemReader {
 				.build();
 	}
 
-	private PostgresPagingQueryProvider newMembersQuery() {
+	private PostgresPagingQueryProvider memberQuery() {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
 		queryProvider.setFromClause("members m JOIN views v USING (collection_id) JOIN collections c USING (collection_id)");
 		queryProvider.setWhereClause("(member_id, view_id) NOT IN (SELECT member_id, b.view_id FROM page_members JOIN buckets b USING (bucket_id))");
-		queryProvider.setSortKeys(sortKeys);
-		return queryProvider;
-	}
-
-	private PostgresPagingQueryProvider refragmentQuery() {
-		Map<String, Order> sortKeys = new HashMap<>();
-		sortKeys.put("timestamp", Order.ASCENDING);
-		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
-		queryProvider.setFromClause("members m LEFT JOIN fragmentation_bucketisation fb on m.old_id = fb.member_id " +
-				"AND fb.view_name = :viewName " +
-				"LEFT JOIN collections c on m.collection_id = c.collection_id");
-		queryProvider.setWhereClause("fb.id IS NULL");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}

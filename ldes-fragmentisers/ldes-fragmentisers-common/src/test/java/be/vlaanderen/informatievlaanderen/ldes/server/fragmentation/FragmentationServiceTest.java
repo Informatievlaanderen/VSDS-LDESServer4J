@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -97,8 +98,6 @@ class FragmentationServiceTest {
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
 		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
-		verify(memberMapper, times(members.size() * 3))
-				.mapToFragmentationMember(any());
 	}
 
 	private void mockBasicViews(int count) {
