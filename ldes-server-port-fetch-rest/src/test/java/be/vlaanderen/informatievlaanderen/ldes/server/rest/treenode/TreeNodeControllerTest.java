@@ -235,7 +235,7 @@ class TreeNodeControllerTest {
 				List.of(), COLLECTION_NAME, null);
 
 		when(streamingTreeNodeFactory.getFragmentWithoutMemberData(identifier)).thenReturn(treeNode);
-		when(streamingTreeNodeFactory.getMembersOfFragment(identifier.asDecodedFragmentId()))
+		when(streamingTreeNodeFactory.getMembersOfFragment(identifier))
 				.thenReturn(Stream.of(new Member("member1", ModelFactory.createDefaultModel()), new Member("member2", ModelFactory.createDefaultModel())));
 
 		client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,

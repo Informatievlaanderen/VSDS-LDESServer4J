@@ -48,8 +48,8 @@ public class ViewServiceImpl implements ViewService {
         checkIfViewAlreadyExists(viewSpecification);
         viewValidator.validateView(viewSpecification);
 
-        eventPublisher.multicastEvent(new ViewAddedEvent(this, viewSpecification));
         viewRepository.saveView(viewSpecification);
+        eventPublisher.multicastEvent(new ViewAddedEvent(this, viewSpecification));
         log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
     }
 

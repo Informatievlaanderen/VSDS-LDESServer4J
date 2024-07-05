@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeNodeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -31,6 +33,8 @@ class StreamingTreeNodeFactoryImplTest {
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private FragmentRepository fragmentRepository;
     private AllocationRepository allocationRepository;
+    private TreeNodeRepository treeNodeRepository;
+    private TreeMemberRepository treeMemberRepository;
     private MemberFetcher memberFetcher;
     private StreamingTreeNodeFactory streamingTreeNodeFactory;
 
@@ -39,7 +43,9 @@ class StreamingTreeNodeFactoryImplTest {
         fragmentRepository = mock(FragmentRepository.class);
         allocationRepository = mock(AllocationRepository.class);
         memberFetcher = mock(MemberFetcher.class);
-        streamingTreeNodeFactory = new StreamingTreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberFetcher, HOST);
+        treeNodeRepository = mock(TreeNodeRepository.class);
+        treeMemberRepository = mock(TreeMemberRepository.class);
+        streamingTreeNodeFactory = new StreamingTreeNodeFactoryImpl(treeNodeRepository, treeMemberRepository);
     }
 
     @Test
@@ -76,7 +82,7 @@ class StreamingTreeNodeFactoryImplTest {
         assertThat(returnedTreeNode).isEqualTo(treeNode);
         assertThat(returnedTreeNode.getMembers()).isEmpty();
 
-        List<Member> returnedMembers = streamingTreeNodeFactory.getMembersOfFragment(id.asDecodedFragmentId()).toList();
+        List<Member> returnedMembers = streamingTreeNodeFactory.getMembersOfFragment(id).toList();
 
         assertThat(returnedMembers).containsAll(members);
     }

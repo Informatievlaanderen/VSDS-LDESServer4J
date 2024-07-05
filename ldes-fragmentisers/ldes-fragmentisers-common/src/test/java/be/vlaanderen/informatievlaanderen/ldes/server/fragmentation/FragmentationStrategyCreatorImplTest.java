@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootBucketCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -27,14 +27,15 @@ class FragmentationStrategyCreatorImplTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private ApplicationContext applicationContext;
-	private RootFragmentCreator rootFragmentCreator;
+	private RootBucketCreator rootBucketCreator;
+
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
-		rootFragmentCreator = mock(RootFragmentCreator.class);
-		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext, rootFragmentCreator);
+		rootBucketCreator = mock();
+		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext, rootBucketCreator);
 	}
 
 	@Test
@@ -45,8 +46,8 @@ class FragmentationStrategyCreatorImplTest {
 				.createFragmentationStrategyForView(viewSpecification);
 
 		assertThat(fragmentationStrategy).isOfAnyClassIn(FragmentationStrategyImpl.class);
-		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
-		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
+		InOrder inOrder = inOrder(applicationContext, rootBucketCreator);
+		inOrder.verify(rootBucketCreator).createRootBucketForView(viewSpecification.getName());
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -74,8 +75,8 @@ class FragmentationStrategyCreatorImplTest {
 				.createFragmentationStrategyForView(viewSpecification);
 
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
-		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
-		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
+		InOrder inOrder = inOrder(applicationContext, rootBucketCreator);
+		inOrder.verify(rootBucketCreator).createRootBucketForView(viewSpecification.getName());
 		inOrder.verify(applicationContext).getBean(TIMEBASED);
 		inOrder.verify(applicationContext).getBean(GEOSPATIAL);
 		inOrder.verifyNoMoreInteractions();

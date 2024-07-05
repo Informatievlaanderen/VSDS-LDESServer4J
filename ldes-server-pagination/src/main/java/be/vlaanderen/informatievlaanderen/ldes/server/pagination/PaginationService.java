@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -96,7 +95,7 @@ public class PaginationService {
 				.listener(new StepExecutionListener() {
 					@Override
 					public void beforeStep(@NotNull StepExecution stepExecution) {
-//						shouldTriggerPagination = stepExecution.getExecutionContext().isEmpty();
+						shouldTriggerPagination = stepExecution.getExecutionContext().isEmpty();
 					}
 				})
 				.allowStartIfComplete(true)

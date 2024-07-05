@@ -36,4 +36,14 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 					return TreeNodeMapper.fromProjection(page, relations, members);
 				});
 	}
+
+	@Override
+	public Optional<TreeNode> findTreeNodeWithoutMembers(LdesFragmentIdentifier fragmentIdentifier) {
+		return pageEntityRepository
+				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
+				.map(page -> {
+					final List<TreeRelationProjection> relations = relationEntityRepository.findAllByFromPageId(page.getId());
+					return TreeNodeMapper.fromProjection(page, relations, List.of());
+				});
+	}
 }

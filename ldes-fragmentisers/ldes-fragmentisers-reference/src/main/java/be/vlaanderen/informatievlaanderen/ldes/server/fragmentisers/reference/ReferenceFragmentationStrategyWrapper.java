@@ -12,7 +12,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.re
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -25,14 +24,13 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties properties) {
 		final var fragmentationPath = properties.getOrDefault(FRAGMENTATION_PATH, DEFAULT_FRAGMENTATION_PATH);
-		final var applicationEventPublisher = applicationContext.getBean(ApplicationEventPublisher.class);
 		final var fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		final var bucketRepository = applicationContext.getBean(BucketRepository.class);
 		final var observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		final var referenceConfig = new ReferenceConfig(fragmentationPath);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
 		final var fragmentationKey = properties.getOrDefault(FRAGMENTATION_KEY, DEFAULT_FRAGMENTATION_KEY);
-		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(applicationEventPublisher, fragmentRepository, fragmentationPath, fragmentationKey);
+		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(applicationContext, fragmentRepository, fragmentationPath, fragmentationKey);
 
 		final var referenceBucketCreator = new ReferenceBucketCreator(bucketRepository, relationsAttributer, fragmentationKey);
 		return new ReferenceFragmentationStrategy(
@@ -40,7 +38,7 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 				referenceBucketiser,
 				referenceBucketCreator,
 				observationRegistry,
-				applicationEventPublisher);
+				applicationContext);
 	}
 
 }

@@ -24,4 +24,7 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	@Query("SELECT m.subject AS subject, m.model AS model FROM PageMemberEntity p JOIN p.member m WHERE p.page.id = :pageId")
 	List<TreeMemberProjection> findAllByPageId(long pageId);
+
+	@Query("SELECT m.subject AS subject, m.model AS model FROM PageMemberEntity p JOIN p.member m where p.page.partialUrl = :partialUrl")
+	List<TreeMemberProjection> findAllByPartialUrl(String partialUrl);
 }

@@ -1,10 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.BucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PageReader;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +32,5 @@ public class LdesServerIntegrationTest {
 
 	@Autowired
 	MemberRepository memberRepository;
-
-	@Autowired
-	PageEntityRepository pageEntityRepository;
-
-	@Autowired
-	BucketEntityRepository bucketEntityRepository;
 
 }

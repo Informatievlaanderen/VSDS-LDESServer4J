@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.B
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
-import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -98,8 +97,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	private FragmentationStrategyBatchExecutor createExecutor(ViewName viewName, ViewSpecification viewSpecification) {
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
-		final var rootFragmentRetriever = new RootBucketCreator(bucketRepository, observationRegistry);
-		rootFragmentRetriever.getOrCreateRootBucket(viewName, Observation.NOOP); // TODO: to be removed
-		return new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootFragmentRetriever, observationRegistry);
+		final var rootBucketRetriever = new RootBucketRetriever(viewName, bucketRepository, observationRegistry);
+		return new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever, observationRegistry);
 	}
 }

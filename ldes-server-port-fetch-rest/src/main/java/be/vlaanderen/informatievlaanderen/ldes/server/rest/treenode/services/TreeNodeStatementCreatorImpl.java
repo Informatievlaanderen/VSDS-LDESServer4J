@@ -71,7 +71,7 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
             statements.addAll(eventStreamInfoResponse.convertToStatements());
             addDcatStatements(statements, currentFragmentId, eventStream.getCollection(), prefix);
         } else {
-            statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
+            statements.add(createStatement(createResource(prefix + currentFragmentId), IS_PART_OF_PROPERTY, collection));
         }
     }
 

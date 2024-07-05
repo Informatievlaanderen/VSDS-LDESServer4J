@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface TreeNodeRepository {
 	Optional<TreeNode> findByFragmentIdentifier(LdesFragmentIdentifier fragmentIdentifier);
+	Optional<TreeNode> findTreeNodeWithoutMembers(LdesFragmentIdentifier fragmentIdentifier);
 }

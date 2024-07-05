@@ -41,6 +41,6 @@ public class TreeNodeStreamConverterImpl implements TreeNodeStreamConverter {
     }
 
     private Statement getTreeNodeStatement(String treeNodeId) {
-        return createStatement(createResource(treeNodeId), RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE));
+        return createStatement(createResource(prefix + treeNodeId), RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE));
     }
 }

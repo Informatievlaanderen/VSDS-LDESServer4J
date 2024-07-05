@@ -5,6 +5,11 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="create-new-pages-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pages"/>
+            </not>
+        </preConditions>
         <createTable tableName="pages">
             <column name="page_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

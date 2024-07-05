@@ -31,7 +31,7 @@ class FragmentationStrategyBatchExecutorTest {
 	@Mock
 	private FragmentationStrategy fragmentationStrategy;
 	@Mock
-	private RootBucketCreator rootBucketCreator;
+	private RootBucketRetriever rootBucketRetriever;
 
 	@Nested
 	class ExecuteNext {
@@ -41,16 +41,16 @@ class FragmentationStrategyBatchExecutorTest {
 		@Test
 		void when_ExecuteIsCalled_then_AllLogicIsWrappedByTheExecutorService() {
 			ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
-			var executor = new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketCreator,
+			var executor = new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever,
 					observationRegistry);
 
 			var member = mock(FragmentationMember.class);
 
 			executor.bucketise(member);
 
-			verify(rootBucketCreator).getOrCreateRootBucket(eq(viewName), any());
+			verify(rootBucketRetriever).retrieveRootBucket(any());
 			verify(fragmentationStrategy).addMemberToBucket(any(), eq(member), any());
-			verifyNoMoreInteractions(fragmentationStrategy, rootBucketCreator);
+			verifyNoMoreInteractions(fragmentationStrategy, rootBucketRetriever);
 		}
 	}
 
@@ -98,7 +98,7 @@ class FragmentationStrategyBatchExecutorTest {
 							new FragmentationStrategyBatchExecutor(viewNameA, null, null, null)),
 					Arguments.of(equals(), executorA,
 							new FragmentationStrategyBatchExecutor(viewNameA, mock(FragmentationStrategy.class),
-									mock(RootBucketCreator.class), mock(ObservationRegistry.class))),
+									mock(RootBucketRetriever.class), mock(ObservationRegistry.class))),
 					Arguments.of(notEquals(), executorA,
 							new FragmentationStrategyBatchExecutor(ViewName.fromString("col/viewB"), null, null, null)));
 		}
