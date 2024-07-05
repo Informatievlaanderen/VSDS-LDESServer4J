@@ -66,7 +66,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
     @Given("a view with the following properties")
     public void aViewWithTheFollowingProperties(ViewSpecification viewSpecification) {
-        applicationEventPublisher.publishEvent(new ViewAddedEvent(this, viewSpecification));
+        applicationEventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
     }
 
     @And("the following Fragments are available")

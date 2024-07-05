@@ -56,4 +56,10 @@ public class EventStreamPostgresRepository implements EventStreamRepository {
     public int deleteEventStream(String collectionName) {
         return repository.deleteByName(collectionName);
     }
+
+    @Override
+    @Transactional
+    public void closeEventStream(String collectionName) {
+        repository.closeEventStream(collectionName);
+    }
 }

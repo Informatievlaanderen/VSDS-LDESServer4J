@@ -16,7 +16,6 @@ import static org.mockito.Mockito.when;
 
 class FragmentationStrategyImplTest {
 	private static final long MEMBER_ID = 1L;
-	private static final long SEQ_NR = 5L;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl();
 

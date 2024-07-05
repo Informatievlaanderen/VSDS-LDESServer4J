@@ -10,13 +10,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ViewServiceImpl implements ViewService {
@@ -25,13 +26,13 @@ public class ViewServiceImpl implements ViewService {
     private static final String VIEW_TYPE = "view";
     private final DcatViewService dcatViewService;
     private final ViewRepository viewRepository;
-    private final ApplicationEventMulticaster eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
     private final ViewValidator viewValidator;
 
     private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 
     public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
-                           ApplicationEventMulticaster eventPublisher, ViewValidator viewValidator) {
+                           ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
         this.dcatViewService = dcatViewService;
         this.viewRepository = viewRepository;
         this.eventPublisher = eventPublisher;
@@ -49,7 +50,7 @@ public class ViewServiceImpl implements ViewService {
         viewValidator.validateView(viewSpecification);
 
         viewRepository.saveView(viewSpecification);
-        eventPublisher.multicastEvent(new ViewAddedEvent(this, viewSpecification));
+        CompletableFuture.runAsync(() -> eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification)));
         log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
     }
 
@@ -95,7 +96,7 @@ public class ViewServiceImpl implements ViewService {
         log.atInfo().log("START deleting view  {}", viewName.asString());
         viewRepository.deleteViewByViewName(viewName);
         log.atInfo().log("FINISHED deleting view {}", viewName.asString());
-        eventPublisher.multicastEvent(new ViewDeletedEvent(this, viewName));
+        eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
     }
 
     /**
@@ -108,7 +109,7 @@ public class ViewServiceImpl implements ViewService {
         viewRepository
                 .retrieveAllViews()
                 .forEach(viewSpecification -> eventPublisher
-                        .multicastEvent(new ViewInitializationEvent(this, viewSpecification)));
+                        .publishEvent(new ViewInitializationEvent(viewSpecification)));
     }
 
     @EventListener

@@ -22,7 +22,7 @@ class DeleteEventHandlerTest {
 	private static final ViewName VIEW = new ViewName(COLLECTION, "view1");
 	private MemberProperties member1 = new MemberProperties("1", COLLECTION, "version", LocalDateTime.now(), true);
 	private MemberProperties member2 = new MemberProperties("2", COLLECTION, "version", LocalDateTime.now(), true);
-	private ViewDeletedEvent event = new ViewDeletedEvent(this, VIEW);
+	private ViewDeletedEvent event = new ViewDeletedEvent(VIEW);
 	private MemberPropertiesRepository memberPropertiesRepository;
 	private MemberRemover memberRemover;
 	private DeleteEventHandler eventHandler;
@@ -54,7 +54,7 @@ class DeleteEventHandlerTest {
 
 	@Test
 	void when_EventstreamDeleted_Then_CallMethod() {
-		eventHandler.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION));
+		eventHandler.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		verify(memberPropertiesRepository, times(1)).removeMemberPropertiesOfCollection(COLLECTION);
 	}

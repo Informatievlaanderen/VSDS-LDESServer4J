@@ -21,8 +21,8 @@ class EventStreamCollectionImplTest {
 	@Test
 	void when_EventStreamDoesNotExist_then_MissingEventStreamExceptionIsThrown() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
-		eventStreamCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(this, COLLECTION));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
+		eventStreamCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		assertThatThrownBy(() -> eventStreamCollection.getEventStreamProperties(COLLECTION))
 				.isInstanceOf(MissingResourceException.class)
@@ -32,7 +32,7 @@ class EventStreamCollectionImplTest {
 	@Test
 	void when_EventStreamExists_then_EventStreamPropertiesCanBeRetrieved() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
 
 		EventStreamProperties actualEventStreamProperties = eventStreamCollection.getEventStreamProperties(COLLECTION);
 

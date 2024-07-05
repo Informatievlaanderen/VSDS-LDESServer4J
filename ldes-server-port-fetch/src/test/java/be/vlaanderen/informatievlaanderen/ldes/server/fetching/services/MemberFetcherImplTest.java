@@ -24,9 +24,9 @@ class MemberFetcherImplTest {
     private static final LocalDateTime TIMESTAMP = LocalDateTime.now();
     private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
     private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
-    private final List<String> MEMBER_SUBJECTS = List
+    private static final List<String> MEMBER_SUBJECTS = List
             .of("http://example.org/observation/1", "http://example.org/measurements/2");
-    private final List<String> MEMBER_IDS = MEMBER_SUBJECTS.stream()
+    private static final List<String> MEMBER_IDS = MEMBER_SUBJECTS.stream()
             .map(id -> "%s/%s".formatted(COLLECTION, id))
             .toList();
 
@@ -39,7 +39,7 @@ class MemberFetcherImplTest {
     void given_StateObjectEventStream_test_FetchAllByIds() {
         when(memberRepository.findAllByIds(MEMBER_IDS)).thenReturn(createIngestMembers());
 
-        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true)));
+        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true)));
 
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members need to have two additional statements added")
@@ -52,7 +52,7 @@ class MemberFetcherImplTest {
     void given_VersionObjectEventStream_test_FetchAllByIds() {
         when(memberRepository.findAllByIds(MEMBER_IDS)).thenReturn(createIngestMembers());
 
-        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(this, new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, false)));
+        memberFetcher.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, false)));
 
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members should not be altered")
