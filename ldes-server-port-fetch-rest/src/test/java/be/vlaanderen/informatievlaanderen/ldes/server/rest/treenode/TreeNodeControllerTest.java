@@ -179,12 +179,12 @@ class TreeNodeControllerTest {
 				ViewName.fromString(fullViewName),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
-				.thenThrow(new MissingResourceException("fragment", "fragmentId"));
+				.thenThrow(new MissingResourceException("fragment", "bucketDescriptor"));
 
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept("application/n-quads"))
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Resource of type: fragment with id: fragmentId could not be found."));
+				.andExpect(content().string("Resource of type: fragment with id: bucketDescriptor could not be found."));
 	}
 
 	@Test

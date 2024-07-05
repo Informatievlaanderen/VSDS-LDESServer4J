@@ -9,6 +9,5 @@ import io.micrometer.observation.Observation;
 import java.util.List;
 
 public interface FragmentationStrategy {
-	List<BucketisedMember> addMemberToFragment(Fragment rootFragmentOfView, FragmentationMember member, Observation parentObservation);
 	List<BucketisedMember> addMemberToBucket(Bucket rootFragmentOfView, FragmentationMember member, Observation parentObservation);
 }

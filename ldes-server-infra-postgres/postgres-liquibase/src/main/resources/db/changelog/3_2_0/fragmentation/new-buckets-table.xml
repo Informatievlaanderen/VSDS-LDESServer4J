@@ -32,7 +32,7 @@
         <preConditions>
             <tableExists tableName="buckets" />
         </preConditions>
-        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-buckets-table.sql" />
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-buckets-table.sql" />
         <rollback>
             <delete tableName="buckets" />
         </rollback>

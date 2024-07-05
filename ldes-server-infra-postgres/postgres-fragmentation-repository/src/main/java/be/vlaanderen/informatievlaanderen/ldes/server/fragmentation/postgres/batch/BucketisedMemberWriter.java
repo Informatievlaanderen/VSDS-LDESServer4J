@@ -41,7 +41,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 		temporaryOldSaving(buckets);
 
 		final List<Object[]> batchArgs = buckets.getItems().stream()
-				.map(bucket -> new Object[]{bucket.fragmentId(), bucket.viewNameAsString(), bucket.memberId()})
+				.map(bucket -> new Object[]{bucket.bucketDescriptor(), bucket.viewNameAsString(), bucket.memberId()})
 				.toList();
 
 		jdbcTemplate.batchUpdate(SQL, batchArgs);
@@ -54,7 +54,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 			for (BucketisedMember bucket : buckets) {
 				// Set the variables
 				ps.setString(1, bucket.viewName().asString());
-				ps.setString(2, bucket.viewNameAsString() + (bucket.fragmentId().isEmpty() ? "" : '?' + bucket.fragmentId()));
+				ps.setString(2, bucket.viewNameAsString() + (bucket.bucketDescriptor().isEmpty() ? "" : '?' + bucket.bucketDescriptor()));
 				ps.setString(3, bucket.viewName().getCollectionName() + '/' + bucket.memberId());
 				// Add it to the batch
 				ps.addBatch();

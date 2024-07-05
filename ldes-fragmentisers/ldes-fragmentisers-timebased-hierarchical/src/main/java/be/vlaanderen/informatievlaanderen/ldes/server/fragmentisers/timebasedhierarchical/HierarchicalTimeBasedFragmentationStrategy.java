@@ -5,14 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedBucketFinder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.*;
@@ -30,36 +27,18 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	private static final Logger LOGGER = LoggerFactory.getLogger(HierarchicalTimeBasedFragmentationStrategy.class);
 
 	private final ObservationRegistry observationRegistry;
-	private final TimeBasedFragmentFinder fragmentFinder;
 	private final TimeBasedBucketFinder bucketFinder;
 	private final TimeBasedConfig config;
 
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 	                                                  ObservationRegistry observationRegistry,
-	                                                  TimeBasedFragmentFinder fragmentFinder,
-	                                                  FragmentRepository fragmentRepository,
 	                                                  TimeBasedBucketFinder bucketFinder,
 													  ApplicationEventPublisher applicationEventPublisher,
 	                                                  TimeBasedConfig config) {
-		super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
+		super(fragmentationStrategy, applicationEventPublisher);
 		this.observationRegistry = observationRegistry;
-		this.fragmentFinder = fragmentFinder;
 		this.bucketFinder = bucketFinder;
 		this.config = config;
-	}
-
-	@Override
-	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
-													  Observation parentObservation) {
-		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
-
-		Fragment fragment = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
-				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
-				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
-
-		List<BucketisedMember> members = super.addMemberToFragment(fragment, member, fragmentationObservation);
-		fragmentationObservation.stop();
-		return members;
 	}
 
 	@Override
@@ -67,7 +46,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
 
 		Bucket bucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
-				.map(timestamp -> bucketFinder.getLowestFragment(parentBucket, timestamp, Granularity.YEAR))
+				.map(timestamp -> bucketFinder.getLowestBucket(parentBucket, timestamp, Granularity.YEAR))
 				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
 
 		List<BucketisedMember> members = super.addMemberToBucket(bucket, member, parentObservation);

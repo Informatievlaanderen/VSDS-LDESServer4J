@@ -12,11 +12,13 @@
             <column name="bucket_id" type="BIGINT">
                 <constraints nullable="true"/>
             </column>
-            <column name="expiration" type="TIMESTAMP"/>
+
             <column name="partial_url" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="immutable" type="BOOLEAN" defaultValueBoolean="false" />
+            <column name="expiration" type="TIMESTAMP"/>
+            <column name="next_update_ts" type="TIMESTAMP" />
         </createTable>
 
         <!-- Add foreign key constraint -->
@@ -39,6 +41,6 @@
         <preConditions>
             <tableExists tableName="pages"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-pages-table.sql" />
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-pages-table.sql" />
     </changeSet>
 </databaseChangeLog>

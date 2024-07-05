@@ -17,7 +17,7 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -47,14 +47,14 @@ class ReferenceBucketCreatorTest {
 	void when_ReferenceFragmentDoesNotExist_NewReferenceFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
-		String bucketDescriptor = bucket.createChild(referencePair).getBucketDescriptorAsString();
+		BucketDescriptor bucketDescriptor = bucket.createChild(referencePair).getBucketDescriptor();
 
-		when(bucketRepository.retrieveBucket(bucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, bucketDescriptor)).thenReturn(Optional.empty());
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF.type.getURI());
-		verify(bucketRepository).retrieveBucket(bucketDescriptor);
+		verify(bucketRepository).retrieveBucket(viewName, bucketDescriptor);
 		verify(bucketRepository).insertBucket(childBucket);
 	}
 
@@ -64,12 +64,12 @@ class ReferenceBucketCreatorTest {
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 		Bucket referenceBucket = bucket.createChild(referencePair);
 
-		when(bucketRepository.retrieveBucket(referenceBucket.getBucketDescriptorAsString())).thenReturn(Optional.of(referenceBucket));
+		when(bucketRepository.retrieveBucket(viewName, referenceBucket.getBucketDescriptor())).thenReturn(Optional.of(referenceBucket));
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF.type.getURI());
-		verify(bucketRepository).retrieveBucket(referenceBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(viewName, referenceBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 
@@ -78,12 +78,12 @@ class ReferenceBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 
-		when(bucketRepository.retrieveBucket(rootBucket.getBucketDescriptorAsString())).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, rootBucket.getBucketDescriptor())).thenReturn(Optional.empty());
 
-		Bucket returnedBucket = referenceBucketCreator.getOrCreateRootBucket(bucket, ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT);
+		Bucket returnedBucket = referenceBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=");
-		verify(bucketRepository).retrieveBucket(rootBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(viewName, rootBucket.getBucketDescriptor());
 		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
@@ -91,12 +91,12 @@ class ReferenceBucketCreatorTest {
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
-		when(bucketRepository.retrieveBucket(rootBucket.getBucketDescriptorAsString())).thenReturn(Optional.of(rootBucket));
+		when(bucketRepository.retrieveBucket(viewName, rootBucket.getBucketDescriptor())).thenReturn(Optional.of(rootBucket));
 
-		Bucket returnedBucket = referenceBucketCreator.getOrCreateBucket(bucket, ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT, rootBucket);
+		Bucket returnedBucket = referenceBucketCreator.getOrCreateBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT, rootBucket);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=");
-		verify(bucketRepository).retrieveBucket(rootBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(viewName, rootBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 
@@ -104,14 +104,14 @@ class ReferenceBucketCreatorTest {
 	void when_DefaultFragmentDoesNotExist_DefaultFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
-		String defaultBucketDescriptor = bucket.createChild(defaultPair).getBucketDescriptorAsString();
+		BucketDescriptor defaultBucketDescriptor = bucket.createChild(defaultPair).getBucketDescriptor();
 
-		when(bucketRepository.retrieveBucket(defaultBucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, defaultBucketDescriptor)).thenReturn(Optional.empty());
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=unknown");
-		verify(bucketRepository).retrieveBucket(defaultBucketDescriptor);
+		verify(bucketRepository).retrieveBucket(viewName, defaultBucketDescriptor);
 		verify(bucketRepository).insertBucket(childBucket);
 	}
 
@@ -121,12 +121,12 @@ class ReferenceBucketCreatorTest {
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 		Bucket defaultBucket = bucket.createChild(defaultPair);
 
-		when(bucketRepository.retrieveBucket(defaultBucket.getBucketDescriptorAsString())).thenReturn(Optional.of(defaultBucket));
+		when(bucketRepository.retrieveBucket(viewName, defaultBucket.getBucketDescriptor())).thenReturn(Optional.of(defaultBucket));
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=unknown");
-		verify(bucketRepository).retrieveBucket(defaultBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(viewName, defaultBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 

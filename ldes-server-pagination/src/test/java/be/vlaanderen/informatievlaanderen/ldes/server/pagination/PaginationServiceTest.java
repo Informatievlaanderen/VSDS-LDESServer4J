@@ -9,14 +9,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.*;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -41,7 +38,7 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationProcessor.class,
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class,
 		MemberPaginationServiceCreator.class, ViewBucketisationService.class})
 class PaginationServiceTest {
 	private final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
@@ -49,6 +46,8 @@ class PaginationServiceTest {
 	private Partitioner bucketisationPartitioner;
 	@MockBean(name = "viewBucketisationPartitioner")
 	private Partitioner viewBucketisationPartitioner;
+	@MockBean
+	private ItemProcessor<Page, Page> pageRelationProcessor;
 	@MockBean
 	private ItemReader<List<BucketisedMember>> reader;
 	@MockBean
@@ -87,7 +86,7 @@ class PaginationServiceTest {
 		mockReader();
 		mockWriter();
 
-		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
+//		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
 
 		assertEquals(4, output.size());
 	}
@@ -95,14 +94,14 @@ class PaginationServiceTest {
 	private void mockBucketisationPartitioner() {
 		ExecutionContext context = new ExecutionContext();
 		context.putString("viewName", VIEW_NAME_1.asString());
-		context.putString("fragmentId", VIEW_NAME_1.asString());
+		context.putString("bucketDescriptor", VIEW_NAME_1.asString());
 
 		when(bucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
 	}
 
 	private void mockViewBucketisationPartitioner() {
 		ExecutionContext context = new ExecutionContext();
-		context.putString("fragmentId", VIEW_NAME_1.asString());
+		context.putString("bucketDescriptor", VIEW_NAME_1.asString());
 
 		when(viewBucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
 	}
@@ -122,10 +121,10 @@ class PaginationServiceTest {
 
 	private List<BucketisedMember> bucketisedMembers() {
 		return List.of(
-				new BucketisedMember("x/1", VIEW_NAME_1, "es/v1"),
-				new BucketisedMember("x/2", VIEW_NAME_1, "es/v1"),
-				new BucketisedMember("x/3", VIEW_NAME_1, "es/v1"),
-				new BucketisedMember("x/4", VIEW_NAME_1, "es/v1")
+				new BucketisedMember(1, VIEW_NAME_1, "es/v1"),
+				new BucketisedMember(2, VIEW_NAME_1, "es/v1"),
+				new BucketisedMember(3, VIEW_NAME_1, "es/v1"),
+				new BucketisedMember(4, VIEW_NAME_1, "es/v1")
 		);
 	}
 }

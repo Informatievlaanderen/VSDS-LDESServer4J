@@ -5,8 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.LongStream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.POLLING_RATE;
 import static org.awaitility.Awaitility.await;
@@ -41,10 +43,9 @@ import static org.mockito.Mockito.*;
 class FragmentationServiceTest {
 
 	@MockBean(name = "newMemberReader")
-	ItemReader<IngestedMember> newMemberItemReader;
-
+	private ItemReader<FragmentationMember> newMemberReader;
 	@MockBean(name = "refragmentEventStream")
-	ItemReader<IngestedMember> refragmentItemReader;
+	private ItemReader<FragmentationMember> rebucketiseMemberReader;
 
 	@MockBean
 	private FragmentRepository fragmentRepository;
@@ -62,6 +63,7 @@ class FragmentationServiceTest {
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
 
 	private final String collectionName = "es";
+	private final EventStreamProperties eventStreamProperties = new EventStreamProperties(collectionName, "versionOfPath", "timestampPath", false);
 	private final String versionOf = "x";
 	private final List<BucketisedMember> output = new ArrayList<>();
 
@@ -72,12 +74,9 @@ class FragmentationServiceTest {
 
 	@Test
 	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() throws Exception {
-		List<IngestedMember> members = List.of(
-				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), true, "", null)
-		);
+		final List<FragmentationMember> members = LongStream.range(1, 5)
+				.mapToObj(id -> new FragmentationMember(id, "subject", versionOf, LocalDateTime.now(), eventStreamProperties, null))
+				.toList();
 
 		mockBasicViews(2);
 		mockReader(members);
@@ -112,18 +111,22 @@ class FragmentationServiceTest {
 		when(strategyCollection.getAllFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
 	}
 
-	private void mockReader(List<IngestedMember> members) throws Exception {
-		when(newMemberItemReader.read())
-				.thenReturn(members.get(0), members.get(1), members.get(2), members.get(3), null);
-		when(refragmentItemReader.read())
-				.thenReturn(members.get(0), members.get(1), members.get(2), members.get(3), null);
+	private void mockReader(List<FragmentationMember> members) throws Exception {
+		final FragmentationMember firstMembers = members.getFirst();
+		final FragmentationMember[] additionalMembers = members.subList(1, 4).toArray(new FragmentationMember[4]);
+		additionalMembers[3] = null;
+		when(newMemberReader.read())
+				.thenReturn(firstMembers, additionalMembers);
+		when(rebucketiseMemberReader.read())
+				.thenReturn(firstMembers, additionalMembers);
 	}
+
 
 	private void mockWriter() throws Exception {
 		doAnswer(invocation -> {
 			Chunk<List<BucketisedMember>> items = invocation.getArgument(0);
 			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
-			return null;
+			return mock();
 		}).when(itemWriter).write(any());
 	}
 }

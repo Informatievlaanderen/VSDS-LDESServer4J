@@ -33,7 +33,7 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 		writer.write(Chunk.of(List.of(bucketisedMembers.get(0), bucketisedMembers.get(1)),
 				List.of(bucketisedMembers.get(2))));
 
-		var count = new JdbcTemplate(dataSource).queryForObject("SELECT COUNT(*) FROM member_buckets", Integer.class);
+		var count = new JdbcTemplate(dataSource).queryForObject("SELECT COUNT(*) FROM page_members", Integer.class);
 
 		assertThat(count).isEqualTo(3);
 
@@ -41,7 +41,7 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 
 	private static List<BucketisedMember> initBucketisedMembers() {
 		return IntStream.range(0, 3)
-				.mapToObj(id -> new BucketisedMember(SUBJECT_PREFIX.formatted(600000 + id), new ViewName("mobility-hindrances", "by-hour"), "year=2023&month=06"))
+				.mapToObj(id -> new BucketisedMember(id /* SUBJECT_PREFIX.formatted(600000 + id) */ , new ViewName("mobility-hindrances", "by-hour"), "year=2023&month=06"))
 				.toList();
 	}
 }

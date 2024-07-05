@@ -20,15 +20,10 @@ public class BucketPostgresRepository implements BucketRepository {
 	}
 
 	@Override
-	public Optional<Bucket> retrieveBucket(String bucketDescriptor) {
-		return bucketEntityRepository
-				.findBucketEntityByBucketDescriptor(bucketDescriptor)
-				.map(BucketMapper::fromProjection);
-	}
-
-	@Override
 	public Optional<Bucket> retrieveBucket(ViewName viewName, BucketDescriptor bucketDescriptor) {
-		return Optional.empty();
+		return bucketEntityRepository
+				.findBucketEntityByBucketDescriptor(viewName.asString(), bucketDescriptor.asDecodedString())
+				.map(BucketMapper::fromProjection);
 	}
 
 	@Override

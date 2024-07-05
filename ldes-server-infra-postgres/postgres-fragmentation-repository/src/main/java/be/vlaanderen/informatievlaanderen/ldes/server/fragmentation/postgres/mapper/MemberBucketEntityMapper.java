@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class MemberBucketEntityMapper {
 
     public MemberBucketEntity toMemberBucketisationEntity(BucketisedMember member) {
-        return new MemberBucketEntity(member.viewName().asString(), member.fragmentId(),
+        return new MemberBucketEntity(member.viewName().asString(), member.bucketDescriptor(),
                 "member.memberId()", 0L);
     }
 

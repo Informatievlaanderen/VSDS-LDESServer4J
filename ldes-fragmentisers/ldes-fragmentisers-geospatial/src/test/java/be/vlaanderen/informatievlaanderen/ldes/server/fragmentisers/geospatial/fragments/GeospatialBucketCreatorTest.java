@@ -39,13 +39,13 @@ class GeospatialBucketCreatorTest {
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
-		String bucketDescriptor = bucket.createChild(geoPair).getBucketDescriptorAsString();
-		when(bucketRepository.retrieveBucket(bucketDescriptor)).thenReturn(Optional.empty());
+		BucketDescriptor bucketDescriptor = bucket.createChild(geoPair).getBucketDescriptor();
+		when(bucketRepository.retrieveBucket(VIEW_NAME, bucketDescriptor)).thenReturn(Optional.empty());
 
-		Bucket childBucket = geospatialBucketCreator.getOrCreateTileFragment(bucket, "15/101/202", rootBucket);
+		Bucket childBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, "15/101/202", rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=15/101/202");
-		verify(bucketRepository).retrieveBucket(bucketDescriptor);
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, bucketDescriptor);
 		verify(bucketRepository).insertBucket(childBucket);
 	}
 
@@ -55,13 +55,13 @@ class GeospatialBucketCreatorTest {
 		Bucket rootBucket = bucket.createChild(geoRootPair);
 		Bucket tileBucket = bucket.createChild(geoPair);
 
-		when(bucketRepository.retrieveBucket(tileBucket.getBucketDescriptorAsString()))
+		when(bucketRepository.retrieveBucket(VIEW_NAME, tileBucket.getBucketDescriptor()))
 				.thenReturn(Optional.of(tileBucket));
 
-		Bucket childBucket = geospatialBucketCreator.getOrCreateTileFragment(bucket, "15/101/202", rootBucket);
+		Bucket childBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, "15/101/202", rootBucket);
 
 		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=15/101/202");
-		verify(bucketRepository).retrieveBucket(tileBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, tileBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 
@@ -69,12 +69,12 @@ class GeospatialBucketCreatorTest {
 	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
-		when(bucketRepository.retrieveBucket(rootBucket.getBucketDescriptorAsString())).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor())).thenReturn(Optional.empty());
 
 		Bucket returnedBucket = geospatialBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_TILE_ROOT);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=0/0/0");
-		verify(bucketRepository).retrieveBucket(rootBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor());
 		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
@@ -82,12 +82,12 @@ class GeospatialBucketCreatorTest {
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
-		when(bucketRepository.retrieveBucket(rootBucket.getBucketDescriptorAsString()))
+		when(bucketRepository.retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor()))
 				.thenReturn(Optional.of(rootBucket));
 
 		Bucket returnedBucket = geospatialBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_TILE_ROOT);
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=0/0/0");
-		verify(bucketRepository).retrieveBucket(rootBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 
@@ -96,12 +96,12 @@ class GeospatialBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
 		Bucket defaultBucket = bucket.createChild(defaultPair);
-		when(bucketRepository.retrieveBucket(defaultBucket.getBucketDescriptorAsString())).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor())).thenReturn(Optional.empty());
 
-		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileFragment(bucket, DEFAULT_BUCKET_STRING, rootBucket);
+		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=unknown");
-		verify(bucketRepository).retrieveBucket(defaultBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor());
 		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
@@ -110,13 +110,13 @@ class GeospatialBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
 		Bucket defaultBucket = bucket.createChild(defaultPair);
-		when(bucketRepository.retrieveBucket(defaultBucket.getBucketDescriptorAsString()))
+		when(bucketRepository.retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor()))
 				.thenReturn(Optional.of(defaultBucket));
 
-		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileFragment(bucket, DEFAULT_BUCKET_STRING, rootBucket);
+		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=unknown");
-		verify(bucketRepository).retrieveBucket(defaultBucket.getBucketDescriptorAsString());
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor());
 		verifyNoMoreInteractions(bucketRepository);
 	}
 }

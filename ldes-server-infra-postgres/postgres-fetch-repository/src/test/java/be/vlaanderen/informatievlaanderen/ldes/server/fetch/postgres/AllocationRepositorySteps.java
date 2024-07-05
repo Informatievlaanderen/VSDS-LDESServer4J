@@ -28,14 +28,14 @@ public class AllocationRepositorySteps extends PostgresAllocationIntegrationTest
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("viewName"),
-				row.get("fragmentId"),
+				row.get("bucketDescriptor"),
 				row.get("memberId"));
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public RetrievedMemberAllocations retrievedMemberAllocationsEntryTransformer(Map<String, String> row) {
 		return new RetrievedMemberAllocations(
-				row.get("fragmentId"),
+				row.get("bucketDescriptor"),
 				row.get("ids").isEmpty() ? List.of() : Arrays.stream(row.get("ids").split(",")).sorted().toList());
 	}
 

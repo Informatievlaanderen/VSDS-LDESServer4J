@@ -19,34 +19,17 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 
 	private final FragmentationStrategy fragmentationStrategy;
 
-	private final FragmentRepository fragmentRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
-	                                         FragmentRepository fragmentRepository,
 	                                         ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentationStrategy = fragmentationStrategy;
-		this.fragmentRepository = fragmentRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
-	}
-
-	@Override
-	public List<BucketisedMember> addMemberToFragment(Fragment rootFragmentOfView, FragmentationMember member,
-													  Observation parentObservation) {
-		return fragmentationStrategy.addMemberToFragment(rootFragmentOfView, member, parentObservation);
 	}
 
 	@Override
 	public List<BucketisedMember> addMemberToBucket(Bucket rootFragmentOfView, FragmentationMember member, Observation parentObservation) {
 		return fragmentationStrategy.addMemberToBucket(rootFragmentOfView, member, parentObservation);
-	}
-
-	protected void addRelationFromParentToChild(Fragment parentFragment, Fragment childFragment) {
-		TreeRelation treeRelation = new TreeRelation("", childFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
-		if (!parentFragment.containsRelation(treeRelation)) {
-			parentFragment.addRelation(treeRelation);
-			fragmentRepository.saveFragment(parentFragment);
-		}
 	}
 
 	protected void addRelationFromParentToChild(Bucket parentBucket, Bucket childBucket) {

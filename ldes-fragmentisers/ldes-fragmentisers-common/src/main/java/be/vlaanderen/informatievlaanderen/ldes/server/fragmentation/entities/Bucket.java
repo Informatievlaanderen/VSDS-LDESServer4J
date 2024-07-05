@@ -42,6 +42,10 @@ public class Bucket {
 		return bucketDescriptor.getDescriptorPairs();
 	}
 
+	public BucketDescriptor getBucketDescriptor() {
+		return bucketDescriptor;
+	}
+
 	public String getBucketDescriptorAsString() {
 		return bucketDescriptor.asDecodedString();
 	}

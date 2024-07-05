@@ -29,7 +29,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Component
 @EnableScheduling
-@EnableBatchProcessing
 public class PaginationService {
 	private static final String PAGINATION_JOB = "pagination";
 	private final JobLauncher jobLauncher;
@@ -97,7 +96,7 @@ public class PaginationService {
 				.listener(new StepExecutionListener() {
 					@Override
 					public void beforeStep(@NotNull StepExecution stepExecution) {
-						shouldTriggerPagination = stepExecution.getExecutionContext().isEmpty();
+//						shouldTriggerPagination = stepExecution.getExecutionContext().isEmpty();
 					}
 				})
 				.allowStartIfComplete(true)

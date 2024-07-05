@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BucketPostgresRepositoryTest {
 	private final ViewName VIEW_NAME = new ViewName("collection", "name");
-	private final String BUCKET_DESCRIPTOR = "key=value&k=v";
+	private final BucketDescriptor BUCKET_DESCRIPTOR = BucketDescriptor.fromString("key=value&k=v");
 	@Mock
 	private BucketEntityRepository bucketEntityRepository;
 	@InjectMocks
@@ -29,18 +29,18 @@ class BucketPostgresRepositoryTest {
 
 	@Test
 	void test_BucketRetrieval() {
-		final Bucket expectedBucket = new Bucket(BucketDescriptor.fromString(BUCKET_DESCRIPTOR), VIEW_NAME);
-		when(bucketEntityRepository.findBucketEntityByBucketDescriptor(BUCKET_DESCRIPTOR))
-				.thenReturn(Optional.of(new BucketProjectionImpl(BUCKET_DESCRIPTOR, VIEW_NAME.asString())));
+		final Bucket expectedBucket = new Bucket(BUCKET_DESCRIPTOR, VIEW_NAME);
+		when(bucketEntityRepository.findBucketEntityByBucketDescriptor(VIEW_NAME.asString(), BUCKET_DESCRIPTOR.asDecodedString()))
+				.thenReturn(Optional.of(new BucketProjectionImpl(BUCKET_DESCRIPTOR.asDecodedString(), VIEW_NAME.asString())));
 
-		final Optional<Bucket> retrievedBucket = bucketPostgresRepository.retrieveBucket(BUCKET_DESCRIPTOR);
+		final Optional<Bucket> retrievedBucket = bucketPostgresRepository.retrieveBucket(VIEW_NAME, BUCKET_DESCRIPTOR);
 
 		assertThat(retrievedBucket).contains(expectedBucket);
 	}
 
 	@Test
 	void test_EmptyRetrieval() {
-		final Optional<Bucket> retrievedBucket = bucketPostgresRepository.retrieveBucket(BUCKET_DESCRIPTOR);
+		final Optional<Bucket> retrievedBucket = bucketPostgresRepository.retrieveBucket(VIEW_NAME, BUCKET_DESCRIPTOR);
 
 		assertThat(retrievedBucket).isEmpty();
 	}
@@ -51,7 +51,7 @@ class BucketPostgresRepositoryTest {
 
 		bucketPostgresRepository.insertBucket(bucketToSave);
 
-		verify(bucketEntityRepository).insertBucketEntity(BUCKET_DESCRIPTOR, VIEW_NAME.asString());
+		verify(bucketEntityRepository).insertBucketEntity(BUCKET_DESCRIPTOR.asDecodedString(), VIEW_NAME.asString());
 	}
 
 	private static class BucketProjectionImpl implements BucketProjection {

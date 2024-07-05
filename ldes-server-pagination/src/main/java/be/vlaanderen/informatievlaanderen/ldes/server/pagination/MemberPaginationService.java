@@ -33,7 +33,7 @@ public class MemberPaginationService {
 		}
 
 		String viewName = bucketisedMembers.getFirst().viewNameAsString();
-		String bucketId = bucketisedMembers.getFirst().fragmentId();
+		String bucketId = bucketisedMembers.getFirst().bucketDescriptor();
 
 		Set<Fragment> updatedPages = new HashSet<>();
 

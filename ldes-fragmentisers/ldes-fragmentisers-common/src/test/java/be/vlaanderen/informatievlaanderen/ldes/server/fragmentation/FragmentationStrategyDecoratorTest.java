@@ -1,64 +1,41 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import io.micrometer.observation.Observation;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.List;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class FragmentationStrategyDecoratorTest {
-	FragmentationStrategy fragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
-	FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-
-	@BeforeEach
-	void setUp() {
-		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy, fragmentRepository, mock());
-	}
+	@Mock
+	private FragmentationStrategy fragmentationStrategy;
+	@Mock
+	private ApplicationEventPublisher applicationEventPublisher;
+	@InjectMocks
+	private FragmentationStrategyDecoratorTestImpl fragmentationStrategyDecorator;
 
 	@Test
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
+		Bucket parentBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		Bucket childBucket = parentBucket.createChild(new BucketDescriptorPair("key", "value"));
 
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		Fragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
-		TreeRelation expectedRelation = new TreeRelation("",
-				childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION);
+		fragmentationStrategyDecorator.addRelationFromParentToChild(parentBucket, childBucket);
 
-		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
-				childFragment);
-
-		assertTrue(parentFragment.containsRelation(expectedRelation));
-		verify(fragmentRepository,
-				Mockito.times(1)).saveFragment(parentFragment);
-	}
-
-	@Test
-	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		FragmentationMember member = mock(FragmentationMember.class);
-		Observation span = mock(Observation.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,
-				span);
-		verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(BucketRelation.createGenericRelation(parentBucket, childBucket)));
 	}
 
 	@Test
@@ -66,15 +43,16 @@ class FragmentationStrategyDecoratorTest {
 		Bucket parentBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
 		FragmentationMember member = mock(FragmentationMember.class);
 		Observation span = mock(Observation.class);
+
 		fragmentationStrategyDecorator.addMemberToBucket(parentBucket, member, span);
+
 		verify(fragmentationStrategy).addMemberToBucket(parentBucket, member, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends FragmentationStrategyDecorator {
 		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
-		                                                 FragmentRepository fragmentRepository,
 		                                                 ApplicationEventPublisher applicationEventPublisher) {
-			super(fragmentationStrategy, fragmentRepository, applicationEventPublisher);
+			super(fragmentationStrategy, applicationEventPublisher);
 		}
 	}
 }

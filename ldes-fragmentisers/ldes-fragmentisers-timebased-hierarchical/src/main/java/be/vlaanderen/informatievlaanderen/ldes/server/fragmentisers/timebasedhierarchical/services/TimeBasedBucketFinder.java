@@ -16,12 +16,12 @@ public class TimeBasedBucketFinder {
 		this.config = config;
 	}
 
-	public Bucket getLowestFragment(Bucket parentFragment, FragmentationTimestamp fragmentationTimestamp,
-	                                Granularity granularity) {
+	public Bucket getLowestBucket(Bucket parentFragment, FragmentationTimestamp fragmentationTimestamp,
+	                              Granularity granularity) {
 		if (isLowest(parentFragment)) {
 			return parentFragment;
 		}
-		return getLowestFragment(
+		return getLowestBucket(
 				bucketCreator.getOrCreateBucket(parentFragment, fragmentationTimestamp, granularity),
 				fragmentationTimestamp, granularity.getChild());
 	}

@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.vocabulary.RDF;
@@ -34,10 +33,14 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
 		final var fragmentationKey = properties.getOrDefault(FRAGMENTATION_KEY, DEFAULT_FRAGMENTATION_KEY);
 		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(applicationEventPublisher, fragmentRepository, fragmentationPath, fragmentationKey);
-		final var referenceFragmentCreator = new ReferenceFragmentCreator(fragmentRepository, relationsAttributer, fragmentationKey);
+
 		final var referenceBucketCreator = new ReferenceBucketCreator(bucketRepository, relationsAttributer, fragmentationKey);
-		return new ReferenceFragmentationStrategy(fragmentationStrategy, referenceBucketiser, referenceFragmentCreator,
-				referenceBucketCreator, observationRegistry, fragmentRepository, applicationEventPublisher);
+		return new ReferenceFragmentationStrategy(
+				fragmentationStrategy,
+				referenceBucketiser,
+				referenceBucketCreator,
+				observationRegistry,
+				applicationEventPublisher);
 	}
 
 }

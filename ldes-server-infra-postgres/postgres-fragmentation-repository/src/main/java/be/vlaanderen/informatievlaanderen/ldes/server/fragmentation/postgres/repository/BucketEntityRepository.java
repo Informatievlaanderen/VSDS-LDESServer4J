@@ -9,13 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface BucketEntityRepository extends JpaRepository<BucketEntity, Long> {
-
-	@Query("SELECT b.bucketDescriptor AS bucketDescriptor, CONCAT(b.view.eventStream.name, '/', b.view.name) AS viewName " +
-			"FROM BucketEntity b " +
-			"WHERE b.bucketDescriptor = :bucketDescriptor ")
-	Optional<BucketProjection> findBucketEntityByBucketDescriptor(String bucketDescriptor);
-
-
 	@Query("SELECT b.bucketDescriptor AS bucketDescriptor, CONCAT(b.view.eventStream.name, '/', b.view.name) AS viewName " +
 			"FROM BucketEntity b " +
 			"WHERE b.bucketDescriptor = :bucketDescriptor AND CONCAT(b.view.eventStream.name, '/', b.view.name) = :viewName")

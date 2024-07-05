@@ -7,8 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import java.util.Optional;
 
 public interface BucketRepository {
-
-	Optional<Bucket> retrieveBucket(String bucketDescriptor);
 	Optional<Bucket> retrieveBucket(ViewName viewName, BucketDescriptor bucketDescriptor);
 
 	void insertBucket(Bucket bucket);

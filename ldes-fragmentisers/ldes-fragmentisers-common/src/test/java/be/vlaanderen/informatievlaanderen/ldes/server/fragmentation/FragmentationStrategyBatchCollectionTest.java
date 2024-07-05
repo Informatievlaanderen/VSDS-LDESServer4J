@@ -103,7 +103,7 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
-		final var rootFragmentRetriever = new RootBucketCreator(mock(), fragmentRepository, observationRegistry);
+		final var rootFragmentRetriever = new RootBucketCreator(mock(), observationRegistry);
 		FragmentationStrategyBatchExecutor fragmentationStrategyExecutor =
 				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootFragmentRetriever, observationRegistry);
 

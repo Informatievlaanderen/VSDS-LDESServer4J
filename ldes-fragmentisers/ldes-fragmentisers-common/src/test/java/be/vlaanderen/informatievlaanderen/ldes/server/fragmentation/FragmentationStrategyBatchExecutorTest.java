@@ -48,8 +48,7 @@ class FragmentationStrategyBatchExecutorTest {
 
 			executor.bucketise(member);
 
-			verify(rootBucketCreator).retrieveRootFragmentOfView(eq(viewName), any());
-			verify(fragmentationStrategy).addMemberToFragment(any(), eq(member), any());
+			verify(rootBucketCreator).getOrCreateRootBucket(eq(viewName), any());
 			verify(fragmentationStrategy).addMemberToBucket(any(), eq(member), any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootBucketCreator);
 		}

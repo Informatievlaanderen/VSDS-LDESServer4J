@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingRootFragmentException;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,11 +22,11 @@ import static org.mockito.Mockito.*;
 class RootBucketCreatorTest {
 
 	@Mock
-	private FragmentRepository fragmentRepository;
+	private BucketRepository bucketRepository;
 
 	private Observation observation;
 	private RootBucketCreator rootBucketCreator;
-	private Fragment rootFragment;
+	private Bucket rootBucket;
 
 	private static final ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
 	private static final ViewName VIEW_NAME = new ViewName("collection", "view");
@@ -37,35 +35,37 @@ class RootBucketCreatorTest {
 	void setUp() {
 		observation = Observation.createNotStarted("observation", observationRegistry).start();
 
-		rootBucketCreator = new RootBucketCreator(mock(), fragmentRepository, observationRegistry);
-		rootFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.of(rootFragment));
+		rootBucketCreator = new RootBucketCreator(bucketRepository, observationRegistry);
+		rootBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		when(bucketRepository.retrieveRootBucket(VIEW_NAME)).thenReturn(Optional.of(rootBucket));
 	}
 
 	@Test
 	void should_FetchRootFragment_when_NotYetInMemory() {
-		final Fragment result = rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		final Bucket result = rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
 
-		assertEquals(rootFragment, result);
-		verify(fragmentRepository).retrieveRootFragment(VIEW_NAME.asString());
+		assertEquals(rootBucket, result);
+		verify(bucketRepository).retrieveRootBucket(VIEW_NAME);
 	}
 
 	@Test
 	void should_ReturnFragmentFromMemory_when_FetchedEarlier() {
-		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
-		final Fragment result = rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation);
+		rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
+		rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
+		rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
+		final Bucket result = rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
 
-		assertEquals(rootFragment, result);
-		verify(fragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
+		assertEquals(rootBucket, result);
+		verify(bucketRepository).retrieveRootBucket(VIEW_NAME);
 	}
 
 	@Test
-	void should_ThrowException_when_RootFragmentIsNotFound() {
-		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.empty());
+	void insertNewRootBucket_when_RootBucketDoesNotYetExist() {
+		when(bucketRepository.retrieveRootBucket(VIEW_NAME)).thenReturn(Optional.empty());
 
-		assertThrows(MissingRootFragmentException.class,
-				() -> rootBucketCreator.retrieveRootFragmentOfView(VIEW_NAME, observation));
+		rootBucketCreator.getOrCreateRootBucket(VIEW_NAME, observation);
+
+		verify(bucketRepository).retrieveRootBucket(VIEW_NAME);
+		verify(bucketRepository).insertBucket(any());
 	}
 }

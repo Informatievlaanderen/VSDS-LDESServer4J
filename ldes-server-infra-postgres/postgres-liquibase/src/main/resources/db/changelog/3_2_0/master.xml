@@ -9,6 +9,5 @@
     <include file="/db/changelog/3_2_0/fragmentation/new-pages-table.xml" />
     <include file="/db/changelog/3_2_0/fragmentation/new-page-members-table.xml" />
     <include file="/db/changelog/3_2_0/fragmentation/new-relations-table.xml" />
-    <include file="/db/changelog/3_2_0/fragmentation/create-on-bucket-insertion-trigger.sql" />
-
+    <include file="/db/changelog/3_2_0/fragmentation/create-page-on-bucket-insertion-trigger.xml" />
 </databaseChangeLog>

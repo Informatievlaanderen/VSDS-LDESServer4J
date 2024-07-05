@@ -25,10 +25,10 @@ public class GeospatialBucketCreator {
 		this.tileBucketRelationsAttributer = tileBucketRelationsAttributer;
 	}
 
-	public Bucket getOrCreateTileFragment(Bucket parentBucket, String tile, Bucket rootTileFragment) {
+	public Bucket getOrCreateTileBucket(Bucket parentBucket, String tile, Bucket rootTileFragment) {
 		Bucket child = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
 		return bucketRepository
-				.retrieveBucket(child.getBucketDescriptorAsString())
+				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(child);
 					tileBucketRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, child);
@@ -42,7 +42,7 @@ public class GeospatialBucketCreator {
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String tile) {
 		Bucket child = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
 		return bucketRepository
-				.retrieveBucket(child.getBucketDescriptorAsString())
+				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(child);
 					

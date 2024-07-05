@@ -34,7 +34,7 @@ public class TimeBasedBucketCreator {
 	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
 		Bucket childBucket = parentBucket.createChild(new BucketDescriptorPair(granularity.getValue(), timeValue));
 		return bucketRepository
-				.retrieveBucket(childBucket.getBucketDescriptorAsString())
+				.retrieveBucket(childBucket.getViewName(), childBucket.getBucketDescriptor())
 				.orElseGet(() -> {
 					bucketRepository.insertBucket(childBucket);
 					addRelationToParent(parentBucket, childBucket);

@@ -46,7 +46,7 @@
         <preConditions>
             <tableExists tableName="page_members"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_2_0/fragmentation/migrate-into-new-page-members-table.sql"/>
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-page-members-table.sql"/>
         <rollback>
             <delete tableName="page_members"/>
         </rollback>

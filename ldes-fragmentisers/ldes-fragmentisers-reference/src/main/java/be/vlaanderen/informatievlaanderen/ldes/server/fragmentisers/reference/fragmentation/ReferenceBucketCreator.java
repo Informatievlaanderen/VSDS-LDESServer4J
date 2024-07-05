@@ -33,7 +33,7 @@ public class ReferenceBucketCreator {
 	public Bucket getOrCreateBucket(Bucket parentBucket, String reference, Bucket rootBucket) {
 		Bucket child = parentBucket.createChild(new BucketDescriptorPair(fragmentKeyReference, reference));
 		return fragmentRepository
-				.retrieveBucket(child.getBucketDescriptorAsString())
+				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
 				.orElseGet(() -> {
 					fragmentRepository.insertBucket(child);
 					if (reference.equals(DEFAULT_BUCKET_STRING)) {
@@ -49,7 +49,7 @@ public class ReferenceBucketCreator {
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String reference) {
 		Bucket child = parentBucket.createChild(new BucketDescriptorPair(fragmentKeyReference, reference));
 		return fragmentRepository
-				.retrieveBucket(child.getBucketDescriptorAsString())
+				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
 				.orElseGet(() -> {
 					fragmentRepository.insertBucket(child);
 					logBucketation(parentBucket, child);

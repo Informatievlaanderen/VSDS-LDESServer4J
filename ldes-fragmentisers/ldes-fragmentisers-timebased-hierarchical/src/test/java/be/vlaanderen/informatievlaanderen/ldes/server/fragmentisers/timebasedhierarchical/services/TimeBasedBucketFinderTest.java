@@ -51,7 +51,7 @@ class TimeBasedBucketFinderTest {
 		when(bucketCreator.getOrCreateBucket(yearBucket, TIME, Granularity.MONTH)).thenReturn(monthBucket);
 		when(bucketCreator.getOrCreateBucket(monthBucket, TIME, Granularity.DAY)).thenReturn(dayBucket);
 
-		Bucket actual = bucketFinder.getLowestFragment(PARENT, TIME, Granularity.YEAR);
+		Bucket actual = bucketFinder.getLowestBucket(PARENT, TIME, Granularity.YEAR);
 
 		assertThat(actual).isEqualTo(expected);
 	}

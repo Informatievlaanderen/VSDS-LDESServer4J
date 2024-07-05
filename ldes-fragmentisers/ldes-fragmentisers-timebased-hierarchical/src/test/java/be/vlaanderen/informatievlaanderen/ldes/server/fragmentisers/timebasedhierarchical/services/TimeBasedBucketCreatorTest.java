@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
@@ -24,7 +22,7 @@ class TimeBasedBucketCreatorTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final BucketDescriptorPair timePair = new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023");
 	private static final Bucket PARENT = new Bucket(new BucketDescriptor(List.of(timePair)), VIEW_NAME);
-	private static final Fragment ROOT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+	private static final Bucket ROOT = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.MONTH);
 
@@ -42,16 +40,16 @@ class TimeBasedBucketCreatorTest {
 	@Test
 	void when_FragmentDoesNotExist_Then_NewFragmentIsCreated() {
 		final BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
-		when(bucketRepository.retrieveBucket(expectedBucketDescriptor.asDecodedString())).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
 
 		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
 
-		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedBucketDescriptor.asDecodedString());
+		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
 		verify(bucketRepository,
-				times(1)).retrieveBucket(expectedBucketDescriptor.asDecodedString());
-//		verify(relationsAttributer, times(1)).addInBetweenRelation(PARENT, child);
-//		verify(bucketRepository, times(1)).saveFragment(child);
-//		verifyNoMoreInteractions(bucketRepository);
+				times(1)).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
+		verify(relationsAttributer).addInBetweenRelation(PARENT, child);
+		verify(bucketRepository).insertBucket(child);
+		verifyNoMoreInteractions(bucketRepository);
 
 	}
 
@@ -59,30 +57,27 @@ class TimeBasedBucketCreatorTest {
 	void when_FragmentDoesNotExistAndIsDefaultFragment_Then_NewFragmentIsCreated() {
 		BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(
 				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
-		when(bucketRepository.retrieveBucket(expectedBucketDescriptor.asDecodedString())).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
 
 		Bucket child = bucketCreator.getOrCreateBucket(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
 
-		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedBucketDescriptor.asDecodedString());
-		verify(bucketRepository).retrieveBucket(expectedBucketDescriptor.asDecodedString());
-//		verify(relationsAttributer, times(1)).addDefaultRelation(ROOT, child);/
-//		verify(bucketRepository, times(1)).saveFragment(child);
-//		verifyNoMoreInteractions(bucketRepository);
-
+		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
+		verify(relationsAttributer).addDefaultRelation(ROOT, child);
+		verify(bucketRepository).insertBucket(child);
+		verifyNoMoreInteractions(bucketRepository);
 	}
 
 	@Test
 	void when_FragmentDoesExist_Then_FragmentIsRetrieved() {
 		Bucket expectedChild = PARENT.createChild(new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"));
-		when(bucketRepository.retrieveBucket(expectedChild.getBucketDescriptorAsString())).thenReturn(Optional.of(expectedChild));
+		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedChild.getBucketDescriptor())).thenReturn(Optional.of(expectedChild));
 
 		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
 
 		assertThat(child.getBucketDescriptorAsString()).isEqualTo(expectedChild.getBucketDescriptorAsString());
-//		verify(bucketRepository,
-//				times(1)).retrieveFragment(expectedChild.getFragmentId());
-//		verifyNoInteractions(relationsAttributer);
-//		verifyNoMoreInteractions(bucketRepository);
-
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, expectedChild.getBucketDescriptor());
+		verifyNoInteractions(relationsAttributer);
+		verifyNoMoreInteractions(bucketRepository);
 	}
 }
