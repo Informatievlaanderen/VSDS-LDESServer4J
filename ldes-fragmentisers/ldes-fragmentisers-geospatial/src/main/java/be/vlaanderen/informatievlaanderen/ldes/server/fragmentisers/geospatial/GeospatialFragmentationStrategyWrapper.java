@@ -4,16 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigPropert
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileBucketRelationsAttributer;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialBucketCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
 

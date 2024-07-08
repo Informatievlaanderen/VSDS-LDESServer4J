@@ -28,9 +28,8 @@ public class ReferenceBucketiser {
 	public Set<String> bucketise(@NotNull String subject,
 								 @NotNull Model memberModel) {
 		try {
-			final String memberSubject = subject.substring(subject.indexOf("/") + 1);
 			Set<String> references = memberModel
-					.listObjectsOfProperty(createResource(memberSubject), createProperty(fragmentationPath))
+					.listObjectsOfProperty(createResource(subject), createProperty(fragmentationPath))
 					.filterKeep(RDFNode::isURIResource)
 					.mapWith(RDFNode::asResource)
 					.mapWith(Resource::getURI)

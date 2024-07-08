@@ -19,13 +19,12 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 	                                                       FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
-		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);
 		TimeBasedRelationsAttributer relationsAttributer = new TimeBasedRelationsAttributer(
-				fragmentRepository, applicationContext, config);
+				applicationContext, config);
 		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(bucketRepository, relationsAttributer);
 		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy,

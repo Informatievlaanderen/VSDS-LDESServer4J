@@ -1,96 +1,100 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class TimeBasedRelationsAttributerTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final FragmentPair timePair = new FragmentPair(Granularity.YEAR.getValue(), "2023");
-	private static final FragmentPair monthPair = new FragmentPair(Granularity.MONTH.getValue(), "02");
-	private Fragment parentFragment;
+	private static final BucketDescriptorPair timePair = new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023");
+	private static final BucketDescriptorPair monthPair = new BucketDescriptorPair(Granularity.MONTH.getValue(), "02");
+	private static final Bucket PARENT_BUCKET = new Bucket(BucketDescriptor.of(timePair), VIEW_NAME);
 	private TimeBasedRelationsAttributer relationsAttributer;
-	private FragmentRepository fragmentRepository;
+	private ApplicationEventPublisher applicationEventPublisher;
 	private TimeBasedConfig config;
 
 	@BeforeEach
 	void setUp() {
-		parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
-		fragmentRepository = mock(FragmentRepository.class);
+		applicationEventPublisher = mock(ApplicationEventPublisher.class);
 		config = new TimeBasedConfig(".*", "", Granularity.SECOND, false);
-		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, mock(), config);
+		relationsAttributer = new TimeBasedRelationsAttributer(applicationEventPublisher, config);
 	}
 
 	@Test
 	void when_RelationNotPresent_AndCachingDisabled_ThenRelationIsAdded_NextUpdateTsIsNotSet_ChildrenStayMutable() {
-		Fragment child = parentFragment.createChild(monthPair);
+		Bucket child = PARENT_BUCKET.createChild(monthPair);
 
-		TreeRelation expected = new TreeRelation(config.getFragmentationPath(),
-				child.getFragmentId(),
-				LocalDateTime.of(2023,2,1,0,0).toString()
-				, XSD_DATETIME, TREE_GTE_RELATION);
+		BucketRelation gteRelation = new BucketRelation(
+				PARENT_BUCKET,
+				child,
+				TREE_GTE_RELATION,
+				LocalDateTime.of(2023,2,1,0,0).toString(),
+				XSD_DATETIME,
+				config.getFragmentationPath());
+		BucketRelation ltRelation = new BucketRelation(
+				PARENT_BUCKET,
+				child,
+				TREE_LT_RELATION,
+				LocalDateTime.of(2023,3,1,0,0).toString(),
+				XSD_DATETIME,
+				config.getFragmentationPath());
 
-		relationsAttributer.addInBetweenRelation(parentFragment, child);
+		relationsAttributer.addInBetweenRelation(PARENT_BUCKET, child);
 
-		assertThat(parentFragment.containsRelation(expected)).isTrue();
-		verify(fragmentRepository, times(2)).saveFragment(parentFragment);
-		assertThat(parentFragment.getNextUpdateTs()).isNull();
-		verify(fragmentRepository, times(0)).makeChildrenImmutable(any());
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(gteRelation));
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(ltRelation));
 	}
 
 	@Test
 	void when_RelationNotPresent_AndCachingEnabled_ThenRelationIsAdded_NextUpdateTsIsSet_AndChildrenBecomeImmutable() {
 		config = new TimeBasedConfig(".*", "", Granularity.SECOND, true);
-		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, mock(), config);
+		relationsAttributer = new TimeBasedRelationsAttributer(applicationEventPublisher, config);
+		Bucket child = PARENT_BUCKET.createChild(monthPair);
 
-		Fragment child = parentFragment.createChild(monthPair);
-		TreeRelation gteRelation = new TreeRelation(config.getFragmentationPath(),
-				child.getFragmentId(),
-				LocalDateTime.of(2023,2,1,0,0).toString()
-				, XSD_DATETIME, TREE_GTE_RELATION);
+		BucketRelation gteRelation = new BucketRelation(
+				PARENT_BUCKET,
+				child,
+				TREE_GTE_RELATION,
+				LocalDateTime.of(2023,2,1,0,0).toString(),
+				XSD_DATETIME,
+				config.getFragmentationPath());
+		BucketRelation ltRelation = new BucketRelation(
+				PARENT_BUCKET,
+				child,
+				TREE_LT_RELATION,
+				LocalDateTime.of(2023,3,1,0,0).toString(),
+				XSD_DATETIME,
+				config.getFragmentationPath());
 
-		TreeRelation ltRelation = new TreeRelation(config.getFragmentationPath(),
-				child.getFragmentId(),
-				LocalDateTime.of(2023,3,1,0,0).toString()
-				, XSD_DATETIME, TREE_LT_RELATION);
+		relationsAttributer.addInBetweenRelation(PARENT_BUCKET, child);
 
-		relationsAttributer.addInBetweenRelation(parentFragment, child);
-
-		assertThat(parentFragment.containsRelation(gteRelation)).isTrue();
-		assertThat(parentFragment.containsRelation(ltRelation)).isTrue();
-		verify(fragmentRepository, times(2)).saveFragment(parentFragment);
-		assertThat(parentFragment.getNextUpdateTs()).isEqualTo(LocalDateTime.of(2023, 2, 28, 23, 59, 59));
-		verify(fragmentRepository, times(2)).makeChildrenImmutable(parentFragment);
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(gteRelation));
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(ltRelation));
 	}
 
 	@Test
 	void when_RelationNotPresent_Then_AddDefaultRelation() {
-		Fragment child = parentFragment.createChild(monthPair);
-		TreeRelation expected = new TreeRelation("",
-				child.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION);
+		Bucket child = PARENT_BUCKET.createChild(monthPair);
+		BucketRelation expected = BucketRelation.createGenericRelation(PARENT_BUCKET, child);
 
-		relationsAttributer.addDefaultRelation(parentFragment, child);
+		relationsAttributer.addDefaultRelation(PARENT_BUCKET, child);
 
-		assertThat(parentFragment.containsRelation(expected)).isTrue();
-		assertThat(parentFragment.getNextUpdateTs()).isNull();
-		verify(fragmentRepository).saveFragment(parentFragment);
+		verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(expected));
 	}
 
 }
