@@ -20,5 +20,5 @@ public interface RelationEntityRepository extends JpaRepository<RelationEntity, 
 			""", nativeQuery = true)
 	void insertRelation(String fromPagePartialUrl, String toPagePartialUrl, String treeRelationType, String treeValue, String treeValueType, String treePath);
 
-	List<TreeRelationProjection> findAllByFromPageId(long pageId);
+	List<TreeRelationProjection> findDistinctByFromPageId(long pageId);
 }

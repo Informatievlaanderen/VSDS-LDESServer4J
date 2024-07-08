@@ -15,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
+
 @AutoConfigureObservability
 @CucumberContextConfiguration
 @EnableAutoConfiguration
@@ -36,5 +38,8 @@ public class LdesServerIntegrationTest {
 
 	@Autowired
 	MemberRepository memberRepository;
+
+	@Autowired
+	DataSource dataSource;
 
 }

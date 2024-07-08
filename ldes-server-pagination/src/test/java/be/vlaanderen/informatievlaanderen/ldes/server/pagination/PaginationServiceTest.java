@@ -5,15 +5,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.*;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -24,7 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,28 +35,24 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class,
-		MemberPaginationServiceCreator.class })
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, MemberPaginationServiceCreator.class, PaginationJobDefinitions.class, })
+@TestPropertySource(properties = {"ldes-server.fragmentation-cron=*/1 * * * * *"})
 class PaginationServiceTest {
 	private static final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
-	@MockBean(name = "bucketisationPartitioner")
+	@MockBean
 	private Partitioner bucketisationPartitioner;
-	@MockBean(name = "viewBucketisationPartitioner")
-	private Partitioner viewBucketisationPartitioner;
+	@MockBean
+	private ItemReader<Page> pageReader;
 	@MockBean
 	private ItemProcessor<Page, Page> pageRelationProcessor;
 	@MockBean
-	private ItemReader<List<BucketisedMember>> reader;
-	@MockBean
-	private ItemWriter<List<MemberAllocation>> writer;
+	private ItemWriter<Page> memberAssigner;
 	@MockBean
 	private FragmentRepository fragmentRepository;
 	@Autowired
@@ -61,6 +60,11 @@ class PaginationServiceTest {
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 	private List<MemberAllocation> output;
+	private final Page page = new Page(1,
+			"/%s".formatted(VIEW_NAME_1.asString()),
+			new Bucket(1, "es/v1"),
+			new PageNumber(1),
+			50);
 
 	@Test
 	void when_MemberBucketised_Then_CorrectServiceCalled() throws Exception {
@@ -69,14 +73,14 @@ class PaginationServiceTest {
 
 		mockBucketisationPartitioner();
 		mockReader();
-		mockWriter();
+		stubProcessor();
 
 
 		paginationService.handleMemberBucketisedEvent();
 
 		await()
 				.timeout(25, SECONDS)
-				.untilAsserted(() -> assertEquals(4, output.size()));
+				.untilAsserted(() -> verify(memberAssigner).write(argThat(chunk -> chunk.getItems().size() == 1)));
 	}
 
 	@Test
@@ -84,49 +88,29 @@ class PaginationServiceTest {
 		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
 		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
-		mockViewBucketisationPartitioner();
+		mockBucketisationPartitioner();
 		mockReader();
-		mockWriter();
+		stubProcessor();
 
-//		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
+		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
 
-		assertEquals(4, output.size());
+		verify(memberAssigner).write(argThat(chunk -> chunk.getItems().contains(page)));
 	}
 
 	private void mockBucketisationPartitioner() {
 		ExecutionContext context = new ExecutionContext();
-		context.putString("viewName", VIEW_NAME_1.asString());
-		context.putString("bucketDescriptor", VIEW_NAME_1.asString());
+		context.putLong("bucketId", 1);
 
 		when(bucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
 	}
 
-	private void mockViewBucketisationPartitioner() {
-		ExecutionContext context = new ExecutionContext();
-		context.putString("bucketDescriptor", VIEW_NAME_1.asString());
-
-		when(viewBucketisationPartitioner.partition(anyInt())).thenReturn(Map.of("testPartition", context));
-	}
-
 	private void mockReader() throws Exception {
-		when(reader.read()).thenReturn(bucketisedMembers(), null);
+		when(pageReader.read())
+				.thenReturn(page, null);
 	}
 
-	private void mockWriter() throws Exception {
-		output = new ArrayList<>();
-		doAnswer(invocation -> {
-			Chunk<List<MemberAllocation>> items = invocation.getArgument(0);
-			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
-			return null;
-		}).when(writer).write(any());
-	}
 
-	private List<BucketisedMember> bucketisedMembers() {
-		return List.of(
-				new BucketisedMember(1, VIEW_NAME_1, "es/v1"),
-				new BucketisedMember(2, VIEW_NAME_1, "es/v1"),
-				new BucketisedMember(3, VIEW_NAME_1, "es/v1"),
-				new BucketisedMember(4, VIEW_NAME_1, "es/v1")
-		);
+	private void stubProcessor() throws Exception {
+		when(pageRelationProcessor.process(page)).thenReturn(page);
 	}
 }

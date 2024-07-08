@@ -31,7 +31,7 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 		return pageEntityRepository
 				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
 				.map(page -> {
-					final List<TreeRelationProjection> relations = relationEntityRepository.findAllByFromPageId(page.getId());
+					final List<TreeRelationProjection> relations = relationEntityRepository.findDistinctByFromPageId(page.getId());
 					final List<TreeMemberProjection> members = memberEntityRepository.findAllByPageId(page.getId());
 					return TreeNodeMapper.fromProjection(page, relations, members);
 				});
@@ -42,7 +42,7 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 		return pageEntityRepository
 				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
 				.map(page -> {
-					final List<TreeRelationProjection> relations = relationEntityRepository.findAllByFromPageId(page.getId());
+					final List<TreeRelationProjection> relations = relationEntityRepository.findDistinctByFromPageId(page.getId());
 					return TreeNodeMapper.fromProjection(page, relations, List.of());
 				});
 	}

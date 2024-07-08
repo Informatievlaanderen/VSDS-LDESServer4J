@@ -1,13 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +39,8 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class, BucketJobDefinitions.class })
+@TestPropertySource(properties = { "spring.batch.jdbc.initialize-schema=always", "ldes-server.fragmentation-cron=*/1 * * * * *"})
 class FragmentationServiceTest {
 	private static final int FRAGMENTATION_INTERVAL = 1000;
 
@@ -49,9 +48,6 @@ class FragmentationServiceTest {
 	private ItemReader<FragmentationMember> newMemberReader;
 	@MockBean(name = "refragmentEventStream")
 	private ItemReader<FragmentationMember> rebucketiseMemberReader;
-
-	@MockBean
-	private FragmentRepository fragmentRepository;
 
 	@MockBean
 	ItemWriter<List<BucketisedMember>> itemWriter;
@@ -131,14 +127,5 @@ class FragmentationServiceTest {
 			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
 			return mock();
 		}).when(itemWriter).write(any());
-	}
-
-	@Test
-	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
-		EventStreamClosedEvent event = new EventStreamClosedEvent("collectionName");
-
-		fragmentationService.markFragmentsImmutableInCollection(event);
-
-		verify(fragmentRepository).markFragmentsImmutableInCollection("collectionName");
 	}
 }

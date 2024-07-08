@@ -13,6 +13,5 @@ public interface TreeNodeProjection {
 	String getViewName();
 	@Value("#{target.bucket.view.eventStream.name}")
 	String getCollectionName();
-//	@Value("#{target.bucket.view.composedViewName.equals('/%s'.formatted(target.partialUrl))}")
 	boolean isView();
 }

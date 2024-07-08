@@ -21,11 +21,12 @@ class EventStreamClosedEventHandlerTest {
 
 	@Test
 	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
-		EventStreamClosedEvent event = new EventStreamClosedEvent(this,"collectionName");
+		final String collectionName = "collectionName";
+		EventStreamClosedEvent event = new EventStreamClosedEvent(collectionName);
 
 		eventStreamClosedEventHandler.onEventStreamClosed(event);
 
-		verify(fragmentRepository).markFragmentsImmutableInCollection("collectionName");
+		verify(fragmentRepository).markFragmentsImmutableInCollection(collectionName);
 	}
 
 }

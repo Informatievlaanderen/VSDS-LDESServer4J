@@ -48,9 +48,7 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 		saveRelation(rootFragment, getRelationToParentFragment(referenceFragments));
 	}
 
-	public void addDefaultRelation(Fragment rootFragment, Fragment fragment) {
-		saveRelation(rootFragment, getDefaultRelation(fragment));
-	}
+
 
 	public void addDefaultRelation(Bucket rootBucket, Bucket referenceBucket) {
 		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(rootBucket, referenceBucket);
