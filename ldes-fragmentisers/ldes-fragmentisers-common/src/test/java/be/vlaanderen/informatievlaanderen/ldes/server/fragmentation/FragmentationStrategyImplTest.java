@@ -15,14 +15,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class FragmentationStrategyImplTest {
+	private static final long BUCKET_ID = 2L;
 	private static final long MEMBER_ID = 1L;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl();
 
 	@Test
 	void when_memberIsAddedToBucket_FragmentationStrategyImplSavesUpdatedFragment() {
-		BucketisedMember expectedBucketisedMember = new BucketisedMember(MEMBER_ID, VIEW_NAME, "");
-		Bucket bucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		BucketisedMember expectedBucketisedMember = new BucketisedMember(BUCKET_ID, MEMBER_ID);
+		Bucket bucket = new Bucket(2, BucketDescriptor.empty(), VIEW_NAME);
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.getMemberId()).thenReturn(MEMBER_ID);
 

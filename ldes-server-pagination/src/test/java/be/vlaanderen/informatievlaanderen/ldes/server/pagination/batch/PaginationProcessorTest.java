@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.MemberPaginationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.MemberPaginationServiceCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -36,10 +36,10 @@ public class TimeBasedBucketCreator {
 		return bucketRepository
 				.retrieveBucket(childBucket.getViewName(), childBucket.getBucketDescriptor())
 				.orElseGet(() -> {
-					bucketRepository.insertBucket(childBucket);
-					addRelationToParent(parentBucket, childBucket);
-					logBucketisation(parentBucket, childBucket);
-					return childBucket;
+					final Bucket insertedChild = bucketRepository.insertBucket(childBucket);
+					addRelationToParent(parentBucket, insertedChild);
+					logBucketisation(parentBucket, insertedChild);
+					return insertedChild;
 				});
 	}
 

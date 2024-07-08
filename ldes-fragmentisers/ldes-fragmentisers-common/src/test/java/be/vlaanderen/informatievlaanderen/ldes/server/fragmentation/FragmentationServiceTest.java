@@ -102,7 +102,7 @@ class FragmentationServiceTest {
 		for (int i = 1; i <= count; i++) {
 			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
 			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember(1, new ViewName(collectionName, "v" + i), "v" + i)));
+					new BucketisedMember(1, 1)));
 			fragmentationExecutors.add(executor);
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}

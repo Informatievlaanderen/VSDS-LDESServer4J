@@ -13,8 +13,7 @@ import java.util.List;
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
 	private static final String SQL = """
 			INSERT INTO page_members (bucket_id, member_id)
-			WITH view_names (view_id, view_name) AS (SELECT v.view_id, c.name || '/' || v.name FROM views v JOIN collections c ON v.collection_id = c.collection_id)
-			SELECT (SELECT b.bucket_id FROM buckets b JOIN view_names v ON b.view_id = v.view_id WHERE b.bucket = ? AND v.view_name = ?), ?
+			VALUES (?, ?)
 			ON CONFLICT DO NOTHING;
 			""";
 
@@ -26,13 +25,13 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 
 	@Override
 	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
-		Chunk<BucketisedMember> buckets = new Chunk<>(chunk.getItems()
+		Chunk<BucketisedMember> bucketisedMembers = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
 				.toList());
 
-		final List<Object[]> batchArgs = buckets.getItems().stream()
-				.map(bucket -> new Object[]{bucket.bucketDescriptor(), bucket.viewNameAsString(), bucket.memberId()})
+		final List<Object[]> batchArgs = bucketisedMembers.getItems().stream()
+				.map(bucketisedMember -> new Object[]{bucketisedMember.bucketId(), bucketisedMember.memberId()})
 				.toList();
 
 		jdbcTemplate.batchUpdate(SQL, batchArgs);

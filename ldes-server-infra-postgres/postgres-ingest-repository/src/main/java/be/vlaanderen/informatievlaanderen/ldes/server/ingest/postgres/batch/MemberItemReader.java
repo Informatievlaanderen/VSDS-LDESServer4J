@@ -37,7 +37,7 @@ public class MemberItemReader {
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(memberQuery())
-				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
+//				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
 				.pageSize(150)
 				.fetchSize(150)
 				.saveState(false)

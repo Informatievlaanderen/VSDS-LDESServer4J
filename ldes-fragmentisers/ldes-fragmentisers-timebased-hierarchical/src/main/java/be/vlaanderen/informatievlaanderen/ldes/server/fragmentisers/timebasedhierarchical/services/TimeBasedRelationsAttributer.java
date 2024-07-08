@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.TimeBasedLinearCachingTriggered;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
@@ -47,27 +48,22 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				XSD_DATETIME,
 				config.getFragmentationPath()
 		);
-		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(parentGteRelation));
-		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(parentLtRelation));
+		saveRelation(parentGteRelation, timestamp.getNextUpdateTs());
+		saveRelation(parentLtRelation, timestamp.getNextUpdateTs());
 	}
 
 	public void addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
 		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
-		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(defaultRelation));
+		saveRelation(defaultRelation, null);
 	}
 
-//	// TODO: move this to pagination OR publish event
-//	private void saveRelation(Fragment fragment, TreeRelation relation, LocalDateTime nextUpdateTs) {
-//		if (!fragment.containsRelation(relation)) {
-//			if (config.isLinearTimeCachingEnabled()) {
-//				fragmentRepository.makeChildrenImmutable(fragment);
-//				fragment.setNextUpdateTs(nextUpdateTs);
-//			}
-//
-//			fragment.addRelation(relation);
-//			fragmentRepository.saveFragment(fragment);
-//		}
-//	}
+	private void saveRelation(BucketRelation bucketRelation, LocalDateTime nextUpdateTs) {
+		if (config.isLinearTimeCachingEnabled()) {
+			applicationEventPublisher.publishEvent(new TimeBasedLinearCachingTriggered(bucketRelation.fromBucket().getBucketId(), nextUpdateTs));
+		}
+		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
+
+	}
 
 	private FragmentationTimestamp timestampFromFragmentPairs(Bucket bucket) {
 		Map<String, Integer> timeMap = bucket.getBucketDescriptorPairs().stream()

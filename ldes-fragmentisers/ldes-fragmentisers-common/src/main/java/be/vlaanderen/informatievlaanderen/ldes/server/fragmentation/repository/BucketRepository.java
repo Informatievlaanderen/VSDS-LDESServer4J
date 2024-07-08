@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface BucketRepository {
 	Optional<Bucket> retrieveBucket(ViewName viewName, BucketDescriptor bucketDescriptor);
 
-	void insertBucket(Bucket bucket);
+	Bucket insertBucket(Bucket bucket);
 
 	Optional<Bucket> retrieveRootBucket(ViewName viewName);
 }

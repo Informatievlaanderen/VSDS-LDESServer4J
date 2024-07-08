@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
@@ -30,9 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
@@ -41,7 +37,7 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, MemberPaginationServiceCreator.class, PaginationJobDefinitions.class, })
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, PaginationService.class, PaginationJobDefinitions.class, })
 @TestPropertySource(properties = {"ldes-server.fragmentation-cron=*/1 * * * * *"})
 class PaginationServiceTest {
 	private static final ViewName VIEW_NAME_1 = new ViewName("es", "v1");
@@ -53,8 +49,6 @@ class PaginationServiceTest {
 	private ItemProcessor<Page, Page> pageRelationProcessor;
 	@MockBean
 	private ItemWriter<Page> memberAssigner;
-	@MockBean
-	private FragmentRepository fragmentRepository;
 	@Autowired
 	private PaginationService paginationService;
 	@Autowired
@@ -68,7 +62,6 @@ class PaginationServiceTest {
 
 	@Test
 	void when_MemberBucketised_Then_CorrectServiceCalled() throws Exception {
-		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
 		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
 		mockBucketisationPartitioner();
@@ -85,7 +78,6 @@ class PaginationServiceTest {
 
 	@Test
 	void when_ViewDeleted_Then_ServiceRemoved() throws Exception {
-		when(fragmentRepository.retrieveFragment(any())).thenReturn(Optional.of(new Fragment(fromFragmentId(VIEW_NAME_1.asString()))));
 		eventPublisher.publishEvent(new ViewInitializationEvent(new ViewSpecification(VIEW_NAME_1, List.of(), List.of(), 10)));
 
 		mockBucketisationPartitioner();

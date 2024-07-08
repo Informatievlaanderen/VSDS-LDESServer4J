@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.bucketisedmember.MemberBucketJpaRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.MemberBucketEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.mock;
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @ComponentScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class, BucketisedMemberPostgresRepository.class,
-		MemberBucketEntityMapper.class, MemberBucketJpaRepository.class, MemberBucketEntityRepository.class})
+		MemberBucketJpaRepository.class, MemberBucketEntityRepository.class})
 @Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresFragmentationIntegrationTest {
@@ -43,9 +42,6 @@ public class PostgresFragmentationIntegrationTest {
 
 	@Autowired
 	public BucketisedMemberRepository bucketisedMemberRepository;
-
-	@Autowired
-	public MemberBucketEntityMapper mapper;
 
 	@Autowired
 	public MemberBucketEntityRepository memberBucketEntityRepository;
