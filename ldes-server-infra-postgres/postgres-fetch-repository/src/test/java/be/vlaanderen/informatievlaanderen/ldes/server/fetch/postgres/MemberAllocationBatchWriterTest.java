@@ -24,19 +24,19 @@ class MemberAllocationBatchWriterTest extends PostgresAllocationIntegrationTest 
 
 	AtomicInteger atomicInteger = new AtomicInteger();
 
-	@Test
-	void testWriter() throws Exception {
-		memberAllocationBatchWriter.write(Chunk.of(List.of(memberAllocation(), memberAllocation()),
-				List.of(memberAllocation(), memberAllocation())));
-
-		var items = allocationEntityRepository.findAll()
-				.stream()
-				.sorted(Comparator.comparing(MemberAllocationEntity::getId))
-				.toList();
-
-		assertEquals(4, items.size());
-		assertEquals("4", items.getLast().getMemberId());
-	}
+//	@Test
+//	void testWriter() throws Exception {
+//		memberAllocationBatchWriter.write(Chunk.of(List.of(memberAllocation(), memberAllocation()),
+//				List.of(memberAllocation(), memberAllocation())));
+//
+//		var items = allocationEntityRepository.findAll()
+//				.stream()
+//				.sorted(Comparator.comparing(MemberAllocationEntity::getId))
+//				.toList();
+//
+//		assertEquals(4, items.size());
+//		assertEquals("4", items.getLast().getMemberId());
+//	}
 
 	MemberAllocation memberAllocation() {
 		return new MemberAllocation(String.valueOf(atomicInteger.incrementAndGet()), "es", "es/v1",

@@ -60,7 +60,7 @@ class BucketPostgresRepositoryTest {
 				"bucket", BUCKET_DESCRIPTOR.asDecodedString(),
 				"viewName", VIEW_NAME.asString()
 		);
-		when(namedParameterJdbcTemplate.update(anyString(), any(), any()))
+		when(namedParameterJdbcTemplate.update(anyString(), any(), any(), any()))
 				.thenAnswer(invocationOnMock -> {
 					invocationOnMock.getArgument(2, KeyHolder.class).getKeyList().add(Map.of("bucket_id", 101L));
 					return 1;
@@ -75,6 +75,7 @@ class BucketPostgresRepositoryTest {
 						.asInstanceOf(InstanceOfAssertFactories.type(MapSqlParameterSource.class))
 						.extracting(MapSqlParameterSource::getValues, InstanceOfAssertFactories.map(String.class, String.class))
 						.containsExactlyInAnyOrderEntriesOf(expectedSqlParams)),
+				any(),
 				any());
 		assertThat(result)
 				.usingRecursiveComparison()

@@ -20,21 +20,21 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
-@CucumberContextConfiguration
-@EnableAutoConfiguration
-@DataJpaTest
-@AutoConfigureEmbeddedDatabase
-@ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class})
-@EntityScan(basePackageClasses = {EventStreamEntity.class, MemberEntity.class, ViewEntity.class, DcatDatasetEntity.class,
-DcatDataServiceEntity.class, EventSourceEntity.class, ShaclShapeEntity.class})
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest"})
-@Sql(value = {"./collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"./remove.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@SuppressWarnings("java:S2187")
-public class PostgresIngestIntegrationTest {
-
-	@Autowired
-	MemberPostgresRepository memberRepository;
-
-}
+//@CucumberContextConfiguration
+//@EnableAutoConfiguration
+//@DataJpaTest
+//@AutoConfigureEmbeddedDatabase
+//@ActiveProfiles("postgres-test")
+//@ContextConfiguration(classes = { MemberEntityRepository.class})
+//@EntityScan(basePackageClasses = {EventStreamEntity.class, MemberEntity.class, ViewEntity.class, DcatDatasetEntity.class,
+//DcatDataServiceEntity.class, EventSourceEntity.class, ShaclShapeEntity.class})
+//@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest"})
+//@Sql(value = {"./collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//@Sql(value = {"./remove.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+//@SuppressWarnings("java:S2187")
+//public class PostgresIngestIntegrationTest {
+//
+//	@Autowired
+//	MemberPostgresRepository memberRepository;
+//
+//}

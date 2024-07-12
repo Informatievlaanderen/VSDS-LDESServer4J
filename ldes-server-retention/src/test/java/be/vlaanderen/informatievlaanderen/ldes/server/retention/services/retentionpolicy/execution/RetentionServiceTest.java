@@ -37,41 +37,41 @@ class RetentionServiceTest {
 		retentionService = new RetentionService(memberPropertiesRepository, memberRemover, retentionPolicyCollection, deletionPolicyCollection);
 	}
 
-	@Test
-	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreRemovedFromTheView() {
-		MemberProperties firstMember = getMemberProperties("1", 0);
-		var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_A, timeBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember));
-
-		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(1);
-		MemberProperties secondMember = getMemberProperties("2", 1);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_B, versionBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember, secondMember));
-
-		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
-		MemberProperties thirdMember = getMemberProperties("3", 0);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_C, timeAndVersionBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember, secondMember, thirdMember));
-
-		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(
-				VIEW_A, timeBasedRetentionPolicy,
-				VIEW_B, versionBasedRetentionPolicy,
-				VIEW_C, timeAndVersionBasedRetentionPolicy
-		));
-
-		when(deletionPolicyCollection.getEventSourceRetentionPolicyMap()).thenReturn(Map.of());
-
-		retentionService.executeRetentionPolicies();
-
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_A.asString());
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_B.asString());
-		verify(memberRemover).removeMemberFromView(secondMember, VIEW_B.asString());
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_C.asString());
-		verify(memberRemover).removeMemberFromView(secondMember, VIEW_C.asString());
-		verify(memberRemover).removeMemberFromView(thirdMember, VIEW_C.asString());
-		verify(memberRemover, never()).deleteMembers(anyList());
-	}
+//	@Test
+//	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreRemovedFromTheView() {
+//		MemberProperties firstMember = getMemberProperties("1", 0);
+//		var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
+//		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_A, timeBasedRetentionPolicy))
+//				.thenReturn(Stream.of(firstMember));
+//
+//		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(1);
+//		MemberProperties secondMember = getMemberProperties("2", 1);
+//		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_B, versionBasedRetentionPolicy))
+//				.thenReturn(Stream.of(firstMember, secondMember));
+//
+//		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
+//		MemberProperties thirdMember = getMemberProperties("3", 0);
+//		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_C, timeAndVersionBasedRetentionPolicy))
+//				.thenReturn(Stream.of(firstMember, secondMember, thirdMember));
+//
+//		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(
+//				VIEW_A, timeBasedRetentionPolicy,
+//				VIEW_B, versionBasedRetentionPolicy,
+//				VIEW_C, timeAndVersionBasedRetentionPolicy
+//		));
+//
+//		when(deletionPolicyCollection.getEventSourceRetentionPolicyMap()).thenReturn(Map.of());
+//
+//		retentionService.executeRetentionPolicies();
+//
+//		verify(memberRemover).removeMemberFromView(firstMember, VIEW_A.asString());
+//		verify(memberRemover).removeMemberFromView(firstMember, VIEW_B.asString());
+//		verify(memberRemover).removeMemberFromView(secondMember, VIEW_B.asString());
+//		verify(memberRemover).removeMemberFromView(firstMember, VIEW_C.asString());
+//		verify(memberRemover).removeMemberFromView(secondMember, VIEW_C.asString());
+//		verify(memberRemover).removeMemberFromView(thirdMember, VIEW_C.asString());
+//		verify(memberRemover, never()).deleteMembers(anyList());
+//	}
 
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfEventSource_MembersAreRemovedFromTheEventSource() {

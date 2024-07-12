@@ -65,15 +65,16 @@ class StreamingTreeNodeFactoryImplTest {
     void when_FragmentExists_ThenReturnThatFragment() {
         LdesFragmentIdentifier id = new LdesFragmentIdentifier(VIEW_NAME,
                 List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-        Fragment fragment = new Fragment(id, true, 10, List.of(), null);
+        TreeNode treeNodeWithoutMembers = new TreeNode(HOST + id.asDecodedFragmentId(), true, false, List.of(),
+                List.of(), "collectionName", null);
         List<Member> members = List.of(new Member("test", ModelFactory.createDefaultModel()), new Member("test2", ModelFactory.createDefaultModel()));
-        TreeNode treeNode = new TreeNode(HOST + fragment.getFragmentIdString(), true, false, List.of(),
+        TreeNode treeNode = new TreeNode(HOST + id.asDecodedFragmentId(), true, false, List.of(),
                 members, "collectionName", null);
 
-        Mockito.when(fragmentRepository.retrieveFragment(fragment.getFragmentId()))
-                .thenReturn(Optional.of(fragment));
-        Mockito.when(allocationRepository.getMemberAllocationsByFragmentId(fragment.getFragmentId().asDecodedFragmentId()))
-                .thenReturn(members.stream().map(member -> toAllocation(member, fragment)));
+        Mockito.when(treeNodeRepository.findTreeNodeWithoutMembers(id))
+                .thenReturn(Optional.of(treeNodeWithoutMembers));
+        Mockito.when(treeMemberRepository.findAllByTreeNodeUrl(id.asDecodedFragmentId()))
+                .thenReturn(members.stream());
         Mockito.when(memberFetcher.fetchAllByIds(List.of("test", "test2")))
                 .thenReturn(members.stream());
 

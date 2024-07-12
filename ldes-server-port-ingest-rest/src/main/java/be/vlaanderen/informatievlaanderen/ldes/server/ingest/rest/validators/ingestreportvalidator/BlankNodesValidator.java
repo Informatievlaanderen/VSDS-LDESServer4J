@@ -8,6 +8,8 @@ import org.apache.jena.rdf.model.Statement;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,39 +18,51 @@ import java.util.stream.Collectors;
 @Component
 public class BlankNodesValidator implements IngestReportValidator {
 
-    @Override
-    public void validate(Model model, EventStream eventStream, ShaclReportManager reportManager) {
-        Map<Integer, List<Resource>> numberOfReferences = getNumberOfNodeReferences(model);
-
-        validateDanglingBlankNodes(numberOfReferences, model, reportManager);
-        validateBlankNodeScope(numberOfReferences, model, reportManager);
+    private static class BlankNodeInfo {
+        public BlankNodeInfo(Resource s) { this.subject = s; }
+        public final Resource subject;
+        public final ArrayList<Statement> statements = new ArrayList<>();
+        public int referenceCount = 0;
+        public final ArrayList<Statement> references = new ArrayList<>();
     }
 
-    private void validateDanglingBlankNodes(Map<Integer, List<Resource>> nrOfReferences, Model model, ShaclReportManager reportManager) {
-        if (nrOfReferences.containsKey(0)) {
-            nrOfReferences.get(0).forEach(subject-> {
-                if (subject.isAnon()) {
-                    reportManager.addEntry(subject, model.listStatements(subject, null, (RDFNode) null).toList(),
-                            "Object graphs don't allow blank nodes to occur outside of a named object.");
-                }
-            });
-        }
-    }
-
-    private void validateBlankNodeScope(Map<Integer, List<Resource>> numberOfReferences, Model model, ShaclReportManager reportManager) {
-        numberOfReferences.forEach((amount, resourceList) -> {
-            if (amount > 1) {
-                resourceList.forEach(resource -> reportManager.addEntry(resource,
-                        model.listStatements(null, null, resource).toList(),
-                        "Blank nodes must be scoped to one object."));
+    private Map<Resource, BlankNodeInfo> createBlankNodeReferenceCounts(Model model) {
+        Map<Resource, BlankNodeInfo> infoPerBlankNode = new HashMap<>();
+        model.listStatements().forEach(statement -> {
+            Resource subject = statement.getSubject();
+            if (subject.isAnon()) {
+                Resource blankNode = subject.asResource();
+                BlankNodeInfo info = infoPerBlankNode.computeIfAbsent(blankNode, BlankNodeInfo::new);
+                info.statements.add(statement);
+            }
+            RDFNode object = statement.getObject();
+            if (object.isAnon()) {
+                Resource blankNode = object.asResource();
+                BlankNodeInfo info = infoPerBlankNode.computeIfAbsent(blankNode, BlankNodeInfo::new);
+                info.referenceCount += 1;
+                info.references.add(statement);
             }
         });
-
+        return infoPerBlankNode;
     }
 
-    private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
-        return model.listSubjects().filterKeep(Resource::isAnon).toList()
-                .stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s)
-                        .mapWith(Statement::getSubject).toSet().size()));
+    @Override
+    public void validate(Model model, EventStream eventStream, ShaclReportManager reportManager) {
+        Map<Resource, BlankNodeInfo> blankNodeReferenceCounts = createBlankNodeReferenceCounts(model);
+
+        validateDanglingBlankNodes(blankNodeReferenceCounts, reportManager);
+        validateBlankNodeScope(blankNodeReferenceCounts, reportManager);
+    }
+
+    private void validateDanglingBlankNodes(Map<Resource, BlankNodeInfo> blankNodeReferenceCounts, ShaclReportManager reportManager) {
+        blankNodeReferenceCounts.values().stream().filter(x -> x.referenceCount == 0).toList().forEach(x -> {
+            reportManager.addEntry(x.subject, x.statements, "Object graphs don't allow blank nodes to occur outside of a named object.");
+        });
+    }
+
+    private void validateBlankNodeScope(Map<Resource, BlankNodeInfo> blankNodeReferenceCounts, ShaclReportManager reportManager) {
+        blankNodeReferenceCounts.values().stream().filter(x -> x.referenceCount > 1).toList().forEach(x -> {
+            reportManager.addEntry(x.subject, x.references, "Blank nodes must be scoped to one object.");
+        });
     }
 }

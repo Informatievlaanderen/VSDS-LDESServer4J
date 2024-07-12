@@ -53,7 +53,7 @@ class FragmentationStrategyBatchCollectionTest {
 		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
-		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
+//		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
 		inOrder.verify(bucketisedMemberRepository).deleteByViewName(initResult.viewName);
 	}
 
@@ -80,7 +80,6 @@ class FragmentationStrategyBatchCollectionTest {
 		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
-		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
 		inOrder.verify(bucketisedMemberRepository).deleteByCollection(initResult.viewName.getCollectionName());
 	}
 

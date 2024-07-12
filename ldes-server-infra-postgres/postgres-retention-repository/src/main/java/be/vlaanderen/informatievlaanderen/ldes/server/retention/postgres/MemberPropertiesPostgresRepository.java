@@ -1,6 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.MemberViewsEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
@@ -27,14 +30,18 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	private final MemberViewEntityRepository viewsRepo;
 	private final EntityManager entityManager;
 	private final MemberPropertiesEntityMapper propertiesMapper;
+	private final MemberEntityRepository memberEntityRepository;
+	private final MemberEntityMapper mapper;
 
 	public MemberPropertiesPostgresRepository(MemberPropertiesEntityRepository propertiesRepo, MemberViewEntityRepository viewsRepo, EntityManager entityManager,
-	                                          MemberPropertiesEntityMapper propertiesMapper) {
+                                              MemberPropertiesEntityMapper propertiesMapper, MemberEntityRepository memberEntityRepository, MemberEntityMapper mapper) {
 		this.propertiesRepo = propertiesRepo;
 		this.viewsRepo = viewsRepo;
 		this.entityManager = entityManager;
 		this.propertiesMapper = propertiesMapper;
-	}
+        this.memberEntityRepository = memberEntityRepository;
+        this.mapper = mapper;
+    }
 
 	@Override
 	@Transactional
@@ -80,6 +87,24 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	@Transactional
+	public void removePageMemberEntity(String id, String viewName) {
+		Query query = entityManager.createQuery("DELETE FROM page_members p WHERE p.MemberEntity.old_id == :memberId AND p.BucketEntity.ViewEntity.name == :viewName");
+		query.setParameter("viewName", viewName);
+		query.setParameter("memberId", id);
+		query.executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public void removePageMemberEntity(Long id, String viewName) {
+		Query query = entityManager.createQuery("DELETE FROM page_members p WHERE p.MemberEntity.id == :memberId AND p.BucketEntity.ViewEntity.name == :viewName");
+		query.setParameter("viewName", viewName);
+		query.setParameter("memberId", id);
+		query.executeUpdate();
+	}
+
+	@Override
+	@Transactional
 	public void removeViewReference(String viewName) {
 		viewsRepo.deleteViewForMember(viewName);
 	}
@@ -92,13 +117,13 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	public void deleteAllByIds(List<String> ids) {
-		propertiesRepo.deleteAllById(ids);
+		memberEntityRepository.deleteAllByOldIdIn(ids);
 	}
 
 	@Override
 	@Transactional
 	public void removeFromEventSource(List<String> ids) {
-		Query query = entityManager.createQuery("UPDATE MemberPropertiesEntity m SET m.isInEventSource = :isInEventSource " +
+		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = :isInEventSource " +
 		                                        "WHERE m.id IN :memberIds");
 		query.setParameter("isInEventSource", false);
 		query.setParameter("memberIds", ids);
@@ -106,76 +131,69 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+	public void findExpiredMemberProperties(ViewName viewName,
 	                                                            TimeBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.stream()
-				.filter(entity -> entity.getViews().contains(viewName.asString()))
-				.map(propertiesMapper::toMemberProperties);
+		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
 	}
 
 	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+	public void findExpiredMemberProperties(ViewName viewName,
 	                                                            VersionBasedRetentionPolicy policy) {
 
-		return propertiesRepo.findAllByCollectionName(viewName.getCollectionName())
-				.stream()
-				.filter(entity -> entity.getViews().contains(viewName.asString()))
+		memberEntityRepository.findAllByViewName(viewName.getCollectionName())
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
-				.map(propertiesMapper::toMemberProperties)
-				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.skip(policy.numberOfMembersToKeep()));
+						.skip(policy.numberOfMembersToKeep()))
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));;
+
 	}
 
 	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+	public void findExpiredMemberProperties(ViewName viewName,
 	                                                            TimeAndVersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.stream()
-				.filter(entity -> entity.getViews().contains(viewName.asString()))
+		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
-				.map(propertiesMapper::toMemberProperties)
-				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.skip(policy.numberOfMembersToKeep()));
+						.skip(policy.numberOfMembersToKeep()))
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));;
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
-				.stream()
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
 				.map(propertiesMapper::toMemberProperties);
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, VersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionName(collectionName)
+		return memberEntityRepository.findAllByCollectionName(collectionName)
 				.stream()
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
-				.map(propertiesMapper::toMemberProperties)
-				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.skip(policy.numberOfMembersToKeep()));
+						.skip(policy.numberOfMembersToKeep()))
+				.map(propertiesMapper::toMemberProperties);
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeAndVersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
-				.stream()
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
-				.map(propertiesMapper::toMemberProperties)
-				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.skip(policy.numberOfMembersToKeep()));
+						.skip(policy.numberOfMembersToKeep()))
+				.map(propertiesMapper::toMemberProperties);
 	}
 
 }

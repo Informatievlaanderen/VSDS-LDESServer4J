@@ -26,9 +26,9 @@ public class MemberRemoverImpl implements MemberRemover {
 	@Override
 	public void removeMemberFromView(MemberProperties memberProperties, String viewName) {
 		memberProperties.deleteViewReference(viewName);
-		memberPropertiesRepository.removeViewReference(memberProperties.getId(), viewName);
-		applicationEventPublisher
-				.publishEvent(new MemberUnallocatedEvent(memberProperties.getId(), ViewName.fromString(viewName)));
+		memberPropertiesRepository.removePageMemberEntity(memberProperties.getId(), viewName);
+//		applicationEventPublisher
+//				.publishEvent(new MemberUnallocatedEvent(memberProperties.getId(), ViewName.fromString(viewName)));
 	}
 
 	@Override
@@ -41,8 +41,8 @@ public class MemberRemoverImpl implements MemberRemover {
 		List<String> ids = memberProperties.stream().filter(MemberProperties::isInEventSource).map(MemberProperties::getId).toList();
 		if (!ids.isEmpty()) {
 			memberPropertiesRepository.removeFromEventSource(ids);
-			applicationEventPublisher.publishEvent(
-					new MembersRemovedFromEventSourceEvent(ids));
+//			applicationEventPublisher.publishEvent(
+//					new MembersRemovedFromEventSourceEvent(ids));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class MemberRemoverImpl implements MemberRemover {
 	public void deleteMembers(List<MemberProperties> memberProperties) {
 		List<String> ids = memberProperties.stream().map(MemberProperties::getId).toList();
 		memberPropertiesRepository.deleteAllByIds(ids);
-		applicationEventPublisher.publishEvent(
-				new MembersDeletedEvent(ids));
+//		applicationEventPublisher.publishEvent(
+//				new MembersDeletedEvent(ids));
 	}
 }

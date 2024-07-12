@@ -58,7 +58,7 @@ public class RetentionService {
 
 	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName viewName,
 																 RetentionPolicy retentionPolicy) {
-		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
+		switch (retentionPolicy.getType()) {
 			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
 					(TimeBasedRetentionPolicy) retentionPolicy);
 			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
@@ -67,9 +67,9 @@ public class RetentionService {
 					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
 		};
 
-		memberPropertiesStream.forEach(
-				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
-		);
+//		memberPropertiesStream.forEach(
+//				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
+//		);
 	}
 
 	private void removeMembersFromEventSourceThatMatchRetentionPolicies(String collectionName,

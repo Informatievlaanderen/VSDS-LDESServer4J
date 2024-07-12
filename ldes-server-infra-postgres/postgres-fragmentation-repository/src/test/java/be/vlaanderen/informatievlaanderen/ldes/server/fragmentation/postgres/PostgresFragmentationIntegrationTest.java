@@ -40,8 +40,8 @@ public class PostgresFragmentationIntegrationTest {
 	@Autowired
 	public FragmentRepository fragmentRepository;
 
-	@Autowired
-	public BucketisedMemberRepository bucketisedMemberRepository;
+//	@Autowired
+//	public BucketisedMemberRepository bucketisedMemberRepository;
 
 	@Autowired
 	public MemberBucketEntityRepository memberBucketEntityRepository;

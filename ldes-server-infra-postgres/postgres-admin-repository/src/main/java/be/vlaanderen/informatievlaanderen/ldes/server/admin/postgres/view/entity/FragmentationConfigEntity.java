@@ -41,4 +41,6 @@ public class FragmentationConfigEntity {
     public void setConfig(Map<String, String> config) {
         this.config = config;
     }
+
+    //TODO: add equals and hashCode
 }

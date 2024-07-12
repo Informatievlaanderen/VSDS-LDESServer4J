@@ -57,6 +57,9 @@ public class MemberEntity {
 	public long getId() {
 		return id;
 	}
+	public String getOldId() {
+		return oldId;
+	}
 
 	public String getSubject() {
 		return subject;

@@ -23,23 +23,23 @@ public class IngestedMemberHandler {
         this.viewCollection = viewCollection;
     }
 
-    @EventListener
-    public void handleMembersIngestedEvent(MembersIngestedEvent event) {
-        final List<MemberProperties> members = event.members().stream()
-                .map(member -> new MemberProperties(member.id(), event.collectionName(), member.versionOf(), member.timestamp(), true))
-                .toList();
+//    @EventListener
+//    public void handleMembersIngestedEvent(MembersIngestedEvent event) {
+//        final List<MemberProperties> members = event.members().stream()
+//                .map(member -> new MemberProperties(member.id(), event.collectionName(), member.versionOf(), member.timestamp(), true))
+//                .toList();
+//
+//        addViewsToMembers(members);
+//        memberPropertiesRepository.insertAll(members);
+//    }
 
-        addViewsToMembers(members);
-        memberPropertiesRepository.insertAll(members);
-    }
-
-    private void addViewsToMembers(List<MemberProperties> members) {
-        final List<String> viewNames = viewCollection.getViews().stream()
-                .map(ViewSpecification::getName)
-                .map(ViewName::asString)
-                .toList();
-
-        members.forEach(member -> member.addAllViewReferences(viewNames));
-    }
+//    private void addViewsToMembers(List<MemberProperties> members) {
+//        final List<String> viewNames = viewCollection.getViews().stream()
+//                .map(ViewSpecification::getName)
+//                .map(ViewName::asString)
+//                .toList();
+//
+//        members.forEach(member -> member.addAllViewReferences(viewNames));
+//    }
 
 }

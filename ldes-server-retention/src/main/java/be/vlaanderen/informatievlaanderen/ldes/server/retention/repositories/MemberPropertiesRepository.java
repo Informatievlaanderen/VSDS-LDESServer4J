@@ -23,6 +23,11 @@ public interface MemberPropertiesRepository {
 	Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName);
 
 	void removeViewReference(String id, String viewName);
+
+	void removePageMemberEntity(String id, String viewName);
+
+	void removePageMemberEntity(Long id, String viewName);
+
 	void removeViewReference(String viewName);
 
 	void removeMemberPropertiesOfCollection(String collectionName);
@@ -37,9 +42,9 @@ public interface MemberPropertiesRepository {
 	 * @param viewName
 	 * @param policy
 	 */
-	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy);
-	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy);
-	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
+	void findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy);
+	void findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy);
+	void findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
 	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeBasedRetentionPolicy policy);
 	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, VersionBasedRetentionPolicy policy);
 	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeAndVersionBasedRetentionPolicy policy);

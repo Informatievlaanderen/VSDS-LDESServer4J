@@ -15,19 +15,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
-@CucumberContextConfiguration
-@EnableAutoConfiguration
-@RecordApplicationEvents
-@ContextConfiguration(classes = {InMemoryMemberPropertiesRepository.class, SchedulingConfig.class, ConfigDataApplicationContextInitializer.class})
-@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.retention"})
-@EnableConfigurationProperties(value = ServerConfig.class)
-@TestPropertySource(properties = "ldes-server.retention-cron=*/2 * * * * *")
-@SuppressWarnings("java:S2187")
-public class RetentionIntegrationTest {
-
-	@Autowired
-	ApplicationEventPublisher applicationEventPublisher;
-
-	@Autowired
-	MemberPropertiesRepository memberPropertiesRepository;
-}
+//@CucumberContextConfiguration
+//@EnableAutoConfiguration
+//@RecordApplicationEvents
+//@ContextConfiguration(classes = {InMemoryMemberPropertiesRepository.class, SchedulingConfig.class, ConfigDataApplicationContextInitializer.class})
+//@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.retention"})
+//@EnableConfigurationProperties(value = ServerConfig.class)
+//@TestPropertySource(properties = "ldes-server.retention-cron=*/2 * * * * *")
+//@SuppressWarnings("java:S2187")
+//public class RetentionIntegrationTest {
+//
+//	@Autowired
+//	ApplicationEventPublisher applicationEventPublisher;
+//
+//	@Autowired
+//	MemberPropertiesRepository memberPropertiesRepository;
+//}

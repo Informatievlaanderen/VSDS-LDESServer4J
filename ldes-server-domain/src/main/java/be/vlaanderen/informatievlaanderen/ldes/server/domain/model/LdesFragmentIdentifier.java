@@ -47,8 +47,10 @@ public class LdesFragmentIdentifier {
 				List<FragmentPair> fragmentPairs = new ArrayList<>();
 				String[] fragmentPairStrings = splitString[1].split("&");
 				for (String fragmentPairString : fragmentPairStrings) {
-					String[] splitFragmentPairString = fragmentPairString.split("=", -1);
-					fragmentPairs.add(new FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
+					if (fragmentPairString.contains("=")) {
+						String[] splitFragmentPairString = fragmentPairString.split("=", -1);
+						fragmentPairs.add(new FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
+					}
 				}
 				return new LdesFragmentIdentifier(viewName, fragmentPairs);
 			}

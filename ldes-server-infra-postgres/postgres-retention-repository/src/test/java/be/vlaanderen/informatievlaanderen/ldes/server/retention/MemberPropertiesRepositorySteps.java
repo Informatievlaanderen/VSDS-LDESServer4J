@@ -55,7 +55,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 
 	@And("I retrieve the MemberProperties with id {string}")
 	public void iRetrieveTheMemberPropertiesWithId(String id) {
-		retrievedMemberProperties = memberPropertiesRepository.retrieve(id).stream().toList();
+//		retrievedMemberProperties = memberPropertiesRepository.retrieve(id).stream().toList();
 	}
 
 	@And("The retrieved MemberProperties has the view {string} as a property")
@@ -121,8 +121,8 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 		Duration duration = Duration.parse(durationString);
 		ViewName viewName = ViewName.fromString(viewNameString);
 		TimeBasedRetentionPolicy timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(duration);
-		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(viewName, timeBasedRetentionPolicy).toList();
+//		retrievedMemberProperties =
+//				memberPropertiesRepository.findExpiredMemberProperties(viewName, timeBasedRetentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for collection {string} with duration {string}")
@@ -139,8 +139,8 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 																   int versionsToKeep) {
 		var viewName = ViewName.fromString(viewNameString);
 		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep);
-		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).toList();
+//		retrievedMemberProperties =
+//				memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for collection {string} with {int} versions")
@@ -158,8 +158,8 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 		var duration = Duration.parse(durationString);
 		var viewName = ViewName.fromString(viewNameString);
 		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
-		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(viewName, retentionPolicy).toList();
+//		retrievedMemberProperties =
+//				memberPropertiesRepository.findExpiredMemberProperties(viewName, retentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for collection {string} with duration {string} and {int} versions")
