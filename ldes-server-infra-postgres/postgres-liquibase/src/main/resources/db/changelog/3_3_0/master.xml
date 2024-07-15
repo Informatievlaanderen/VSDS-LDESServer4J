@@ -3,4 +3,10 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <include file="/db/changelog/3_3_0/member-data-model/member-rename-id.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-buckets-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-pages-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-page-members-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-relations-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/create-page-on-bucket-insertion-trigger.xml" />
 </databaseChangeLog>
