@@ -59,11 +59,11 @@ public class RetentionService {
 	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName viewName,
 																 RetentionPolicy retentionPolicy) {
 		switch (retentionPolicy.getType()) {
-			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+			case TIME_BASED -> memberPropertiesRepository.removeExpiredMembers(viewName,
 					(TimeBasedRetentionPolicy) retentionPolicy);
-			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+			case VERSION_BASED -> memberPropertiesRepository.removeExpiredMembers(viewName,
 					(VersionBasedRetentionPolicy) retentionPolicy);
-			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.removeExpiredMembers(viewName,
 					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
 		};
 
@@ -75,16 +75,16 @@ public class RetentionService {
 	private void removeMembersFromEventSourceThatMatchRetentionPolicies(String collectionName,
 														 RetentionPolicy retentionPolicy) {
 		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
-			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(collectionName,
+			case TIME_BASED -> memberPropertiesRepository.retrieveExpiredMembers(collectionName,
 					(TimeBasedRetentionPolicy) retentionPolicy);
-			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(collectionName,
+			case VERSION_BASED -> memberPropertiesRepository.retrieveExpiredMembers(collectionName,
 					(VersionBasedRetentionPolicy) retentionPolicy);
-			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(collectionName,
+			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.retrieveExpiredMembers(collectionName,
 					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
 		};
 
-		Map<Boolean, List<MemberProperties>> areMembersRemoveableMap = memberPropertiesStream.collect(Collectors.partitioningBy(memberProperties -> memberProperties.getViewReferences().isEmpty()));
-		memberRemover.deleteMembers(areMembersRemoveableMap.get(true));
-		memberRemover.removeMembersFromEventSource(areMembersRemoveableMap.get(false));
+		Map<Boolean, List<MemberProperties>> areMembersRemoveableMap = memberPropertiesStream.collect(Collectors.partitioningBy(memberProperties -> memberProperties.isInView()));
+		memberRemover.deleteMembers(areMembersRemoveableMap.get(false));
+		memberRemover.removeMembersFromEventSource(areMembersRemoveableMap.get(true));
 	}
 }

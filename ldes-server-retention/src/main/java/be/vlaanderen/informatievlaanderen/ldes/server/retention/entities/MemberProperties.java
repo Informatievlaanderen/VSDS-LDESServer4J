@@ -6,24 +6,24 @@ import java.util.List;
 import java.util.Set;
 
 public class MemberProperties {
-	private final String id;
+	private final Long id;
 	private final String collectionName;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
-	private final Set<String> viewReferences;
 	private final boolean isInEventSource;
+	private final boolean isInView;
 
-	public MemberProperties(String id, String collectionName, String versionOf,
-                            LocalDateTime timestamp, boolean isInEventSource) {
+	public MemberProperties(Long id, String collectionName, String versionOf,
+                            LocalDateTime timestamp, boolean isInEventSource, boolean isInView) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
         this.isInEventSource = isInEventSource;
-        this.viewReferences = new HashSet<>();
+		this.isInView = isInView;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -39,27 +39,11 @@ public class MemberProperties {
 		return timestamp;
 	}
 
-	public Set<String> getViewReferences() {
-		return viewReferences;
-	}
-
 	public boolean isInEventSource() {
 		return isInEventSource;
 	}
 
-	public boolean containsViewReference(String viewName) {
-		return viewReferences.contains(viewName);
-	}
-
-	public void addViewReference(String viewName) {
-		viewReferences.add(viewName);
-	}
-
-	public void addAllViewReferences(List<String> viewNames) {
-		viewReferences.addAll(viewNames);
-	}
-
-	public void deleteViewReference(String viewName) {
-		viewReferences.remove(viewName);
+	public boolean isInView() {
+		return isInView;
 	}
 }

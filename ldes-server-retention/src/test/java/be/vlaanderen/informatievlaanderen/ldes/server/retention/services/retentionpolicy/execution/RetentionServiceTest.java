@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.Del
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,7 +78,7 @@ class RetentionServiceTest {
 		MemberProperties secondMember = getMemberProperties("2", 1);
 
 		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
-		when(memberPropertiesRepository.findExpiredMemberProperties(COLLECTION, timeAndVersionBasedRetentionPolicy))
+		when(memberPropertiesRepository.retrieveExpiredMembers(COLLECTION, timeAndVersionBasedRetentionPolicy))
 				.thenReturn(Stream.of(firstMember, secondMember));
 
 		when(deletionPolicyCollection.getEventSourceRetentionPolicyMap()).thenReturn(Map.of(

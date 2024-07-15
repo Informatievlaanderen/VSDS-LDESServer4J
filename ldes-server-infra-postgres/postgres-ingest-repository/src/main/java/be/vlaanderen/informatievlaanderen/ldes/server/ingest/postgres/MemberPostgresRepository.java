@@ -90,9 +90,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public void deleteMembers(List<String> oldIds) {
-		repository.deleteAllByOldIdIn(oldIds);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(oldIds.size());
+	public void deleteMembers(List<Long> ids) {
+		repository.deleteAllByIdIn(ids);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(ids.size());
 	}
 
 	@Override
@@ -104,9 +104,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public void removeFromEventSource(List<String> ids) {
-		jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE old_id IN ?", ids);
-	}
+	public void removeFromEventSource(List<Long> ids) {
+        jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE member_id IN ?", ids);
+    }
 
 	@Override
 	public List<IngestedMember> getMembersOfCollection(String collectionName) {

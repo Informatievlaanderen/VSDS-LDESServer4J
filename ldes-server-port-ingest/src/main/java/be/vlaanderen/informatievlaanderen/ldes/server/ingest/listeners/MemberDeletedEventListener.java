@@ -16,11 +16,11 @@ public class MemberDeletedEventListener {
 
 	@EventListener
 	public void handleMembersDeletedEvent(MembersDeletedEvent event) {
-		memberRepository.deleteMembers(event.memberIds());
+//		memberRepository.deleteMembers(event.memberIds());
 	}
 
 	@EventListener
 	public void handleMembersRemovedFromEventSourceEvent(MembersRemovedFromEventSourceEvent event) {
-		memberRepository.removeFromEventSource(event.ids());
+//		memberRepository.removeFromEventSource(event.ids());
 	}
 }

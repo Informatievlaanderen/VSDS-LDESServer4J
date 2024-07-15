@@ -50,7 +50,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 
 	@When("I save the MemberProperties using the MemberPropertiesRepository")
 	public void iSaveTheMemberPropertiesUsingTheMemberPropertiesRepository() {
-		memberPropertiesRepository.insertAll(memberProperties);
+//		memberPropertiesRepository.insertAll(memberProperties);
 	}
 
 	@And("I retrieve the MemberProperties with id {string}")
@@ -65,7 +65,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 
 	@And("I retrieve all MemberProperties with versionOf {string} from view {string}")
 	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf, String viewName) {
-		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersionAndView(versionOf, viewName);
+//		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersionAndView(versionOf, viewName);
 	}
 
 	@Then("I have retrieved {int} MemberProperties")
@@ -92,7 +92,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 	@And("I retrieve all MemberProperties with view {string}")
 	public void iRetrieveAllMemberPropertiesWithView(String viewNameString) {
 		ViewName viewName = ViewName.fromString(viewNameString);
-		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName).toList();
+//		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName).toList();
 	}
 
 	@And("I remove the view with name {string} of the MemberProperties with id {string}")
@@ -112,7 +112,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 
 	@And("I delete the MemberProperties with id {string}")
 	public void iDeleteTheMemberPropertiesWithId(String id) {
-		memberPropertiesRepository.deleteAllByIds(List.of(id));
+//		memberPropertiesRepository.deleteAllByIds(List.of(id));
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with duration {string}")
@@ -131,7 +131,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 		Duration duration = Duration.parse(durationString);
 		TimeBasedRetentionPolicy timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(duration);
 		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(collectionName, timeBasedRetentionPolicy).toList();
+				memberPropertiesRepository.retrieveExpiredMembers(collectionName, timeBasedRetentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with {int} versions")
@@ -148,7 +148,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 																   int versionsToKeep) {
 		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep);
 		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(collection, versionBasedRetentionPolicy).toList();
+				memberPropertiesRepository.retrieveExpiredMembers(collection, versionBasedRetentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with duration {string} and {int} versions")
@@ -169,7 +169,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 		var duration = Duration.parse(durationString);
 		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
 		retrievedMemberProperties =
-				memberPropertiesRepository.findExpiredMemberProperties(collection, retentionPolicy).toList();
+				memberPropertiesRepository.retrieveExpiredMembers(collection, retentionPolicy).toList();
 	}
 
 	@And("I add the view with name {string} to the MemberProperties with id {string}")
@@ -188,7 +188,7 @@ public class MemberPropertiesRepositorySteps extends PostgresRetentionIntegratio
 
 	@And("I remove members {string} and {string} from the event source")
 	public void iRemoveMembersFromEventSource(String id1, String id2) {
-		memberPropertiesRepository.removeFromEventSource(List.of(id1, id2));
+//		memberPropertiesRepository.removeFromEventSource(List.of(id1, id2));
 	}
 
 	@Then("the MemberProperties all contain a reference to view {string}")

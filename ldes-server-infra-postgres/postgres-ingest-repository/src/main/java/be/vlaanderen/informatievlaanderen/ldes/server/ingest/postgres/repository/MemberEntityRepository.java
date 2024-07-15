@@ -25,6 +25,7 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	List<MemberEntity> findAllByCollectionName(String collectionName);
 
 	void deleteAllByOldIdIn(List<String> oldIds);
+	void deleteAllByIdIn(List<Long> oldIds);
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
