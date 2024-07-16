@@ -17,7 +17,7 @@ import java.util.List;
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_JOB = "bucketisation";
 	public static final String REBUCKETISATION_JOB = "rebucketisation";
-	private static final int TRANSACTION_SIZE = 250;
+	private static final int TRANSACTION_SIZE = 150;
 
 	@Bean
 	public Step bucketiseMembersStep(JobRepository jobRepository,
