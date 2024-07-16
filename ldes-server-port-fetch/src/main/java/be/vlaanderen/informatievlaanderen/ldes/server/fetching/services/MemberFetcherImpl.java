@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation.VersionObjectCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation.VersionObjectCreatorFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
@@ -19,9 +20,11 @@ import java.util.stream.Stream;
 public class MemberFetcherImpl implements MemberFetcher {
     private final Map<String, VersionObjectCreator> versionObjectCreatorMap = new HashMap<>();
     private final MemberRepository memberRepository;
+    private final TreeMemberRepository treeMemberRepository;
 
-    public MemberFetcherImpl(MemberRepository memberRepository) {
+    public MemberFetcherImpl(MemberRepository memberRepository, TreeMemberRepository treeMemberRepository) {
         this.memberRepository = memberRepository;
+        this.treeMemberRepository = treeMemberRepository;
     }
 
     @Override

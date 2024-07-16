@@ -90,13 +90,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public void deleteMembers(List<Long> ids) {
-		repository.deleteAllByIdIn(ids);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(ids.size());
-	}
-
-	@Override
-	@Transactional
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
 		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(subjects.size());
@@ -107,11 +100,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	public void removeFromEventSource(List<Long> ids) {
         jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE member_id IN ?", ids);
     }
-
-	@Override
-	public List<IngestedMember> getMembersOfCollection(String collectionName) {
-		return repository.findAllByCollectionName(collectionName).stream().map(mapper::toMember).toList();
-	}
 
 	@Override
 	public Stream<Member> findAllByTreeNodeUrl(String url) {

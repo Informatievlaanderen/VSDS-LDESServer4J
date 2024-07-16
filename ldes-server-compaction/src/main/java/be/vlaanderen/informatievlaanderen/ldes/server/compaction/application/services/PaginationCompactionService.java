@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
@@ -21,16 +22,16 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 @Component
 public class PaginationCompactionService {
 	private final FragmentRepository fragmentRepository;
-	private final AllocationRepository allocationRepository;
+	private final TreeMemberRepository treeMemberRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 	private final ObservationRegistry observationRegistry;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public PaginationCompactionService(FragmentRepository fragmentRepository,
-	                                   AllocationRepository allocationRepository,
+									   TreeMemberRepository treeMemberRepository,
 	                                   ApplicationEventPublisher applicationEventPublisher, ObservationRegistry observationRegistry, ApplicationEventPublisher eventPublisher) {
 		this.fragmentRepository = fragmentRepository;
-		this.allocationRepository = allocationRepository;
+		this.treeMemberRepository = treeMemberRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
 		this.observationRegistry = observationRegistry;
 		this.eventPublisher = eventPublisher;
