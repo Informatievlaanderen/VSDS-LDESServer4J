@@ -62,7 +62,7 @@ public class FragmentationService {
 				.toJobParameters());
 	}
 
-	@Scheduled(cron = FRAGMENTATION_CRON)
+	@Scheduled(fixedDelay = 15000)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		while (shouldTriggerBucketisation.get() && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
 			launchJob(bucketiseJob, new JobParameters());
