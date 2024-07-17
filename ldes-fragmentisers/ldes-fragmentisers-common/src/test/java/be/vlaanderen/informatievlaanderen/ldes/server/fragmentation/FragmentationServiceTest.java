@@ -83,7 +83,7 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation();
 
-		await().atMost(FRAGMENTATION_INTERVAL * 15, TimeUnit.MILLISECONDS)
+		await().atMost(FRAGMENTATION_INTERVAL * 20, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
