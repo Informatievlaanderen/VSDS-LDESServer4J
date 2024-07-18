@@ -24,7 +24,6 @@ public class MemberItemReader {
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(memberQuery())
 				.pageSize(150)
-				.fetchSize(150)
 				.saveState(false)
 				.build();
 	}
@@ -36,10 +35,9 @@ public class MemberItemReader {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
-				.queryProvider(memberQuery())
-//				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
+				.queryProvider(refragmentQuery())
+				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
 				.pageSize(150)
-				.fetchSize(150)
 				.saveState(false)
 				.build();
 	}
@@ -49,8 +47,32 @@ public class MemberItemReader {
 		sortKeys.put("timestamp", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
-		queryProvider.setFromClause("members m JOIN views v USING (collection_id) JOIN collections c USING (collection_id)");
-		queryProvider.setWhereClause("(member_id, view_id) NOT IN (SELECT member_id, b.view_id FROM page_members JOIN buckets b USING (bucket_id))");
+		queryProvider.setFromClause("members m " +
+		                            "JOIN views v USING (collection_id) " +
+		                            "JOIN collections c USING (collection_id) " +
+		                            "JOIN buckets b USING (view_id) ");
+		queryProvider.setWhereClause("NOT EXISTS (" +
+		                             "  select * from page_members mb" +
+		                             "  where mb.member_id = m.member_id and mb.bucket_id = b.bucket_id" +
+		                             ")");
+		queryProvider.setSortKeys(sortKeys);
+		return queryProvider;
+	}
+
+	private PostgresPagingQueryProvider refragmentQuery() {
+		Map<String, Order> sortKeys = new HashMap<>();
+		sortKeys.put("timestamp", Order.ASCENDING);
+		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
+		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
+		queryProvider.setFromClause("members m " +
+		                            "JOIN views v USING (collection_id) " +
+		                            "JOIN collections c USING (collection_id) " +
+		                            "JOIN buckets b USING (view_id) ");
+		queryProvider.setWhereClause("NOT EXISTS (" +
+		                             "  select * from page_members mb" +
+		                             "  where mb.member_id = m.member_id and mb.bucket_id = b.bucket_id" +
+		                             ") " +
+		                             "AND v.name = :viewName");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}

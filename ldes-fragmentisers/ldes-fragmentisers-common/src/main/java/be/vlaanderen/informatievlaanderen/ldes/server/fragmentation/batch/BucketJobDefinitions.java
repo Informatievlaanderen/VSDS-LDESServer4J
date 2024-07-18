@@ -17,6 +17,7 @@ import java.util.List;
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_JOB = "bucketisation";
 	public static final String REBUCKETISATION_JOB = "rebucketisation";
+	private static final int CHUNK_SIZE = 1000;
 
 	@Bean
 	public Step bucketiseMembersStep(JobRepository jobRepository,
@@ -24,7 +25,7 @@ public class BucketJobDefinitions {
 	                                  ItemReader<FragmentationMember> newMemberReader, BucketProcessor processor,
 	                                  ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("bucketiseMembers", jobRepository)
-				.<FragmentationMember, List<BucketisedMember>>chunk(150, transactionManager)
+				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
 				.reader(newMemberReader)
 				.processor(processor)
 				.writer(writer)
@@ -37,7 +38,7 @@ public class BucketJobDefinitions {
 	                                   ItemReader<FragmentationMember> refragmentEventStream, BucketProcessor processor,
 	                                   ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("rebucketiseMembers", jobRepository)
-				.<FragmentationMember, List<BucketisedMember>>chunk(150, transactionManager)
+				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
 				.reader(refragmentEventStream)
 				.processor(processor)
 				.writer(writer)

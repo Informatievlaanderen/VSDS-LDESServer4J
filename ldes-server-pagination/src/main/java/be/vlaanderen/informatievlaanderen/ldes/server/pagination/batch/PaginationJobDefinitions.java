@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class PaginationJobDefinitions {
 	public static final String PAGINATION_JOB = "pagination";
 	public static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
+	private static final int CHUNK_SIZE = 1000;
 
 	@Bean
 	public Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
@@ -27,7 +28,7 @@ public class PaginationJobDefinitions {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(150, transactionManager)
+						.<Page, Page>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
@@ -48,7 +49,7 @@ public class PaginationJobDefinitions {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(150, transactionManager)
+						.<Page, Page>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
