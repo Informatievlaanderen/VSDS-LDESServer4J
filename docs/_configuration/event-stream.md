@@ -111,7 +111,7 @@ For more info, visit the [Swagger API documentation.](./admin-api)
 To determine which members should be permanently deleted from the Event Stream, it is necessary to set one or more retention policies on the event source of the Event Stream.
 Definition of event source:
 
-> In Linked Data Event Streams, the ldes:EventSource class exists to indicate this fragmentation is designed to be the source for all derived views. The Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a retention policy on top of it.
+> In Linked Data Event Streams, the ldes:EventSource class is designed to be the source for all derived views. The Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a retention policy on top of it.
 
 By default, no retention policy is set on the event source meaning that no data is removed from the Event Stream. Even when all views are deleted, the members will not be deleted from the Event Stream.
 
