@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.List;
+
 @Configuration
 public class PaginationJobDefinitions {
 	public static final String PAGINATION_JOB = "pagination";
@@ -22,13 +24,13 @@ public class PaginationJobDefinitions {
 	@Bean
 	public Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                           Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                           ItemProcessor<Page, Page> pageRelationsProcessor,
-	                           ItemWriter<Page> memberAssigner,
+	                           ItemProcessor<Page, List<Page>> pageRelationsProcessor,
+	                           ItemWriter<List<Page>> memberAssigner,
 	                           TaskExecutor taskExecutor) {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(CHUNK_SIZE, transactionManager)
+						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
@@ -43,13 +45,13 @@ public class PaginationJobDefinitions {
 	@Bean
 	public Step newViewPaginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                                  Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                                  ItemProcessor<Page, Page> pageRelationsProcessor,
-	                                  ItemWriter<Page> memberAssigner,
+	                                  ItemProcessor<Page, List<Page>> pageRelationsProcessor,
+	                                  ItemWriter<List<Page>> memberAssigner,
 	                                  TaskExecutor taskExecutor) {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(CHUNK_SIZE, transactionManager)
+						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)

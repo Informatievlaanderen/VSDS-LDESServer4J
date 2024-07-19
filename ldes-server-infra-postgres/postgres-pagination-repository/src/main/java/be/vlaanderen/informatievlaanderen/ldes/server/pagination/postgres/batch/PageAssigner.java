@@ -7,9 +7,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Component
-public class PageAssigner implements ItemWriter<Page> {
+public class PageAssigner implements ItemWriter<List<Page>> {
 	private static final String SQL = """
 			UPDATE page_members
 			SET page_id = ?
@@ -22,9 +23,9 @@ public class PageAssigner implements ItemWriter<Page> {
 	}
 
 	@Override
-	public void write(Chunk<? extends Page> chunk) throws Exception {
-		for (var page : chunk) {
-			jdbcTemplate.update(SQL, page.getId(), page.getBucketId(), page.getAvailableMemberSpace());
+	public void write(Chunk<? extends List<Page>> chunk) throws Exception {
+		for (var pages : chunk) {
+			pages.forEach(page -> jdbcTemplate.update(SQL, page.getId(), page.getBucketId(), page.getAssignedMemberCount()));
 		}
 	}
 }

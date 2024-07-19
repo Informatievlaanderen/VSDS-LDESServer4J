@@ -15,7 +15,7 @@ import java.util.Map;
 @Configuration
 public class PageReader {
 	private static final String SELECT_PAGE_SQL = """
-			SELECT DISTINCT p.page_id, p.bucket_id, p.partial_url, v.page_size - COUNT(member_id) AS available_member_capacity
+			SELECT DISTINCT p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
 			FROM pages p
 			         LEFT JOIN page_members m ON p.page_id = m.page_id
 			         JOIN buckets b ON p.bucket_id = b.bucket_id

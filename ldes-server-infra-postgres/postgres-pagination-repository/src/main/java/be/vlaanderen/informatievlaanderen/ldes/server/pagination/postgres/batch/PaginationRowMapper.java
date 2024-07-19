@@ -13,6 +13,7 @@ public class PaginationRowMapper implements RowMapper<Page> {
 				rs.getLong("page_id"),
 				rs.getLong("bucket_id"),
 				rs.getString("partial_url"),
-				rs.getInt("available_member_capacity")
+				rs.getInt("page_size"),
+				rs.getInt("assigned_members")
 		);	}
 }
