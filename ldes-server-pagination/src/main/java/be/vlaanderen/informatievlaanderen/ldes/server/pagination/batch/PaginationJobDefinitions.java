@@ -8,8 +8,10 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -26,7 +28,7 @@ public class PaginationJobDefinitions {
 	                           Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
 	                           ItemProcessor<Page, List<Page>> pageRelationsProcessor,
 	                           ItemWriter<List<Page>> memberAssigner,
-	                           TaskExecutor taskExecutor) {
+	                           @Qualifier("asynch") TaskExecutor taskExecutor) {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
@@ -35,9 +37,9 @@ public class PaginationJobDefinitions {
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
+						.taskExecutor(taskExecutor)
 						.build()
 				)
-				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
 	}
@@ -47,7 +49,7 @@ public class PaginationJobDefinitions {
 	                                  Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
 	                                  ItemProcessor<Page, List<Page>> pageRelationsProcessor,
 	                                  ItemWriter<List<Page>> memberAssigner,
-	                                  TaskExecutor taskExecutor) {
+	                                  @Qualifier("asynch") TaskExecutor taskExecutor) {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
@@ -56,10 +58,15 @@ public class PaginationJobDefinitions {
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
+						.taskExecutor(taskExecutor)
 						.build()
 				)
-				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
+	}
+
+	@Bean("asynch")
+	public TaskExecutor taskExecutor() {
+		return new SimpleAsyncTaskExecutor("spring_batch");
 	}
 }
