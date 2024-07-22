@@ -37,36 +37,46 @@ class TimeBasedBucketCreatorTest {
 		bucketCreator = new TimeBasedBucketCreator(bucketRepository, relationsAttributer);
 	}
 
-//	@Test
-//	void when_FragmentDoesNotExist_Then_NewFragmentIsCreated() {
-//		final BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
-//		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
-//
-//		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
-//
-//		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
-//		verify(bucketRepository,
-//				times(1)).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
-//		verify(relationsAttributer).addInBetweenRelation(PARENT, child);
-//		verify(bucketRepository).insertBucket(child);
-//		verifyNoMoreInteractions(bucketRepository);
-//
-//	}
-//
-//	@Test
-//	void when_FragmentDoesNotExistAndIsDefaultFragment_Then_NewFragmentIsCreated() {
-//		BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(
-//				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
-//		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
-//
-//		Bucket child = bucketCreator.getOrCreateBucket(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
-//
-//		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
-//		verify(bucketRepository).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
-//		verify(relationsAttributer).addDefaultRelation(ROOT, child);
-//		verify(bucketRepository).insertBucket(child);
-//		verifyNoMoreInteractions(bucketRepository);
-//	}
+	@Test
+	void when_FragmentDoesNotExist_Then_NewFragmentIsCreated() {
+		final BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
+		final Bucket expectedChild = new Bucket(expectedBucketDescriptor, VIEW_NAME);
+		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(expectedChild);
+
+		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
+
+		assertThat(child)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(expectedChild)
+				.extracting(Bucket::getBucketDescriptor)
+				.isEqualTo(expectedBucketDescriptor);
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
+		verify(relationsAttributer).addInBetweenRelation(PARENT, child);
+		verify(bucketRepository).insertBucket(child);
+		verifyNoMoreInteractions(bucketRepository);
+	}
+
+	@Test
+	void when_FragmentDoesNotExistAndIsDefaultFragment_Then_NewFragmentIsCreated() {
+		BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(
+				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
+		final Bucket expectedChild = new Bucket(expectedBucketDescriptor, VIEW_NAME);
+		when(bucketRepository.retrieveBucket(VIEW_NAME, expectedBucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(expectedChild);
+
+		Bucket child = bucketCreator.getOrCreateBucket(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
+
+		assertThat(child)
+				.describedAs("Child instance must be the same, to assure the bucket inserted into the db is returned")
+				.isSameAs(expectedChild)
+				.extracting(Bucket::getBucketDescriptor)
+				.isEqualTo(expectedBucketDescriptor);
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, expectedBucketDescriptor);
+		verify(relationsAttributer).addDefaultRelation(ROOT, child);
+		verify(bucketRepository).insertBucket(child);
+		verifyNoMoreInteractions(bucketRepository);
+	}
 
 	@Test
 	void when_FragmentDoesExist_Then_FragmentIsRetrieved() {

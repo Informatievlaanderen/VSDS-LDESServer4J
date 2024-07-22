@@ -47,13 +47,13 @@ public class ReferenceBucketCreator {
 	}
 
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String reference) {
-		Bucket child = parentBucket.createChild(new BucketDescriptorPair(fragmentKeyReference, reference));
+		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(fragmentKeyReference, reference);
 		return fragmentRepository
-				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
+				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
-					fragmentRepository.insertBucket(child);
-					logBucketation(parentBucket, child);
-					return child;
+					final Bucket childBucket = fragmentRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
+					logBucketation(parentBucket, childBucket);
+					return childBucket;
 				});
 	}
 

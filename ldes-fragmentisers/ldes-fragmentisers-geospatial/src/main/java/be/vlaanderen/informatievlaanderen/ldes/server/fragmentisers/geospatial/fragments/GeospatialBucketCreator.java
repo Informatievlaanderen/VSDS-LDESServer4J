@@ -40,16 +40,16 @@ public class GeospatialBucketCreator {
 	}
 
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String tile) {
-		Bucket child = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
+		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile);
 		return bucketRepository
-				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
+				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
-					bucketRepository.insertBucket(child);
+					final Bucket childBucket = bucketRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
 					
 					String viewName = parentBucket.getViewName().asString();
 					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
-					LOGGER.debug("Geospatial rootfragment created with id: {}", child.getBucketDescriptorAsString());
-					return child;
+					LOGGER.debug("Geospatial rootfragment created with id: {}", childBucket.getBucketDescriptorAsString());
+					return childBucket;
 				});
 	}
 }

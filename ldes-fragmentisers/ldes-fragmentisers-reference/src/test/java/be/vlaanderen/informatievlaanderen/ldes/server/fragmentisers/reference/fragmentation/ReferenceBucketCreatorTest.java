@@ -47,15 +47,19 @@ class ReferenceBucketCreatorTest {
 	void when_ReferenceFragmentDoesNotExist_NewReferenceFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
-		BucketDescriptor bucketDescriptor = bucket.createChild(referencePair).getBucketDescriptor();
+		Bucket childBucket = bucket.createChild(referencePair);
 
-		when(bucketRepository.retrieveBucket(viewName, bucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, childBucket.getBucketDescriptor())).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(childBucket);
 
-		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
+		Bucket returnedBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
-		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF.type.getURI());
-		verify(bucketRepository).retrieveBucket(viewName, bucketDescriptor);
-		verify(bucketRepository).insertBucket(childBucket);
+		assertThat(returnedBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(childBucket);
+		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF.type.getURI());
+		verify(bucketRepository).retrieveBucket(viewName, childBucket.getBucketDescriptor());
+		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
 	@Test
@@ -79,10 +83,13 @@ class ReferenceBucketCreatorTest {
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 
 		when(bucketRepository.retrieveBucket(viewName, rootBucket.getBucketDescriptor())).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(rootBucket);
 
 		Bucket returnedBucket = referenceBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT);
 
-		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=");
+		assertThat(returnedBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(rootBucket);
 		verify(bucketRepository).retrieveBucket(viewName, rootBucket.getBucketDescriptor());
 		verify(bucketRepository).insertBucket(returnedBucket);
 	}
@@ -104,14 +111,17 @@ class ReferenceBucketCreatorTest {
 	void when_DefaultFragmentDoesNotExist_DefaultFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
-		BucketDescriptor defaultBucketDescriptor = bucket.createChild(defaultPair).getBucketDescriptor();
+		Bucket defaultBucket = bucket.createChild(defaultPair);
 
-		when(bucketRepository.retrieveBucket(viewName, defaultBucketDescriptor)).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, defaultBucket.getBucketDescriptor())).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(defaultBucket);
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
-		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=unknown");
-		verify(bucketRepository).retrieveBucket(viewName, defaultBucketDescriptor);
+		assertThat(childBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(defaultBucket);
+		verify(bucketRepository).retrieveBucket(viewName, defaultBucket.getBucketDescriptor());
 		verify(bucketRepository).insertBucket(childBucket);
 	}
 
