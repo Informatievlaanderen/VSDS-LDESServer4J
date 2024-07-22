@@ -20,9 +20,10 @@ public class BucketJobDefinitions {
 
 	@Bean
 	public Step bucketiseMembersStep(JobRepository jobRepository,
-	                                  PlatformTransactionManager transactionManager,
-	                                  ItemReader<FragmentationMember> newMemberReader, BucketProcessor processor,
-	                                  ItemWriter<List<BucketisedMember>> writer) {
+	                                 PlatformTransactionManager transactionManager,
+	                                 ItemReader<FragmentationMember> newMemberReader,
+	                                 BucketProcessor processor,
+	                                 ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("bucketiseMembers", jobRepository)
 				.<FragmentationMember, List<BucketisedMember>>chunk(150, transactionManager)
 				.reader(newMemberReader)
@@ -33,8 +34,10 @@ public class BucketJobDefinitions {
 	}
 
 	@Bean
-	public Step rebucketiseMembersStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                                   ItemReader<FragmentationMember> refragmentEventStream, BucketProcessor processor,
+	public Step rebucketiseMembersStep(JobRepository jobRepository,
+	                                   PlatformTransactionManager transactionManager,
+	                                   ItemReader<FragmentationMember> refragmentEventStream,
+	                                   BucketProcessor processor,
 	                                   ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("rebucketiseMembers", jobRepository)
 				.<FragmentationMember, List<BucketisedMember>>chunk(150, transactionManager)

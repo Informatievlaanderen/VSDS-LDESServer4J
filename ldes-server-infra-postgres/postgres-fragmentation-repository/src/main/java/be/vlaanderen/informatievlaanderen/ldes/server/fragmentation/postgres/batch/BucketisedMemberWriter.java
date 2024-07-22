@@ -24,7 +24,7 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	}
 
 	@Override
-	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
+	public void write(Chunk<? extends List<BucketisedMember>> chunk) {
 		Chunk<BucketisedMember> bucketisedMembers = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)

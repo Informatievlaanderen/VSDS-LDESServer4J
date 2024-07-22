@@ -26,23 +26,23 @@ public class ReferenceBucketCreator {
 	                              ReferenceFragmentRelationsAttributer relationsAttributer,
 	                              String fragmentKeyReference) {
 		this.fragmentRepository = fragmentRepository;
-        this.relationsAttributer = relationsAttributer;
+		this.relationsAttributer = relationsAttributer;
 		this.fragmentKeyReference = fragmentKeyReference;
-    }
+	}
 
 	public Bucket getOrCreateBucket(Bucket parentBucket, String reference, Bucket rootBucket) {
-		Bucket child = parentBucket.createChild(new BucketDescriptorPair(fragmentKeyReference, reference));
+		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(fragmentKeyReference, reference);
 		return fragmentRepository
-				.retrieveBucket(child.getViewName(), child.getBucketDescriptor())
+				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
-					fragmentRepository.insertBucket(child);
+					final Bucket childBucket = fragmentRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
 					if (reference.equals(DEFAULT_BUCKET_STRING)) {
-						relationsAttributer.addDefaultRelation(parentBucket, child);
+						relationsAttributer.addDefaultRelation(parentBucket, childBucket);
 					} else {
-						relationsAttributer.addRelationFromRootToBottom(rootBucket, child);
+						relationsAttributer.addRelationFromRootToBottom(rootBucket, childBucket);
 					}
-					logBucketation(parentBucket, child);
-					return child;
+					logBucketation(parentBucket, childBucket);
+					return childBucket;
 				});
 	}
 
