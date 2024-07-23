@@ -25,7 +25,10 @@ public class PageAssigner implements ItemWriter<List<Page>> {
 	@Override
 	public void write(Chunk<? extends List<Page>> chunk) throws Exception {
 		for (var pages : chunk) {
-			pages.forEach(page -> jdbcTemplate.update(SQL, page.getId(), page.getBucketId(), page.getAssignedMemberCount()));
+			final List<Object[]> batchArgs = pages.stream()
+					.map(page -> new Object[]{page.getId(), page.getBucketId(), page.getAssignedMemberCount()})
+					.toList();
+			jdbcTemplate.batchUpdate(SQL, batchArgs);
 		}
 	}
 }
