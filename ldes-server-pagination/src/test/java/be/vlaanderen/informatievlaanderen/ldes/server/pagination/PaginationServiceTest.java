@@ -46,9 +46,9 @@ class PaginationServiceTest {
 	@MockBean
 	private ItemReader<Page> pageReader;
 	@MockBean
-	private ItemProcessor<Page, Page> pageRelationProcessor;
+	private ItemProcessor<Page, List<Page>> pageRelationProcessor;
 	@MockBean
-	private ItemWriter<Page> memberAssigner;
+	private ItemWriter<List<Page>> memberAssigner;
 	@Autowired
 	private PaginationService paginationService;
 	@Autowired
@@ -57,7 +57,7 @@ class PaginationServiceTest {
 	private final Page page = new Page(1,
 			"/%s".formatted(VIEW_NAME_1.asString()),
 			new Bucket(1, "es/v1"),
-			new PageNumber(1),
+			new PageNumber(1), 0,
 			50);
 
 	@Test
@@ -86,7 +86,7 @@ class PaginationServiceTest {
 
 		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
 
-		verify(memberAssigner).write(argThat(chunk -> chunk.getItems().contains(page)));
+		verify(memberAssigner).write(argThat(chunk -> chunk.getItems().contains(List.of(page))));
 	}
 
 	private void mockBucketisationPartitioner() {
@@ -103,6 +103,6 @@ class PaginationServiceTest {
 
 
 	private void stubProcessor() throws Exception {
-		when(pageRelationProcessor.process(page)).thenReturn(page);
+		when(pageRelationProcessor.process(page)).thenReturn(List.of(page));
 	}
 }

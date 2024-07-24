@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="#1336-memberReader-indexes">
+        <createIndex tableName="members" indexName="members_timestamp_idx">
+            <column name="timestamp" />
+        </createIndex>
+        <createIndex tableName="members" indexName="members_collectionId_idx">
+            <column name="collection_id" />
+        </createIndex>
+
+        <createIndex tableName="buckets" indexName="buckets_viewId_idx">
+            <column name="view_id" />
+        </createIndex>
+
+        <createIndex tableName="views" indexName="views_collectionId_idx">
+            <column name="collection_id" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

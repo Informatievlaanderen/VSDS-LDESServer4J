@@ -10,14 +10,16 @@ public class Page {
 	private final String viewNameUrlPrefix;
 	private final Bucket bucket;
 	private final PageNumber pageNumber;
-	private final int availableMemberSpace;
+	private int assignedMemberCount;
+	private final int maximumMemberCount;
 
-	public Page(long id, String viewNameUrlPrefix, Bucket bucket, PageNumber pageNumber, int availableMemberSpace) {
+	public Page(long id, String viewNameUrlPrefix, Bucket bucket, PageNumber pageNumber, int assignedMemberCount, int maximumMemberCount) {
 		this.id = id;
 		this.viewNameUrlPrefix = viewNameUrlPrefix;
 		this.bucket = bucket;
 		this.pageNumber = pageNumber;
-		this.availableMemberSpace = availableMemberSpace;
+		this.assignedMemberCount = assignedMemberCount;
+		this.maximumMemberCount = maximumMemberCount;
 	}
 
 	public long getId() {
@@ -33,20 +35,32 @@ public class Page {
 	}
 
 	public boolean isFull() {
-		return availableMemberSpace == 0;
+		return getAvailableMemberSpace() == 0;
 	}
 
 	public int getAvailableMemberSpace() {
-		return availableMemberSpace;
+		return maximumMemberCount - assignedMemberCount;
 	}
 
-	public static Page createWithPartialUrl(long id, long bucketId, String partialUrl, int availableMemberSpace) {
+	public int getAssignedMemberCount() {
+		return assignedMemberCount;
+	}
+
+	public void setAssignedMemberCount(int assignedMemberCount) {
+		this.assignedMemberCount = assignedMemberCount;
+	}
+
+	public int getMaximumMemberCount() {
+		return maximumMemberCount;
+	}
+
+	public static Page createWithPartialUrl(long id, long bucketId, String partialUrl, int assignedMemberCount, int maximumMemberCount) {
 		final String[] mainPartialUrlParts = partialUrl.split("\\?");
 		final String urlPrefix = mainPartialUrlParts[0];
 		final String extendedBucketDescriptor = mainPartialUrlParts.length == 2 ? mainPartialUrlParts[1] : "";
 		final String[] descriptorParts = extendedBucketDescriptor.split(PAGE_NUMBER + "=");
 		final PageNumber pageNumber = descriptorParts.length == 2 ? new PageNumber(Integer.parseInt(descriptorParts[1])) : null;
-		return new Page(id, urlPrefix, new Bucket(bucketId, descriptorParts[0]), pageNumber, availableMemberSpace);
+		return new Page(id, urlPrefix, new Bucket(bucketId, descriptorParts[0]), pageNumber, assignedMemberCount, maximumMemberCount);
 	}
 
 

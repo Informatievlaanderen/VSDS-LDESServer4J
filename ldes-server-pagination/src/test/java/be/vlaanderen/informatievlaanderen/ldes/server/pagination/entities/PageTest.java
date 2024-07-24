@@ -19,7 +19,7 @@ class PageTest {
 	@ArgumentsSource(BucketProvider.class)
 	void test_GetPartialUrl(String bucketDescriptor, String expectedPartialUrl) {
 		final PageNumber pageNumber = new PageNumber(1);
-		final Page page = new Page(0, VIEW_NAME_PREFIX, new Bucket(0, bucketDescriptor), pageNumber, 12);
+		final Page page = new Page(0, VIEW_NAME_PREFIX, new Bucket(0, bucketDescriptor), pageNumber, 0, 12);
 
 		final String result = page.getPartialUrl();
 

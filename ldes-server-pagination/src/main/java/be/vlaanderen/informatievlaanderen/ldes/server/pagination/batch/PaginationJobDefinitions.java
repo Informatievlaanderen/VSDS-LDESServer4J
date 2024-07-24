@@ -8,33 +8,38 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.List;
 
 @Configuration
 public class PaginationJobDefinitions {
 	public static final String PAGINATION_JOB = "pagination";
 	public static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
+	private static final int CHUNK_SIZE = 1000;
 
 	@Bean
 	public Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                           Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                           ItemProcessor<Page, Page> pageRelationsProcessor,
-	                           ItemWriter<Page> memberAssigner,
-	                           TaskExecutor taskExecutor) {
+	                           ItemProcessor<Page, List<Page>> pageRelationsProcessor,
+	                           ItemWriter<List<Page>> memberAssigner,
+	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(150, transactionManager)
+						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
+						.taskExecutor(taskExecutor)
 						.build()
 				)
-				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
 	}
@@ -42,21 +47,26 @@ public class PaginationJobDefinitions {
 	@Bean
 	public Step newViewPaginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                                  Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                                  ItemProcessor<Page, Page> pageRelationsProcessor,
-	                                  ItemWriter<Page> memberAssigner,
-	                                  TaskExecutor taskExecutor) {
+	                                  ItemProcessor<Page, List<Page>> pageRelationsProcessor,
+	                                  ItemWriter<List<Page>> memberAssigner,
+	                                  @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, Page>chunk(150, transactionManager)
+						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
+						.taskExecutor(taskExecutor)
 						.build()
 				)
-				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
 				.build();
+	}
+
+	@Bean("paginationTaskExecutor")
+	public TaskExecutor paginationTaskExecutor() {
+		return new SimpleAsyncTaskExecutor("spring_batch");
 	}
 }

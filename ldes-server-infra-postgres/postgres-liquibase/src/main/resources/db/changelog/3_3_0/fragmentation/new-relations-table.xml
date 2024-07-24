@@ -52,7 +52,7 @@
     </changeSet>
     <changeSet id="migrate-into-new-page-relations-table" author="vsds">
         <preConditions>
-            <changeSetExecuted id="create-new-page-relations-table" author="vsds" changeLogFile="db/changelog/3_2_0/fragmentation/new-relations-table.xml" />
+            <changeSetExecuted id="create-new-page-relations-table" author="vsds" changeLogFile="db/changelog/3_3_0/fragmentation/new-relations-table.xml" />
         </preConditions>
         <sqlFile relativeToChangelogFile="true" path="migrate-into-new-page-relations-table.sql" />
     </changeSet>
