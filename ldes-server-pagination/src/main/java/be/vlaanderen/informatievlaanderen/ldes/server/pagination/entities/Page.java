@@ -12,7 +12,6 @@ public class Page {
 	private final PageNumber pageNumber;
 	private int assignedMemberCount;
 	private final int maximumMemberCount;
-	private final int availableMemberSpace;
 
 	public Page(long id, String viewNameUrlPrefix, Bucket bucket, PageNumber pageNumber, int assignedMemberCount, int maximumMemberCount) {
 		this.id = id;
@@ -21,7 +20,6 @@ public class Page {
 		this.pageNumber = pageNumber;
 		this.assignedMemberCount = assignedMemberCount;
 		this.maximumMemberCount = maximumMemberCount;
-		this.availableMemberSpace = maximumMemberCount - assignedMemberCount;
 	}
 
 	public long getId() {
@@ -37,11 +35,11 @@ public class Page {
 	}
 
 	public boolean isFull() {
-		return availableMemberSpace == 0;
+		return getAvailableMemberSpace() == 0;
 	}
 
 	public int getAvailableMemberSpace() {
-		return availableMemberSpace;
+		return maximumMemberCount - assignedMemberCount;
 	}
 
 	public int getAssignedMemberCount() {

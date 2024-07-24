@@ -34,9 +34,10 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<Page>> {
 		int unprocessedMemberCount = jdbcTemplate.queryForObject(SELECT_UNPROCESSED, Integer.class, page.getBucketId());
 
 		List<Page> assignedPages = new ArrayList<>();
+		Page assignedPage = page;
 
 		while (0 < unprocessedMemberCount) {
-			Page assignedPage = assignToPage(page, unprocessedMemberCount);
+			assignedPage = assignToPage(assignedPage, unprocessedMemberCount);
 			assignedPages.add(assignedPage);
 			unprocessedMemberCount -= assignedPage.getAssignedMemberCount();
 		}
