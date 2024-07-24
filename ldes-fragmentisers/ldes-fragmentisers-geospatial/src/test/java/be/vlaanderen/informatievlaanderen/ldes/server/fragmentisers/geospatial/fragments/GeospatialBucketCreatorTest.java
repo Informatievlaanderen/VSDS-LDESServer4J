@@ -39,14 +39,18 @@ class GeospatialBucketCreatorTest {
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
-		BucketDescriptor bucketDescriptor = bucket.createChild(geoPair).getBucketDescriptor();
-		when(bucketRepository.retrieveBucket(VIEW_NAME, bucketDescriptor)).thenReturn(Optional.empty());
+		Bucket childBucket = bucket.createChild(geoPair);
 
-		Bucket childBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, "15/101/202", rootBucket);
+		when(bucketRepository.retrieveBucket(VIEW_NAME, childBucket.getBucketDescriptor()))
+				.thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(childBucket);
 
-		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=15/101/202");
-		verify(bucketRepository).retrieveBucket(VIEW_NAME, bucketDescriptor);
-		verify(bucketRepository).insertBucket(childBucket);
+		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, "15/101/202", rootBucket);
+
+		assertThat(returnedBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(childBucket);
+		verify(bucketRepository).retrieveBucket(VIEW_NAME, childBucket.getBucketDescriptor());
 	}
 
 	@Test
@@ -70,12 +74,14 @@ class GeospatialBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 		Bucket rootBucket = bucket.createChild(geoRootPair);
 		when(bucketRepository.retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor())).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(rootBucket);
 
 		Bucket returnedBucket = geospatialBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_TILE_ROOT);
 
-		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=0/0/0");
+		assertThat(returnedBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(rootBucket);
 		verify(bucketRepository).retrieveBucket(VIEW_NAME, rootBucket.getBucketDescriptor());
-		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
 	@Test
@@ -97,12 +103,15 @@ class GeospatialBucketCreatorTest {
 		Bucket rootBucket = bucket.createChild(geoRootPair);
 		Bucket defaultBucket = bucket.createChild(defaultPair);
 		when(bucketRepository.retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor())).thenReturn(Optional.empty());
+		when(bucketRepository.insertBucket(any())).thenReturn(defaultBucket);
 
 		Bucket returnedBucket = geospatialBucketCreator.getOrCreateTileBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
-		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=unknown");
+		assertThat(returnedBucket)
+				.describedAs("Child instance must be the same, to assure the bucket instance from the db is returned")
+				.isSameAs(defaultBucket);
+		assertThat(returnedBucket.getBucketDescriptor()).isEqualTo(defaultBucket.getBucketDescriptor());
 		verify(bucketRepository).retrieveBucket(VIEW_NAME, defaultBucket.getBucketDescriptor());
-		verify(bucketRepository).insertBucket(returnedBucket);
 	}
 
 	@Test

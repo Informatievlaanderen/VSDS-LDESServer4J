@@ -51,12 +51,16 @@ public class Bucket {
 	}
 
 	public Bucket createChild(BucketDescriptorPair descriptorPair) {
+		return new Bucket(createChildDescriptor(descriptorPair), viewName);
+	}
+
+	public BucketDescriptor createChildDescriptor(BucketDescriptorPair descriptorPair) {
 		List<BucketDescriptorPair> childFragmentPairs = new ArrayList<>(this.bucketDescriptor.getDescriptorPairs());
 		if (hasChildWithSameDescriptorKey(descriptorPair, childFragmentPairs)) {
 			throw new DuplicateFragmentPairException(bucketDescriptor.asDecodedString(), descriptorPair.key());
 		}
 		childFragmentPairs.add(descriptorPair);
-		return new Bucket(new BucketDescriptor(childFragmentPairs), viewName);
+		return new BucketDescriptor(childFragmentPairs);
 	}
 
 	public String createPartialUrl() {

@@ -32,14 +32,14 @@ public class TimeBasedBucketCreator {
 	}
 
 	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
-		Bucket childBucket = parentBucket.createChild(new BucketDescriptorPair(granularity.getValue(), timeValue));
+		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(granularity.getValue(), timeValue);
 		return bucketRepository
-				.retrieveBucket(childBucket.getViewName(), childBucket.getBucketDescriptor())
+				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
-					final Bucket insertedChild = bucketRepository.insertBucket(childBucket);
-					addRelationToParent(parentBucket, insertedChild);
-					logBucketisation(parentBucket, insertedChild);
-					return insertedChild;
+					final Bucket childBucket = bucketRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
+					addRelationToParent(parentBucket, childBucket);
+					logBucketisation(parentBucket, childBucket);
+					return childBucket;
 				});
 	}
 
