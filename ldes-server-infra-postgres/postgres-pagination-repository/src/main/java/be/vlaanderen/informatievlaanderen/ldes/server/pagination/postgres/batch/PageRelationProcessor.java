@@ -29,7 +29,7 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<Page>> {
 	}
 
 	@Override
-	public List<Page> process(@NotNull Page page) throws NullPointerException {
+	public List<Page> process(@NotNull Page page) throws Exception {
 		// Get Items count to process
 		int unprocessedMemberCount = jdbcTemplate.queryForObject(SELECT_UNPROCESSED, Integer.class, page.getBucketId());
 
