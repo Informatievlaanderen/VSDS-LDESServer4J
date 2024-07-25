@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants.LDES_SERVER_DELETED_MEMBERS_COUNT;
-
 @Repository
 public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
 	private final MemberEntityRepository repository;
@@ -118,5 +116,11 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 			throw new MissingResourceException("eventstream", collectionName);
 		}
 		return collectionId;
+	}
+
+	@Override
+	public Stream<Long> findAllIdsByTreeNodeIds(List<Long> ids) {
+		return repository.findAllByPageIdsIn(ids)
+				.stream();
 	}
 }

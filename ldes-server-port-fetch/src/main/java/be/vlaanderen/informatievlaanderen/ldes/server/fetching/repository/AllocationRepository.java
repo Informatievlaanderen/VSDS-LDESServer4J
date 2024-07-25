@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public interface AllocationRepository {
+
 	List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds);
 
 	Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);

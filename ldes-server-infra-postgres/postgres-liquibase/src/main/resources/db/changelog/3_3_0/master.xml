@@ -10,4 +10,5 @@
     <include file="/db/changelog/3_3_0/fragmentation/new-relations-table.xml" />
     <include file="/db/changelog/3_3_0/fragmentation/create-page-on-bucket-insertion-trigger.xml" />
     <include file="/db/changelog/3_3_0/#1336-memberReader-indexes.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/page-member-extend-pk.xml" />
 </databaseChangeLog>

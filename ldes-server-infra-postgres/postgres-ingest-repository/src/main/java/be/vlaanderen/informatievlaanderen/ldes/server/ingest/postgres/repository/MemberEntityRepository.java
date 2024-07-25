@@ -29,6 +29,9 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
+    @Query("SELECT m.id FROM PageMemberEntity p JOIN p.member m where p.page.id IN :ids")
+    List<Long> findAllByPageIdsIn(List<Long> ids);
+
 	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName AND m.timestamp < :timestamp")
 	Stream<MemberEntity> findAllByViewNameAndTimestampBefore(String viewName, LocalDateTime timestamp);
 

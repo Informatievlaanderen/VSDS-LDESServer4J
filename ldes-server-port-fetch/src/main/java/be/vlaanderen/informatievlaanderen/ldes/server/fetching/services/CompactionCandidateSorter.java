@@ -10,57 +10,57 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.hasNoConnections;
+//import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.hasNoConnections;
 
 public class CompactionCandidateSorter {
     private CompactionCandidateSorter() {
     }
 
     public static Stream<CompactionCandidate> sortCompactionCandidates(Stream<CompactionCandidate> compactionCandidates) {
-        List<CompactionCandidate> candidatesList = compactionCandidates.toList();
+//        List<CompactionCandidate> candidatesList = compactionCandidates.toList();
+//
+//        var firstElement = candidatesList.stream()
+//                .filter(candidate -> hasNoConnections(candidate.getFragment(), candidatesList.stream()
+//                        .map(CompactionCandidate::getFragment)
+//                        .toList()))
+//                .findFirst();
+//
+//        if (firstElement.isEmpty()) {
+//            return Stream.of();
+//        }
+//
+//        List<CompactionCandidate> orderedCandidates = new LinkedList<>(List.of(firstElement.get()));
+//        String currentFragment = "1";//firstElement.get().getId();
+//
+//        var map = candidatesList.stream()
+//                .filter(candidate -> !candidate.getFragment().getRelations().isEmpty())
+//                .collect(Collectors.toMap(CompactionCandidate::getId, candidate -> candidate.getFragment().getRelations()
+//                        .stream()
+//                        .findFirst()
+//                        .map(TreeRelation::treeNode)
+//                        .map(LdesFragmentIdentifier::asDecodedFragmentId)
+//                        .orElseThrow()));
+//
+//
+//        Optional<CompactionCandidate> foundFragment;
+//
+//        do {
+//            String fragmentId = map.get(currentFragment);
+//
+//            foundFragment = candidatesList.stream()
+//                    .filter(candidate -> candidate.getId().equals(fragmentId))
+//                    .findFirst();
+//
+//            if (foundFragment.isPresent()) {
+//                orderedCandidates.add(foundFragment.get());
+//                currentFragment = fragmentId;
+//            }
+//        } while (foundFragment.isPresent());
+//
+//        if (orderedCandidates.size() < candidatesList.size()) {
+//            throw new IllegalArgumentException("Not all compaction candidates are linked. Candidates: " + candidatesList);
+//        }
 
-        var firstElement = candidatesList.stream()
-                .filter(candidate -> hasNoConnections(candidate.getFragment(), candidatesList.stream()
-                        .map(CompactionCandidate::getFragment)
-                        .toList()))
-                .findFirst();
-
-        if (firstElement.isEmpty()) {
-            return Stream.of();
-        }
-
-        List<CompactionCandidate> orderedCandidates = new LinkedList<>(List.of(firstElement.get()));
-        String currentFragment = firstElement.get().getId();
-
-        var map = candidatesList.stream()
-                .filter(candidate -> !candidate.getFragment().getRelations().isEmpty())
-                .collect(Collectors.toMap(CompactionCandidate::getId, candidate -> candidate.getFragment().getRelations()
-                        .stream()
-                        .findFirst()
-                        .map(TreeRelation::treeNode)
-                        .map(LdesFragmentIdentifier::asDecodedFragmentId)
-                        .orElseThrow()));
-
-
-        Optional<CompactionCandidate> foundFragment;
-
-        do {
-            String fragmentId = map.get(currentFragment);
-
-            foundFragment = candidatesList.stream()
-                    .filter(candidate -> candidate.getId().equals(fragmentId))
-                    .findFirst();
-
-            if (foundFragment.isPresent()) {
-                orderedCandidates.add(foundFragment.get());
-                currentFragment = fragmentId;
-            }
-        } while (foundFragment.isPresent());
-
-        if (orderedCandidates.size() < candidatesList.size()) {
-            throw new IllegalArgumentException("Not all compaction candidates are linked. Candidates: " + candidatesList);
-        }
-
-        return orderedCandidates.stream();
+        return compactionCandidates;//orderedCandidates.stream();
     }
 }

@@ -9,8 +9,13 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "page_members")
 public class PageMemberEntity {
-	@EmbeddedId
-	private PageMemberId pageMemberId;
+//	@EmbeddedId
+//	private PageMemberId pageMemberId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false, columnDefinition = "BIGINT")
+	private Long id;
 
 	@MapsId("memberId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -24,6 +29,7 @@ public class PageMemberEntity {
 	@JoinColumn(name = "bucket_id", nullable = false, columnDefinition = "BIGINT")
 	private BucketEntity bucket;
 
+	@MapsId("id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "page_id", nullable = false, columnDefinition = "BIGINT")

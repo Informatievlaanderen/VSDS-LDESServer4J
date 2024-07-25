@@ -1,12 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.CompactionCandidateProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeNodeProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	Optional<TreeNodeProjection> findTreeNodeByPartialUrl(String partialUrl);
@@ -25,4 +29,16 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 			                             JOIN collections c using (collection_id) WHERE c.name = :collectionName);
 			""", nativeQuery = true)
 	void markAllPagesImmutableByCollectionName(String collectionName);
+
+    @Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size " +
+            "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v " +
+            "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
+            "GROUP BY p.id " +
+            "HAVING COUNT(*) < :capacityPerPage")
+    Stream<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
+                                                                   @Param("viewName") String viewName,
+                                                                   @Param("capacityPerPage") Integer capacityPerPage);
+
+    @Query("DELETE FROM PageEntity p WHERE p.expiration > :expiration")
+    void deleteByExpirationAfter(@Param("expiration") LocalDateTime expiration);
 }

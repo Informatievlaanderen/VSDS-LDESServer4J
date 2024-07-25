@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="page-member-extend-pk" author="vsds">
+<!--        <preConditions onFail="MARK_RAN">-->
+<!--            <not>-->
+<!--                <tableExists tableName="buckets"/>-->
+<!--            </not>-->
+<!--        </preConditions>-->
+<!--        <addDefaultValue  columnName="page_id"-->
+<!--                          defaultValueNumeric="0"-->
+<!--                          tableName="page_members"/>-->
+        <addColumn tableName="page_members">
+            <column name="id" type="BIGINT" autoIncrement="true">
+            </column>
+        </addColumn>
+        <dropPrimaryKey  tableName= "page_members"/>
+        <addPrimaryKey tableName="page_members" columnNames="id"/>
+        <addUniqueConstraint tableName="page_members" columnNames="bucket_id,member_id,page_id"></addUniqueConstraint>
+        <rollback>
+            <dropPrimaryKey  tableName= "page_members"/>
+            <addPrimaryKey tableName="page_members" columnNames="bucket_id,member_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,28 +1,25 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PagePostgresRepository;
 import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentSorter.isConnectedTo;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateSorter.sortCompactionCandidates;
 
 @Component
 public class CompactionCandidateService {
-	private final AllocationRepository allocationRepository;
-	private final FragmentRepository fragmentRepository;
+	private final PagePostgresRepository pageRepository;
 
 
-	public CompactionCandidateService(AllocationRepository allocationRepository, FragmentRepository fragmentRepository) {
-		this.allocationRepository = allocationRepository;
-		this.fragmentRepository = fragmentRepository;
-	}
+	public CompactionCandidateService(PagePostgresRepository pageRepository) {
+        this.pageRepository = pageRepository;
+    }
 
 	/**
 	 * Preparation step for the Compaction Service.
@@ -44,7 +41,7 @@ public class CompactionCandidateService {
 
 		StreamEx.of(possibleCompactionCandidates.stream())
 				.forPairs((cc1, cc2) -> {
-					if (cc1.getFragment().isConnectedTo(cc2.getFragment())) {
+					if (isConnectedTo(cc1.getTreeNode(), cc2.getTreeNode())) {
 						Set<CompactionCandidate> set = compactionDesign.getOrDefault(index.get(), new HashSet<>());
 						var totalSum = set.stream().map(CompactionCandidate::getSize).reduce(Integer::sum).orElse(cc1.getSize());
 
@@ -61,13 +58,11 @@ public class CompactionCandidateService {
 	}
 
 	protected List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {
-		var compactionCandidates = allocationRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
+		var compactionCandidates = pageRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
 				.toList();
-		compactionCandidates.forEach(cc -> cc.setFragment(fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(cc.getId()))
-				.orElseThrow()));
 		return sortCompactionCandidates(compactionCandidates.stream()
-				.filter(cc -> cc.getFragment().isImmutable())
-				.filter(cc -> cc.getFragment().getDeleteTime() == null))
+				.filter(cc -> cc.getTreeNode().isImmutable()))
+//				.filter(cc -> cc.getTreeNode().getDeleteTime() == null))
 				.toList();
 	}
 }
