@@ -14,4 +14,15 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	@Modifying
 	@Query("UPDATE PageEntity p SET p.immutable = true WHERE p.id IN (SELECT r.toPage.id FROM RelationEntity r JOIN r.fromPage p WHERE p.bucket.bucketId = :bucketId)")
 	void setAllChildrenImmutableByBucketId(long bucketId);
+
+	@Modifying
+	@Query(value = """
+			UPDATE pages
+			SET immutable = true
+			WHERE bucket_id IN (SELECT b.bucket_id
+			                    FROM buckets b
+			                             JOIN views USING (view_id)
+			                             JOIN collections c using (collection_id) WHERE c.name = :collectionName);
+			""", nativeQuery = true)
+	void markAllPagesImmutableByCollectionName(String collectionName);
 }

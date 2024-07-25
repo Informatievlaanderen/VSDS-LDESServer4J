@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Component
-public class PageAssigner implements ItemWriter<List<Page>> {
+public class PageAssigner implements ItemWriter<List<PageAssignment>> {
 	private static final String SQL = """
 			UPDATE page_members
 			SET page_id = ?
@@ -23,10 +23,10 @@ public class PageAssigner implements ItemWriter<List<Page>> {
 	}
 
 	@Override
-	public void write(Chunk<? extends List<Page>> chunk) throws Exception {
+	public void write(Chunk<? extends List<PageAssignment>> chunk) {
 		for (var pages : chunk) {
 			final List<Object[]> batchArgs = pages.stream()
-					.map(page -> new Object[]{page.getId(), page.getBucketId(), page.getAssignedMemberCount()})
+					.map(assignment -> new Object[]{assignment.pageId(), assignment.bucketId(), assignment.assignedMemberCount()})
 					.toList();
 			jdbcTemplate.batchUpdate(SQL, batchArgs);
 		}

@@ -41,10 +41,6 @@ public class Page {
 		return bucketId;
 	}
 
-	public String getPartialUrl() {
-		return partialUrl.asString();
-	}
-
 	public boolean isFull() {
 		return getAvailableMemberSpace() == 0;
 	}
@@ -53,12 +49,8 @@ public class Page {
 		return pageSize - assignedMemberCount;
 	}
 
-	public int getAssignedMemberCount() {
-		return assignedMemberCount;
-	}
-
-	public void setAssignedMemberCount(int assignedMemberCount) {
-		this.assignedMemberCount = assignedMemberCount;
+	public void incrementAssignedMemberCount(int assignedMemberCount) {
+		this.assignedMemberCount += assignedMemberCount;
 	}
 
 	public int getMaximumMemberCount() {
@@ -75,5 +67,18 @@ public class Page {
 
 	public boolean isNumberLess() {
 		return partialUrl.isNumberLess();
+	}
+
+	@Override
+	public final boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Page page)) return false;
+
+		return id == page.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Long.hashCode(id);
 	}
 }
