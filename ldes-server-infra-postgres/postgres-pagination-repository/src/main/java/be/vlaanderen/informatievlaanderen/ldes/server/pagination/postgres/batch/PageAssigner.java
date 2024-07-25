@@ -26,7 +26,7 @@ public class PageAssigner implements ItemWriter<List<PageAssignment>> {
 	public void write(Chunk<? extends List<PageAssignment>> chunk) {
 		for (var pages : chunk) {
 			final List<Object[]> batchArgs = pages.stream()
-					.map(assignment -> new Object[]{assignment.pageId(), assignment.bucketId(), assignment.assignedMemberCount()})
+					.map(assignment -> new Object[]{assignment.pageId(), assignment.bucketId(), assignment.newlyAssignedMemberCount()})
 					.toList();
 			jdbcTemplate.batchUpdate(SQL, batchArgs);
 		}
