@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,9 +30,9 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<Page>> {
 	}
 
 	@Override
-	public List<Page> process(@NotNull Page page) throws Exception {
+	public List<Page> process(@NotNull Page page) {
 		// Get Items count to process
-		int unprocessedMemberCount = jdbcTemplate.queryForObject(SELECT_UNPROCESSED, Integer.class, page.getBucketId());
+		int unprocessedMemberCount = Objects.requireNonNull(jdbcTemplate.queryForObject(SELECT_UNPROCESSED, Integer.class, page.getBucketId()));
 
 		List<Page> assignedPages = new ArrayList<>();
 		Page assignedPage = page;
@@ -57,22 +58,21 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<Page>> {
 
 	private Page createNewPage(Page page) {
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		final String childPagePartialUrl = page.createChildPartialUrl();
+		final PartialUrl childPagePartialUrl = page.createChildPartialUrl();
 		jdbcTemplate.update(connection -> {
 			PreparedStatement ps = connection.prepareStatement(INSERT_NEW_PAGE_SQL, new String[] {"page_id"});
 			ps.setLong(1, page.getBucketId());
-			ps.setString(2, childPagePartialUrl);
+			ps.setString(2, childPagePartialUrl.asString());
 			return ps;
 		}, keyHolder);
 		if(!page.isNumberLess()) {
 			jdbcTemplate.update(MARK_PAGE_IMMUTABLE_SQL, page.getId());
 		}
 		jdbcTemplate.update(INSERT_PAGE_RELATION_SQL, page.getId(), keyHolder.getKey(), RdfConstants.GENERIC_TREE_RELATION);
-		return Page.createWithPartialUrl(
+		return new Page(
 				Objects.requireNonNull(keyHolder.getKeyAs(Long.class)),
 				page.getBucketId(),
 				childPagePartialUrl,
-				0,
 				page.getMaximumMemberCount()
 		);
 	}

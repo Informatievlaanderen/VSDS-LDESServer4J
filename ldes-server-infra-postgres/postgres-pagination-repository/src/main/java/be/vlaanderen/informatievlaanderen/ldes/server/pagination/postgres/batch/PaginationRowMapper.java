@@ -9,11 +9,12 @@ import java.sql.SQLException;
 public class PaginationRowMapper implements RowMapper<Page> {
 	@Override
 	public Page mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return Page.createWithPartialUrl(
+		return new Page(
 				rs.getLong("page_id"),
 				rs.getLong("bucket_id"),
 				rs.getString("partial_url"),
-				rs.getInt("assigned_members"),
-				rs.getInt("page_size")
-		);	}
+				rs.getInt("page_size"),
+				rs.getInt("assigned_members")
+		);
+	}
 }

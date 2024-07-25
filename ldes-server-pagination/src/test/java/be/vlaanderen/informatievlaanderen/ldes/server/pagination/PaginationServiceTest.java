@@ -7,8 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -55,9 +53,8 @@ class PaginationServiceTest {
 	private ApplicationEventPublisher eventPublisher;
 	private List<MemberAllocation> output;
 	private final Page page = new Page(1,
+			1,
 			"/%s".formatted(VIEW_NAME_1.asString()),
-			new Bucket(1, "es/v1"),
-			new PageNumber(1), 0,
 			50);
 
 	@Test

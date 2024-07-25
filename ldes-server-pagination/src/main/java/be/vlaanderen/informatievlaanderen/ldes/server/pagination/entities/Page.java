@@ -1,25 +1,36 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber.PAGE_NUMBER;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
 
 public class Page {
 	private final long id;
-	private final String viewNameUrlPrefix;
-	private final Bucket bucket;
-	private final PageNumber pageNumber;
+	private final long bucketId;
+	private final PartialUrl partialUrl;
+	private final int pageSize;
 	private int assignedMemberCount;
-	private final int maximumMemberCount;
 
-	public Page(long id, String viewNameUrlPrefix, Bucket bucket, PageNumber pageNumber, int assignedMemberCount, int maximumMemberCount) {
+	public Page(long id, long bucketId, PartialUrl partialUrl, int pageSize) {
+		this(id, bucketId, partialUrl, pageSize, 0);
+	}
+
+	public Page(long id, long bucketId, PartialUrl partialUrl, int pageSize, int assignedMemberCount) {
 		this.id = id;
-		this.viewNameUrlPrefix = viewNameUrlPrefix;
-		this.bucket = bucket;
-		this.pageNumber = pageNumber;
+		this.bucketId = bucketId;
+		this.partialUrl = partialUrl;
+		this.pageSize = pageSize;
 		this.assignedMemberCount = assignedMemberCount;
-		this.maximumMemberCount = maximumMemberCount;
+	}
+
+	public Page(long id, long bucketId, String partialUrl, int pageSize) {
+		this(id, bucketId, partialUrl, pageSize, 0);
+	}
+
+	public Page(long id, long bucketId, String partialUrl, int pageSize, int assignedMemberCount) {
+		this.id = id;
+		this.bucketId = bucketId;
+		this.partialUrl = PartialUrl.fromUrl(partialUrl);
+		this.pageSize = pageSize;
+		this.assignedMemberCount = assignedMemberCount;
 	}
 
 	public long getId() {
@@ -27,11 +38,11 @@ public class Page {
 	}
 
 	public long getBucketId() {
-		return bucket.id();
+		return bucketId;
 	}
 
 	public String getPartialUrl() {
-		return viewNameUrlPrefix + "?" + (bucket.descriptor().isEmpty() ? "" : bucket.descriptor() + "&") + pageNumber.asString();
+		return partialUrl.asString();
 	}
 
 	public boolean isFull() {
@@ -39,7 +50,7 @@ public class Page {
 	}
 
 	public int getAvailableMemberSpace() {
-		return maximumMemberCount - assignedMemberCount;
+		return pageSize - assignedMemberCount;
 	}
 
 	public int getAssignedMemberCount() {
@@ -51,25 +62,18 @@ public class Page {
 	}
 
 	public int getMaximumMemberCount() {
-		return maximumMemberCount;
+		return pageSize;
 	}
 
 	public static Page createWithPartialUrl(long id, long bucketId, String partialUrl, int assignedMemberCount, int maximumMemberCount) {
-		final String[] mainPartialUrlParts = partialUrl.split("\\?");
-		final String urlPrefix = mainPartialUrlParts[0];
-		final String extendedBucketDescriptor = mainPartialUrlParts.length == 2 ? mainPartialUrlParts[1] : "";
-		final String[] descriptorParts = extendedBucketDescriptor.split(PAGE_NUMBER + "=");
-		final PageNumber pageNumber = descriptorParts.length == 2 ? new PageNumber(Integer.parseInt(descriptorParts[1])) : null;
-		return new Page(id, urlPrefix, new Bucket(bucketId, descriptorParts[0]), pageNumber, assignedMemberCount, maximumMemberCount);
+		return new Page(id, bucketId, PartialUrl.fromUrl(partialUrl), maximumMemberCount, assignedMemberCount);
 	}
 
-
-	public String createChildPartialUrl() {
-		final PageNumber childPageNumber = pageNumber == null ? new PageNumber(1) : pageNumber.increment();
-		return viewNameUrlPrefix + "?" + (bucket.descriptor().isEmpty() ? "" : bucket.descriptor() + "&") + childPageNumber.asString();
+	public PartialUrl createChildPartialUrl() {
+		return partialUrl.createChild();
 	}
 
 	public boolean isNumberLess() {
-		return pageNumber == null;
+		return partialUrl.isNumberLess();
 	}
 }

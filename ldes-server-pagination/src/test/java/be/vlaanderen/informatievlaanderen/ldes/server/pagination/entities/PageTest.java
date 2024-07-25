@@ -1,39 +1,37 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-
-import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PageTest {
-	private static final String VIEW_NAME_PREFIX = "/mobility-hindrances/paged";
+	private static final String TILE = "tile=15/142/122";
 
-	@ParameterizedTest
-	@ArgumentsSource(BucketProvider.class)
-	void test_GetPartialUrl(String bucketDescriptor, String expectedPartialUrl) {
-		final PageNumber pageNumber = new PageNumber(1);
-		final Page page = new Page(0, VIEW_NAME_PREFIX, new Bucket(0, bucketDescriptor), pageNumber, 0, 12);
+	@Test
+	void given_PageWithBucketDescriptor_test_CreateWithPartialUrl() {
+		final String partialUrl = "/mobility-hindrances/by-loc?%s&pageNumber=4".formatted(TILE);
+		final Page expectedPage = new Page(0, 0, partialUrl, 150);
 
-		final String result = page.getPartialUrl();
+		final Page actualPage = Page.createWithPartialUrl(0, 0, partialUrl, 0, 150);
 
-		assertThat(result).isEqualTo(expectedPartialUrl);
+		assertThat(actualPage)
+				.usingRecursiveComparison()
+				.isEqualTo(expectedPage);
 	}
 
-	static class BucketProvider implements ArgumentsProvider {
-		@Override
-		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) {
-			return Stream.of(
-					Arguments.of("year=2024&month=06&day=18", VIEW_NAME_PREFIX + "?year=2024&month=06&day=18&pageNumber=1"),
-					Arguments.of("", VIEW_NAME_PREFIX + "?pageNumber=1")
-			);
-		}
+	@Test
+	void given_PageWithoutBucketDescriptor_test_CreateWithPartialUrl() {
+		final String partialUrl = "/mobility-hindrances/paged?pageNumber=4";
+		final Page expectedPage = new Page(0, 0, partialUrl,150);
+
+		final Page actualPage = Page.createWithPartialUrl(0, 0, partialUrl, 0, 150);
+
+		assertThat(actualPage)
+				.usingRecursiveComparison()
+				.isEqualTo(expectedPage);
 	}
+
+
+
 
 }
