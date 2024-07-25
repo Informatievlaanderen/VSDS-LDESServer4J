@@ -22,7 +22,7 @@ public class PageNumber {
 
 	public static PageNumber fromString(String pageNumberString) {
 		if (!pageNumberString.contains(PAGE_NUMBER)) {
-			throw new IllegalArgumentException("Invalid page number: " + pageNumberString);
+			throw new IllegalArgumentException("Invalid page number: %s - Expected format: %s=<INTEGER>".formatted(pageNumberString, PAGE_NUMBER));
 		}
 		return new PageNumber(Integer.parseInt(pageNumberString.replace(PAGE_NUMBER + "=", "")));
 	}
