@@ -31,7 +31,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		String extendedTreeNodeId = hostName + treeNodeId.asEncodedFragmentId();
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
-						() -> new MissingResourceException("fragment", treeNodeId.asEncodedFragmentId()));
+						() -> new MissingResourceException("TreeNode", treeNodeId.asEncodedFragmentId()));
 
 		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId()).toList();
 		List<Member> members = memberFetcher

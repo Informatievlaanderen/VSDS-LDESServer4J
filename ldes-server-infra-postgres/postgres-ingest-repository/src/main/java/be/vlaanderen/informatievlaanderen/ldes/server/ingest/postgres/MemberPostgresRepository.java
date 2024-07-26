@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.Member
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
 import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants.LDES_SERVER_DELETED_MEMBERS_COUNT;
 
 @Repository
-@Primary
 public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;

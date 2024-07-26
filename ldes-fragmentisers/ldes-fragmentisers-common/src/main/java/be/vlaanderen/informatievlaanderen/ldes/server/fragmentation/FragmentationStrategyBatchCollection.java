@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -19,17 +18,14 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 
 	private final BucketRepository bucketRepository;
 	private final Set<FragmentationStrategyBatchExecutor> fragmentationStrategySet;
-	private final BucketisedMemberRepository bucketisedMemberRepository;
 	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyBatchCollection(
 			BucketRepository bucketRepository,
-			BucketisedMemberRepository bucketisedMemberRepository,
 			FragmentationStrategyCreator fragmentationStrategyCreator,
 			ObservationRegistry observationRegistry) {
 		this.bucketRepository = bucketRepository;
-		this.bucketisedMemberRepository = bucketisedMemberRepository;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategySet = new HashSet<>();
@@ -64,13 +60,11 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
 		removeFromStrategySet(
 				executor -> Objects.equals(executor.getViewName().getCollectionName(), event.collectionName()));
-		bucketisedMemberRepository.deleteByCollection(event.collectionName());
 	}
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		removeFromStrategySet(executor -> Objects.equals(executor.getViewName(), event.getViewName()));
-		bucketisedMemberRepository.deleteByViewName(event.getViewName());
 	}
 
 	private void removeFromStrategySet(Predicate<FragmentationStrategyBatchExecutor> filterPredicate) {

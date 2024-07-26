@@ -15,22 +15,22 @@ class ReferenceBucketiserTest {
     private final ReferenceConfig config = new ReferenceConfig(RDF.type.getURI());
     private ReferenceBucketiser referenceBucketiser;
 
-    private final String memberId = "parcels/https://data.vlaanderen.be/id/perceel/13374D0779-00D003/2022-11-29T11:37:27+01:00";
+    private final String memberId = "https://data.vlaanderen.be/id/perceel/13374D0779-00D003/2022-11-29T11:37:27+01:00";
 
     @BeforeEach
     void setUp() {
         referenceBucketiser = new ReferenceBucketiser(config);
     }
 
-//    @Test
-//    void shouldReturnSetOfFoundResources() {
-//        Model model = RDFParser.source("member-with-two-types.ttl").toModel();
-//
-//        assertThat(referenceBucketiser.bucketise(memberId, model))
-//                .hasSize(2)
-//                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel")
-//                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw");
-//    }
+    @Test
+    void shouldReturnSetOfFoundResources() {
+        Model model = RDFParser.source("member-with-two-types.ttl").toModel();
+
+        assertThat(referenceBucketiser.bucketise(memberId, model))
+                .hasSize(2)
+                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel")
+                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw");
+    }
 
     @Test
     void shouldReturnDefaultBucketString() {
@@ -41,14 +41,14 @@ class ReferenceBucketiserTest {
                 .contains(DEFAULT_BUCKET_STRING);
     }
 
-//    @Test
-//    void when_MemberHasInvalidURI_Then_ReturnOnlyCorrectBucket() {
-//        Model model = RDFParser.source("member-with-two-types-faulty.ttl").toModel();
-//
-//        assertThat(referenceBucketiser.bucketise(memberId, model))
-//                .hasSize(1)
-//                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
-//    }
+    @Test
+    void when_MemberHasInvalidURI_Then_ReturnOnlyCorrectBucket() {
+        Model model = RDFParser.source("member-with-two-types-faulty.ttl").toModel();
+
+        assertThat(referenceBucketiser.bucketise(memberId, model))
+                .hasSize(1)
+                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
+    }
 
     @Test
     void shouldSkipResultsThatAreNotUris() {

@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
@@ -79,13 +80,12 @@ public class FragmentationService {
 	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 
-		if (jobExecution.getStepExecutions().stream().toList().getFirst().getWriteCount() == 0) {
-			shouldTriggerBucketisation.set(false);
-		}
-		if (job.getName().equals(BUCKETISATION_JOB)) {
-			eventPublisher.publishEvent(new MembersBucketisedEvent());
-		} else if (job.getName().equals(REBUCKETISATION_JOB)) {
-			eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
+		if(List.copyOf(jobExecution.getStepExecutions()).getFirst().getWriteCount() != 0) {
+			if (job.getName().equals(BUCKETISATION_JOB)) {
+				eventPublisher.publishEvent(new MembersBucketisedEvent());
+			} else if (job.getName().equals(REBUCKETISATION_JOB)) {
+				eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
+			}
 		}
 	}
 

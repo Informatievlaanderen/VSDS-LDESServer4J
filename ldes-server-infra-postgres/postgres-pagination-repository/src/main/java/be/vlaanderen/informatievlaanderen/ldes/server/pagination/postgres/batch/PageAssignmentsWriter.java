@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Component
-public class PageAssigner implements ItemWriter<List<PageAssignment>> {
+public class PageAssignmentsWriter implements ItemWriter<List<PageAssignment>> {
 	private static final String SQL = """
 			UPDATE page_members
 			SET page_id = ?
@@ -18,7 +18,7 @@ public class PageAssigner implements ItemWriter<List<PageAssignment>> {
 			""";
 	private final JdbcTemplate jdbcTemplate;
 
-	public PageAssigner(DataSource dataSource) {
+	public PageAssignmentsWriter(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 

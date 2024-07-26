@@ -26,18 +26,15 @@ class RootBucketRetrieverTest {
 	@Mock
 	private BucketRepository bucketRepository;
 
+	@Mock
 	private Observation observation;
 	private RootBucketRetriever rootBucketRetriever;
 	private Bucket rootBucket;
-
-	private static final ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
 	private static final ViewName VIEW_NAME = new ViewName("collection", "view");
 
 	@BeforeEach
 	void setUp() {
-		observation = Observation.createNotStarted("observation", observationRegistry).start();
-
-		rootBucketRetriever = new RootBucketRetriever(VIEW_NAME, bucketRepository, observationRegistry);
+		rootBucketRetriever = new RootBucketRetriever(VIEW_NAME, bucketRepository, ObservationRegistry.NOOP);
 		rootBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
 		when(bucketRepository.retrieveRootBucket(VIEW_NAME)).thenReturn(Optional.of(rootBucket));
 	}

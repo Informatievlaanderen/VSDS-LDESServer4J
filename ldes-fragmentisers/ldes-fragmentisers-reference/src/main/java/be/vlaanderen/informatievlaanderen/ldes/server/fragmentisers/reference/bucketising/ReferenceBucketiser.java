@@ -25,8 +25,7 @@ public class ReferenceBucketiser {
 		this.fragmentationPath = referenceConfig.fragmentationPath();
 	}
 
-	public Set<String> bucketise(@NotNull String subject,
-								 @NotNull Model memberModel) {
+	public Set<String> bucketise(@NotNull String subject, @NotNull Model memberModel) {
 		try {
 			Set<String> references = memberModel
 					.listObjectsOfProperty(createResource(subject), createProperty(fragmentationPath))
