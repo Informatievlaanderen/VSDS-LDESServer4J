@@ -10,7 +10,12 @@ import java.util.stream.Stream;
 
 public interface MemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
-	boolean existsByOldIdIn(List<String> oldIds);
+	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
+			"FROM members " +
+			"WHERE collection_id = :collectionId " +
+			"AND subject IN :subjects",
+			nativeQuery = true)
+	boolean existsByCollectionAndSubjectIn(int collectionId, List<String> subjects);
 
 	List<MemberEntity> findAllByOldIdIn(List<String> oldIds);
 
