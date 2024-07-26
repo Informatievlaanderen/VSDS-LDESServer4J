@@ -18,8 +18,6 @@ class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
 	@Autowired
 	BucketisedMemberWriter writer;
 	@Autowired
-	MemberBucketEntityRepository repository;
-	@Autowired
 	DataSource dataSource;
 
 	@Test

@@ -36,8 +36,7 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.retention",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain",
 })
-@ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class,
-		MemberBucketEntityRepository.class})
+@ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class})
 @Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresFragmentationIntegrationTest {
@@ -47,8 +46,6 @@ public class PostgresFragmentationIntegrationTest {
 	@Autowired
 	public FragmentRepository fragmentRepository;
 
-	@Autowired
-	public MemberBucketEntityRepository memberBucketEntityRepository;
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
@@ -57,9 +54,6 @@ public class PostgresFragmentationIntegrationTest {
 		public ObservationRegistry observationRegistry() {
 			return ObservationRegistry.NOOP;
 		}
-
-
-
 
 		@Bean
 		public MemberPropertiesRepository memberPropertiesRepository() {

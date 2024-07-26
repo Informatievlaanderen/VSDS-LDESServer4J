@@ -42,11 +42,6 @@ public class PostgresPaginationIntegrationTest {
         }
 
         @Bean
-        public MemberBucketEntityRepository memberBucketRepository() {
-            return Mockito.mock(MemberBucketEntityRepository.class);
-        }
-
-        @Bean
         public FragmentEntityRepository fragmentEntityRepositoryRepository() {
             return Mockito.mock(FragmentEntityRepository.class);
         }
