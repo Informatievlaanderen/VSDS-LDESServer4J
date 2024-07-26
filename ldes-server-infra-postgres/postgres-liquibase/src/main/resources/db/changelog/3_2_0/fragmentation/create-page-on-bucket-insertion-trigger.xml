@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-on-insertion-trigger" author="vsds">
+        <sqlFile path="create-on-bucket-insertion-function.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 stripComments="false"
+                 endDelimiter="\n-- end"/>
+        <sqlFile path="create-on-bucket-insertion-trigger.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 stripComments="false"
+                 endDelimiter="\n-- end"/>
+    </changeSet>
+
+</databaseChangeLog>

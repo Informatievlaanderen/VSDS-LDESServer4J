@@ -34,6 +34,7 @@ public class ViewPostgresRepository implements ViewRepository {
     }
 
     @Override
+    @Transactional
     public void saveView(ViewSpecification viewSpecification) {
         final ViewEntity viewEntity = ViewSpecificationMapper.toEntity(viewSpecification);
         final EventStreamEntity eventStreamEntity = eventStreamEntityRepository

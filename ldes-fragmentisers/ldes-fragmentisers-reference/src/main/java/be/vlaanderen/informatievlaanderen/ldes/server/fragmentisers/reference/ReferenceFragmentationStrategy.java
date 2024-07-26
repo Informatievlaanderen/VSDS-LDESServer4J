@@ -2,53 +2,53 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 
 public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorator {
 
     public static final String REFERENCE_FRAGMENTATION = "ReferenceFragmentation";
 
     private final ReferenceBucketiser referenceBucketiser;
-    private final ReferenceFragmentCreator fragmentCreator;
+    private final ReferenceBucketCreator bucketCreator;
     private final ObservationRegistry observationRegistry;
 
     public ReferenceFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
                                           ReferenceBucketiser referenceBucketiser,
-                                          ReferenceFragmentCreator fragmentCreator,
+                                          ReferenceBucketCreator bucketCreator,
                                           ObservationRegistry observationRegistry,
-                                          FragmentRepository fragmentRepository) {
-        super(fragmentationStrategy, fragmentRepository);
+                                          ApplicationEventPublisher applicationEventPublisher) {
+        super(fragmentationStrategy, applicationEventPublisher);
         this.referenceBucketiser = referenceBucketiser;
-        this.fragmentCreator = fragmentCreator;
+        this.bucketCreator = bucketCreator;
         this.observationRegistry = observationRegistry;
     }
 
     @Override
-    public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, FragmentationMember member,
-                                                      Observation parentObservation) {
+    public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member,
+                                                    Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
-        final var rootFragment = getOrCreateRootFragment(parentFragment);
+        final var rootFragment = getOrCreateRootBucket(parentBucket);
         var fragments =
                 referenceBucketiser
-                        .bucketise(member.id(), member.model())
+                        .bucketise(member.getSubject(), member.getVersionModel())
                         .stream()
-                        .map(reference -> fragmentCreator.getOrCreateFragment(parentFragment, reference, rootFragment))
+                        .map(reference -> bucketCreator.getOrCreateBucket(parentBucket, reference, rootFragment))
                         .toList();
 
         List<BucketisedMember> members = fragments.parallelStream()
-                .map(ldesFragment -> super.addMemberToFragment(ldesFragment, member, fragmentationObservation))
+                .map(bucket -> super.addMemberToBucket(bucket, member, fragmentationObservation))
                 .flatMap(Collection::stream)
                 .toList();
         fragmentationObservation.stop();
@@ -61,9 +61,9 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                 .start();
     }
 
-    private Fragment getOrCreateRootFragment(Fragment parentFragment) {
-        Fragment referenceRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment, FRAGMENT_KEY_REFERENCE_ROOT);
-        super.addRelationFromParentToChild(parentFragment, referenceRootFragment);
+    private Bucket getOrCreateRootBucket(Bucket parentBucket) {
+        Bucket referenceRootFragment = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_REFERENCE_ROOT);
+        super.addRelationFromParentToChild(parentBucket, referenceRootFragment);
         return referenceRootFragment;
     }
 

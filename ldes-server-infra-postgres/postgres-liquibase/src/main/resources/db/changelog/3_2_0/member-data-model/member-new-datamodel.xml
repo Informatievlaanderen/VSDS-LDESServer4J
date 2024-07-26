@@ -9,7 +9,7 @@
             </not>
         </preConditions>
         <createTable tableName="members">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="member_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="members_pkey"/>
             </column>
             <column name="subject" type="VARCHAR(255)">
@@ -43,12 +43,13 @@
                                  referencedColumnNames="collection_id"
                                  onDelete="CASCADE"/>
         <createIndex indexName="idx3mw3hkmk4pkhm5hg5plm4bdqs" tableName="members">
-            <column name="id"/>
+            <column name="member_id"/>
             <column name="timestamp"/>
         </createIndex>
         <createIndex indexName="idx3mw3hkmk4phlm5hg3vsm4bzes" tableName="members">
             <column name="old_id"/>
         </createIndex>
+        <addUniqueConstraint tableName="members" columnNames="collection_id, subject" />
         <rollback>
             <dropTable tableName="members" cascadeConstraints="true" />
         </rollback>

@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,139 +13,125 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReferenceFragmentCreatorTest {
 
-    private static final ViewName viewName = new ViewName("collectionName", "view");
-    private static final FragmentPair timebasedPair = new FragmentPair("year", "2023");
-    private static final FragmentPair referenceRootPair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT);
-    private static final FragmentPair referencePair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, RDF.type.getURI());
-    private static final FragmentPair defaultPair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, DEFAULT_BUCKET_STRING);
+	private static final ViewName viewName = new ViewName("collectionName", "view");
+	private static final BucketDescriptorPair timebasedPair = new BucketDescriptorPair("year", "2023");
+	private static final BucketDescriptorPair referenceRootPair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT);
+	private static final BucketDescriptorPair referencePair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, RDF.type.getURI());
+	private static final BucketDescriptorPair defaultPair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, DEFAULT_BUCKET_STRING);
+	@Mock
+	private ReferenceBucketCreator referenceBucketCreator;
+	@Mock
+	private BucketRepository bucketRepository;
+	@Mock
+	private ReferenceFragmentRelationsAttributer relationsAttributer;
 
-    private ReferenceFragmentCreator referenceFragmentCreator;
+	@BeforeEach
+	void setUp() {
+		referenceBucketCreator =
+				new ReferenceBucketCreator(bucketRepository, relationsAttributer, DEFAULT_FRAGMENTATION_KEY);
+	}
 
-    @Mock
-    private FragmentRepository fragmentRepository;
+	@Test
+	void when_ReferenceFragmentDoesNotExist_NewReferenceFragmentIsCreatedAndSaved() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		BucketDescriptor bucketDescriptor = bucket.createChild(referencePair).getBucketDescriptor();
 
-    @Mock
-    private ReferenceFragmentRelationsAttributer relationsAttributer;
+		when(bucketRepository.retrieveBucket(viewName, bucketDescriptor)).thenReturn(Optional.empty());
 
-    @BeforeEach
-    void setUp() {
-        referenceFragmentCreator =
-                new ReferenceFragmentCreator(fragmentRepository, relationsAttributer, DEFAULT_FRAGMENTATION_KEY);
-    }
+		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
-    @Test
-    void when_ReferenceFragmentDoesNotExist_NewReferenceFragmentIsCreatedAndSaved() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment.createChild(referenceRootPair);
-        LdesFragmentIdentifier tileFragmentId = fragment.createChild(referencePair).getFragmentId();
+		assertThat(childBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, referencePair).asDecodedString());
+		verify(bucketRepository).retrieveBucket(viewName, bucketDescriptor);
+		verify(bucketRepository).insertBucket(childBucket);
+	}
 
-        when(fragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
+	@Test
+	void when_ReferenceFragmentDoesExist_RetrievedReferenceFragmentIsReturned() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		Bucket tileBucket = bucket.createChild(referencePair);
 
-        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, RDF.type.getURI(), rootFragment);
+		when(bucketRepository.retrieveBucket(viewName, tileBucket.getBucketDescriptor()))
+				.thenReturn(Optional.of(tileBucket));
+		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
-        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, referencePair)))
-                .isEqualTo(childFragment.getFragmentId());
-        verify(fragmentRepository,
-                times(1)).retrieveFragment(tileFragmentId);
-        verify(fragmentRepository,
-                times(1)).saveFragment(childFragment);
-    }
+		assertThat(childBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, referencePair).asDecodedString());
+		verify(bucketRepository).retrieveBucket(viewName, tileBucket.getBucketDescriptor());
+		verifyNoMoreInteractions(bucketRepository);
+	}
 
-    @Test
-    void when_ReferenceFragmentDoesExist_RetrievedReferenceFragmentIsReturned() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment.createChild(referenceRootPair);
-        Fragment tileFragment = fragment.createChild(referencePair);
+	@Test
+	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
 
-        when(fragmentRepository.retrieveFragment(tileFragment.getFragmentId())).thenReturn(Optional.of(tileFragment));
+		when(bucketRepository.retrieveBucket(viewName, rootBucket.getBucketDescriptor())).thenReturn(Optional.empty());
 
-        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, RDF.type.getURI(), rootFragment);
+		Bucket returnedBucket = referenceBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT);
 
-        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, referencePair)))
-                .isEqualTo(childFragment.getFragmentId());
-        verify(fragmentRepository,
-                times(1)).retrieveFragment(tileFragment.getFragmentId());
-        verifyNoMoreInteractions(fragmentRepository);
-    }
+		assertThat(returnedBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, referenceRootPair).asDecodedString());
+		verify(bucketRepository).retrieveBucket(viewName, rootBucket.getBucketDescriptor());
+		verify(bucketRepository).insertBucket(returnedBucket);
+	}
 
-    @Test
-    void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(
-                viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment
-                .createChild(referenceRootPair);
+	@Test
+	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		when(bucketRepository.retrieveBucket(viewName, rootBucket.getBucketDescriptor())).thenReturn(Optional.of(rootBucket));
 
-        when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.empty());
+		Bucket returnedBucket = referenceBucketCreator.getOrCreateBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT, rootBucket);
 
-        Fragment returnedFragment = referenceFragmentCreator.getOrCreateRootFragment(fragment,
-                FRAGMENT_KEY_REFERENCE_ROOT);
+		assertThat(returnedBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, referenceRootPair).asDecodedString());
+		verify(bucketRepository, times(1)).retrieveBucket(viewName, rootBucket.getBucketDescriptor());
+		verifyNoMoreInteractions(bucketRepository);
+	}
 
-        assertEquals(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, referenceRootPair)),
-                returnedFragment.getFragmentId());
-        verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
-        verify(fragmentRepository, times(1)).saveFragment(returnedFragment);
-    }
+	@Test
+	void when_DefaultFragmentDoesNotExist_DefaultFragmentIsCreatedAndSaved() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		BucketDescriptor bucketDescriptor = bucket.createChild(defaultPair).getBucketDescriptor();
+		when(bucketRepository.retrieveBucket(viewName, bucketDescriptor)).thenReturn(Optional.empty());
 
-    @Test
-    void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment.createChild(referenceRootPair);
-        when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.of(rootFragment));
+		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
-        Fragment returnedFragment =
-                referenceFragmentCreator.getOrCreateFragment(fragment, FRAGMENT_KEY_REFERENCE_ROOT, rootFragment);
+		assertThat(childBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, defaultPair).asDecodedString());
+		verify(bucketRepository).retrieveBucket(viewName, bucketDescriptor);
+		verify(bucketRepository).insertBucket(childBucket);
+	}
 
-        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, referenceRootPair)))
-                .isEqualTo(returnedFragment.getFragmentId());
-        verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
-        verifyNoMoreInteractions(fragmentRepository);
-    }
-    @Test
-    void when_DefaultFragmentDoesNotExist_DefaultFragmentIsCreatedAndSaved() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment.createChild(referenceRootPair);
-        LdesFragmentIdentifier tileFragmentId = fragment.createChild(defaultPair).getFragmentId();
+	@Test
+	void when_DefaultFragmentDoesExist_RetrievedDefaultFragmentIsReturned() {
+		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
+		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		Bucket tileBucket = bucket.createChild(defaultPair);
 
-        when(fragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
+		when(bucketRepository.retrieveBucket(viewName, tileBucket.getBucketDescriptor())).thenReturn(Optional.of(tileBucket));
 
-        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, DEFAULT_BUCKET_STRING, rootFragment);
+		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 
-        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, defaultPair)))
-                .isEqualTo(childFragment.getFragmentId());
-        verify(fragmentRepository,
-                times(1)).retrieveFragment(tileFragmentId);
-        verify(fragmentRepository,
-                times(1)).saveFragment(childFragment);
-    }
-
-    @Test
-    void when_DefaultFragmentDoesExist_RetrievedDefaultFragmentIsReturned() {
-        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
-        Fragment rootFragment = fragment.createChild(referenceRootPair);
-        Fragment tileFragment = fragment.createChild(defaultPair);
-
-        when(fragmentRepository.retrieveFragment(tileFragment.getFragmentId())).thenReturn(Optional.of(tileFragment));
-
-        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, DEFAULT_BUCKET_STRING, rootFragment);
-
-        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, defaultPair)))
-                .isEqualTo(childFragment.getFragmentId());
-        verify(fragmentRepository,
-                times(1)).retrieveFragment(tileFragment.getFragmentId());
-        verifyNoMoreInteractions(fragmentRepository);
-    }
+		assertThat(childBucket.getBucketDescriptorAsString())
+				.isEqualTo(BucketDescriptor.of(timebasedPair, defaultPair).asDecodedString());
+		verify(bucketRepository).retrieveBucket(viewName, tileBucket.getBucketDescriptor());
+		verifyNoMoreInteractions(bucketRepository);
+	}
 
 }

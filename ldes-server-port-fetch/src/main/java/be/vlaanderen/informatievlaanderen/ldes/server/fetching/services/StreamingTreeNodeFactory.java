@@ -9,5 +9,5 @@ import java.util.stream.Stream;
 public interface StreamingTreeNodeFactory {
     TreeNode getFragmentWithoutMemberData(LdesFragmentIdentifier treeNodeId);
 
-    Stream<Member> getMembersOfFragment(String treeNodeId);
+    Stream<Member> getMembersOfFragment(LdesFragmentIdentifier treeNodeId);
 }

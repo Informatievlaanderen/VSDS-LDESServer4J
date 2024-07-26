@@ -13,16 +13,15 @@ import java.util.List;
 @Component
 public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCreator {
 	private final ApplicationContext applicationContext;
-	private final RootFragmentCreator rootFragmentCreator;
+	private final RootBucketCreator rootBucketCreator;
 
-	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-			RootFragmentCreator rootFragmentCreator) {
+	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext, RootBucketCreator rootBucketCreator) {
 		this.applicationContext = applicationContext;
-		this.rootFragmentCreator = rootFragmentCreator;
+		this.rootBucketCreator = rootBucketCreator;
 	}
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
-		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
+		rootBucketCreator.createRootBucketForView(viewSpecification.getName());
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl();
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
@@ -32,7 +31,7 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	}
 
 	private FragmentationStrategy wrapFragmentationStrategy(List<FragmentationConfig> fragmentationConfigs,
-			FragmentationStrategy fragmentationStrategy) {
+	                                                        FragmentationStrategy fragmentationStrategy) {
 		for (int i = fragmentationConfigs.size() - 1; i >= 0; i--) {
 			FragmentationConfig currentFragmentationConfig = fragmentationConfigs.get(i);
 			fragmentationStrategy = wrapFragmentationStrategyUsingFragmentationConfig(fragmentationStrategy,

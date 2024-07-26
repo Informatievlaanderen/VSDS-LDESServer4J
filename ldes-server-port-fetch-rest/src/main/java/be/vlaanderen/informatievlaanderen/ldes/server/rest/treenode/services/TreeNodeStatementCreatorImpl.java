@@ -48,7 +48,7 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
                         prefix + treeRelation.treeNode().asEncodedFragmentId(),
                         treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
                 .toList();
-        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
+        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(prefix + treeNode.getFragmentId(),
                 treeRelationResponses);
         List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
         addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape, prefix);
@@ -71,7 +71,7 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
             statements.addAll(eventStreamInfoResponse.convertToStatements());
             addDcatStatements(statements, currentFragmentId, eventStream.getCollection(), prefix);
         } else {
-            statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
+            statements.add(createStatement(createResource(prefix + currentFragmentId), IS_PART_OF_PROPERTY, collection));
         }
     }
 
@@ -87,7 +87,7 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
     private List<Statement> getMemberStatements(TreeNode treeNode, Resource collectionId) {
         List<Statement> statements = new ArrayList<>();
         treeNode.getMembers()
-                .stream().map(Member::getMemberIdWithoutPrefix)
+                .stream().map(Member::id)
                 .forEach(memberId -> statements.add(createStatement(collectionId, TREE_MEMBER,
                         createResource(memberId))));
         return statements;

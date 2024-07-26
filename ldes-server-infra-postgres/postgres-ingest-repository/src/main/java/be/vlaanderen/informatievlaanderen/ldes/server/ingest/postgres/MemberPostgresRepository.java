@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
@@ -19,7 +21,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.Pos
 
 @Repository
 @Primary
-public class MemberPostgresRepository implements MemberRepository {
+public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 	private final DatabaseColumnModelConverter modelConverter;
@@ -105,5 +107,12 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Override
 	public List<IngestedMember> getMembersOfCollection(String collectionName) {
 		return repository.findAllByCollectionName(collectionName).stream().map(mapper::toMember).toList();
+	}
+
+	@Override
+	public Stream<Member> findAllByTreeNodeUrl(String url) {
+		return repository.findAllByPartialUrl(url)
+				.stream()
+				.map(member -> new Member(member.getSubject(), member.getModel()));
 	}
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-buckets-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="buckets"/>
+            </not>
+        </preConditions>
+        <createTable tableName="buckets">
+            <column name="bucket_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bucket" type="varchar(255)"/>
+            <column name="view_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="buckets" baseColumnNames="view_id" constraintName="fk_buckets_view_id"
+                                 referencedTableName="views"
+                                 referencedColumnNames="view_id"
+                                 onDelete="CASCADE"/>
+        <addUniqueConstraint tableName="buckets" columnNames="bucket,view_id" />
+        <rollback>
+            <dropTable tableName="buckets" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-data-into-new-buckets-table" author="vsds">
+        <preConditions>
+            <tableExists tableName="buckets" />
+        </preConditions>
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-buckets-table.sql" />
+        <rollback>
+            <delete tableName="buckets" />
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

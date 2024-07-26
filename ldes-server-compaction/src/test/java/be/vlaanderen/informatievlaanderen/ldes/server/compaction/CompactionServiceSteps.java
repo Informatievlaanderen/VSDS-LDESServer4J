@@ -48,7 +48,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
     @DataTableType
     public MemberFragmentations MemberFragmentationsEntryTransformer(Map<String, String> row) {
-        return new MemberFragmentations(row.get("fragmentId"), Arrays.stream(row.get("memberIds").split(",")).toList());
+        return new MemberFragmentations(row.get("bucketDescriptor"), Arrays.stream(row.get("memberIds").split(",")).toList());
     }
 
     @DataTableType(replaceWithEmptyString = "[blank]")

@@ -15,13 +15,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
+
 @AutoConfigureObservability
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES,
-		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD)
+		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD,
+		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = { MemberEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
@@ -35,5 +38,8 @@ public class LdesServerIntegrationTest {
 
 	@Autowired
 	MemberRepository memberRepository;
+
+	@Autowired
+	DataSource dataSource;
 
 }

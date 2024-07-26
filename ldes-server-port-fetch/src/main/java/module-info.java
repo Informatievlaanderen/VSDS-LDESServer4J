@@ -13,5 +13,6 @@ module ldes.fetch.domain {
     requires micrometer.core;
     requires org.jetbrains.annotations;
     requires org.apache.jena.core;
+	requires spring.tx;
 
 }

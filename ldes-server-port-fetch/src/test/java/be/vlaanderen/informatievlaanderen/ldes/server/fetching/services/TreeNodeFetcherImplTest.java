@@ -17,6 +17,7 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class TreeNodeFetcherImplTest {
 	private static final String COLLECTION = "collectionName";
@@ -31,8 +32,8 @@ class TreeNodeFetcherImplTest {
 	@BeforeEach
 	void setUp() {
 		prefixConstructor = new PrefixConstructor(hostName, false);
-		treeNodeFactory = Mockito.mock(TreeNodeFactory.class);
-		treeNodeFetcher = new TreeNodeFetcherImpl(treeNodeFactory, prefixConstructor);
+		treeNodeFactory = mock(TreeNodeFactory.class);
+		treeNodeFetcher = new TreeNodeFetcherImpl(mock());
 	}
 
 	@Test

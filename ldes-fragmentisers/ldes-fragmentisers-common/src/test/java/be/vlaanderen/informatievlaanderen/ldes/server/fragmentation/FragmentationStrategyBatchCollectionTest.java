@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
@@ -26,14 +27,15 @@ class FragmentationStrategyBatchCollectionTest {
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 	private final BucketisedMemberRepository bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
+	private final BucketRepository bucketRepository = mock(BucketRepository.class);
 
 	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(
-			fragmentRepository, bucketisedMemberRepository, fragmentationStrategyCreator, observationRegistry);
+			bucketRepository, bucketisedMemberRepository, fragmentationStrategyCreator, observationRegistry);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
 		InitViewAddedResult initResult = initAddView();
-		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
@@ -44,11 +46,11 @@ class FragmentationStrategyBatchCollectionTest {
 	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
 		InitViewAddedResult initResult = initAddView();
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
-		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertFalse(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
 
-		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
@@ -59,7 +61,7 @@ class FragmentationStrategyBatchCollectionTest {
 	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
 		InitViewAddedResult initViewAddedResult = initAddView();
 		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
-		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
 
@@ -70,12 +72,12 @@ class FragmentationStrategyBatchCollectionTest {
 	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {
 		InitViewAddedResult initResult = initAddView();
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
-		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertFalse(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleEventStreamDeletedEvent(
 				new EventStreamDeletedEvent(initResult.viewName.getCollectionName()));
 
-		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		assertTrue(fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		InOrder inOrder = inOrder(fragmentRepository, bucketisedMemberRepository);
 		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
@@ -83,7 +85,7 @@ class FragmentationStrategyBatchCollectionTest {
 	}
 
 	private void verifySingleViewAdded(InitViewAddedResult initResult) {
-		var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME);
+		var executors = fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(COLLECTION_NAME);
 		assertEquals(1, executors.size());
 		assertEquals(initResult.fragmentationStrategyExecutor(), executors.getFirst());
 	}
@@ -93,9 +95,9 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
-		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
+		final var rootBucketRetriever = new RootBucketRetriever(viewName, mock(), observationRegistry);
 		FragmentationStrategyBatchExecutor fragmentationStrategyExecutor =
-				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootFragmentRetriever, observationRegistry);
+				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever, observationRegistry);
 
 		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
 				fragmentationStrategyExecutor);
