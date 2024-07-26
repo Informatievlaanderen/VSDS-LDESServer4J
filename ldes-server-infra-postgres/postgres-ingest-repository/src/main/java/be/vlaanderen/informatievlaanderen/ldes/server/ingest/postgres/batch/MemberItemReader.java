@@ -36,7 +36,7 @@ public class MemberItemReader {
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(refragmentQuery())
-				.parameterValues(Map.of("viewName", jobParameters.get("viewName")))
+				.parameterValues(Map.of("viewName", jobParameters.get("viewName"), "collectionName", jobParameters.get("collectionName")))
 				.pageSize(150)
 				.saveState(false)
 				.build();
@@ -72,7 +72,7 @@ public class MemberItemReader {
 		                             "  select * from page_members mb" +
 		                             "  where mb.member_id = m.member_id and mb.bucket_id = b.bucket_id" +
 		                             ") " +
-		                             "AND v.name = :viewName");
+		                             "AND v.name = :viewName and c.name = :collectionName");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
