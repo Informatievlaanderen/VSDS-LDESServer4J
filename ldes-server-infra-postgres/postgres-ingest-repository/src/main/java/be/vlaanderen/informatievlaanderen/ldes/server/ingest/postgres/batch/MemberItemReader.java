@@ -36,7 +36,7 @@ public class MemberItemReader {
 				.dataSource(dataSource)
 				.rowMapper(new MemberRowMapper())
 				.queryProvider(refragmentQuery())
-				.parameterValues(Map.of("viewName", jobParameters.get("viewName"), "collectionName", jobParameters.get("collectionName")))
+				.parameterValues(jobParameters)
 				.pageSize(150)
 				.saveState(false)
 				.build();

@@ -19,4 +19,4 @@ spring:
 
 logging:
   level:
-    org.springframework.batch.core: ERROR
+    org.springframework.batch.core: WARN
