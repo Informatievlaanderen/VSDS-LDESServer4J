@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
@@ -7,12 +8,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,60 +26,53 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 	private final DatabaseColumnModelConverter modelConverter;
-	private final EntityManager entityManager;
+	private final JdbcTemplate jdbcTemplate;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-                                    MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, EntityManager entityManager) {
+	                                MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, DataSource dataSource) {
 		this.repository = repository;
 		this.mapper = mapper;
-        this.modelConverter = modelConverter;
-        this.entityManager = entityManager;
+		this.modelConverter = modelConverter;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
 	@Transactional
 	public List<IngestedMember> insertAll(List<IngestedMember> members) {
-		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, is_in_event_source, member_model, old_id) SELECT o.subject, c.collection_id, o.version, cast(o.timestamp as timestamp), transaction, cast(o.eventSource as BOOLEAN), cast(o.model as BYTEA), o.oldId FROM collections c, (VALUES ";
+		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
+		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
+		if (!membersContainDuplicateIds(members) && !membersExistInCollection(collectionId, subjects)) {
+			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model, old_id) VALUES (?,?,?,?,?,?,?)";
 
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < members.size(); i++) {
-				sb.append("(?, ?, ?, ?, ?, ?, ?, ?),");
-			}
-			sql += sb.substring(0, sb.length() - 1);
-			sql += ") AS o(subject, version, timestamp, transaction, eventSource, model, collectionName, oldId) WHERE c.name = o.collectionName";
+			final List<Object[]> batchArgs = members.stream()
+					.map(member -> new Object[]{
+							member.getSubject(),
+							collectionId,
+							member.getVersionOf(),
+							member.getTimestamp(),
+							member.getTransactionId(),
+							modelConverter.convertToDatabaseColumn(member.getModel()),
+							member.getCollectionName() + "/" + member.getSubject()
+					})
+					.toList();
 
-			Query query = entityManager.createNativeQuery(sql);
+			jdbcTemplate.batchUpdate(sql, batchArgs);
 
-			int index = 1;
-			for (IngestedMember member : members) {
-				query.setParameter(index++, member.getSubject());
-				query.setParameter(index++, member.getVersionOf());
-				query.setParameter(index++, member.getTimestamp());
-				query.setParameter(index++, member.getTransactionId());
-				query.setParameter(index++, member.isInEventSource());
-				query.setParameter(index++, modelConverter.convertToDatabaseColumn(member.getModel()));
-				query.setParameter(index++, member.getCollectionName());
-				query.setParameter(index++, member.getCollectionName() + "/" + member.getSubject());
-			}
-
-			query.executeUpdate();
 			return members;
-		}
-		else {
+		} else {
 			return List.of();
 		}
 	}
 
-	protected boolean membersExist(List<IngestedMember> members) {
-		return repository.existsByOldIdIn(members.stream().map(member -> member.getCollectionName() + "/" + member.getSubject()).toList());
+	protected boolean membersExistInCollection(int collectionId, List<String> subjects) {
+		return repository.existsByCollectionAndSubjectIn(collectionId, subjects);
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
 		return members.stream()
-				       .map(IngestedMember::getSubject)
-				       .collect(Collectors.toSet())
-				       .size() != members.size();
+				.map(IngestedMember::getSubject)
+				.collect(Collectors.toSet())
+				.size() != members.size();
 	}
 
 	@Override
@@ -98,10 +92,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	@Override
 	@Transactional
 	public void removeFromEventSource(List<String> ids) {
-		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
-		                                        "WHERE m.old_id IN :memberIds");
-		query.setParameter("memberIds", ids);
-		query.executeUpdate();
+		jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE old_id IN ?", ids);
 	}
 
 	@Override
@@ -114,5 +105,13 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 		return repository.findAllByPartialUrl(url)
 				.stream()
 				.map(member -> new Member(member.getSubject(), member.getModel()));
+	}
+
+	private int getCollectionId(String collectionName) {
+		final Integer collectionId = jdbcTemplate.queryForObject("SELECT collection_id FROM collections WHERE name = ?", Integer.class, collectionName);
+		if (collectionId == null) {
+			throw new MissingResourceException("eventstream", collectionName);
+		}
+		return collectionId;
 	}
 }
