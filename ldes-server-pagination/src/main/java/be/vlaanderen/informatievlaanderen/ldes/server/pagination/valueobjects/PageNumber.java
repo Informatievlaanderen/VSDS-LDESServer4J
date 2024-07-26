@@ -12,16 +12,19 @@ public class PageNumber {
 		return PAGE_NUMBER + "=" + value;
 	}
 
-	public String asUrlPart() {
-		return "&%s=%d".formatted(PAGE_NUMBER, value);
-	}
-
 	public PageNumber increment() {
 		return new PageNumber(value + 1);
 	}
 
 	public static PageNumber startPageNumber() {
 		return new PageNumber(1);
+	}
+
+	public static PageNumber fromString(String pageNumberString) {
+		if (!pageNumberString.contains(PAGE_NUMBER)) {
+			throw new IllegalArgumentException("Invalid page number: %s - Expected format: %s=<INTEGER>".formatted(pageNumberString, PAGE_NUMBER));
+		}
+		return new PageNumber(Integer.parseInt(pageNumberString.replace(PAGE_NUMBER + "=", "")));
 	}
 
 	@Override

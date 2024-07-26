@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
@@ -26,42 +27,42 @@ public class PaginationJobDefinitions {
 	@Bean
 	public Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                           Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                           ItemProcessor<Page, List<Page>> pageRelationsProcessor,
-	                           ItemWriter<List<Page>> memberAssigner,
+	                           ItemProcessor<Page, List<PageAssignment>> pageRelationsProcessor,
+	                           ItemWriter<List<PageAssignment>> memberAssigner,
 	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder("paginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
+						.<Page, List<PageAssignment>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
-						.taskExecutor(taskExecutor)
 						.build()
 				)
 				.allowStartIfComplete(true)
+				.taskExecutor(taskExecutor)
 				.build();
 	}
 
 	@Bean
 	public Step newViewPaginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 	                                  Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                                  ItemProcessor<Page, List<Page>> pageRelationsProcessor,
-	                                  ItemWriter<List<Page>> memberAssigner,
+	                                  ItemProcessor<Page, List<PageAssignment>> pageRelationsProcessor,
+	                                  ItemWriter<List<PageAssignment>> memberAssigner,
 	                                  @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, List<Page>>chunk(CHUNK_SIZE, transactionManager)
+						.<Page, List<PageAssignment>>chunk(CHUNK_SIZE, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)
 						.allowStartIfComplete(true)
-						.taskExecutor(taskExecutor)
 						.build()
 				)
 				.allowStartIfComplete(true)
+				.taskExecutor(taskExecutor)
 				.build();
 	}
 

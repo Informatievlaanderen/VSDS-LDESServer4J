@@ -7,8 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -46,18 +45,17 @@ class PaginationServiceTest {
 	@MockBean
 	private ItemReader<Page> pageReader;
 	@MockBean
-	private ItemProcessor<Page, List<Page>> pageRelationProcessor;
+	private ItemProcessor<Page, List<PageAssignment>> pageRelationProcessor;
 	@MockBean
-	private ItemWriter<List<Page>> memberAssigner;
+	private ItemWriter<List<PageAssignment>> memberAssigner;
 	@Autowired
 	private PaginationService paginationService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 	private List<MemberAllocation> output;
 	private final Page page = new Page(1,
+			1,
 			"/%s".formatted(VIEW_NAME_1.asString()),
-			new Bucket(1, "es/v1"),
-			new PageNumber(1), 0,
 			50);
 
 	@Test
@@ -86,7 +84,7 @@ class PaginationServiceTest {
 
 		paginationService.handleNewViewBucketisedEvent(new NewViewBucketisedEvent(VIEW_NAME_1.asString()));
 
-		verify(memberAssigner).write(argThat(chunk -> chunk.getItems().contains(List.of(page))));
+		verify(memberAssigner).write(argThat(chunk -> chunk.getItems().contains(List.of(new PageAssignment(page.getId(), page.getBucketId(), 22)))));
 	}
 
 	private void mockBucketisationPartitioner() {
@@ -103,6 +101,6 @@ class PaginationServiceTest {
 
 
 	private void stubProcessor() throws Exception {
-		when(pageRelationProcessor.process(page)).thenReturn(List.of(page));
+		when(pageRelationProcessor.process(page)).thenReturn(List.of(new PageAssignment(page.getId(), page.getBucketId(), 22)));
 	}
 }
