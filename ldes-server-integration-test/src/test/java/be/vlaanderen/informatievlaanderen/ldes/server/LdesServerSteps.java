@@ -201,6 +201,18 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		interactedStreams.push(eventStreamName);
 	}
 
+	@Then("^I create the view ([^ ]+)")
+	public void iCreateTheViewViewDescriptionFile(String viewDescriptionFile) throws Exception {
+		String viewDescriptionFileSanitized = viewDescriptionFile.replace("\"", "");
+		String view = readBodyFromFile(viewDescriptionFileSanitized)
+				.replace("CURRENTTIME", getCurrentTimestamp());
+
+		mockMvc.perform(post("/admin/api/v1/eventstreams/%s/views".formatted(interactedStreams.getFirst()))
+						.contentType(RDFLanguages.guessContentType(viewDescriptionFileSanitized).getContentTypeStr())
+						.content(view))
+				.andExpect(status().isCreated());
+	}
+
 	@Then("^I delete the eventstream ([^ ]+)")
 	public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
 		String eventStreamNameSanitized = eventStreamName.replace("\"", "");

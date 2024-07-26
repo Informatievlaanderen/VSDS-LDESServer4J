@@ -57,7 +57,8 @@ public class FragmentationService {
 	@EventListener
 	public void handleViewInitializationEvent(ViewNeedsRebucketisationEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		launchJob(rebucketiseJob, new JobParametersBuilder()
-				.addString("viewName", event.viewName().asString())
+				.addString("viewName", event.viewName().getViewName())
+				.addString("collectionName", event.viewName().getCollectionName())
 				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
 	}

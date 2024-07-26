@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
@@ -27,7 +28,8 @@ public class BucketProcessor implements ItemProcessor<FragmentationMember, List<
 	@Override
 	public List<BucketisedMember> process(@NotNull FragmentationMember item) {
 		if (jobParameters.containsKey("viewName")) {
-			return fragmentationCollections.getFragmentationStrategyExecutor((String) jobParameters.get("viewName"))
+			ViewName viewName = new ViewName((String) jobParameters.get("collectionName"), (String) jobParameters.get("viewName"));
+			return fragmentationCollections.getFragmentationStrategyExecutor(viewName.asString())
 					.map(fragmentationStrategyBatchExecutor -> fragmentationStrategyBatchExecutor.bucketise(item))
 					.orElse(null);
 		} else {
