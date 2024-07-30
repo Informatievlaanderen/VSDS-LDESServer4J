@@ -5,14 +5,12 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class BucketPartitioner implements Partitioner {
-	private static final String SQL = """
+	static final String SQL = """
 			SELECT bucket_id
 			FROM page_members
 			WHERE page_id IS NULL
@@ -23,20 +21,16 @@ public class BucketPartitioner implements Partitioner {
 
 	private final JdbcTemplate jdbcTemplate;
 
-	public BucketPartitioner(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	public BucketPartitioner(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		List<Long> bucketIds = jdbcTemplate.queryForList(SQL, Long.class, gridSize);
-
-		final Map<String, ExecutionContext> contextMap = HashMap.newHashMap(bucketIds.size());
-		for(Long bucketId : bucketIds) {
-			final ExecutionContext context = new ExecutionContext(HashMap.newHashMap(1));
-			context.putLong("bucketId", bucketId);
-			contextMap.put("bucket: %d".formatted(bucketId), context);
-		}
-		return contextMap;
+		return jdbcTemplate.queryForList(SQL, Long.class, gridSize).stream()
+				.collect(Collectors.toMap(
+						"bucket: %d"::formatted,
+						bucketId -> new ExecutionContext(Map.of("bucketId", bucketId))
+				));
 	}
 }
