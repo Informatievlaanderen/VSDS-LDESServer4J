@@ -34,7 +34,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 						.map(LdesFragmentIdentifier::asDecodedFragmentId)
 						.collect(Collectors.joining(""))
 				+ treeNode.getMembers().stream()
-						.map(Member::id)
+						.map(Member::subject)
 						.collect(Collectors.joining(""))
 				+ language);
 	}

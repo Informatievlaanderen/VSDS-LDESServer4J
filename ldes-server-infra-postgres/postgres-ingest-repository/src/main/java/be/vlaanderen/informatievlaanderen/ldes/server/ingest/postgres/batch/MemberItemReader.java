@@ -21,7 +21,7 @@ public class MemberItemReader {
 	public JdbcPagingItemReader<FragmentationMember> newMemberReader(DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
-				.rowMapper(new MemberRowMapper())
+				.rowMapper(new FragmentationMemberRowMapper())
 				.queryProvider(memberQuery())
 				.pageSize(150)
 				.saveState(false)
@@ -34,7 +34,7 @@ public class MemberItemReader {
 	                                                                       DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
-				.rowMapper(new MemberRowMapper())
+				.rowMapper(new FragmentationMemberRowMapper())
 				.queryProvider(refragmentQuery())
 				.parameterValues(jobParameters)
 				.pageSize(150)

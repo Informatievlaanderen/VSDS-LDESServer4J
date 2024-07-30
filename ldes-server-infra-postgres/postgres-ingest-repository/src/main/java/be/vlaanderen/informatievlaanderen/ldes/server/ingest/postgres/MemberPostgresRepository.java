@@ -3,15 +3,18 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,11 +29,11 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	private final EntityManager entityManager;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-                                    MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, EntityManager entityManager) {
+	                                MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, EntityManager entityManager) {
 		this.repository = repository;
 		this.mapper = mapper;
-        this.modelConverter = modelConverter;
-        this.entityManager = entityManager;
+		this.modelConverter = modelConverter;
+		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -62,8 +65,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 			query.executeUpdate();
 			return members;
-		}
-		else {
+		} else {
 			return List.of();
 		}
 	}
@@ -74,14 +76,21 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
 		return members.stream()
-				       .map(IngestedMember::getSubject)
-				       .collect(Collectors.toSet())
-				       .size() != members.size();
+				.map(IngestedMember::getSubject)
+				.collect(Collectors.toSet())
+				.size() != members.size();
 	}
 
 	@Override
 	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
 		return repository.findAllByOldIdIn(memberIds)
+				.stream()
+				.map(mapper::toMember);
+	}
+
+	@Override
+	public Stream<IngestedMember> findAllByCollectionAndSubject(String collectionName, List<String> subjects) {
+		return repository.findAllByCollectionNameAndSubjectIn(collectionName, subjects)
 				.stream()
 				.map(mapper::toMember);
 	}
@@ -95,9 +104,16 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
+	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
+		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(subjects.size());
+	}
+
+	@Override
+	@Transactional
 	public void removeFromEventSource(List<String> ids) {
 		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
-		                                        "WHERE m.old_id IN :memberIds");
+				"WHERE m.oldId IN :memberIds");
 		query.setParameter("memberIds", ids);
 		query.executeUpdate();
 	}
@@ -109,8 +125,8 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		return repository.findAllByPartialUrl(url)
-				.stream()
-				.map(member -> new Member(member.getSubject(), member.getModel()));
+		final JdbcTemplate jdbcTemplate = new JdbcTemplate(entityManager.unwrap(DataSource.class));
+		final String sql = "SELECT m.subject, m.member_model FROM members m JOIN page_members pm USING (member_id) JOIN pages p USING (page_id) WHERE p.partial_url = ?";
+		return jdbcTemplate.query(sql, new MemberRowMapper(), url).stream();
 	}
 }

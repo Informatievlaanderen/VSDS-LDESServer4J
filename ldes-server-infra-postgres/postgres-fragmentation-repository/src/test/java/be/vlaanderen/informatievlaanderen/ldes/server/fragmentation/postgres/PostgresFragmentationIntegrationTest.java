@@ -34,7 +34,7 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation",
 		"be.vlaanderen.informatievlaanderen.ldes.server.ingest",
 		"be.vlaanderen.informatievlaanderen.ldes.server.retention",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain",
+		"be.vlaanderen.informatievlaanderen.ldes.server.domain"
 })
 @ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class})
 @Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
