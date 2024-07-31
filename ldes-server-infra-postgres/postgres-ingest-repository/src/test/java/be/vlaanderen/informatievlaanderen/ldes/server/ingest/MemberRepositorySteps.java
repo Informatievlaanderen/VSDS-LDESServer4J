@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +28,11 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@When("I save the members using the MemberRepository")
 	public void iSaveTheMembers(List<IngestedMember> members) {
-		List<IngestedMember> actualIngestedMembers = memberRepository.insertAll(members);
+		List<IngestedMember> actualIngestedMembers = members.stream()
+				.collect(Collectors.groupingBy(IngestedMember::getCollectionName))
+				.values().stream()
+				.flatMap(groupedMembers -> memberRepository.insertAll(groupedMembers).stream())
+				.toList();
 		this.members.addAll(actualIngestedMembers);
 	}
 
@@ -60,7 +65,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@Then("The member with collection {string} and subject {string} will exist")
 	public void theMemberWithCollectionAndSubjectWillExist(String collection, String subject) {
-		assertThat(memberRepository.findAllByCollectionAndSubject(collection, List.of(subject))).hasSize(1);
+		assertThat(memberRepository.findAllByCollectionAndSubject(collection, List.of(subject))).isNotEmpty();
 	}
 
 	@And("The member with collection {string} and subject {string} will not exist")

@@ -33,6 +33,13 @@
             <artifactId>ldes-server-port-fetch</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>postgres-liquibase</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
