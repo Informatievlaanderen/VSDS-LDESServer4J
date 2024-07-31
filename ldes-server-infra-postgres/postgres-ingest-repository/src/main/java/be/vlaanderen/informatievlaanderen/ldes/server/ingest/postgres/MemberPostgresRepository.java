@@ -5,10 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,9 +115,12 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		final TypedQuery<Member> query = entityManager.createQuery("SELECT new be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member(pm.member.subject, pm.member.model) FROM PageMemberEntity pm JOIN pm.page p WHERE p.partialUrl = :url", Member.class);
-		query.setParameter("url", url);
-		return query.getResultList().stream();
+		final String sql = """
+				SELECT m.subject, m.member_model
+				FROM members m
+				    JOIN page_members USING (member_id)
+				    JOIN pages p USING (page_id) WHERE p.partial_url = ?""";
+		return jdbcTemplate.query(sql, new MemberRowMapper(), url).stream();
 	}
 
 	private int getCollectionId(String collectionName) {
