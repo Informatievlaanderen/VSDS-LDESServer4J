@@ -43,9 +43,9 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
                         prefix + treeRelation.treeNode().asEncodedFragmentId(),
                         treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
                 .toList();
-        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(), treeRelationResponses);
+        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(prefix + treeNode.getFragmentId(), treeRelationResponses);
         List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-        addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape, prefix);
+        addLdesCollectionStatements(statements, treeNode.isView(), prefix + treeNode.getFragmentId(), eventStream, shaclShape, prefix);
 
         return statements;
     }

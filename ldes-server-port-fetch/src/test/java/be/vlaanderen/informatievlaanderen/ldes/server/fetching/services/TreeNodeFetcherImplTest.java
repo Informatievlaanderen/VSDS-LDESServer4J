@@ -42,7 +42,7 @@ class TreeNodeFetcherImplTest {
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs()));
 		Mockito.when(treeNodeRepository.findByFragmentIdentifier(fragment.getFragmentId()))
-				.thenThrow(new MissingResourceException("fragment", fragment.getFragmentIdString()));
+				.thenThrow(new MissingResourceException("TreeNode", fragment.getFragmentIdString()));
 
 		assertThatThrownBy(() -> treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.isInstanceOf(MissingResourceException.class)

@@ -21,7 +21,7 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<PageAssig
 	static final String SELECT_UNPROCESSED_MEMBER_COUNT = "SELECT count(*) FROM page_members WHERE bucket_id = ? AND page_id IS NULL";
 	static final String INSERT_NEW_PAGE_SQL = "INSERT INTO pages (bucket_id, expiration, partial_url) VALUES (?, NULL, ?)";
 	static final String MARK_PAGE_IMMUTABLE_SQL = "UPDATE pages SET immutable = true WHERE page_id = ?";
-	static final String INSERT_PAGE_RELATION_SQL = "INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, " + RdfConstants.GENERIC_TREE_RELATION + " )";
+	static final String INSERT_PAGE_RELATION_SQL = "INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, '" + RdfConstants.GENERIC_TREE_RELATION + "')";
 
 	private final JdbcTemplate jdbcTemplate;
 

@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PageMemberEntityRepository extends JpaRepository<PageMemberEntity, PageMemberId> {
-	@Query("SELECT p.member FROM PageMemberEntity p WHERE p.page.id = :pageId")
+	@Query("SELECT m.subject AS subject, m.model AS model FROM PageMemberEntity p JOIN p.member m WHERE p.page.id = :pageId")
 	List<TreeMemberProjection> findAllMembersByPageId(long pageId);
 }
