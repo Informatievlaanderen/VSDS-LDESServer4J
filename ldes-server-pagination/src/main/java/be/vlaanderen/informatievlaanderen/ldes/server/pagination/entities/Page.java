@@ -53,7 +53,7 @@ public class Page {
 		this.assignedMemberCount += assignedMemberCount;
 	}
 
-	public int getMaximumMemberCount() {
+	public int getPageSize() {
 		return pageSize;
 	}
 

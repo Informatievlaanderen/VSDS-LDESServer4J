@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessors;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class, BucketJobDefinitions.class })
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessors.class, BucketJobDefinitions.class })
 @TestPropertySource(properties = { "spring.batch.jdbc.initialize-schema=always", "ldes-server.fragmentation-cron=*/1 * * * * *"})
 class FragmentationServiceTest {
 	private static final int FRAGMENTATION_INTERVAL = 1000;

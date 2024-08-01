@@ -44,7 +44,7 @@ class MemberFetcherImplTest {
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members need to have two additional statements added")
                 .allMatch(member -> member.model().size() == 2)
-                .map(be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member::id)
+                .map(be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member::subject)
                 .containsExactlyInAnyOrderElementsOf(MEMBER_IDS);
     }
 
@@ -57,7 +57,7 @@ class MemberFetcherImplTest {
         assertThat(memberFetcher.fetchAllByIds(MEMBER_IDS))
                 .as("The empty models in the members should not be altered")
                 .allMatch(member -> member.model().isEmpty())
-                .map(be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member::id)
+                .map(be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member::subject)
                 .containsExactlyInAnyOrderElementsOf(MEMBER_IDS);
     }
 

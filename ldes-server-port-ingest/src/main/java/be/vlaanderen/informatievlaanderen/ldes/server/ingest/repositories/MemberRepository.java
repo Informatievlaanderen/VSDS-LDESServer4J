@@ -13,7 +13,11 @@ public interface MemberRepository {
 
 	List<IngestedMember> getMembersOfCollection(String collectionName);
 
+	Stream<IngestedMember> findAllByCollectionAndSubject(String collectionName, List<String> subject);
+
 	void deleteMembers(List<String> memberId);
+
+	void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> oldIds);
 
 	void removeFromEventSource(List<String> ids);
 }

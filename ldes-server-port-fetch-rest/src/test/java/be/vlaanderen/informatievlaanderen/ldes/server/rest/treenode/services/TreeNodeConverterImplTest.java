@@ -49,60 +49,60 @@ class TreeNodeConverterImplTest {
         treeNodeStatementCreator.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }
 
-//    @Test
-//    void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-//        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
-//                COLLECTION_NAME, null);
-//        ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
-//        Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
-//        DcatView dcatView = DcatView.from(viewName, dcat);
-//        treeNodeStatementCreator.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-//
-//        Model model = treeNodeConverter.toModel(treeNode);
-//
-//        assertThat(model.size()).isEqualTo(25);
-//        verifyTreeNodeStatement(model);
-//        verifyLdesStatements(model);
-//    }
-//
-//    @Test
-//    void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-//        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
-//                COLLECTION_NAME, null);
-//        Model model = treeNodeConverter.toModel(treeNode);
-//
-//        assertThat(model.size()).isEqualTo(3);
-//        verifyTreeNodeStatement(model);
-//        verifyIsPartOfStatement(model);
-//        verifyRemainingItemsStatementAbsent(model);
-//    }
-//
-//    @Test
-//    void when_TreeNodeHasMembersAndARelations_ModelHasMultipleStatements() {
-//        Model ldesMemberModel = RDFParserBuilder.create().fromString("""
-//                <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
-//                <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
-//                .""").lang(Lang.NQUADS).toModel();
-//        Member member = new Member(
-//                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
-//        TreeRelation treeRelation = new TreeRelation("path",
-//                new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
-//                "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-//        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
-//                List.of(member), COLLECTION_NAME, null);
-//
-//        Model model = treeNodeConverter.toModel(treeNode);
-//
-//        assertThat(model.size()).isEqualTo(9);
-//        verifyTreeNodeStatement(model);
-//        verifyIsPartOfStatement(model);
-//        Resource relationObject = model.listStatements(null, TREE_RELATION,
-//                        (Resource) null).nextStatement().getObject()
-//                .asResource();
-//        verifyRelationStatements(model, relationObject);
-//        verifyMemberStatements(model);
-//        verifyRemainingItemsStatementAbsent(model);
-//    }
+    @Test
+    void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
+                COLLECTION_NAME, null);
+        ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+        Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+        DcatView dcatView = DcatView.from(viewName, dcat);
+        treeNodeStatementCreator.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
+
+        Model model = treeNodeConverter.toModel(treeNode);
+
+        assertThat(model.size()).isEqualTo(25);
+        verifyTreeNodeStatement(model);
+        verifyLdesStatements(model);
+    }
+
+    @Test
+    void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, false, List.of(), List.of(),
+                COLLECTION_NAME, null);
+        Model model = treeNodeConverter.toModel(treeNode);
+
+        assertThat(model.size()).isEqualTo(3);
+        verifyTreeNodeStatement(model);
+        verifyIsPartOfStatement(model);
+        verifyRemainingItemsStatementAbsent(model);
+    }
+
+    @Test
+    void when_TreeNodeHasMembersAndARelations_ModelHasMultipleStatements() {
+        Model ldesMemberModel = RDFParserBuilder.create().fromString("""
+                <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
+                <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
+                .""").lang(Lang.NQUADS).toModel();
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
+        TreeRelation treeRelation = new TreeRelation("path",
+                new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
+                "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, false, List.of(treeRelation),
+                List.of(member), COLLECTION_NAME, null);
+
+        Model model = treeNodeConverter.toModel(treeNode);
+
+        assertThat(model.size()).isEqualTo(9);
+        verifyTreeNodeStatement(model);
+        verifyIsPartOfStatement(model);
+        Resource relationObject = model.listStatements(null, TREE_RELATION,
+                        (Resource) null).nextStatement().getObject()
+                .asResource();
+        verifyRelationStatements(model, relationObject);
+        verifyMemberStatements(model);
+        verifyRemainingItemsStatementAbsent(model);
+    }
 
     private void verifyLdesStatements(Model model) {
         String id = HOST_NAME + "/" + COLLECTION_NAME;

@@ -5,9 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeNodeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -32,7 +30,6 @@ class StreamingTreeNodeFactoryImplTest {
     private static final ViewName VIEW_NAME = new ViewName(COLLECTION, VIEW);
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private FragmentRepository fragmentRepository;
-    private AllocationRepository allocationRepository;
     private TreeNodeRepository treeNodeRepository;
     private TreeMemberRepository treeMemberRepository;
     private MemberFetcher memberFetcher;
@@ -41,7 +38,6 @@ class StreamingTreeNodeFactoryImplTest {
     @BeforeEach
     void setUp() {
         fragmentRepository = mock(FragmentRepository.class);
-        allocationRepository = mock(AllocationRepository.class);
         memberFetcher = mock(MemberFetcher.class);
         treeNodeRepository = mock(TreeNodeRepository.class);
         treeMemberRepository = mock(TreeMemberRepository.class);
@@ -86,12 +82,6 @@ class StreamingTreeNodeFactoryImplTest {
         List<Member> returnedMembers = streamingTreeNodeFactory.getMembersOfFragment(id).toList();
 
         assertThat(returnedMembers).containsAll(members);
-    }
-
-    private MemberAllocation toAllocation(Member member, Fragment fragment) {
-        String id = member.id() + "/" + fragment.getFragmentIdString();
-        return new MemberAllocation(id, fragment.getFragmentId().getViewName().getCollectionName()
-                , fragment.getFragmentId().getViewName().getViewName(), fragment.getFragmentIdString(), member.id());
     }
 
 }

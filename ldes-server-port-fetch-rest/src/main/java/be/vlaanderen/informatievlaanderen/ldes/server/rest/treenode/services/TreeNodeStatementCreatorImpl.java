@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -29,11 +27,8 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
 
     @Override
     public List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
-        List<Statement> statements = new ArrayList<>();
-        Resource collectionId = createResource(baseUrl);
-        statements.addAll(getEventStreamStatements(collectionId));
-        statements.addAll(getMemberStatements(treeNode, collectionId));
-        return statements;
+	    Resource collectionId = createResource(baseUrl);
+	    return new ArrayList<>(getEventStreamStatements(collectionId));
     }
 
     @Override
@@ -48,10 +43,9 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
                         prefix + treeRelation.treeNode().asEncodedFragmentId(),
                         treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
                 .toList();
-        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(prefix + treeNode.getFragmentId(),
-                treeRelationResponses);
+        TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(prefix + treeNode.getFragmentId(), treeRelationResponses);
         List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-        addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape, prefix);
+        addLdesCollectionStatements(statements, treeNode.isView(), prefix + treeNode.getFragmentId(), eventStream, shaclShape, prefix);
 
         return statements;
     }
@@ -71,7 +65,7 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
             statements.addAll(eventStreamInfoResponse.convertToStatements());
             addDcatStatements(statements, currentFragmentId, eventStream.getCollection(), prefix);
         } else {
-            statements.add(createStatement(createResource(prefix + currentFragmentId), IS_PART_OF_PROPERTY, collection));
+            statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
         }
     }
 
@@ -83,15 +77,6 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
         }
     }
 
-
-    private List<Statement> getMemberStatements(TreeNode treeNode, Resource collectionId) {
-        List<Statement> statements = new ArrayList<>();
-        treeNode.getMembers()
-                .stream().map(Member::id)
-                .forEach(memberId -> statements.add(createStatement(collectionId, TREE_MEMBER,
-                        createResource(memberId))));
-        return statements;
-    }
 
     private List<Statement> getEventStreamStatements(Resource collectionId) {
         List<Statement> statements = new ArrayList<>();

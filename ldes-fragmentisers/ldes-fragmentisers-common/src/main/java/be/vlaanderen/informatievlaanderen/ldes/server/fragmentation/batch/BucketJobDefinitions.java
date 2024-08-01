@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +24,12 @@ public class BucketJobDefinitions {
 	public Step bucketiseMembersStep(JobRepository jobRepository,
 	                                 PlatformTransactionManager transactionManager,
 	                                 ItemReader<FragmentationMember> newMemberReader,
-	                                 BucketProcessor processor,
+	                                 ItemProcessor<FragmentationMember, List<BucketisedMember>> multiViewBucketProcessor,
 	                                 ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("bucketiseMembers", jobRepository)
 				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
 				.reader(newMemberReader)
-				.processor(processor)
+				.processor(multiViewBucketProcessor)
 				.writer(writer)
 				.allowStartIfComplete(true)
 				.build();
@@ -38,12 +39,12 @@ public class BucketJobDefinitions {
 	public Step rebucketiseMembersStep(JobRepository jobRepository,
 	                                   PlatformTransactionManager transactionManager,
 	                                   ItemReader<FragmentationMember> refragmentEventStream,
-	                                   BucketProcessor processor,
+	                                   ItemProcessor<FragmentationMember, List<BucketisedMember>> singleViewBucketProcessor,
 	                                   ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("rebucketiseMembers", jobRepository)
 				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
 				.reader(refragmentEventStream)
-				.processor(processor)
+				.processor(singleViewBucketProcessor)
 				.writer(writer)
 				.allowStartIfComplete(true)
 				.build();

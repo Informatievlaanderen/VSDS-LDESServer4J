@@ -69,12 +69,12 @@ class LdesFragmentIdentifierTest {
 		assertEquals(rootFragmentId, LdesFragmentIdentifier.fromFragmentId(rootIdString));
 	}
 
-//	@Test
-//	void when_MalformedFragmentIdString_Then_CreateFragmentIdentifier() {
-//		assertThrows(LdesFragmentIdentifierParseException.class,
-//				() -> LdesFragmentIdentifier.fromFragmentId(malformedIdString),
-//				"LdesFragmentIdentifier could not be created from string: " + malformedIdString);
-//	}
+	@Test
+	void when_MalformedFragmentIdString_Then_CreateFragmentIdentifier() {
+		assertThrows(LdesFragmentIdentifierParseException.class,
+				() -> LdesFragmentIdentifier.fromFragmentId(malformedIdString),
+				"LdesFragmentIdentifier could not be created from string: " + malformedIdString);
+	}
 
 	@Test
 	void when_RootFragmentIdentifier_Then_CreateFragmentIdString() {

@@ -48,7 +48,7 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 		return currentBucket
 				.getValueForKey(fragmentKeyReference)
 				.orElseThrow(
-						() -> new MissingFragmentValueException(currentBucket.getBucketDescriptorAsString(), fragmentKeyReference)
+						() -> new MissingFragmentValueException(currentBucket.createPartialUrl(), fragmentKeyReference)
 				);
 	}
 }

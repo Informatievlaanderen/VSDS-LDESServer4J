@@ -66,15 +66,15 @@ class ReferenceFragmentRelationsAttributerTest {
         verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(expectedRelation));
     }
 
-//    @Test
-//    void when_ReferenceFragmentHasNoReference_ThenAnExceptionIsThrown() {
-//        Bucket rootBucket = createReferenceBuket("");
-//        Bucket referenceBucket = parentBucket.createChild(new BucketDescriptorPair("invalid-key", fragmentReference));
-//
-//        assertThatExceptionOfType(MissingFragmentValueException.class)
-//                .isThrownBy(() -> relationsAttributer.addRelationFromRootToBottom(rootBucket, referenceBucket))
-//                .withMessage("FragmentId /collectionName/view?invalid-key=https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceeldoes not contain a value for fragmentkey reference");
-//    }
+    @Test
+    void when_ReferenceFragmentHasNoReference_ThenAnExceptionIsThrown() {
+        Bucket rootBucket = createReferenceBuket("");
+        Bucket referenceBucket = parentBucket.createChild(new BucketDescriptorPair("invalid-key", fragmentReference));
+
+        assertThatExceptionOfType(MissingFragmentValueException.class)
+                .isThrownBy(() -> relationsAttributer.addRelationFromRootToBottom(rootBucket, referenceBucket))
+                .withMessage("FragmentId /collectionName/view?invalid-key=https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceeldoes not contain a value for fragmentkey reference");
+    }
 
     private Bucket createReferenceBuket(String reference) {
         return parentBucket.createChild(new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, reference));

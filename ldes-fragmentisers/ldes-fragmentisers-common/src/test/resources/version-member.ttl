@@ -1,0 +1,9 @@
+@prefix ns0: <http://example.com/vocab#> .
+@prefix dcterms:           <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema>
+
+
+<http://temporary.org#bart/2024-07-26T12:29:02.343350100>
+  ns0:name "Bart" ;
+  dcterms:created "2024-07-26T12:29:02.343350100"^^xsd:dateTime ;
+  dcterms:isVersionOf <http://temporary.org#bart> .
