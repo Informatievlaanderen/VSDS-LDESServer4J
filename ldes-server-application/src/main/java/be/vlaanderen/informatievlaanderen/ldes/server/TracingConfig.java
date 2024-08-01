@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Configuration
@@ -41,7 +40,7 @@ public class TracingConfig implements BeanPostProcessor {
 
 			List<SpanData> nonActuatorSpans = spans.stream()
 					.filter(span -> !actuatorTraceIds.contains(span.getTraceId()))
-					.collect(toList());
+					.toList();
 
 			return super.export(nonActuatorSpans);
 		}
