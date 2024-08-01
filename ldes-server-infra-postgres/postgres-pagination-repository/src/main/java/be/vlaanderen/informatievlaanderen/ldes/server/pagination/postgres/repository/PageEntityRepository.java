@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -30,15 +31,18 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 			""", nativeQuery = true)
 	void markAllPagesImmutableByCollectionName(String collectionName);
 
-    @Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size " +
-            "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v " +
+    @Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.immutable AS immutable, " +
+            "p.expiration AS expiration, " +
+            "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
+            "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN RelationEntity r ON p = r.fromPage " +
             "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
-            "GROUP BY p.id " +
+            "GROUP BY p.id, r.toPage.id " +
             "HAVING COUNT(*) < :capacityPerPage")
-    Stream<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
-                                                                   @Param("viewName") String viewName,
-                                                                   @Param("capacityPerPage") Integer capacityPerPage);
+    List<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
+                                                                 @Param("viewName") String viewName,
+                                                                 @Param("capacityPerPage") Integer capacityPerPage);
 
+    @Modifying
     @Query("DELETE FROM PageEntity p WHERE p.expiration > :expiration")
     void deleteByExpirationAfter(@Param("expiration") LocalDateTime expiration);
 }

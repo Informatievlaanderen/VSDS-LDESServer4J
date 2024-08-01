@@ -21,4 +21,9 @@ public interface RelationEntityRepository extends JpaRepository<RelationEntity, 
 	void insertRelation(String fromPagePartialUrl, String toPagePartialUrl, String treeRelationType, String treeValue, String treeValueType, String treePath);
 
 	List<TreeRelationProjection> findDistinctByFromPageId(long pageId);
+
+	@Modifying
+	@Query("UPDATE RelationEntity r SET r.toPage = (SELECT PageEntity p WHERE p.id = :targetId), " +
+	"WHERE r.toPage.id IN :ids OR r.fromPage.id IN : ids")
+	void updateToPageRelations(List<Long> ids, long targetId);
 }

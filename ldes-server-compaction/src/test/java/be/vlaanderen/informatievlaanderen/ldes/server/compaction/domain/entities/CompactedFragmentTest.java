@@ -1,24 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
-import static org.junit.jupiter.api.Assertions.*;
 
 class CompactedFragmentTest {
 
 	private static final String MOBHIND_PAGE = "/mobility-hindrances/by-page?pageNumber=";
 
-	private CompactedFragment compactedFragment;
+	private CompactedFragmentCreator compactedFragment;
 
 //	@BeforeEach
 //	void setUp() {

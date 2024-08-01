@@ -2,22 +2,21 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PagePostgresRepository;
-import one.util.streamex.StreamEx;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentSorter.isConnectedTo;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateSorter.sortCompactionCandidates;
+import static be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateSorter.getCompactionCandidateList;
 
 @Component
 public class CompactionCandidateService {
-	private final PagePostgresRepository pageRepository;
+	private final PageRepository pageRepository;
 
 
-	public CompactionCandidateService(PagePostgresRepository pageRepository) {
+	public CompactionCandidateService(PageRepository pageRepository) {
         this.pageRepository = pageRepository;
     }
 
@@ -31,38 +30,20 @@ public class CompactionCandidateService {
 	 * @return a structured group of Fragments for a view that can be compacted
 	 */
 	public Collection<Set<CompactionCandidate>> getCompactionTaskList(ViewCapacity viewCapacity) {
-		AtomicInteger index = new AtomicInteger();
-		Map<Integer, Set<CompactionCandidate>> compactionDesign = new HashMap<>();
 		List<CompactionCandidate> possibleCompactionCandidates = getPossibleCompactionCandidates(viewCapacity);
 
 		if (possibleCompactionCandidates.isEmpty()) {
 			return List.of();
 		}
 
-		StreamEx.of(possibleCompactionCandidates.stream())
-				.forPairs((cc1, cc2) -> {
-					if (isConnectedTo(cc1.getTreeNode(), cc2.getTreeNode())) {
-						Set<CompactionCandidate> set = compactionDesign.getOrDefault(index.get(), new HashSet<>());
-						var totalSum = set.stream().map(CompactionCandidate::getSize).reduce(Integer::sum).orElse(cc1.getSize());
-
-						if (totalSum + cc2.getSize() <= viewCapacity.getCapacityPerPage()) {
-							set.addAll(Set.of(cc1, cc2));
-							compactionDesign.put(index.get(), set);
-						} else {
-							index.incrementAndGet();
-						}
-					}
-				});
-
-		return compactionDesign.values();
+		return getCompactionCandidateList(possibleCompactionCandidates);
 	}
 
 	protected List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {
 		var compactionCandidates = pageRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
 				.toList();
-		return sortCompactionCandidates(compactionCandidates.stream()
-				.filter(cc -> cc.getTreeNode().isImmutable()))
-//				.filter(cc -> cc.getTreeNode().getDeleteTime() == null))
+		return compactionCandidates.stream()
+				.filter(CompactionCandidate::isCompactable)
 				.toList();
 	}
 }

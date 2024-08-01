@@ -25,13 +25,11 @@ class MemberRemoverImplTest {
 	public static final String VIEW_NAME = "collection/view";
 	@Mock
 	private MemberPropertiesRepository memberPropertiesRepository;
-	@Mock
-	private ApplicationEventPublisher applicationEventPublisher;
 	private MemberRemover memberRemover;
 
 	@BeforeEach
 	void setUp() {
-		memberRemover = new MemberRemoverImpl(memberPropertiesRepository, applicationEventPublisher);
+		memberRemover = new MemberRemoverImpl(memberPropertiesRepository);
 	}
 
 //	@Test

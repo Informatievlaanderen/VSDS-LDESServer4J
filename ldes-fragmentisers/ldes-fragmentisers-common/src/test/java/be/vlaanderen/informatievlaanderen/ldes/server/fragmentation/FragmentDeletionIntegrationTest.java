@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +15,12 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 @EnableAutoConfiguration
 @RecordApplicationEvents
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SchedulingConfigFragmentation.class, FragmentDeletionScheduler.class, SpringBatchConfiguration.class})
+@ContextConfiguration(classes = {SchedulingConfigFragmentation.class, SpringBatchConfiguration.class})
 @TestPropertySource(properties = "ldes-server.deletion-cron=*/4 * * * * *")
 @SuppressWarnings("java:S2187")
 public class FragmentDeletionIntegrationTest {
 	@Autowired
 	ApplicationEventPublisher applicationEventPublisher;
-
-	@Autowired
-	@MockBean
-	FragmentRepository fragmentRepository;
 
 	@Autowired
 	@MockBean

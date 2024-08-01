@@ -42,7 +42,7 @@ public class CompactionScheduler {
 		}
 		viewCollection.getAllViewCapacities()
 				.parallelStream()
-				.forEach(viewCapacity -> /*getRootFragment(viewCapacity).ifPresent(rootFragment -> */{
+				.forEach(viewCapacity -> {
 
 					var compactionTaskList = compactionCandidateService.getCompactionTaskList(viewCapacity);
 
@@ -54,11 +54,5 @@ public class CompactionScheduler {
 						compactionTaskList.forEach(paginationCompactionService::applyCompactionForFragments);
 					}
 				});
-
 	}
-
-//	private Optional<Fragment> getRootFragment(ViewCapacity viewCapacity) {
-//		return fragmentRepository.retrieveFragment(new LdesFragmentIdentifier(viewCapacity.getViewName(), List.of()));
-//	}
-
 }

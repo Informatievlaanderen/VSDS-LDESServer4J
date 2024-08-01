@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PagePostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CompactionCandidateServiceTest {
-	PagePostgresRepository pagePostgresRepository = mock(PagePostgresRepository.class);
+	PageRepository pagePostgresRepository = mock(PageRepository.class);
 	CompactionCandidateService service = new CompactionCandidateService(pagePostgresRepository);
 
 	Map<String, Fragment> fragments = Map.of("/c/f1",

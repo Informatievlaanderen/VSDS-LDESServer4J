@@ -6,21 +6,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.ser
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.PaginationCompactionService;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.SchedulingConfigCompaction;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollectionImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.event.EventListener;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.RecordApplicationEvents;
@@ -40,23 +37,14 @@ import static org.mockito.Mockito.mock;
 public class CompactionIntegrationTest {
 
     @Autowired
+    EntityManager entityManager;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    @Autowired
+    PageRepository pageRepository;
+    @Autowired
     ApplicationEventPublisher applicationEventPublisher;
-    @Autowired
-    @MockBean
-    EventConsumer eventConsumer;
-    @Autowired
-    @MockBean
-    FragmentRepository fragmentRepository;
-    @Autowired
-    @MockBean
-    AllocationRepository allocationRepository;
 
-    @TestComponent
-    protected static class EventConsumer {
-        @EventListener
-        public void consumeEvent(BulkMemberAllocatedEvent testEvent) {
-        }
-    }
 
     @TestConfiguration
     public static class CompactionIntegrationTestConfiguration {

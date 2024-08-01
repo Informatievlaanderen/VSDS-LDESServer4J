@@ -15,12 +15,9 @@ import java.util.List;
 public class MemberRemoverImpl implements MemberRemover {
 
 	private final MemberPropertiesRepository memberPropertiesRepository;
-	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public MemberRemoverImpl(MemberPropertiesRepository memberPropertiesRepository,
-			ApplicationEventPublisher applicationEventPublisher) {
+	public MemberRemoverImpl(MemberPropertiesRepository memberPropertiesRepository) {
 		this.memberPropertiesRepository = memberPropertiesRepository;
-		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	@Override
@@ -28,8 +25,6 @@ public class MemberRemoverImpl implements MemberRemover {
 		List<Long> ids = memberProperties.stream().filter(MemberProperties::isInEventSource).map(MemberProperties::getId).toList();
 		if (!ids.isEmpty()) {
 			memberPropertiesRepository.removeFromEventSource(ids);
-//			applicationEventPublisher.publishEvent(
-//					new MembersRemovedFromEventSourceEvent(ids));
 		}
 	}
 
@@ -37,7 +32,5 @@ public class MemberRemoverImpl implements MemberRemover {
 	public void deleteMembers(List<MemberProperties> memberProperties) {
 		List<Long> ids = memberProperties.stream().map(MemberProperties::getId).toList();
 		memberPropertiesRepository.deleteAllByIds(ids);
-//		applicationEventPublisher.publishEvent(
-//				new MembersDeletedEvent(ids));
 	}
 }

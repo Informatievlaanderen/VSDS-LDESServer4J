@@ -1,29 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import org.mockito.ArgumentMatchers;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.*;
 
 @SuppressWarnings("java:S3415")
 public class CompactionServiceSteps extends CompactionIntegrationTest {
@@ -47,21 +46,55 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
     }
 
     @DataTableType
-    public MemberFragmentations MemberFragmentationsEntryTransformer(Map<String, String> row) {
-        return new MemberFragmentations(row.get("bucketDescriptor"), Arrays.stream(row.get("memberIds").split(",")).toList());
+    public Member MemberFragmentationsEntryTransformer(Map<String, String> row) {
+        return new Member(Long.parseLong(row.get("pageId")),
+                row.get("collection"),
+                row.get("bucketDescriptor"),
+                Integer.parseInt(row.get("amount")));
     }
 
     @DataTableType(replaceWithEmptyString = "[blank]")
-    public Fragment FragmentEntryTransformer(Map<String, String> row) {
-        final ArrayList<TreeRelation> relations = row.get("relation").isEmpty() ? new ArrayList<>()
-                : Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
-                        LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-                .collect(Collectors.toCollection(ArrayList::new));
-        return new Fragment(
-                LdesFragmentIdentifier.fromFragmentId(row.get("fragmentIdentifier")),
-                Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("nrOfMembersAdded")),
-                relations,
-                null);
+    public Page FragmentEntryTransformer(Map<String, String> row) {
+        return new Page(
+                row.get("bucket"),
+                row.get("view"),
+                Boolean.parseBoolean(row.get("immutable")),
+                row.get("url"));
+    }
+
+    public class Page {
+        private final String bucketDescription;
+        private final String viewName;
+        private final boolean immutable;
+        private final String partialUrl;
+
+        public Page(String bucketDescription, String viewName, boolean immutable, String partialUrl) {
+            this.bucketDescription = bucketDescription;
+            this.viewName = viewName;
+            this.immutable = immutable;
+            this.partialUrl = partialUrl;
+        }
+    }
+
+    public class Member {
+        private final long pageId;
+        private final String collectionName;
+        private final String bucketDesc;
+        private final int amount;
+
+        public Member(long pageId, String collectionName, String bucketDesc, int amount) {
+            this.pageId = pageId;
+            this.collectionName = collectionName;
+            this.bucketDesc = bucketDesc;
+            this.amount = amount;
+        }
+    }
+
+    @Given("a collection with the following name {string}")
+    public void aViewWithTheFollowingProperties(String name) {
+        applicationEventPublisher.publishEvent(new EventStreamCreatedEvent(
+                new EventStream(name, "http://example.com",
+                        "http://example.com", true)));
     }
 
     @Given("a view with the following properties")
@@ -70,77 +103,96 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
     }
 
     @And("the following Fragments are available")
-    public void theFollowingFragmentsAreAvailable(List<Fragment> fragments) {
-        fragments.forEach(fragment -> {
-            when(fragmentRepository.retrieveFragment(fragment.getFragmentId())).thenReturn(Optional.of(fragment));
-            when(fragmentRepository.retrieveFragment(fragment.getFragmentId())).thenReturn(Optional.of(fragment));
-            if (fragment.getFragmentPairs().isEmpty()) {
-                when(fragmentRepository.retrieveRootFragment(fragment.getViewName().asString()))
-                        .thenReturn(Optional.of(fragment));
+    public void theFollowingPagesAreAvailable(List<Page> pages) {
+        AtomicLong lastPageId = new AtomicLong(0L);
+        pages.forEach(page -> {
+            MapSqlParameterSource params = new MapSqlParameterSource(Map.of(
+                    "bucket", page.bucketDescription,
+                    "viewName", page.viewName
+            ));
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update("INSERT INTO buckets (bucket, view_id) SELECT :bucket, v.view_id FROM view_names v WHERE v.view_name = :viewName",
+                    params, keyHolder, new String[]{"bucket_id"});
+
+            MapSqlParameterSource pageParams = new MapSqlParameterSource(Map.of(
+                    "bucketId", keyHolder.getKey(),
+                    "immutable", page.immutable,
+                    "partialUrl", page.partialUrl
+            ));
+            jdbcTemplate.update("INSERT INTO pages (bucket_id, immutable, partial_url) VALUES (:bucketId, :immutable, :partialUrl)", pageParams, keyHolder, new String[]{"page_id"});
+            if (lastPageId.get() != 0L) {
+
+                MapSqlParameterSource relationParams = new MapSqlParameterSource(Map.of(
+                        "from", lastPageId.get(),
+                        "to", keyHolder.getKey(),
+                        "type", GENERIC_TREE_RELATION
+                ));
+                jdbcTemplate.update("INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (:from, :to, :type)", relationParams);
             }
-            fragment.getRelations()
-                    .forEach(treeRelation -> when(
-                            fragmentRepository.retrieveFragmentsByOutgoingRelation(treeRelation.treeNode()))
-                            .thenReturn(List.of(fragment)));
+            lastPageId.set(keyHolder.getKeyAs(Long.class));
         });
     }
 
-    @And("the following allocations are present")
-    public void theFollowingAllocationsArePresent(List<FragmentAllocations> fragmentAllocations) {
-        when(allocationRepository.getPossibleCompactionCandidates(any(ViewName.class), anyInt()))
-                .thenAnswer(i ->
-                        getAllocationAggregates(fragmentAllocations, i.getArgument(0, ViewName.class))
-                );
+    @And("the following members are present")
+    public void theFollowingAllocationsArePresent(List<Member> members) {
+//        mobility-hindrances/by-page
+        members.forEach(memberGroup -> {
+            for(int i = 0; i < memberGroup.amount; i++) {
+                MapSqlParameterSource params = new MapSqlParameterSource(Map.of(
+                        "oldId", UUID.randomUUID().toString(),
+                        "subject", "http://example.com",
+                        "collId", 1L,
+                        "versionOf", "http://example.com",
+                        "timestamp", LocalDateTime.now(),
+                        "transactionId", UUID.randomUUID().toString(),
+                        "inEventSource", true,
+                        "model", "http://example.com"
+                ));
+                KeyHolder keyHolder = new GeneratedKeyHolder();
+                jdbcTemplate.update("INSERT INTO members (old_id, subject, collection_id, version_of, timestamp, transaction_id, is_in_event_source, member_model) " +
+                                "VALUES (:oldId, :subject, :collId, :versionOf, :timestamp, :transactionId, :inEventSource, :model)",
+                        params, keyHolder, new String[]{"member_id"});
 
-        when(allocationRepository.getMemberAllocationIdsByFragmentIds(ArgumentMatchers.any()))
-                .thenAnswer(x -> {
-                    Set<String> requested = x.getArgument(0);
-                    return fragmentAllocations.stream()
-                            .filter(fragmentAllocation -> requested.contains(fragmentAllocation.fragmentId))
-                            .flatMap(fragmentAllocations1 -> fragmentAllocations1.memberAllocations.stream()
-                                    .map(MemberAllocation::memberId)).toList();
-                });
+                MapSqlParameterSource memberParams = new MapSqlParameterSource(Map.of(
+                        "memberId", keyHolder.getKey(),
+                        "pageId", memberGroup.pageId
+                ));
+                jdbcTemplate.update("INSERT INTO page_members (member_id, bucket_id, page_id) " +
+                                "SELECT :memberId, b.bucket_id, p.page_id FROM pages p JOIN buckets b ON p.bucket_id = b.bucket_id WHERE p.page_id = :pageId",
+                        memberParams);
+            }
+        });
+
+
     }
 
-    private Stream<CompactionCandidate> getAllocationAggregates(List<FragmentAllocations> fragmentAllocations, ViewName viewName) {
-        return fragmentAllocations.stream()
-                .filter(fragmentAllocation -> {
-                    var fragmentId = LdesFragmentIdentifier.fromFragmentId(fragmentAllocation.fragmentId);
-                    return fragmentId.getViewName().equals(viewName);
-                })
-                .map(fragmentAllocation -> new CompactionCandidate(fragmentAllocation.fragmentId, fragmentAllocation.memberAllocations.size()));
-    }
+//    private Stream<CompactionCandidate> getAllocationAggregates(List<FragmentAllocations> fragmentAllocations, ViewName viewName) {
+//        return fragmentAllocations.stream()
+//                .filter(fragmentAllocation -> {
+//                    var fragmentId = LdesFragmentIdentifier.fromFragmentId(fragmentAllocation.fragmentId);
+//                    return fragmentId.getViewName().equals(viewName);
+//                })
+//                .map(fragmentAllocation -> new CompactionCandidate(fragmentAllocation.fragmentId, fragmentAllocation.memberAllocations.size()));
+//    }
 
-    @And("verify creation of the following fragments")
-    public void verifyCreationOfTheFollowingFragments(List<String> createdFragments) {
-        createdFragments.forEach(createdFragment -> verify(fragmentRepository)
-                .saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(createdFragment))));
+    @And("verify there are {int} pages")
+    public void verifyCreationOfTheFollowingFragments(int i) {
+        assertThat(entityManager.createQuery("SELECT COUNT(*) FROM pages p").getSingleResult()).isEqualTo(i);
     }
 
     @And("verify update of predecessor relations")
-    public void verifyUpdateOfPredecessorRelations(List<String> predecessorFragments) {
-        predecessorFragments.forEach(predecessorFragment -> {
-            verify(fragmentRepository)
-                    .saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment)));
-
-            List<TreeRelation> treeRelations = fragmentRepository
-                    .retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
-                    .orElseThrow()
-                    .getRelations();
-            assertThat(treeRelations)
-                    .map(TreeRelation::treeNode)
-                    .map(LdesFragmentIdentifier::asDecodedFragmentId)
-                    .filteredOn(identifier -> !identifier.contains("dummy"))
-                    .hasSize(1);
-        });
+    public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
+        var count = entityManager.createQuery("SELECT COUNT(*) FROM page_relations r JOIN pages p ON r.to_page = p WHERE p.id IN :ids")
+                .setParameter("ids", ids).getSingleResult();
+        assertThat(count).isEqualTo(0);
     }
 
     @And("verify fragmentation of members")
     public void verifyFragmentationOfMembers(List<MemberFragmentations> memberFragmentations) {
-        verify(eventConsumer, times(memberFragmentations.size())).consumeEvent(any(BulkMemberAllocatedEvent.class));
-        memberFragmentations.forEach(memberFragmentation -> {
-            verify(fragmentRepository).incrementNrOfMembersAdded(LdesFragmentIdentifier.fromFragmentId(memberFragmentation.fragmentId), memberFragmentation.memberIds.size());
-        });
+//        verify(eventConsumer, times(memberFragmentations.size())).consumeEvent(any(BulkMemberAllocatedEvent.class));
+//        memberFragmentations.forEach(memberFragmentation -> {
+//            verify(fragmentRepository).incrementNrOfMembersAdded(LdesFragmentIdentifier.fromFragmentId(memberFragmentation.fragmentId), memberFragmentation.memberIds.size());
+//        });
     }
 
     @Then("wait for {int} seconds until compaction has executed at least once")

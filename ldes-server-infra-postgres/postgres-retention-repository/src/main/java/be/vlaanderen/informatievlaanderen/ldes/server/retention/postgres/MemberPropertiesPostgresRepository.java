@@ -52,7 +52,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	public void removePageMemberEntity(Long id, String viewName) {
-		Query query = entityManager.createQuery("DELETE FROM page_members p WHERE p.MemberEntity.id == :memberId AND p.BucketEntity.ViewEntity.name == :viewName");
+		Query query = entityManager.createQuery("DELETE FROM PageMemberEntity p WHERE p.member.id = :memberId AND p.bucket.view.name = :viewName");
 		query.setParameter("viewName", viewName);
 		query.setParameter("memberId", id);
 		query.executeUpdate();

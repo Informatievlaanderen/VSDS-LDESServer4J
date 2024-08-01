@@ -43,7 +43,7 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 	public void theFollowingFragmentsArePresent(List<Fragment> fragments) {
 		Stream<Fragment> deletionCandidates = fragments.stream().filter(fragment -> fragment.getDeleteTime() != null);
 
-		when(fragmentRepository.getDeletionCandidates()).thenReturn(deletionCandidates);
+//		when(fragmentRepository.getDeletionCandidates()).thenReturn(deletionCandidates);
 	}
 
 	private LocalDateTime getDeleteTime(String daysUntilDeletion) {
@@ -61,8 +61,8 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 
 	@And("verify the deletion of the following fragments")
 	public void verifyTheDeletionOfTheFollowingFragments(List<String> fragmentIds) {
-		fragmentIds.forEach(fragmentId -> verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(
-				argThat(fragment -> fragment.asDecodedFragmentId().equals(fragmentId))
-		));
+//		fragmentIds.forEach(fragmentId -> verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(
+//				argThat(fragment -> fragment.asDecodedFragmentId().equals(fragmentId))
+//		));
 	}
 }

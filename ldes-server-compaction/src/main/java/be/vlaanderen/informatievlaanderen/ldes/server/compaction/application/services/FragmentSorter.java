@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 public class FragmentSorter {
 	private FragmentSorter() {}
 
-	public static Stream<TreeNode> sortFragments(Stream<TreeNode> fragmentStream) {
+//	public static Stream<TreeNode> sortFragments(Stream<TreeNode> fragmentStream) {
 //		List<TreeNode> fragments = fragmentStream.toList();
 //
 //		var firstElement = fragments.stream()
@@ -47,19 +48,16 @@ public class FragmentSorter {
 //			}
 //
 //		} while (foundFragment.isPresent());
-
-
-		return fragmentStream;//fragmentList.stream();
-	}
-
-	public static boolean hasNoConnections(TreeNode fragment, List<TreeNode> fragments) {
-		return fragments.stream().noneMatch(fragment1 -> isConnectedTo(fragment1, fragment));
-	}
-
-	public static boolean isConnectedTo(TreeNode treeNode, TreeNode otherTreeNode) {
-		return treeNode.getRelations()
-				.stream()
-				.anyMatch(treeRelation -> treeRelation.treeNode()
-						.equals(LdesFragmentIdentifier.fromFragmentId(otherTreeNode.getFragmentId())));
-	}
+//
+//
+//		return fragmentStream;//fragmentList.stream();
+//	}
+//
+//	public static boolean hasNoConnections(CompactionCandidate fragment, List<CompactionCandidate> fragments) {
+//		return fragments.stream().noneMatch(fragment1 -> isConnectedTo(fragment1, fragment));
+//	}
+//
+//	public static boolean isConnectedTo(CompactionCandidate treeNode, CompactionCandidate otherTreeNode) {
+//		return treeNode.getNextPageId() == otherTreeNode.getId();
+//	}
 }
