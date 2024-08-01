@@ -11,12 +11,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MemberRowMapper implements RowMapper<Member> {
+
+	static final String SUBJECT_KEY = "subject";
+	static final String MEMBER_MODEL_KEY = "member_model";
+
 	@Override
 	public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
 		final Model model = RDFParser
-				.source(new ByteArrayInputStream(rs.getBytes("member_model")))
+				.source(new ByteArrayInputStream(rs.getBytes(MEMBER_MODEL_KEY)))
 				.lang(PostgresIngestMemberConstants.SERIALISATION_LANG)
 				.toModel();
-		return new Member(rs.getString("subject"), model);
+		return new Member(rs.getString(SUBJECT_KEY), model);
 	}
+
+
 }

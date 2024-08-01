@@ -21,9 +21,7 @@ import javax.sql.DataSource;
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
-@ComponentScan(basePackages = {
-		"be.vlaanderen.informatievlaanderen.ldes.server.ingest"
-})
+@ComponentScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server.ingest"})
 @ContextConfiguration(classes = {MemberEntityRepository.class})
 @Sql(value = {"init-collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(statements = "DELETE FROM collections;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)

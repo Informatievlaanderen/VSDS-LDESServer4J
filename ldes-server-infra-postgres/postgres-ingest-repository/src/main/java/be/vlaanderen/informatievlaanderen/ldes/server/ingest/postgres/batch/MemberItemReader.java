@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.FragmentationMemberRowMapper;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class MemberItemReader {
 
 	@Bean
+	@StepScope
 	public JdbcPagingItemReader<FragmentationMember> newMemberReader(DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
 				.dataSource(dataSource)
