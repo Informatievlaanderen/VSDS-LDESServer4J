@@ -8,14 +8,22 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -229,6 +237,53 @@ class EventStreamConverterImplTest {
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
 			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
+		}
+	}
+
+	@Nested
+	class EventStreamWithSkoleminationDomain {
+		private static final String LDES_SKOLEMIZATION_DOMAIN_KEY = "#LDES_SKOLEMIZATION_DOMAIN_LINE";
+		private static final String SKOLEMIZATION_DOMAIN = "http://example.org";
+
+		@Test
+		void given_ModelWithSkolemizationDomainLiteral_when_FromModel_then_ReturnEventStreamToWithSkolemizationDomain() {
+			final String modelString = readModelString()
+					.replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "ldes:skolemizationDomain \"" + SKOLEMIZATION_DOMAIN + "\" ;");
+			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+
+			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
+
+			assertThat(eventStreamTO.getSkolemizationDomain()).isNull();
+		}
+
+		@Test
+		void given_ModelWithSkolemizationDomainResource_when_FromModel_then_ReturnEventStreamToWithSkolemizationDomain() {
+			final String modelString = readModelString()
+					.replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "ldes:skolemizationDomain <" + SKOLEMIZATION_DOMAIN + "> ;");
+			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+
+			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
+
+			assertThat(eventStreamTO.getSkolemizationDomain()).isEqualTo(SKOLEMIZATION_DOMAIN);
+		}
+
+		@Test
+		void given_ModelWithoutSkolemization_when_FromModel_then_ReturnEventStreamToWitouthSkolemizationDomain() {
+			final String modelString = readModelString().replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "");
+			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+
+			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
+
+			assertThat(eventStreamTO.getSkolemizationDomain()).isNull();
+		}
+
+		private String readModelString() {
+			try {
+				final File file = ResourceUtils.getFile("classpath:eventstream/streams/ldes-with-skol-dom.ttl");
+				return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
 		}
 	}
 

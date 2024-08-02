@@ -9,6 +9,7 @@
 server:mobility-hindrances a ldes:EventStream ;
 	ldes:timestampPath dcterms:created ;
 	ldes:versionOfPath dcterms:isVersionOf ;
+    ldes:skolemizationDomain <http://example.org> ;
     tree:view mobility-hindrances:paged  ;
 	tree:shape mobility-hindrances:shape .
 

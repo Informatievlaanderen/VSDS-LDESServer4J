@@ -1,0 +1,24 @@
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix gipod: <https://gipod.vlaanderen.be/ns/gipod#> .
+@prefix ns0: <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix m8g: <http://data.europa.eu/m8g/> .
+
+<http://test-data/mobility-hindrance/1/1>
+  dc:isVersionOf <http://test-data/mobility-hindrance/1> ;
+  a <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
+  geosparql:asWKT "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^geosparql:wktLiteral ;
+  dc:created "2023-11-30T21:45:15+01:00"^^xsd:dateTime ;
+  adms:identifier [
+    a adms:Identifier ;
+    skos:notation "10810464"^^gipod:gipodId ;
+    adms:schemaAgency "https://gipod.vlaanderen.be"@nl-be
+  ] ;
+  ns0:periode [
+    m8g:endTime "2022-05-27T17:00:00Z"^^xsd:dateTime ;
+    m8g:startTime "2022-05-27T07:00:00Z"^^xsd:dateTime ;
+    a m8g:PeriodOfTime
+  ] .

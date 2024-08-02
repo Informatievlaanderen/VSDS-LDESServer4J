@@ -68,8 +68,8 @@ class MemberIngestControllerTest {
     @BeforeEach
     void setUp() {
         Stream.of(
-                        new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf", false),
-                        new EventStream("restaurant", "http://www.w3.org/ns/prov#generatedAtTime", "https://vocabulary.uncefact.org/elementVersionId", false))
+                        new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf", false, null),
+                        new EventStream("restaurant", "http://www.w3.org/ns/prov#generatedAtTime", "https://vocabulary.uncefact.org/elementVersionId", false, null))
                 .map(EventStreamCreatedEvent::new)
                 .forEach(eventPublisher::publishEvent);
     }

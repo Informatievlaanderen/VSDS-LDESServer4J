@@ -150,9 +150,10 @@ public class EventStreamConverterImpl implements EventStreamConverter {
     }
 
     private Optional<String> getResource(Model model, Property predicate) {
-        return model.listStatements(null, predicate, (Resource) null)
+        return model.listObjectsOfProperty(predicate)
+                .filterKeep(RDFNode::isResource)
                 .nextOptional()
-                .map(statement -> statement.getObject().toString());
+                .map(RDFNode::toString);
     }
 
     private Optional<Boolean> getBooleanResource(Model model, Property predicate) {
