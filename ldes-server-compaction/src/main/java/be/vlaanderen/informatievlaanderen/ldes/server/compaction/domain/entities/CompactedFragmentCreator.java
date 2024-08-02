@@ -38,7 +38,6 @@ public class CompactedFragmentCreator {
 
 		jdbcTemplate.update(INSERT_PAGE_RELATION_SQL, keyHolder.getKey(), lastPage.getNextPageId(), RdfConstants.GENERIC_TREE_RELATION);
 
-//		jdbcTemplate.update(UPDATE_PAGE_MEMBERS_SQL, keyHolder.getKey());
 		return keyHolder.getKeyAs(Long.class);
 	}
 

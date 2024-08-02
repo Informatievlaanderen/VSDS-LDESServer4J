@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,46 +33,29 @@ class MemberRemoverImplTest {
 		memberRemover = new MemberRemoverImpl(memberPropertiesRepository);
 	}
 
-//	@Test
-//	void when_MemberPropertiesHas1ViewReference_then_ViewReferenceIsDeleted() {
-//		MemberProperties memberProperties = new MemberProperties("1", null, null, null, true);
-//		memberProperties.addViewReference(VIEW_NAME);
-//		assertTrue(memberProperties.containsViewReference(VIEW_NAME));
-//
-//		memberRemover.removeMemberFromView(memberProperties, VIEW_NAME);
-//
-//		assertFalse(memberProperties.containsViewReference(VIEW_NAME));
-//		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
-//		inOrder.verify(memberPropertiesRepository).removeViewReference(memberProperties.getId(), VIEW_NAME);
-//		inOrder.verify(applicationEventPublisher)
-//				.publishEvent(new MemberUnallocatedEvent(memberProperties.getId(), ViewName.fromString(VIEW_NAME)));
-//		inOrder.verifyNoMoreInteractions();
-//	}
+	@Test
+	void when_MemberPropertiesToBeRemovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
+		MemberProperties memberProperties = new MemberProperties(1L, "collection",
+				"http://example.com", LocalDateTime.now(), false, true);
+		MemberProperties memberProperties2 = new MemberProperties(2L, "collection",
+				"http://example.com", LocalDateTime.now(), true, true);
 
-//	@Test
-//	void when_MemberPropertiesToBeRemovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
-//		MemberProperties memberProperties = new MemberProperties("1", null, null, null, true);
-//		MemberProperties memberProperties2 = new MemberProperties("1", null, null, null, false);
-//
-//		memberRemover.removeMembersFromEventSource(List.of(memberProperties, memberProperties2));
-//
-//		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
-//		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties2.getId()));
-//		inOrder.verify(applicationEventPublisher)
-//				.publishEvent(new MembersRemovedFromEventSourceEvent(List.of(memberProperties2.getId())));
-//		inOrder.verifyNoMoreInteractions();
-//	}
+		memberRemover.removeMembersFromEventSource(List.of(memberProperties, memberProperties2));
+
+		InOrder inOrder = inOrder(memberPropertiesRepository);
+		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties2.getId()));
+		inOrder.verifyNoMoreInteractions();
+	}
 
 	@Test
 	void when_MemberPropertiesNotInEventSource_Then_MemberIsRemoved() {
-//		MemberProperties memberProperties = new MemberProperties("1", null, null, null, false);
-//
-//		memberRemover.deleteMembers(List.of(memberProperties));
-//
-//		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
-//		inOrder.verify(memberPropertiesRepository).deleteAllByIds(List.of(memberProperties.getId()));
-//		inOrder.verify(applicationEventPublisher)
-//				.publishEvent(new MembersDeletedEvent(List.of(memberProperties.getId())));
-//		inOrder.verifyNoMoreInteractions();
+		MemberProperties memberProperties = new MemberProperties(1L, "collection",
+				"http://example.com", LocalDateTime.now(), false, false);
+
+		memberRemover.deleteMembers(List.of(memberProperties));
+
+		InOrder inOrder = inOrder(memberPropertiesRepository);
+		inOrder.verify(memberPropertiesRepository).deleteAllByIds(List.of(memberProperties.getId()));
+		inOrder.verifyNoMoreInteractions();
 	}
 }

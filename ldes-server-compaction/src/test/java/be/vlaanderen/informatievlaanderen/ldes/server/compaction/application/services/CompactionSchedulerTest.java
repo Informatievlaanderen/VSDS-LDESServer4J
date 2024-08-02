@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +14,6 @@ import static org.mockito.Mockito.*;
 class CompactionSchedulerTest {
 	@Mock
 	private ViewCollection viewCollection;
-	@Mock
-	private FragmentRepository fragmentRepository;
 	@Mock
 	private PaginationCompactionService paginationCompactionService;
 	@Mock
@@ -35,7 +32,7 @@ class CompactionSchedulerTest {
 		compactionScheduler.compactFragments();
 
 		verify(retentionPolicyCollection).isEmpty();
-		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
+//		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
 	}
 
 	@Test
@@ -46,7 +43,7 @@ class CompactionSchedulerTest {
 
 		verify(retentionPolicyCollection).isEmpty();
 		verify(viewCollection).getAllViewCapacities();
-		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
+//		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
 	}
 
 

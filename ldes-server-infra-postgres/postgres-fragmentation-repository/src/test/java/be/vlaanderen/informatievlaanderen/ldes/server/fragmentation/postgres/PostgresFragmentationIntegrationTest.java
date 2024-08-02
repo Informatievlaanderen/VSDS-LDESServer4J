@@ -4,6 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.bucketisedmember.MemberBucketJpaRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
@@ -36,7 +40,8 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.retention",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain"
 })
-@ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class})
+@ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class,
+        MemberBucketJpaRepository.class, MemberBucketEntityRepository.class})
 @Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresFragmentationIntegrationTest {

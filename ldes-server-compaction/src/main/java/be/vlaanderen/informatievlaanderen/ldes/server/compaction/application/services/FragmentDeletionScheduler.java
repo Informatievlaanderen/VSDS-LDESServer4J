@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PagePostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,10 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 public class FragmentDeletionScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentDeletionScheduler.class);
 	private static final Long DELETION_GRACE_PERIOD_DAYS = 7L;
-	private final PagePostgresRepository pageRepository;
+	private final PageRepository pageRepository;
 	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
-	public FragmentDeletionScheduler(PagePostgresRepository pageRepository, RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
+	public FragmentDeletionScheduler(PageRepository pageRepository, RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.pageRepository = pageRepository;
 		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
