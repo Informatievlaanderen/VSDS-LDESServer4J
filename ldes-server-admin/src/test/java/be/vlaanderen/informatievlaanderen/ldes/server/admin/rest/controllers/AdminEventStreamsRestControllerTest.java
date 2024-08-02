@@ -55,6 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
+	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
+	public static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	@MockBean
 	private EventStreamService eventStreamService;
 
@@ -87,13 +89,20 @@ class AdminEventStreamsRestControllerTest {
 							List.of(fragmentationConfig), 100));
 
 			eventStreams = List.of(
-					new EventStreamTO(COLLECTION, "http://purl.org/dc/terms/created",
-							"http://purl.org/dc/terms/isVersionOf", false,
-							views, shape1, List.of()),
-					new EventStreamTO("name2", "http://purl.org/dc/terms/created",
-							"http://purl.org/dc/terms/isVersionOf", false,
-							List.of(singleView),
-							shape2, List.of()));
+					new EventStreamTO.Builder()
+							.withCollection(COLLECTION)
+							.withTimestampPath(TIMESTAMP_PATH)
+							.withVersionOfPath(VERSION_OF_PATH)
+							.withViews(views)
+							.withShacl(shape1)
+							.build(),
+					new EventStreamTO.Builder()
+							.withCollection("name2")
+							.withTimestampPath(TIMESTAMP_PATH)
+							.withVersionOfPath(VERSION_OF_PATH)
+							.withViews(List.of(singleView))
+							.withShacl(shape2)
+							.build());
 		}
 
 		@Test
@@ -117,9 +126,12 @@ class AdminEventStreamsRestControllerTest {
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
 			Model model = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 			Model shape = readModelFromFile("shacl/server-shape.ttl");
-			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
-					"http://purl.org/dc/terms/isVersionOf", false,
-					List.of(), shape, List.of());
+			EventStreamTO eventStream = new EventStreamTO.Builder()
+					.withCollection("name1")
+					.withTimestampPath(TIMESTAMP_PATH)
+					.withVersionOfPath(VERSION_OF_PATH)
+					.withShacl(shape)
+					.build();
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 
@@ -150,12 +162,12 @@ class AdminEventStreamsRestControllerTest {
 			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 			final Model shape = readModelFromFile("shacl/server-shape.ttl");
 
-			EventStreamTO eventStreamTO = new EventStreamTO(
-					"name1",
-					"http://purl.org/dc/terms/created",
-					"http://purl.org/dc/terms/isVersionOf",
-					false,
-					List.of(), shape, List.of());
+			EventStreamTO eventStreamTO = new EventStreamTO.Builder()
+					.withCollection("name1")
+					.withTimestampPath(TIMESTAMP_PATH)
+					.withVersionOfPath(VERSION_OF_PATH)
+					.withShacl(shape)
+					.build();
 
 			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
 
@@ -175,12 +187,13 @@ class AdminEventStreamsRestControllerTest {
 			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-create-versions.ttl");
 			final Model shape = readModelFromFile("shacl/server-shape.ttl");
 
-			EventStreamTO eventStreamTO = new EventStreamTO(
-					"name1",
-					"http://purl.org/dc/terms/created",
-					"http://purl.org/dc/terms/isVersionOf",
-					true,
-					List.of(), shape, List.of());
+			EventStreamTO eventStreamTO = new EventStreamTO.Builder()
+					.withCollection("name1")
+					.withTimestampPath(TIMESTAMP_PATH)
+					.withVersionOfPath(VERSION_OF_PATH)
+					.withVersionCreationEnabled(true)
+					.withShacl(shape)
+					.build();
 
 			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
 

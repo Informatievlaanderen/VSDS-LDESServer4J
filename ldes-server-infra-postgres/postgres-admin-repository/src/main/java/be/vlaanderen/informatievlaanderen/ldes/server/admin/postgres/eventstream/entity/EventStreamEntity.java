@@ -33,6 +33,9 @@ public class EventStreamEntity {
     @Column(name = "is_closed", nullable = false)
     private Boolean closed;
 
+    @Column(name = "skolemization_domain")
+    private String skolemizationDomain;
+
     @OneToMany(mappedBy = "eventStream", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ViewEntity> views;
 
@@ -48,12 +51,13 @@ public class EventStreamEntity {
     public EventStreamEntity() {
     }
 
-    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean closed) {
+    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean closed, String skolemizationDomain) {
         this.name = name;
         this.timestampPath = timestampPath;
         this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
         this.closed = closed;
+        this.skolemizationDomain = skolemizationDomain;
     }
 
     public Integer getId() {
@@ -78,6 +82,10 @@ public class EventStreamEntity {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public String getSkolemizationDomain() {
+        return skolemizationDomain;
     }
 
     public List<ViewEntity> getViews() {

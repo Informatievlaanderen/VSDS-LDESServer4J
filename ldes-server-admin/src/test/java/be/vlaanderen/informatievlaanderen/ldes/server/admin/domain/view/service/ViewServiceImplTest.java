@@ -50,7 +50,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, false)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, false, null)));
 	}
 
 	@Nested

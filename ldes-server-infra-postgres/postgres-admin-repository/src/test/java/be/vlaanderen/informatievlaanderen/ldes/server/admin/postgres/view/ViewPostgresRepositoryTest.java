@@ -38,13 +38,13 @@ class ViewPostgresRepositoryTest {
         when(viewEntityRepository.findAll())
                 .thenReturn(List.of(
                         new ViewEntity(VIEW_NAME, List.of(), List.of(), 100) {{
-                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false, null));
                         }},
                         new ViewEntity("view2", List.of(), List.of(), 100) {{
-                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false, null));
                         }},
                         new ViewEntity("view1", List.of(), List.of(), 100) {{
-                            setEventStream(new EventStreamEntity("collection2", null, null, false, false));
+                            setEventStream(new EventStreamEntity("collection2", null, null, false, false, null));
                         }}));
         final List<ViewSpecification> expectedViews = List.of(
                 new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), List.of(), 100),
@@ -61,10 +61,10 @@ class ViewPostgresRepositoryTest {
         when(viewEntityRepository.findAllByCollectionName(COLLECTION_NAME))
                 .thenReturn(List.of(
                         new ViewEntity(VIEW_NAME, List.of(), List.of(), 100) {{
-                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false, null));
                         }},
                         new ViewEntity("view2", List.of(), List.of(), 100) {{
-                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false, null));
                         }}));
         final List<ViewSpecification> expectedViews = List.of(
                 new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), List.of(), 100),
@@ -111,7 +111,7 @@ class ViewPostgresRepositoryTest {
     @Test
     void test_getViewByViewName() {
         ViewEntity viewEntity = new ViewEntity(VIEW_NAME, List.of(), List.of(), 100);
-        viewEntity.setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+        viewEntity.setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false, null));
 
         ViewSpecification expectedViewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME),
                 List.of(), List.of(), 100);

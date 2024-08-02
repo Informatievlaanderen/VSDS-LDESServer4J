@@ -107,8 +107,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@When("I ingest {int} members of template {string} to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
 			throws Exception {
+		final String memberContentTemplate = readMemberTemplate(memberTemplate);
 		for (int i = 0; i < numberOfMembers; i++) {
-			String memberContent = readMemberTemplate(memberTemplate)
+			String memberContent = memberContentTemplate
 					.replace("ID", String.valueOf(i))
 					.replace("DATETIME", getCurrentTimestamp());
 			mockMvc.perform(post("/" + collectionName)

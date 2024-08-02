@@ -22,7 +22,7 @@ class EventSourcePostgresRepositoryTest {
     private static final String COLLECTION_NAME = "testCollection";
     private static final EventSource EVENT_SOURCE = new EventSource(COLLECTION_NAME, List.of());
     private static final EventSourceEntity EVENT_SOURCE_ENTITY = new EventSourceEntity(
-            new EventStreamEntity(COLLECTION_NAME, "", "", false, false)
+            new EventStreamEntity(COLLECTION_NAME, "", "", false, false, null)
     );
 
     @Mock

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class EventStream {
 
@@ -9,25 +10,27 @@ public class EventStream {
 	private final String versionOfPath;
 	private final boolean versionCreationEnabled;
 	private final boolean isClosed;
+	private final String skolemizationDomain;
 
 	public EventStream(String collection,
-					   String timestampPath,
-					   String versionOfPath,
-					   boolean versionCreationEnabled) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false);
+	                   String timestampPath,
+	                   String versionOfPath,
+	                   boolean versionCreationEnabled, String skolemizationDomain) {
+		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, skolemizationDomain);
 	}
 
 	public EventStream(String collection,
-					   String timestampPath,
-					   String versionOfPath,
-					   boolean versionCreationEnabled,
-					   boolean isClosed) {
+	                   String timestampPath,
+	                   String versionOfPath,
+	                   boolean versionCreationEnabled,
+	                   boolean isClosed, String skolemizationDomain) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
         this.isClosed = isClosed;
-    }
+		this.skolemizationDomain = skolemizationDomain;
+	}
 
 	public String getCollection() {
 		return collection;
@@ -47,6 +50,10 @@ public class EventStream {
 
 	public boolean isClosed() {
 		return isClosed;
+	}
+
+	public Optional<String> getSkolemizationDomain() {
+		return Optional.ofNullable(skolemizationDomain);
 	}
 
 	@Override

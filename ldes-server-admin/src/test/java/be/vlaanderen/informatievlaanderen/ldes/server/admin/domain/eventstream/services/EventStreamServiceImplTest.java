@@ -38,225 +38,233 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
 
-    private static final String COLLECTION = "collection";
-    private static final String TIMESTAMP_PATH = "generatedAt";
-    private static final String VERSION_OF_PATH = "isVersionOf";
-    private static final boolean VERSION_CREATION_ENABLED = false;
-    private static final boolean CLOSED = false;
-    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-    private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-            VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
-    private DcatDataset dataset;
-    private EventStreamTO eventStreamTOWithDataset;
+	private static final String COLLECTION = "collection";
+	private static final String TIMESTAMP_PATH = "generatedAt";
+	private static final String VERSION_OF_PATH = "isVersionOf";
+	private static final boolean VERSION_CREATION_ENABLED = false;
+	private static final boolean CLOSED = false;
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, null);
+	private static final EventStreamTO.Builder BASE_BUILDER = new EventStreamTO.Builder()
+			.withEventStream(EVENT_STREAM)
+			.withViews(List.of())
+			.withShacl(ModelFactory.createDefaultModel())
+			.withEventSourceRetentionPolicies(List.of());
+	private static final EventStreamTO EVENT_STREAM_RESPONSE = BASE_BUILDER.build();
+	private DcatDataset dataset;
+	private EventStreamTO eventStreamTOWithDataset;
 
-    @Mock
-    private EventStreamRepository eventStreamRepository;
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
-    @Captor
-    ArgumentCaptor<EventStreamDeletedEvent> deletedEventArgumentCaptor;
-    @Mock
-    private ViewValidator viewValidator;
-    @Mock
-    private ShaclShapeService shaclShapeService;
-    @Mock
-    private DcatDatasetService dcatDatasetService;
-    @Mock
-    private DcatServerService dcatServerService;
-    @Mock
-    private EventSourceService eventSourceService;
-    @InjectMocks
-    private EventStreamServiceImpl service;
+	@Mock
+	private EventStreamRepository eventStreamRepository;
+	@Mock
+	private ApplicationEventPublisher eventPublisher;
+	@Captor
+	ArgumentCaptor<EventStreamDeletedEvent> deletedEventArgumentCaptor;
+	@Mock
+	private ViewValidator viewValidator;
+	@Mock
+	private ShaclShapeService shaclShapeService;
+	@Mock
+	private DcatDatasetService dcatDatasetService;
+	@Mock
+	private DcatServerService dcatServerService;
+	@Mock
+	private EventSourceService eventSourceService;
+	@InjectMocks
+	private EventStreamServiceImpl service;
 
-    @BeforeEach
-    void setUp() throws URISyntaxException {
-        dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
-        eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-                VERSION_OF_PATH, VERSION_CREATION_ENABLED, CLOSED, List.of(), ModelFactory.createDefaultModel(), List.of(), dataset);
-    }
+	@BeforeEach
+	void setUp() throws URISyntaxException {
+		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
+		eventStreamTOWithDataset = BASE_BUILDER.withDcatDataset(dataset).build();
+	}
 
-    @Test
-    void when_retrieveAllEventStream_then_returnList() {
-        final String otherCollection = "other";
-        List<ViewSpecification> views = List
-                .of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
+	@Test
+	void when_retrieveAllEventStream_then_returnList() {
+		final String otherCollection = "other";
+		List<ViewSpecification> views = List
+				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
-        EventStreamTO otherEventStreamTO = new EventStreamTO(otherCollection, "created", "versionOf", false,
-                CLOSED, views, ModelFactory.createDefaultModel(), List.of(), dataset);
+		EventStreamTO otherEventStreamTO = new EventStreamTO.Builder()
+				.withCollection(otherCollection)
+				.withTimestampPath("created")
+				.withVersionOfPath("versionOf")
+				.withVersionCreationEnabled(false)
+				.withClosed(CLOSED)
+				.withViews(views)
+				.withShacl(ModelFactory.createDefaultModel())
+				.withEventSourceRetentionPolicies(List.of())
+				.withDcatDataset(dataset)
+				.build();
 
-        when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(eventStreamTOWithDataset, otherEventStreamTO));
+		when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(eventStreamTOWithDataset, otherEventStreamTO));
 
-        List<EventStreamTO> eventStreams = service.retrieveAllEventStreams();
+		List<EventStreamTO> eventStreams = service.retrieveAllEventStreams();
 
-        assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamTO);
-        verify(eventStreamRepository).retrieveAllEventStreamTOs();
-        verifyNoInteractions(shaclShapeService, dcatDatasetService);
+		assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamTO);
+		verify(eventStreamRepository).retrieveAllEventStreamTOs();
+		verifyNoInteractions(shaclShapeService, dcatDatasetService);
 
-    }
+	}
 
-    @Test
-    void when_collectionExists_then_retrieveEventStream() {
-        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
+	@Test
+	void when_collectionExists_then_retrieveEventStream() {
+		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
 
-        EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
+		EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
-        assertThat(eventStreamTO).isEqualTo(EVENT_STREAM_RESPONSE);
-        verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
-        verifyNoInteractions(shaclShapeService, dcatDatasetService);
-    }
+		assertThat(eventStreamTO).isEqualTo(EVENT_STREAM_RESPONSE);
+		verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
+		verifyNoInteractions(shaclShapeService, dcatDatasetService);
+	}
 
-    @Test
-    void when_collectionAndDatasetExists_then_retrieveEventStreamWithDataset() {
-        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
+	@Test
+	void when_collectionAndDatasetExists_then_retrieveEventStreamWithDataset() {
+		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTOWithDataset));
 
-        EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
+		EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
-        assertThat(eventStreamTO).isEqualTo(eventStreamTOWithDataset);
-    }
+		assertThat(eventStreamTO).isEqualTo(eventStreamTOWithDataset);
+	}
 
-    @Test
-    void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
-        when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.empty());
+	@Test
+	void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
+		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
-                .isInstanceOf(MissingResourceException.class)
-                .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
-
-        verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
-        verifyNoInteractions(dcatDatasetService, shaclShapeService);
-    }
-
-    @Test
-    void when_collectionExists_then_updateEventSource() {
-        service.updateEventSource(COLLECTION, List.of());
-
-        InOrder inOrder = inOrder(eventSourceService, eventPublisher);
-        inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
-    }
-
-    @Nested
-    class CreateEventStream {
-        private static final String TIMESTAMP_PATH = "generatedAt";
-        private static final String VERSION_OF_PATH = "versionOf";
-        private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-
-        @Test
-        void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
-            EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-                    VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
-
-            EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
-
-            assertThat(createdEventStream).isSameAs(eventStreamTO);
-            verify(eventStreamRepository).saveEventStream(eventStreamTO);
-            verifyNoInteractions(shaclShapeService);
-        }
-
-        @Test
-        void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
-            when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-            EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-                    VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
-
-            assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("This collection already exists!");
-
-            InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService);
-            inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-            inOrder.verifyNoMoreInteractions();
-        }
-
-        @Test
-        void given_NonExistingEventStream_when_errorOccursWhileCreation_then_DeleteAgainAndThrowException() {
-            final String byPage = "by-page";
-            final String byLocation = "by-location";
-            when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-            doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(any());
-            ViewSpecification byPageView = new ViewSpecification(new ViewName(COLLECTION, byPage), List.of(), List.of(), 100);
-            ViewSpecification byLocationView = new ViewSpecification(new ViewName(COLLECTION, byLocation), List.of(), List.of(), 100);
-            EventStreamTO eventStreamTO = new EventStreamTO(
-                    COLLECTION,
-                    TIMESTAMP_PATH,
-                    VERSION_OF_PATH,
-                    VERSION_CREATION_ENABLED,
-                    List.of(byPageView, byLocationView),
-                    ModelFactory.createDefaultModel(),
-                    List.of());
-
-            assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
-                    .isInstanceOf(DuplicateRetentionException.class);
-            verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        }
-    }
-
-
-    @Test
-    void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
-        when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(0);
-
-        assertThatThrownBy(() -> service.deleteEventStream(COLLECTION))
-                .isInstanceOf(MissingResourceException.class)
-                .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
-    }
-
-    @Test
-    void when_collectionExists_and_triesToDeleteEventStream_then_throwExceptionWithRetrieval() {
-        when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(1).thenReturn(0);
-
-        service.deleteEventStream(COLLECTION);
-
-        InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
-        inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
-        inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
-        assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
-        assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
-                .isInstanceOf(MissingResourceException.class)
-                .hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
-    }
-
-    @Test
-    void when_init() {
-        ((EventStreamServiceImpl) service).initEventStream();
-        verify(eventStreamRepository).retrieveAllEventStreams();
-    }
-
-    @Test
-    void should_CallDcatServiceToGetDcat_when_GetComposedDcatIsCalled() {
-        service.getComposedDcat();
-
-        verify(dcatServerService).getComposedDcat();
-        verifyNoMoreInteractions(dcatServerService);
-    }
-
-    @Test
-    void when_closeEventStream_thenPublishEventStreamClosedEvent() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-
-        service.closeEventStream(COLLECTION);
-
-        verify(eventStreamRepository).closeEventStream(COLLECTION);
-        verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verify(eventPublisher).publishEvent(new EventStreamClosedEvent(COLLECTION));
-    }
-
-    @Test
-    void when_closeEventStream_andEventStreamDoesNotExist_thenExceptionIsThrown() {
-        when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.closeEventStream(COLLECTION))
-                .isInstanceOf(MissingResourceException.class)
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
 				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 
-        verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-        verify(eventPublisher, never()).publishEvent(new EventStreamClosedEvent(COLLECTION));
-    }
+		verify(eventStreamRepository).retrieveEventStreamTO(COLLECTION);
+		verifyNoInteractions(dcatDatasetService, shaclShapeService);
+	}
 
-    private Model readModelFromFile(String fileName) throws URISyntaxException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-                .toString();
-        return RDFDataMgr.loadModel(uri);
-    }
+	@Test
+	void when_collectionExists_then_updateEventSource() {
+		service.updateEventSource(COLLECTION, List.of());
+
+		InOrder inOrder = inOrder(eventSourceService, eventPublisher);
+		inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
+	}
+
+	@Nested
+	class CreateEventStream {
+		private static final String TIMESTAMP_PATH = "generatedAt";
+		private static final String VERSION_OF_PATH = "versionOf";
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, null);
+
+		@Test
+		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
+			EventStreamTO eventStreamTO = BASE_BUILDER.build();
+
+			EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
+
+			assertThat(createdEventStream).isSameAs(eventStreamTO);
+			verify(eventStreamRepository).saveEventStream(eventStreamTO);
+			verifyNoInteractions(shaclShapeService);
+		}
+
+		@Test
+		void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
+			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+			EventStreamTO eventStreamTO = BASE_BUILDER.build();
+
+			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage("This collection already exists!");
+
+			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService);
+			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void given_NonExistingEventStream_when_errorOccursWhileCreation_then_DeleteAgainAndThrowException() {
+			final String byPage = "by-page";
+			final String byLocation = "by-location";
+			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+			doThrow(DuplicateRetentionException.class).when(viewValidator).validateView(any());
+			ViewSpecification byPageView = new ViewSpecification(new ViewName(COLLECTION, byPage), List.of(), List.of(), 100);
+			ViewSpecification byLocationView = new ViewSpecification(new ViewName(COLLECTION, byLocation), List.of(), List.of(), 100);
+			EventStreamTO eventStreamTO = new EventStreamTO.Builder()
+					.withEventStream(EVENT_STREAM)
+					.withViews(List.of(byPageView, byLocationView))
+					.withShacl(ModelFactory.createDefaultModel())
+					.withEventSourceRetentionPolicies(List.of())
+					.build();
+
+			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
+					.isInstanceOf(DuplicateRetentionException.class);
+			verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		}
+	}
+
+
+	@Test
+	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
+		when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(0);
+
+		assertThatThrownBy(() -> service.deleteEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+	}
+
+	@Test
+	void when_collectionExists_and_triesToDeleteEventStream_then_throwExceptionWithRetrieval() {
+		when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(1).thenReturn(0);
+
+		service.deleteEventStream(COLLECTION);
+
+		InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
+		inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
+		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
+		assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+	}
+
+	@Test
+	void when_init() {
+		((EventStreamServiceImpl) service).initEventStream();
+		verify(eventStreamRepository).retrieveAllEventStreams();
+	}
+
+	@Test
+	void should_CallDcatServiceToGetDcat_when_GetComposedDcatIsCalled() {
+		service.getComposedDcat();
+
+		verify(dcatServerService).getComposedDcat();
+		verifyNoMoreInteractions(dcatServerService);
+	}
+
+	@Test
+	void when_closeEventStream_thenPublishEventStreamClosedEvent() {
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+
+		service.closeEventStream(COLLECTION);
+
+		verify(eventStreamRepository).closeEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventPublisher).publishEvent(new EventStreamClosedEvent(COLLECTION));
+	}
+
+	@Test
+	void when_closeEventStream_andEventStreamDoesNotExist_thenExceptionIsThrown() {
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> service.closeEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventPublisher, never()).publishEvent(new EventStreamClosedEvent(COLLECTION));
+	}
+
+	private Model readModelFromFile(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
+	}
 
 }
