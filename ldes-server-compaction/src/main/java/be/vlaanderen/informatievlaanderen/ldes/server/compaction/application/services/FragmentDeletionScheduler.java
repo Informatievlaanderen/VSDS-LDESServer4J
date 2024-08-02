@@ -14,7 +14,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 @Service
 public class FragmentDeletionScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentDeletionScheduler.class);
-	private static final Long DELETION_GRACE_PERIOD_DAYS = 7L;
 	private final PageRepository pageRepository;
 	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
@@ -30,6 +29,6 @@ public class FragmentDeletionScheduler {
 			LOGGER.atDebug().log("Fragment deletion skipped: no retention policies found.");
 			return;
 		}
-		pageRepository.deleteOutdatedFragments(LocalDateTime.now().plusDays(DELETION_GRACE_PERIOD_DAYS));
+		pageRepository.deleteOutdatedFragments(LocalDateTime.now());
 	}
 }

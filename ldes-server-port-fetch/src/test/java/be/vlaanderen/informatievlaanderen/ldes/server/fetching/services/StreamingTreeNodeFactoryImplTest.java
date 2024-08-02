@@ -28,7 +28,6 @@ class StreamingTreeNodeFactoryImplTest {
     private static final String VIEW = "view";
     private static final ViewName VIEW_NAME = new ViewName(COLLECTION, VIEW);
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-    private FragmentRepository fragmentRepository;
     private TreeNodeRepository treeNodeRepository;
     private TreeMemberRepository treeMemberRepository;
     private MemberFetcher memberFetcher;
@@ -36,7 +35,6 @@ class StreamingTreeNodeFactoryImplTest {
 
     @BeforeEach
     void setUp() {
-        fragmentRepository = mock(FragmentRepository.class);
         memberFetcher = mock(MemberFetcher.class);
         treeNodeRepository = mock(TreeNodeRepository.class);
         treeMemberRepository = mock(TreeMemberRepository.class);
@@ -48,7 +46,7 @@ class StreamingTreeNodeFactoryImplTest {
         LdesFragmentIdentifier id = new LdesFragmentIdentifier(VIEW_NAME,
                 List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
         Fragment fragment = new Fragment(id);
-        Mockito.when(fragmentRepository.retrieveFragment(fragment.getFragmentId()))
+        Mockito.when(treeNodeRepository.findTreeNodeWithoutMembers(fragment.getFragmentId()))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> streamingTreeNodeFactory.getFragmentWithoutMemberData(id))

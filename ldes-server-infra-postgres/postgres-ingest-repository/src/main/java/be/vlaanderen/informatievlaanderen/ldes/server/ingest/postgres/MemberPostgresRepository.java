@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants.LDES_SERVER_DELETED_MEMBERS_COUNT;
+
 @Repository
 public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
 	private final MemberEntityRepository repository;

@@ -19,18 +19,11 @@ public interface MemberPropertiesEntityRepository extends JpaRepository<MemberPr
 	@Query("SELECT m FROM MemberPropertiesEntity m JOIN m.views v WHERE v.view = :view")
 	Stream<MemberPropertiesEntity> findMembersWithView(@Param("view") String view);
 
-//	List<MemberPropertiesEntity> findAllByCollectionName(String collectionName);
-
-//	List<MemberPropertiesEntity> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime time);
-
 	void deleteAllByCollectionName(String collectionName);
-
 
 	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName")
 	List<RetentionMemberProjection> findAllByCollectionName(String collectionName);
 
 	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName AND m.timestamp < :timestamp")
 	Stream<RetentionMemberProjection> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);
-
-
 }

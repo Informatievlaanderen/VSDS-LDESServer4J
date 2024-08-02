@@ -22,6 +22,7 @@ class PaginationCompactionServiceTest {
     private final PageRelationRepository pageRelationRepository = mock(PageRelationRepository.class);
     private final PageMemberRepository pageMemberRepository = mock(PageMemberRepository.class);
     private final CompactedFragmentCreator compactedFragmentCreator = mock(CompactedFragmentCreator.class);
+    private final PageDeletionTimeSetter pageDeletionTimeSetter = mock(PageDeletionTimeSetter.class);
     private final ObservationRegistry observationRegistry = ObservationRegistry.create();
     private PaginationCompactionService paginationCompactionService;
     private Set<CompactionCandidate> candidates;
@@ -30,26 +31,29 @@ class PaginationCompactionServiceTest {
     void setUp() {
         candidates = new HashSet<>();
         paginationCompactionService = new PaginationCompactionService(pageRelationRepository, pageMemberRepository,
-                compactedFragmentCreator, observationRegistry);
+                compactedFragmentCreator, pageDeletionTimeSetter, observationRegistry);
     }
 
     @Test
     void when_CompactPages_Then_PagesAreCompacted() {
+        List<Long> ids = List.of(3L, 2L, 1L);
+        long newId = 10L;
         candidates.add(new CompactionCandidate(1L, 5, 2L, true,
                 null, 1L, "http://example.com"));
         candidates.add(new CompactionCandidate(2L, 5, 3L, true,
                 null, 1L, "http://example.com"));
         candidates.add(new CompactionCandidate(3L, 5, 4L, true,
                 null, 1L, "http://example.com"));
-        when(compactedFragmentCreator.createCompactedPage(candidates)).thenReturn(10L);
+        when(compactedFragmentCreator.createCompactedPage(candidates)).thenReturn(newId);
 
         paginationCompactionService.applyCompactionForFragments(candidates);
 
         InOrder inOrder = inOrder(pageRelationRepository, pageMemberRepository,
-                compactedFragmentCreator);
+                compactedFragmentCreator, pageDeletionTimeSetter);
         inOrder.verify(compactedFragmentCreator).createCompactedPage(candidates);
-        inOrder.verify(pageMemberRepository).setPageMembersToNewPage(10L, List.of(3L, 2L, 1L));
-        inOrder.verify(pageRelationRepository).updateCompactionBucketRelations(List.of(3L, 2L, 1L), 10L);
+        inOrder.verify(pageMemberRepository).setPageMembersToNewPage(newId, ids);
+        inOrder.verify(pageRelationRepository).updateCompactionBucketRelations(ids, newId);
+        inOrder.verify(pageDeletionTimeSetter).setDeleteTimeOfFragment(ids);
         inOrder.verifyNoMoreInteractions();
     }
 }

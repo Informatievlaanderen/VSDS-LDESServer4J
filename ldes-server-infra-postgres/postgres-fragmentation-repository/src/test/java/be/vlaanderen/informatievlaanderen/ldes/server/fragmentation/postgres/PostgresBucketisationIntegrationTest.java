@@ -1,19 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.BucketisedMemberWriter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.bucketisedmember.MemberBucketJpaRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -40,17 +34,12 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.retention",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain"
 })
-@ContextConfiguration(classes = {FragmentPostgresRepository.class, FragmentEntityRepository.class,
-        MemberBucketJpaRepository.class, MemberBucketEntityRepository.class})
-@Import(PostgresFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
+@ContextConfiguration(classes = {BucketisedMemberWriter.class})
+@Import(PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
-public class PostgresFragmentationIntegrationTest {
+public class PostgresBucketisationIntegrationTest {
 	@MockBean
 	public MemberEntityRepository memberEntityRepository;
-
-	@Autowired
-	public FragmentRepository fragmentRepository;
-
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {

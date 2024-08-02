@@ -35,7 +35,8 @@ import javax.sql.DataSource;
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = { MemberEntityRepository.class, PageRelationPostgresRepository.class, RelationEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *", "ldes-server.compaction-cron=0 * * * * *" })
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *", "ldes-server.compaction-cron=*/10 * * * * *",
+		"ldes-server.deletion-cron=*/20 * * * * *", "ldes-server.compaction-duration=PT1S" })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
 	static final int FRAGMENTATION_POLLING_RATE = 1000;

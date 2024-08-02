@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	Optional<TreeNodeProjection> findTreeNodeByPartialUrl(String partialUrl);
@@ -43,6 +42,10 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
                                                                  @Param("capacityPerPage") Integer capacityPerPage);
 
     @Modifying
-    @Query("DELETE FROM PageEntity p WHERE p.expiration > :expiration")
-    void deleteByExpirationAfter(@Param("expiration") LocalDateTime expiration);
+    @Query("DELETE FROM PageEntity p WHERE CAST(p.expiration AS timestamp) < CAST(:expiration AS timestamp)")
+    void deleteByExpirationBefore(@Param("expiration") LocalDateTime expiration);
+
+	@Modifying
+	@Query("UPDATE PageEntity p SET p.expiration = :expiration WHERE p.id IN :ids")
+	void setDeleteTime(@Param("ids") List<Long> ids, @Param("expiration") LocalDateTime expiration);
 }

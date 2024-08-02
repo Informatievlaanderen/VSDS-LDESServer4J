@@ -36,7 +36,7 @@ public class CompactionCandidateService {
 			return List.of();
 		}
 
-		return getCompactionCandidateList(possibleCompactionCandidates);
+		return getCompactionCandidateList(possibleCompactionCandidates, viewCapacity.getCapacityPerPage());
 	}
 
 	protected List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {

@@ -16,14 +16,16 @@ public class PaginationCompactionService {
 	private final PageRelationRepository pageRelationRepository;
 	private final PageMemberRepository pageMemberRepository;
 	private final CompactedFragmentCreator compactedFragmentCreator;
+	private final PageDeletionTimeSetter pageDeletionTimeSetter;
 	private final ObservationRegistry observationRegistry;
 
 	public PaginationCompactionService(PageRelationRepository pageRelationRepository, PageMemberRepository pageMemberRepository,
-									   CompactedFragmentCreator compactedFragmentCreator, ObservationRegistry observationRegistry) {
+                                       CompactedFragmentCreator compactedFragmentCreator, PageDeletionTimeSetter pageDeletionTimeSetter, ObservationRegistry observationRegistry) {
         this.pageRelationRepository = pageRelationRepository;
         this.pageMemberRepository = pageMemberRepository;
         this.compactedFragmentCreator = compactedFragmentCreator;
-		this.observationRegistry = observationRegistry;
+        this.pageDeletionTimeSetter = pageDeletionTimeSetter;
+        this.observationRegistry = observationRegistry;
 	}
 
 	public void applyCompactionForFragments(Set<CompactionCandidate> toBeCompactedFragments) {
@@ -34,6 +36,7 @@ public class PaginationCompactionService {
 
 		pageMemberRepository.setPageMembersToNewPage(compactedFragmentId, compactedPageIds);
 		pageRelationRepository.updateCompactionBucketRelations(compactedPageIds, compactedFragmentId);
+		pageDeletionTimeSetter.setDeleteTimeOfFragment(compactedPageIds);
 
 		compactionObservation.stop();
 	}

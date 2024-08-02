@@ -21,7 +21,7 @@ mobility-hindrances:paged
           a ldes:LatestVersionSubset ;
           ldes:amount 1 ;
         ] ;
-	    tree:pageSize "10"^^<http://www.w3.org/2001/XMLSchema#int> ;
+	    tree:pageSize "5"^^<http://www.w3.org/2001/XMLSchema#int> ;
 	] .
 
 mobility-hindrances:shape a sh:NodeShape ;

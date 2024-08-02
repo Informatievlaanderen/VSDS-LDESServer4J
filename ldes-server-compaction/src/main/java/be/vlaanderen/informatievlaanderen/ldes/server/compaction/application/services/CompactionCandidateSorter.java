@@ -9,7 +9,7 @@ public class CompactionCandidateSorter {
     private CompactionCandidateSorter() {
     }
 
-    public static Collection<Set<CompactionCandidate>> getCompactionCandidateList(List<CompactionCandidate> candidatesList) {
+    public static Collection<Set<CompactionCandidate>> getCompactionCandidateList(List<CompactionCandidate> candidatesList, int capacity) {
 
         List<CompactionCandidate> firstElements = candidatesList.stream()
                 .filter(candidate -> hasNoConnections(candidate, candidatesList.stream()
@@ -19,14 +19,28 @@ public class CompactionCandidateSorter {
         Map<Integer, Set<CompactionCandidate>> compactionDesign = new HashMap<>();
 
         firstElements.forEach(candidate -> {
+            int currentCapacity = 0;
             Set<CompactionCandidate> splitList = new HashSet<>();
             Optional<CompactionCandidate> currentCandidate = Optional.of(candidate);
             while (currentCandidate.isPresent()) {
-                splitList.add(currentCandidate.get());
+                currentCapacity += currentCandidate.get().getSize();
+                if (currentCapacity > capacity) {
+                    currentCapacity = 0;
+                    if(splitList.size() > 1) {
+                        compactionDesign.put(index.incrementAndGet(), splitList);
+                        splitList = new HashSet<>();
+                    }
+                }
+                else {
+                    splitList.add(currentCandidate.get());
+                }
                 long nextId = currentCandidate.get().getNextPageId();
                 currentCandidate = candidatesList.stream().filter(c->c.getId() == nextId).findFirst();
             }
-            compactionDesign.put(index.incrementAndGet(), splitList);
+
+            if(splitList.size() > 1) {
+                compactionDesign.put(index.incrementAndGet(), splitList);
+            }
         });
 
         return compactionDesign.values();

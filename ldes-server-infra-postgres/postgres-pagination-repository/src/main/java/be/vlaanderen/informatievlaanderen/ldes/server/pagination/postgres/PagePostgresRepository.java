@@ -2,11 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -43,6 +41,12 @@ public class PagePostgresRepository implements PageRepository {
     @Override
     @Transactional
     public void deleteOutdatedFragments(LocalDateTime deleteTime) {
-        pageEntityRepository.deleteByExpirationAfter(deleteTime);
+        pageEntityRepository.deleteByExpirationBefore(deleteTime);
     }
+
+	@Override
+	@Transactional
+	public void setDeleteTime(List<Long> ids, LocalDateTime deleteTime) {
+		pageEntityRepository.setDeleteTime(ids, deleteTime);
+	}
 }

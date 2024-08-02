@@ -35,28 +35,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("java:S3415")
 public class CompactionServiceSteps extends LdesServerIntegrationTest {
-    @And("the members are ingested")
-    public void theFollowingPagesAreAvailable() throws Exception {
-        List<Integer> ids = new ArrayList<>();
-        ids.addAll(IntStream.rangeClosed(1, 18)
-                .boxed().toList());
-        for (int i = 0; i < 10; i++) {
-            ids.add(19);
-        }
-        for (int i = 0; i < 4; i++) {
-            ids.add(20);
-        }
-        for (int i = 0; i < 3; i++) {
-            ids.add(20);
-        }
-        for (int i = 0; i < 5; i++) {
-            ids.add(21);
-        }
-        ids.addAll(IntStream.rangeClosed(22, 32)
-                .boxed().toList());
-        for (int id : ids) {
+    private int versionIncremeter = 1;
+
+    @And("I ingest {int} members of different versions")
+    public void ingestDifferentVersions(int amount) throws Exception {
+        for (int i = 0; i < amount; i++) {
             String memberContent = readMemberTemplate("data/input/members/mob-hind.template.ttl")
-                    .replace("ID", String.valueOf(id))
+                    .replace("ID", String.valueOf(++versionIncremeter))
+                    .replace("DATETIME", getCurrentTimestamp());
+            mockMvc.perform(post("/" + "mobility-hindrances")
+                            .contentType("text/turtle")
+                            .content(memberContent))
+                    .andExpect(status().is2xxSuccessful());
+        }
+    }
+
+    @And("I ingest {int} members of the same version")
+    public void ingestSameVersions(int amount) throws Exception {
+        versionIncremeter++;
+        for (int i = 0; i < amount; i++) {
+            String memberContent = readMemberTemplate("data/input/members/mob-hind.template.ttl")
+                    .replace("ID", String.valueOf(versionIncremeter))
                     .replace("DATETIME", getCurrentTimestamp());
             mockMvc.perform(post("/" + "mobility-hindrances")
                             .contentType("text/turtle")
@@ -70,17 +69,28 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
         assertThat(entityManager.createQuery("SELECT COUNT(*) FROM PageEntity p").getSingleResult()).isEqualTo(i);
     }
 
-    @And("verify update of predecessor relations")
+    @And("verify the following pages have no relation pointing to them")
     public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
         var count = entityManager.createQuery("SELECT COUNT(*) FROM RelationEntity r JOIN PageEntity p ON r.toPage = p WHERE p.id IN :ids")
                 .setParameter("ids", ids).getSingleResult();
         assertThat(count).isEqualTo(0L);
-        var countNewPage = entityManager.createQuery("SELECT COUNT(*) FROM RelationEntity r JOIN PageEntity p ON r.toPage = p WHERE p.id = :id")
-                .setParameter("id", 6L).getSingleResult();
-        assertThat(countNewPage).isEqualTo(4L);
     }
 
-    @And("verify fragmentation of members")
+    @And("verify the following pages no longer exist")
+    public void verifyRemovalOfPages(List<Long> ids) {
+        var count = entityManager.createQuery("SELECT COUNT(*) FROM PageEntity p WHERE p.id IN :ids")
+                .setParameter("ids", ids).getSingleResult();
+        assertThat(count).isEqualTo(0L);
+    }
+
+    @And("verify the pages have a relation pointing to the new page {long}")
+    public void verifyUpdateOfPredecessorRelations(long id) {
+        var countNewPage = entityManager.createQuery("SELECT COUNT(*) FROM RelationEntity r JOIN PageEntity p ON r.toPage = p WHERE p.id = :id")
+                .setParameter("id", id).getSingleResult();
+        assertThat(countNewPage).isEqualTo(3L);
+    }
+
+    @And("verify the following pages have no members")
     public void verifyFragmentationOfMembers(List<Long> ids) {
         var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
                 .setParameter("ids", ids).getSingleResult();
@@ -89,6 +99,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @Then("wait for {int} seconds until compaction has executed at least once")
     public void waitForSecondsUntilCompactionHasExecutedAtLeastOnce(int secondsToWait) {
+        await()
+                .timeout(secondsToWait + 1, SECONDS)
+                .pollDelay(secondsToWait, SECONDS)
+                .untilAsserted(() -> assertThat(true).isTrue());
+    }
+
+    @Then("wait for {int} seconds until deletion has executed at least once")
+    public void waitForSecondsUntilDeltionHasExecutedAtLeastOnce(int secondsToWait) {
         await()
                 .timeout(secondsToWait + 1, SECONDS)
                 .pollDelay(secondsToWait, SECONDS)
