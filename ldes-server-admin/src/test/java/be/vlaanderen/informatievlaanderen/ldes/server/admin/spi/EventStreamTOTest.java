@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.InvalidSkolemisationDomainException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -16,8 +17,7 @@ import java.util.stream.Stream;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EventStreamTOTest {
 	private static final String COLLECTION = "collection";
@@ -57,6 +57,11 @@ class EventStreamTOTest {
 		}
 	}
 
+	@Test
+	void test_invalid_skolem_domain() {
+		assertThrows(InvalidSkolemisationDomainException.class, ()-> getBaseBuilder().withSkolemizationDomain("example.com").build());
+	}
+
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {
 
 		@Override
@@ -74,7 +79,7 @@ class EventStreamTOTest {
 							getBaseBuilder().withCollection("other").build()),
 					Arguments.of("null", null),
 					Arguments.of("dataset", EVENT_STREAM_RESPONSE_WITH_DATASET),
-					Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, null))));
+					Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED))));
 		}
 	}
 

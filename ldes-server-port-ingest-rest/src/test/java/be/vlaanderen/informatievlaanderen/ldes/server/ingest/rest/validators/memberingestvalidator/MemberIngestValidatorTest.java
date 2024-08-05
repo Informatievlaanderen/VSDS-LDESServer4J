@@ -36,9 +36,9 @@ class MemberIngestValidatorTest {
     void setup() {
         validator = new MemberIngestValidator(List.of(new BlankNodesValidator(), new PathsValidator()));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
-                new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, true, null)));
+                new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, true)));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
-                new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, false, null)));
+                new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, false)));
     }
 
     @ParameterizedTest(name = "Receiving incorrect member {0}")
@@ -68,7 +68,7 @@ class MemberIngestValidatorTest {
 
     @Test
     void when_EventStreamInit_Then_EventstreamAddedToMap() {
-        EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, false, null);
+        EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, false);
 
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 

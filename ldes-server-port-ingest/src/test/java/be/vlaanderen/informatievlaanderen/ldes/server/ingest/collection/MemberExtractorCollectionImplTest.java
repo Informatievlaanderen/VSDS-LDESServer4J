@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedBaseMemberExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +56,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, null);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -66,7 +66,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true, null);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -81,7 +81,7 @@ class MemberExtractorCollectionImplTest {
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
-                .containsInstanceOf(SkolemizedMemberExtractor.class)
+                .containsInstanceOf(SkolemizedBaseMemberExtractor.class)
                 .get()
                 .extracting(extractor -> {
 	                try {
@@ -102,7 +102,7 @@ class MemberExtractorCollectionImplTest {
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
-                .containsInstanceOf(SkolemizedMemberExtractor.class)
+                .containsInstanceOf(SkolemizedBaseMemberExtractor.class)
                 .get()
                 .extracting(extractor -> {
                     try {

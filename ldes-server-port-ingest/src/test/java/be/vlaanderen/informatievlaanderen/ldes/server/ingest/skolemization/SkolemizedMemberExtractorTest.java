@@ -21,8 +21,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SkolemizedMemberExtractorTest {
 	private static final String COLLECTION = "mobility-hindrances";
-	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
-	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final String SKOLEMIZATION_DOMAIN = "http://example.com";
 	private static Model model;
 	@Mock
@@ -37,7 +35,7 @@ class SkolemizedMemberExtractorTest {
 	void test_ExtractMembers() {
 		final IngestedMember ingestedMember = ingestedMember();
 		when(baseMemberExtractor.extractMembers(model)).thenReturn(List.of(ingestedMember));
-		final SkolemizedMemberExtractor skolemizedMemberExtractor = new SkolemizedMemberExtractor(baseMemberExtractor, SKOLEMIZATION_DOMAIN);
+		final SkolemizedBaseMemberExtractor skolemizedMemberExtractor = new SkolemizedBaseMemberExtractor(baseMemberExtractor, SKOLEMIZATION_DOMAIN);
 
 		final List<IngestedMember> result = skolemizedMemberExtractor.extractMembers(model);
 
@@ -45,8 +43,8 @@ class SkolemizedMemberExtractorTest {
 				.hasSize(1)
 				.first()
 				.extracting(IngestedMember::getModel, new InstanceOfAssertFactory<>(Model.class, SkolemizedModelAssert::new))
-				.hasSkolemizedSubjectsWithPrefix(2, SKOLEMIZATION_DOMAIN + SkolemizedMemberExtractor.SKOLEM_URI)
-				.hasSkolemizedObjectsWithPrefix(2, SKOLEMIZATION_DOMAIN + SkolemizedMemberExtractor.SKOLEM_URI);
+				.hasSkolemizedSubjectsWithPrefix(2, SKOLEMIZATION_DOMAIN + SkolemizedBaseMemberExtractor.SKOLEM_URI)
+				.hasSkolemizedObjectsWithPrefix(2, SKOLEMIZATION_DOMAIN + SkolemizedBaseMemberExtractor.SKOLEM_URI);
 	}
 
 	private IngestedMember ingestedMember() {

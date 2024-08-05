@@ -15,6 +15,13 @@ public class EventStream {
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
+	                   boolean versionCreationEnabled) {
+		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, null);
+	}
+
+	public EventStream(String collection,
+	                   String timestampPath,
+	                   String versionOfPath,
 	                   boolean versionCreationEnabled, String skolemizationDomain) {
 		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, skolemizationDomain);
 	}

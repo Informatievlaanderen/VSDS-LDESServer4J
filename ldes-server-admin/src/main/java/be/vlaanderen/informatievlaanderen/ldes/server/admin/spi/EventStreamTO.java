@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.InvalidSkolemisationDomainException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -8,9 +9,10 @@ import org.apache.jena.rdf.model.Model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EventStreamTO {
-
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
@@ -102,6 +104,7 @@ public class EventStreamTO {
 
 
 	public static final class Builder {
+		private final Pattern SKOLEMISATION_DOMAIN_PATTERN = Pattern.compile("^(https?://)([\\\\w.-]+)(:[0-9]+)?(/.*)?$");
 		private String collection;
 		private String timestampPath;
 		private String versionOfPath;
@@ -174,7 +177,17 @@ public class EventStreamTO {
 		}
 
 		public EventStreamTO build() {
+			validateSkolemizationDomain();
 			return new EventStreamTO(this);
+		}
+
+		private void validateSkolemizationDomain() {
+			if (skolemizationDomain != null) {
+				Matcher matcher = SKOLEMISATION_DOMAIN_PATTERN.matcher(skolemizationDomain);
+				if (!matcher.matches()) {
+					throw new InvalidSkolemisationDomainException();
+				}
+			}
 		}
 	}
 }

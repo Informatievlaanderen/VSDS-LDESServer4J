@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedBaseMemberExtractor;
 
 public class MemberExtractorFactory {
     private MemberExtractorFactory() {
@@ -11,7 +11,7 @@ public class MemberExtractorFactory {
         final MemberExtractor baseMemberExtractor = getBaseMemberExtractor(eventStream);
         return eventStream
                 .getSkolemizationDomain()
-                .map(skolemizationDomain -> (MemberExtractor) new SkolemizedMemberExtractor(baseMemberExtractor, skolemizationDomain))
+                .map(skolemizationDomain -> (MemberExtractor) new SkolemizedBaseMemberExtractor(baseMemberExtractor, skolemizationDomain))
                 .orElse(baseMemberExtractor);
     }
 
