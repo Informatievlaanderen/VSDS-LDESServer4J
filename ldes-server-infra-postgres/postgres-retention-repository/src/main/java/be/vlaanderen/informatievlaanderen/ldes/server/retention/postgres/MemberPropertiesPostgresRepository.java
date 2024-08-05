@@ -3,10 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberPropertiesEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
@@ -64,6 +64,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public void deleteAllByIds(List<Long> ids) {
 		memberEntityRepository.deleteAllByIdIn(ids);
 	}
@@ -118,13 +119,13 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
 				.map(propertiesMapper::toMemberProperties);
 	}
 
 	@Override
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, VersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionName(collectionName)
+		return memberEntityRepository.findAllByCollectionName(collectionName)
 				.stream()
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(RetentionMemberProjection::getVersionOf))
@@ -137,7 +138,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeAndVersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(RetentionMemberProjection::getVersionOf))
 				.values()
@@ -146,5 +147,4 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 						.skip(policy.numberOfMembersToKeep()))
 				.map(propertiesMapper::toMemberProperties);
 	}
-
 }

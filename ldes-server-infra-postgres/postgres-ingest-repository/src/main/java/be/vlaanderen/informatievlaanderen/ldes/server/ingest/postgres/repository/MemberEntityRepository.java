@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,9 +22,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	List<MemberEntity> findAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
-	@Query("SELECT m FROM MemberEntity m LEFT JOIN EventStreamEntity e ON m.collection = e WHERE e.name = :collectionName")
-	List<MemberEntity> findAllByCollectionName(String collectionName);
-
 	void deleteAllByOldIdIn(List<String> oldIds);
 	void deleteAllByIdIn(List<Long> oldIds);
 
@@ -35,6 +33,9 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName AND v.eventStream.name = :collectionName")
 	Stream<MemberEntity> findAllByViewName(String viewName, String collectionName);
 
-	@Query("SELECT m FROM MemberEntity m WHERE m.collection.name = :collectionName AND m.timestamp < :timestamp")
-	Stream<MemberEntity> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);
+	@Query("SELECT m.id AS id, m.versionOf AS versionOf, m.timestamp AS timestamp, CASE WHEN (SELECT COUNT(p.id) FROM PageMemberEntity p WHERE p.member.id = m.id) > 0 THEN true ELSE false END AS inView, m.isInEventSource AS inEventSource, c.name AS collectionName FROM MemberEntity m JOIN EventStreamEntity c ON m.collection = c WHERE c.name = :collectionName GROUP BY m.id, c.name")
+	List<RetentionMemberProjection> findAllByCollectionName(String collectionName);
+
+	@Query("SELECT m.id AS id, m.versionOf AS versionOf, m.timestamp AS timestamp, CASE WHEN (SELECT COUNT(p.id) FROM PageMemberEntity p WHERE p.member.id = m.id) > 0 THEN true ELSE false END AS inView, m.isInEventSource AS inEventSource, c.name AS collectionName FROM MemberEntity m JOIN EventStreamEntity c ON m.collection = c WHERE c.name = :collectionName AND CAST(m.timestamp AS timestamp) < CAST(:timestamp as timestamp) GROUP BY m.id, c.name")
+	Stream<RetentionMemberProjection> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);
 }

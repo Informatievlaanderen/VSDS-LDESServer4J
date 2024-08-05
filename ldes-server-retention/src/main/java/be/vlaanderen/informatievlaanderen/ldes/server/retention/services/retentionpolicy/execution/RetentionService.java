@@ -65,11 +65,7 @@ public class RetentionService {
 					(VersionBasedRetentionPolicy) retentionPolicy);
 			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.removeExpiredMembers(viewName,
 					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
-		};
-
-//		memberPropertiesStream.forEach(
-//				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
-//		);
+		}
 	}
 
 	private void removeMembersFromEventSourceThatMatchRetentionPolicies(String collectionName,
@@ -83,8 +79,8 @@ public class RetentionService {
 					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
 		};
 
-		Map<Boolean, List<MemberProperties>> areMembersRemoveableMap = memberPropertiesStream.collect(Collectors.partitioningBy(memberProperties -> memberProperties.isInView()));
-		memberRemover.deleteMembers(areMembersRemoveableMap.get(false));
-		memberRemover.removeMembersFromEventSource(areMembersRemoveableMap.get(true));
+		Map<Boolean, List<MemberProperties>> areMembersRemoveableMap = memberPropertiesStream.collect(Collectors.partitioningBy(memberProperties -> !memberProperties.isInView()));
+		memberRemover.deleteMembers(areMembersRemoveableMap.get(true));
+		memberRemover.removeMembersFromEventSource(areMembersRemoveableMap.get(false));
 	}
 }

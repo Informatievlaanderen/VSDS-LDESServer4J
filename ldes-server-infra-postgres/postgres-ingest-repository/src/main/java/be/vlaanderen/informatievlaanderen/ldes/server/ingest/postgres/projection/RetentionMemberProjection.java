@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection;
 
 import java.time.LocalDateTime;
 

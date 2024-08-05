@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.MemberPropertiesEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,9 +21,9 @@ public interface MemberPropertiesEntityRepository extends JpaRepository<MemberPr
 
 	void deleteAllByCollectionName(String collectionName);
 
-	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName")
+	@Query("SELECT m.id AS id, m.versionOf AS versionOf, m.timestamp AS timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END AS inView, m.isInEventSource AS inEventSource, m.collection.name AS collectionName FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName GROUP BY m.id, m.collection.name")
 	List<RetentionMemberProjection> findAllByCollectionName(String collectionName);
 
-	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName AND CAST(m.timestamp AS timestamp) < CAST(:timestamp as timestamp)")
+	@Query("SELECT m.id AS id, m.versionOf AS versionOf, m.timestamp AS timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END AS inView, m.isInEventSource AS inEventSource, m.collection.name AS collectionName FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName AND CAST(m.timestamp AS timestamp) < CAST(:timestamp as timestamp) GROUP BY m.id, m.collection.name")
 	Stream<RetentionMemberProjection> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);
 }
