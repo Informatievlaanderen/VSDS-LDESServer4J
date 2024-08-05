@@ -56,7 +56,7 @@ jobs:
 
       - name: Analyse & publish package
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage -Dparallel=all -DperCoreThreadCount=true
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_ENV
         env:
@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: '**/*.jar'
+          path: '**/*with-dependencies.jar'
   create-image:
     runs-on: ubuntu-latest
     needs: build
@@ -119,7 +119,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: github
+          context: .github
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
