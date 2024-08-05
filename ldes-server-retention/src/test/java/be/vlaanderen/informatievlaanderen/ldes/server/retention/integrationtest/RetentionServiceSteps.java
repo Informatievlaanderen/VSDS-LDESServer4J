@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RetentionServiceSteps extends RetentionIntegrationTest {
 
 	private final RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
-	public static final String MEMBER_TEMPLATE_FILENAME = "features/data/memberTemplate.ttl";
 
 	@Before
 	public void initialization() {

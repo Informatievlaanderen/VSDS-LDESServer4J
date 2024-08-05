@@ -6,4 +6,5 @@ public interface EventStreamProperties {
     String getVersionOfPath();
     boolean isVersionCreationEnabled();
     boolean isClosed();
+    String getSkolemizationDomain();
 }

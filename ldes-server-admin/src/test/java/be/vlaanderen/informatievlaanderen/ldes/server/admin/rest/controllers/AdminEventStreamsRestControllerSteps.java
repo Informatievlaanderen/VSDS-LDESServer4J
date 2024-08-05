@@ -76,8 +76,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 						List.of(fragmentationConfig), 100));
 
 		when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(
-				new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, views, shape1, List.of()),
-				new EventStreamTO(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(singleView), shape2, List.of())
+				new EventStreamTO.Builder().withEventStream(eventStream).withViews(views).withShacl(shape1).build(),
+				new EventStreamTO.Builder().withEventStream(eventStream2).withViews(List.of(singleView)).withShacl(shape2).build()
 		));
 	}
 
@@ -101,7 +101,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void aDbContainingOneEventStream() throws URISyntaxException {
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		Model shape = readModelFromFile("shacl/server-shape.ttl");
-		final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), shape, List.of());
+		final EventStreamTO eventStreamTO = new EventStreamTO.Builder().withEventStream(eventStream).withShacl(shape).build();
 		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTO));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 	}

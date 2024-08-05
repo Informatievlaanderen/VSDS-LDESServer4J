@@ -56,3 +56,14 @@ Feature: LDES Server basic Ingest functionality
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 7 members
 
+  Scenario Outline: Server can skolemize on ingestion
+    Given I create the eventstream <eventStreamFile>
+    When I ingest 1 members of template "<memberTemplateFile>" to the collection "mobility-hindrances"
+    Then the LDES "mobility-hindrances" contains <expectedMemberCount> members
+    When I fetch the root "paged" fragment of "mobility-hindrances"
+    And I fetch the next fragment through the first "Relation"
+    Then this fragment contains <expectedMemberCount> members with 2 skolemized identifiers
+    Examples:
+      | eventStreamFile                                                         | memberTemplateFile                             | expectedMemberCount |
+      | "data/input/eventstreams/skolemization/mobility-hindrances.version.ttl" | data/input/members/mob-hind.bnodes/version.ttl | 1                   |
+      | "data/input/eventstreams/skolemization/mobility-hindrances.state.ttl"   | data/input/members/mob-hind.bnodes/state.ttl   | 2                   |
