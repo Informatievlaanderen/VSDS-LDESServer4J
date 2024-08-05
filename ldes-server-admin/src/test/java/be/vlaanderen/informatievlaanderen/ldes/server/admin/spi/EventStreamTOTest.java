@@ -59,7 +59,8 @@ class EventStreamTOTest {
 
 	@Test
 	void test_invalid_skolem_domain() {
-		assertThrows(InvalidSkolemisationDomainException.class, ()-> getBaseBuilder().withSkolemizationDomain("example.com").build());
+		var builder = getBaseBuilder().withSkolemizationDomain("example.com");
+		assertThrows(InvalidSkolemisationDomainException.class, builder::build);
 	}
 
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {

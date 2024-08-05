@@ -6,14 +6,14 @@ import org.apache.jena.rdf.model.Model;
 import java.util.List;
 
 public abstract class BaseMemberExtractor implements MemberExtractor {
-	private final MemberExtractor baseMemberExtractor;
+	private final MemberExtractor memberExtractor;
 
-	protected BaseMemberExtractor(MemberExtractor baseMemberExtractor) {
-		this.baseMemberExtractor = baseMemberExtractor;
+	protected BaseMemberExtractor(MemberExtractor memberExtractor) {
+		this.memberExtractor = memberExtractor;
 	}
 
 	@Override
 	public List<IngestedMember> extractMembers(Model ingestedModel) {
-		return baseMemberExtractor.extractMembers(ingestedModel);
+		return memberExtractor.extractMembers(ingestedModel);
 	}
 }

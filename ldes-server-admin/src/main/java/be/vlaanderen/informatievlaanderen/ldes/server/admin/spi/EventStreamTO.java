@@ -104,7 +104,7 @@ public class EventStreamTO {
 
 
 	public static final class Builder {
-		private final Pattern SKOLEMISATION_DOMAIN_PATTERN = Pattern.compile("^(https?://)([\\w.-]+)(:[0-9]+)?(/.*)?$");
+		private static final Pattern SKOLEMISATION_DOMAIN_PATTERN = Pattern.compile("^(https?://)([\\w.-]+)(:\\d+)?(/.*)?$");
 		private String collection;
 		private String timestampPath;
 		private String versionOfPath;
