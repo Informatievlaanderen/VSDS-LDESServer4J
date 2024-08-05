@@ -2,13 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberPropertiesEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -25,29 +22,17 @@ import java.util.stream.Stream;
 
 @Component
 public class MemberPropertiesPostgresRepository implements MemberPropertiesRepository {
-	private final MemberPropertiesEntityRepository propertiesRepo;
-	private final MemberViewEntityRepository viewsRepo;
 	private final EntityManager entityManager;
 	private final MemberPropertiesEntityMapper propertiesMapper;
 	private final MemberEntityRepository memberEntityRepository;
-	private final MemberEntityMapper mapper;
 
-	public MemberPropertiesPostgresRepository(MemberPropertiesEntityRepository propertiesRepo, MemberViewEntityRepository viewsRepo, EntityManager entityManager,
-                                              MemberPropertiesEntityMapper propertiesMapper, MemberEntityRepository memberEntityRepository, MemberEntityMapper mapper) {
-		this.propertiesRepo = propertiesRepo;
-		this.viewsRepo = viewsRepo;
+	public MemberPropertiesPostgresRepository(EntityManager entityManager,
+                                              MemberPropertiesEntityMapper propertiesMapper,
+											  MemberEntityRepository memberEntityRepository) {
 		this.entityManager = entityManager;
 		this.propertiesMapper = propertiesMapper;
         this.memberEntityRepository = memberEntityRepository;
-        this.mapper = mapper;
     }
-
-	@Override
-	@Transactional
-	public void removeViewReference(String id, String viewName) {
-		viewsRepo.deleteViewForMember(viewName, id);
-	}
-
 	@Override
 	public void removePageMemberEntity(Long id, String collectionName, String viewName) {
 		Query query = entityManager.createQuery("DELETE FROM PageMemberEntity p WHERE p.member.id = :memberId AND p.bucket.view.name = :viewName AND p.bucket.view.eventStream.name = :collectionName");
@@ -55,12 +40,6 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 		query.setParameter("collectionName", collectionName);
 		query.setParameter("memberId", id);
 		query.executeUpdate();
-	}
-
-	@Override
-	@Transactional
-	public void removeMemberPropertiesOfCollection(String collectionName) {
-		propertiesRepo.deleteAllByCollectionName(collectionName);
 	}
 
 	@Override

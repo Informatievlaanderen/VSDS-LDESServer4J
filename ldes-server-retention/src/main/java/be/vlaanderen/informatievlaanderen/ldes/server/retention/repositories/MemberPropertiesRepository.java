@@ -11,11 +11,7 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	void removeViewReference(String id, String viewName);
-
 	void removePageMemberEntity(Long id, String collectionName, String viewName);
-
-	void removeMemberPropertiesOfCollection(String collectionName);
 
 	void deleteAllByIds(List<Long> id);
 
