@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedBaseMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedMemberExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -81,7 +81,7 @@ class MemberExtractorCollectionImplTest {
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
-                .containsInstanceOf(SkolemizedBaseMemberExtractor.class)
+                .containsInstanceOf(SkolemizedMemberExtractor.class)
                 .get()
                 .extracting(extractor -> {
 	                try {
@@ -102,7 +102,7 @@ class MemberExtractorCollectionImplTest {
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
-                .containsInstanceOf(SkolemizedBaseMemberExtractor.class)
+                .containsInstanceOf(SkolemizedMemberExtractor.class)
                 .get()
                 .extracting(extractor -> {
                     try {

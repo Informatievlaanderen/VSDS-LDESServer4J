@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedModelAssert.assertThatSkolemizedModel;
 
 class SkolemizedModelTest {
-	private static final String SKOLEM_URI_TEMPLATE = "http://example.org" + SkolemizedBaseMemberExtractor.SKOLEM_URI + "%s";
+	private static final String SKOLEM_URI_TEMPLATE = "http://example.org" + SkolemizedMemberExtractor.SKOLEM_URI + "%s";
 
 	@Test
 	void given_ModelWithBNodes_when_getModel_then_NoBNodesArePresent() {
