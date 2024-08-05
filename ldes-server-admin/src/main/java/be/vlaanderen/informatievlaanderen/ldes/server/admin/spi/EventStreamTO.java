@@ -104,7 +104,7 @@ public class EventStreamTO {
 
 
 	public static final class Builder {
-		private final Pattern SKOLEMISATION_DOMAIN_PATTERN = Pattern.compile("^(https?://)([\\\\w.-]+)(:[0-9]+)?(/.*)?$");
+		private final Pattern SKOLEMISATION_DOMAIN_PATTERN = Pattern.compile("^(https?://)([\\w.-]+)(:[0-9]+)?(/.*)?$");
 		private String collection;
 		private String timestampPath;
 		private String versionOfPath;
@@ -185,7 +185,7 @@ public class EventStreamTO {
 			if (skolemizationDomain != null) {
 				Matcher matcher = SKOLEMISATION_DOMAIN_PATTERN.matcher(skolemizationDomain);
 				if (!matcher.matches()) {
-					throw new InvalidSkolemisationDomainException();
+					throw new InvalidSkolemisationDomainException(skolemizationDomain);
 				}
 			}
 		}
