@@ -1,7 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.PageListSortException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import org.apache.jena.rdf.model.EmptyListException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -26,7 +28,11 @@ public class CompactedFragmentCreator {
 
 	public Long createCompactedPage(Collection<CompactionCandidate> pages) {
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		final CompactionCandidate lastPage = pages.stream().filter(p -> pages.stream().filter(p2 -> p2.getId() == p.getNextPageId()).findFirst().isEmpty()).findFirst().get();
+		final CompactionCandidate lastPage = pages.stream()
+				.filter(p -> pages.stream()
+						.filter(p2 -> p2.getId() == p.getNextPageId()).findFirst().isEmpty())
+				.findFirst().orElseThrow(() -> new PageListSortException(pages.stream().map(p -> String.valueOf(p.getId())).toList()));
+
 		final String compactedPagePartialUrl = createCompactedPartialUrl(lastPage);
 		jdbcTemplate.update(connection -> {
 			PreparedStatement ps = connection.prepareStatement(INSERT_COMPACTED_PAGE_SQL, new String[] {"page_id"});
