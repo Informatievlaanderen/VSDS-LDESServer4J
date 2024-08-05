@@ -32,7 +32,7 @@ class CompactionSchedulerTest {
 		compactionScheduler.compactFragments();
 
 		verify(retentionPolicyCollection).isEmpty();
-//		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
+		verifyNoMoreInteractions(viewCollection, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
 	}
 
 	@Test
@@ -43,7 +43,7 @@ class CompactionSchedulerTest {
 
 		verify(retentionPolicyCollection).isEmpty();
 		verify(viewCollection).getAllViewCapacities();
-//		verifyNoMoreInteractions(viewCollection, fragmentRepository, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
+		verifyNoMoreInteractions(viewCollection, paginationCompactionService, compactionCandidateService, retentionPolicyCollection);
 	}
 
 

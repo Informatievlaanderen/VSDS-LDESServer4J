@@ -39,14 +39,11 @@ class RetentionServiceTest {
 
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreRemovedFromTheView() {
-		MemberProperties firstMember = getMemberProperties(1L, 0);
 		var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
 
 		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(1);
-		MemberProperties secondMember = getMemberProperties(2l, 1);
 
 		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
-		MemberProperties thirdMember = getMemberProperties(3l, 0);
 
 		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(
 				VIEW_A, timeBasedRetentionPolicy,

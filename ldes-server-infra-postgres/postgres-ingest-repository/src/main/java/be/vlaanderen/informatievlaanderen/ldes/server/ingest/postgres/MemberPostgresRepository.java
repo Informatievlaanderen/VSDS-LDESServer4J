@@ -119,10 +119,4 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 		}
 		return collectionId;
 	}
-
-	@Override
-	public Stream<Long> findAllIdsByTreeNodeIds(List<Long> ids) {
-		return repository.findAllByPageIdsIn(ids)
-				.stream();
-	}
 }
