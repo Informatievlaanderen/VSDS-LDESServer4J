@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.RetentionMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -24,11 +24,11 @@ import java.util.stream.Stream;
 public class MemberPropertiesPostgresRepository implements MemberPropertiesRepository {
 	private final EntityManager entityManager;
 	private final MemberPropertiesEntityMapper propertiesMapper;
-	private final MemberEntityRepository memberEntityRepository;
+	private final RetentionMemberEntityRepository memberEntityRepository;
 
 	public MemberPropertiesPostgresRepository(EntityManager entityManager,
                                               MemberPropertiesEntityMapper propertiesMapper,
-											  MemberEntityRepository memberEntityRepository) {
+											  RetentionMemberEntityRepository memberEntityRepository) {
 		this.entityManager = entityManager;
 		this.propertiesMapper = propertiesMapper;
         this.memberEntityRepository = memberEntityRepository;
@@ -97,12 +97,14 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeBasedRetentionPolicy policy) {
-		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration())).stream()
 				.map(propertiesMapper::toMemberProperties);
 	}
 
 	@Override
+	@Transactional
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, VersionBasedRetentionPolicy policy) {
 		return memberEntityRepository.findAllByCollectionName(collectionName)
 				.stream()
@@ -116,8 +118,9 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeAndVersionBasedRetentionPolicy policy) {
-		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration())).stream()
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(RetentionMemberProjection::getVersionOf))
 				.values()
