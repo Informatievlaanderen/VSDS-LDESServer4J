@@ -29,11 +29,11 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
-	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName AND m.timestamp < :timestamp")
-	Stream<MemberEntity> findAllByViewNameAndTimestampBefore(String viewName, LocalDateTime timestamp);
+	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName AND v.eventStream.name = :collectionName AND CAST(m.timestamp as timestamp) < CAST(:timestamp as timestamp)")
+	Stream<MemberEntity> findAllByViewNameAndTimestampBefore(String viewName, String collectionName, LocalDateTime timestamp);
 
-	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName")
-	Stream<MemberEntity> findAllByViewName(String viewName);
+	@Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream WHERE v.name = :viewName AND v.eventStream.name = :collectionName")
+	Stream<MemberEntity> findAllByViewName(String viewName, String collectionName);
 
 	@Query("SELECT m FROM MemberEntity m WHERE m.collection.name = :collectionName AND m.timestamp < :timestamp")
 	Stream<MemberEntity> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);

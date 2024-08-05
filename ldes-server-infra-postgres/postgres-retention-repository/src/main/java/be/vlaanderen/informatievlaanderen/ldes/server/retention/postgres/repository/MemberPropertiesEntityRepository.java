@@ -24,6 +24,6 @@ public interface MemberPropertiesEntityRepository extends JpaRepository<MemberPr
 	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName")
 	List<RetentionMemberProjection> findAllByCollectionName(String collectionName);
 
-	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName AND m.timestamp < :timestamp")
+	@Query("SELECT m.id AS, m.versionOf, m.timestamp, CASE WHEN COUNT(p.id) > 0 THEN true ELSE false END, m.collection.name FROM MemberEntity m JOIN PageMemberEntity p ON m = p.member WHERE m.collection.name = :collectionName AND CAST(m.timestamp AS timestamp) < CAST(:timestamp as timestamp)")
 	Stream<RetentionMemberProjection> findAllByCollectionNameAndTimestampBefore(String collectionName, LocalDateTime timestamp);
 }

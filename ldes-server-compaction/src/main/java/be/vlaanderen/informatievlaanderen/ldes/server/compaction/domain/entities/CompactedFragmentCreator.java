@@ -18,7 +18,6 @@ public class CompactedFragmentCreator {
 	public static final String PAGE_NUMBER_REGEX = "pageNumber=.*";
 	public static final String INSERT_COMPACTED_PAGE_SQL = "INSERT INTO pages (bucket_id, expiration, partial_url, immutable) VALUES (?, NULL, ?, true)";
 	public static final String INSERT_PAGE_RELATION_SQL = "INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, ?)";
-	public static final String UPDATE_PAGE_MEMBERS_SQL = "UPDATE page_members m SET m.page_id = ? WHERE m.page_id IN (:ids)";
 	private final JdbcTemplate jdbcTemplate;
 
 	public CompactedFragmentCreator(JdbcTemplate jdbcTemplate) {
@@ -43,6 +42,6 @@ public class CompactedFragmentCreator {
 
 	private String createCompactedPartialUrl(CompactionCandidate candidate) {
 		Matcher matcher = Pattern.compile(PAGE_NUMBER_REGEX).matcher(candidate.getPartialUrl());
-		return matcher.replaceFirst(UUID.randomUUID().toString());
+		return matcher.replaceFirst("pageNumber=" + UUID.randomUUID());
 	}
 }

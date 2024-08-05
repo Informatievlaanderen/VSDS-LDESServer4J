@@ -49,9 +49,10 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
-	public void removePageMemberEntity(Long id, String viewName) {
-		Query query = entityManager.createQuery("DELETE FROM PageMemberEntity p WHERE p.member.id = :memberId AND p.bucket.view.name = :viewName");
+	public void removePageMemberEntity(Long id, String collectionName, String viewName) {
+		Query query = entityManager.createQuery("DELETE FROM PageMemberEntity p WHERE p.member.id = :memberId AND p.bucket.view.name = :viewName AND p.bucket.view.eventStream.name = :collectionName");
 		query.setParameter("viewName", viewName);
+		query.setParameter("collectionName", collectionName);
 		query.setParameter("memberId", id);
 		query.executeUpdate();
 	}
@@ -81,8 +82,8 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Transactional
 	public void removeExpiredMembers(ViewName viewName,
 									 TimeBasedRetentionPolicy policy) {
-		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
+		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
 	}
 
 	@Override
@@ -90,14 +91,14 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	public void removeExpiredMembers(ViewName viewName,
 									 VersionBasedRetentionPolicy policy) {
 
-		memberEntityRepository.findAllByViewName(viewName.getCollectionName())
+		memberEntityRepository.findAllByViewName(viewName.getViewName(), viewName.getCollectionName())
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
 
 	}
 
@@ -105,14 +106,14 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Transactional
 	public void removeExpiredMembers(ViewName viewName,
 									 TimeAndVersionBasedRetentionPolicy policy) {
-		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
+		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
 				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
 	}
 
 	@Override
