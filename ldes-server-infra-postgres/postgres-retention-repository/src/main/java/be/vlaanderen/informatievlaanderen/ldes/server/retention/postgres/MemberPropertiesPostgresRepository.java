@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.MemberViewsEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberPropertiesEntityRepository;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,7 +97,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));;
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
 
 	}
 
@@ -114,7 +112,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));;
+				.forEach(m -> removePageMemberEntity(m.getId(), viewName.asString()));
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
