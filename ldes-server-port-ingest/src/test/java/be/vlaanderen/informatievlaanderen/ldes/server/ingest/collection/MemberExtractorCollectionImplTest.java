@@ -85,7 +85,7 @@ class MemberExtractorCollectionImplTest {
                 .get()
                 .extracting(extractor -> {
 	                try {
-		                Field field = extractor.getClass().getSuperclass().getDeclaredField("baseMemberExtractor");
+		                Field field = extractor.getClass().getSuperclass().getDeclaredField("memberExtractor");
                         field.setAccessible(true);
                         return field.get(extractor);
 	                } catch (Exception e) {
@@ -106,7 +106,7 @@ class MemberExtractorCollectionImplTest {
                 .get()
                 .extracting(extractor -> {
                     try {
-                        Field field = extractor.getClass().getSuperclass().getDeclaredField("baseMemberExtractor");
+                        Field field = extractor.getClass().getSuperclass().getDeclaredField("memberExtractor");
                         field.setAccessible(true);
                         return field.get(extractor);
                     } catch (Exception e) {
