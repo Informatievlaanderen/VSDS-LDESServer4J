@@ -12,7 +12,13 @@ public class MemberModelExtractor {
     private static class ModelInfo {
         public final List<Statement> statements = new ArrayList<>();
         public final List<Resource> references = new ArrayList<>();
-        public boolean processed;
+        private boolean processed = false;
+        public boolean isProcessed() {
+            return processed;
+        }
+        public void markProcessed() {
+            processed = true;
+        }
     }
 
     private final Model model;
@@ -54,9 +60,9 @@ public class MemberModelExtractor {
 
     private void deepCopyToModel(Resource subject, Model member) {
         ModelInfo info = statementsPerSubject.get(subject);
-        if (info != null && !info.processed) {
+        if (info != null && !info.isProcessed()) {
             member.add(info.statements);
-            info.processed = true;
+            info.markProcessed();
             info.references.forEach(x -> this.deepCopyToModel(x, member));
         }
     }
