@@ -30,13 +30,11 @@ class StreamingTreeNodeFactoryImplTest {
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private TreeNodeRepository treeNodeRepository;
     private TreeMemberRepository treeMemberRepository;
-    private MemberFetcher memberFetcher;
-    private StreamingTreeNodeFactory streamingTreeNodeFactory;
+	private StreamingTreeNodeFactory streamingTreeNodeFactory;
 
     @BeforeEach
     void setUp() {
-        memberFetcher = mock(MemberFetcher.class);
-        treeNodeRepository = mock(TreeNodeRepository.class);
+	    treeNodeRepository = mock(TreeNodeRepository.class);
         treeMemberRepository = mock(TreeMemberRepository.class);
         streamingTreeNodeFactory = new StreamingTreeNodeFactoryImpl(treeNodeRepository, treeMemberRepository);
     }
@@ -67,8 +65,6 @@ class StreamingTreeNodeFactoryImplTest {
         Mockito.when(treeNodeRepository.findTreeNodeWithoutMembers(id))
                 .thenReturn(Optional.of(treeNodeWithoutMembers));
         Mockito.when(treeMemberRepository.findAllByTreeNodeUrl(id.asDecodedFragmentId()))
-                .thenReturn(members.stream());
-        Mockito.when(memberFetcher.fetchAllByIds(List.of("test", "test2")))
                 .thenReturn(members.stream());
 
         TreeNode returnedTreeNode = streamingTreeNodeFactory.getFragmentWithoutMemberData(id);
