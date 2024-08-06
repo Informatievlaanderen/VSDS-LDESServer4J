@@ -5,7 +5,6 @@ FROM amazoncorretto:21-alpine-jdk
 COPY ./ldes-server-application/target/ldes-server-application.jar ./
 
 COPY ./ldes-server-infra-postgres/postgres-ingest-repository/target/postgres-ingest-repository-jar-with-dependencies.jar ./lib/
-COPY ./ldes-server-infra-postgres/postgres-fetch-repository/target/postgres-fetch-repository-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-infra-postgres/postgres-retention-repository/target/postgres-retention-repository-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-infra-postgres/postgres-fragmentation-repository/target/postgres-fragmentation-repository-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-infra-postgres/postgres-pagination-repository/target/postgres-pagination-repository-jar-with-dependencies.jar ./lib/
