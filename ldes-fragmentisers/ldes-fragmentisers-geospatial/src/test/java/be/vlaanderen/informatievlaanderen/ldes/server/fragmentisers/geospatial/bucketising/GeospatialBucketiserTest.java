@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +40,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -54,7 +56,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -70,7 +72,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising-faulty.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -86,7 +88,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising-faulty.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -101,7 +103,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising-invalid-coordinates.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -115,7 +117,12 @@ class GeospatialBucketiserTest {
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel();
 
-		return new FragmentationMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+		final EventStreamProperties eventStreamProperties = new EventStreamProperties("collectionName", "versionOfPath", "timestampPath", false);
+
+		return new FragmentationMember(1, "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"version-of",
+				LocalDateTime.now(),
+				eventStreamProperties,
 				outputModel);
 	}
 

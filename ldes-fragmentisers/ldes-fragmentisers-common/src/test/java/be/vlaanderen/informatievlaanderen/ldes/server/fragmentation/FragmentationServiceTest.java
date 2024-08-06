@@ -1,15 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessors;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.LongStream;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,28 +39,21 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *" })
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessors.class, BucketJobDefinitions.class })
+@TestPropertySource(properties = { "spring.batch.jdbc.initialize-schema=always", "ldes-server.fragmentation-cron=*/1 * * * * *"})
 class FragmentationServiceTest {
 	private static final int FRAGMENTATION_INTERVAL = 1000;
 
 	@MockBean(name = "newMemberReader")
-	ItemReader<IngestedMember> newMemberItemReader;
-
+	private ItemReader<FragmentationMember> newMemberReader;
 	@MockBean(name = "refragmentEventStream")
-	ItemReader<IngestedMember> refragmentItemReader;
-
-	@MockBean
-	private FragmentRepository fragmentRepository;
+	private ItemReader<FragmentationMember> rebucketiseMemberReader;
 
 	@MockBean
 	ItemWriter<List<BucketisedMember>> itemWriter;
 
 	@MockBean
 	FragmentationStrategyCollection strategyCollection;
-
-	@MockBean
-	MemberMapperCollection memberMappers;
 
 	@Autowired
 	private FragmentationService fragmentationService;
@@ -70,6 +62,7 @@ class FragmentationServiceTest {
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
 
 	private final String collectionName = "es";
+	private final EventStreamProperties eventStreamProperties = new EventStreamProperties(collectionName, "versionOfPath", "timestampPath", false);
 	private final String versionOf = "x";
 	private final List<BucketisedMember> output = new ArrayList<>();
 
@@ -80,15 +73,9 @@ class FragmentationServiceTest {
 
 	@Test
 	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() throws Exception {
-		List<IngestedMember> members = List.of(
-				new IngestedMember("x/1", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/2", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/3", collectionName, versionOf, LocalDateTime.now(), true, "", null),
-				new IngestedMember("x/4", collectionName, versionOf, LocalDateTime.now(), true, "", null)
-		);
-
-		MemberMapper memberMapper = mock(MemberMapper.class);
-		when(memberMappers.getMemberMapper(collectionName)).thenReturn(Optional.of(memberMapper));
+		final List<FragmentationMember> members = LongStream.range(1, 5)
+				.mapToObj(id -> new FragmentationMember(id, "subject", versionOf, LocalDateTime.now(), eventStreamProperties, null))
+				.toList();
 
 		mockBasicViews(2);
 		mockReader(members);
@@ -107,8 +94,6 @@ class FragmentationServiceTest {
 		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
 		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
-		verify(memberMapper, times(members.size() * 3))
-				.mapToFragmentationMember(any());
 	}
 
 	private void mockBasicViews(int count) {
@@ -117,35 +102,30 @@ class FragmentationServiceTest {
 		for (int i = 1; i <= count; i++) {
 			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
 			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i)));
+					new BucketisedMember(1, 1)));
 			fragmentationExecutors.add(executor);
 			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}
 
-		when(strategyCollection.getFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
+		when(strategyCollection.getAllFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
 	}
 
-	private void mockReader(List<IngestedMember> members) throws Exception {
-		when(newMemberItemReader.read())
-				.thenReturn(members.get(0), members.get(1), members.get(2), members.get(3), null);
-		when(refragmentItemReader.read())
-				.thenReturn(members.get(0), members.get(1), members.get(2), members.get(3), null);
+	private void mockReader(List<FragmentationMember> members) throws Exception {
+		final FragmentationMember firstMembers = members.getFirst();
+		final FragmentationMember[] additionalMembers = members.subList(1, 4).toArray(new FragmentationMember[4]);
+		additionalMembers[3] = null;
+		when(newMemberReader.read())
+				.thenReturn(firstMembers, additionalMembers);
+		when(rebucketiseMemberReader.read())
+				.thenReturn(firstMembers, additionalMembers);
 	}
+
 
 	private void mockWriter() throws Exception {
 		doAnswer(invocation -> {
 			Chunk<List<BucketisedMember>> items = invocation.getArgument(0);
 			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
-			return null;
+			return mock();
 		}).when(itemWriter).write(any());
-	}
-
-	@Test
-	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
-		EventStreamClosedEvent event = new EventStreamClosedEvent("collectionName");
-
-		fragmentationService.markFragmentsImmutableInCollection(event);
-
-		verify(fragmentRepository).markFragmentsImmutableInCollection("collectionName");
 	}
 }

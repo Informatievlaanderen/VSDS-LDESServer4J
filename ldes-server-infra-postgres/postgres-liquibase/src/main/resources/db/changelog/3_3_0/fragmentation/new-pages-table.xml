@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-pages-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pages"/>
+            </not>
+        </preConditions>
+        <createTable tableName="pages">
+            <column name="page_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="bucket_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="partial_url" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="immutable" type="BOOLEAN" defaultValueBoolean="false" />
+            <column name="expiration" type="TIMESTAMP"/>
+            <column name="next_update_ts" type="TIMESTAMP" />
+        </createTable>
+
+        <!-- Add foreign key constraint -->
+        <addForeignKeyConstraint baseTableName="pages"
+                                 baseColumnNames="bucket_id"
+                                 constraintName="fk_pages_bucket"
+                                 referencedTableName="buckets"
+                                 referencedColumnNames="bucket_id"
+                                 onDelete="CASCADE"/>
+
+        <!-- Create an index on 'partial_url' -->
+        <createIndex tableName="pages"
+                     indexName="idx_partial_url"
+                     unique="true">
+            <column name="partial_url"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="migrate-into-new-page-table" author="vsds">
+        <preConditions>
+            <tableExists tableName="pages"/>
+        </preConditions>
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-pages-table.sql" />
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-page-members-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="page_members"/>
+            </not>
+        </preConditions>
+        <createTable tableName="page_members">
+            <column name="bucket_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="page_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="page_members" columnNames="member_id,bucket_id"/>
+        <addForeignKeyConstraint baseTableName="page_members" baseColumnNames="bucket_id"
+                                 constraintName="pk_page_members_buckets_id"
+                                 referencedTableName="buckets"
+                                 referencedColumnNames="bucket_id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="page_members" baseColumnNames="member_id"
+                                 constraintName="fk_member_page_members_id"
+                                 referencedTableName="members"
+                                 referencedColumnNames="member_id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="page_members" baseColumnNames="page_id"
+                                 constraintName="fk_page_page_members_id"
+                                 referencedTableName="pages"
+                                 referencedColumnNames="page_id"
+                                 onDelete="CASCADE"/>
+        <addUniqueConstraint tableName="page_members" columnNames="member_id,page_id"/>
+        <rollback>
+            <delete tableName="page_members"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-into-new-page-members-table" author="vsds">
+        <preConditions>
+            <tableExists tableName="page_members"/>
+        </preConditions>
+        <sqlFile relativeToChangelogFile="true" path="migrate-into-new-page-members-table.sql"/>
+        <rollback>
+            <delete tableName="page_members"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

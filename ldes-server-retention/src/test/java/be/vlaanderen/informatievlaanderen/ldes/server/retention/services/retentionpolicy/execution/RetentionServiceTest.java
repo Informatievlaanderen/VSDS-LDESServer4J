@@ -39,20 +39,11 @@ class RetentionServiceTest {
 
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreRemovedFromTheView() {
-		MemberProperties firstMember = getMemberProperties("1", 0);
 		var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_A, timeBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember));
 
 		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(1);
-		MemberProperties secondMember = getMemberProperties("2", 1);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_B, versionBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember, secondMember));
 
 		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
-		MemberProperties thirdMember = getMemberProperties("3", 0);
-		when(memberPropertiesRepository.findExpiredMemberProperties(VIEW_C, timeAndVersionBasedRetentionPolicy))
-				.thenReturn(Stream.of(firstMember, secondMember, thirdMember));
 
 		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(
 				VIEW_A, timeBasedRetentionPolicy,
@@ -64,23 +55,19 @@ class RetentionServiceTest {
 
 		retentionService.executeRetentionPolicies();
 
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_A.asString());
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_B.asString());
-		verify(memberRemover).removeMemberFromView(secondMember, VIEW_B.asString());
-		verify(memberRemover).removeMemberFromView(firstMember, VIEW_C.asString());
-		verify(memberRemover).removeMemberFromView(secondMember, VIEW_C.asString());
-		verify(memberRemover).removeMemberFromView(thirdMember, VIEW_C.asString());
-		verify(memberRemover, never()).deleteMembers(anyList());
+		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_A, timeBasedRetentionPolicy);
+		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_B, versionBasedRetentionPolicy);
+		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_C, timeAndVersionBasedRetentionPolicy);
 	}
 
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfEventSource_MembersAreRemovedFromTheEventSource() {
-		MemberProperties firstMember = getMemberProperties("1", 0);
-		firstMember.addAllViewReferences(List.of(VIEW_A.getViewName()));
-		MemberProperties secondMember = getMemberProperties("2", 1);
+		MemberProperties firstMember = getMemberProperties(1l, 0);
+		MemberProperties secondMember = new MemberProperties(2L, "coll", "http://ex.com",
+				LocalDateTime.now().plusDays(1), true, false);
 
 		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
-		when(memberPropertiesRepository.findExpiredMemberProperties(COLLECTION, timeAndVersionBasedRetentionPolicy))
+		when(memberPropertiesRepository.retrieveExpiredMembers(COLLECTION, timeAndVersionBasedRetentionPolicy))
 				.thenReturn(Stream.of(firstMember, secondMember));
 
 		when(deletionPolicyCollection.getEventSourceRetentionPolicyMap()).thenReturn(Map.of(
@@ -102,7 +89,8 @@ class RetentionServiceTest {
 		verifyNoInteractions(memberRemover);
 	}
 
-	private MemberProperties getMemberProperties(String memberId, int plusDays) {
-		return new MemberProperties(memberId, null, null, LocalDateTime.now().plusDays(plusDays), true);
+	private MemberProperties getMemberProperties(long memberId, int plusDays) {
+		return new MemberProperties(memberId, "coll", "http://ex.com",
+				LocalDateTime.now().plusDays(plusDays), true, true);
 	}
 }

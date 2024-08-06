@@ -1,0 +1,8 @@
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix mobility-hindrances: <http://localhost:8080/mobility-hindrances/> .
+@prefix tree: <https://w3id.org/tree#> .
+
+mobility-hindrances:paged tree:viewDescription [
+    tree:fragmentationStrategy () ;
+    tree:pageSize "300"^^xsd:integer ;
+] .

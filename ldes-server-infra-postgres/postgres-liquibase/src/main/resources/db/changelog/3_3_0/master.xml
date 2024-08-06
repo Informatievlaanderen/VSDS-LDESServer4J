@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include relativeToChangelogFile="true" file="add-skolemization-domain-column.xml" />
+    <include file="/db/changelog/3_3_0/member-data-model/modify-members-tables.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-buckets-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-pages-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-page-members-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/new-relations-table.xml" />
+    <include file="/db/changelog/3_3_0/fragmentation/create-page-on-bucket-insertion-trigger.xml" />
+    <include file="/db/changelog/3_3_0/#1336-memberReader-indexes.xml" />
+    <include file="/db/changelog/3_3_0/add-skolemization-domain-column.xml" />
 </databaseChangeLog>

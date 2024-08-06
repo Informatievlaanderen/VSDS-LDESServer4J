@@ -103,7 +103,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 					.data(encodeModel(treeNodeStreamConverter.getMetaDataStatements(treeNode), lang))
 					.comment(String.format("Metadata and relations of the LDES fragment, encoded in base64 and with %s as mimetype.", lang.getHeaderString())));
 
-			streamingTreeNodeFactory.getMembersOfFragment(id.asDecodedFragmentId())
+			streamingTreeNodeFactory.getMembersOfFragment(id)
 					.map(member -> treeNodeStreamConverter.getMemberStatements(member, treeNode.getCollectionName())).forEach(model -> {
 						try {
 							emitter.send(SseEmitter.event().name("member")

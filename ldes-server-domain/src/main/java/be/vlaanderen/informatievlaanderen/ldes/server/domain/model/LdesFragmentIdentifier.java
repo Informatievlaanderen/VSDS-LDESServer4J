@@ -75,8 +75,8 @@ public class LdesFragmentIdentifier {
 			stringBuilder.append("?");
 			stringBuilder.append(fragmentPairs.stream()
 					.map(fragmentPair -> encoded
-                            ? fragmentPair.fragmentKey() + "=" + encode(fragmentPair.fragmentValue(), UTF_8)
-                            : fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
+							? fragmentPair.fragmentKey() + "=" + encode(fragmentPair.fragmentValue(), UTF_8)
+							: fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
 					.collect(Collectors.joining("&")));
 		}
 

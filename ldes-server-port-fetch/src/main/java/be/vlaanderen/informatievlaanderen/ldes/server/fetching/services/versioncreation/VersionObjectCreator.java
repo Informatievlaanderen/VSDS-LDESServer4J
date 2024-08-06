@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
+
+import java.time.LocalDateTime;
 
 @FunctionalInterface
 public interface VersionObjectCreator {
-    Model createFromMember(IngestedMember member);
+	Model createFromMember(String subject, Model model, String versionOf, LocalDateTime timestamp);
 }

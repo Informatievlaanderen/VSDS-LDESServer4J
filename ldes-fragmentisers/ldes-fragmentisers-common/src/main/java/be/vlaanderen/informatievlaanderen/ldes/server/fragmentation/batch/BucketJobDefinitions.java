@@ -1,64 +1,50 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
-import org.springframework.batch.core.Job;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 
-@Component
+@Configuration
 public class BucketJobDefinitions {
-	private BucketJobDefinitions() {}
 	public static final String BUCKETISATION_JOB = "bucketisation";
 	public static final String REBUCKETISATION_JOB = "rebucketisation";
+	private static final int CHUNK_SIZE = 1000;
 
-	public static Job bucketiseJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                         ItemReader<IngestedMember> reader, BucketProcessor processor,
-	                         ItemWriter<List<BucketisedMember>> writer) {
-		return new JobBuilder(BUCKETISATION_JOB, jobRepository)
-				.start(bucketiseMembers(jobRepository, transactionManager, reader, processor, writer))
-				.incrementer(new RunIdIncrementer())
-				.build();
-	}
-
-	public static Job rebucketiseJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                           ItemReader<IngestedMember> reader, BucketProcessor processor,
-	                           ItemWriter<List<BucketisedMember>> writer) {
-		return new JobBuilder(REBUCKETISATION_JOB, jobRepository)
-				.start(rebucketiseMembers(jobRepository, transactionManager, reader, processor, writer))
-				.incrementer(new RunIdIncrementer())
-				.build();
-	}
-
-	private static Step bucketiseMembers(JobRepository jobRepository,
-	                              PlatformTransactionManager transactionManager,
-	                              ItemReader<IngestedMember> reader, BucketProcessor processor,
-	                              ItemWriter<List<BucketisedMember>> writer) {
+	@Bean
+	public Step bucketiseMembersStep(JobRepository jobRepository,
+	                                 PlatformTransactionManager transactionManager,
+	                                 ItemReader<FragmentationMember> newMemberReader,
+	                                 ItemProcessor<FragmentationMember, List<BucketisedMember>> multiViewBucketProcessor,
+	                                 ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("bucketiseMembers", jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(reader)
-				.processor(processor)
+				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
+				.reader(newMemberReader)
+				.processor(multiViewBucketProcessor)
 				.writer(writer)
 				.allowStartIfComplete(true)
 				.build();
 	}
 
-	private static Step rebucketiseMembers(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                                ItemReader<IngestedMember> reader, BucketProcessor processor,
-	                                ItemWriter<List<BucketisedMember>> writer) {
+	@Bean
+	public Step rebucketiseMembersStep(JobRepository jobRepository,
+	                                   PlatformTransactionManager transactionManager,
+	                                   ItemReader<FragmentationMember> refragmentEventStream,
+	                                   ItemProcessor<FragmentationMember, List<BucketisedMember>> singleViewBucketProcessor,
+	                                   ItemWriter<List<BucketisedMember>> writer) {
 		return new StepBuilder("rebucketiseMembers", jobRepository)
-				.<IngestedMember, List<BucketisedMember>>chunk(150, transactionManager)
-				.reader(reader)
-				.processor(processor)
+				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
+				.reader(refragmentEventStream)
+				.processor(singleViewBucketProcessor)
 				.writer(writer)
 				.allowStartIfComplete(true)
 				.build();

@@ -3,45 +3,37 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
 
 @Component
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
+	private static final String SQL = """
+			INSERT INTO page_members (bucket_id, member_id)
+			VALUES (?, ?)
+			ON CONFLICT DO NOTHING;
+			""";
 
-	private static final String SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
-	                                  "values (?, ?, ?, ?)";
-
-	private final DataSource dataSource;
+	private final JdbcTemplate jdbcTemplate;
 
 	public BucketisedMemberWriter(DataSource dataSource) {
-		this.dataSource = dataSource;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
-	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
-		Chunk<BucketisedMember> buckets = new Chunk<>(chunk.getItems()
+	public void write(Chunk<? extends List<BucketisedMember>> chunk) {
+		Chunk<BucketisedMember> bucketisedMembers = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
 				.toList());
 
-		try(Connection connection = dataSource.getConnection();
-		    PreparedStatement ps = connection.prepareStatement(SQL)) {
-			ps.setLong(4, 0L);
-			for (BucketisedMember bucket : buckets) {
-				// Set the variables
-				ps.setString(1, bucket.viewName().asString());
-				ps.setString(2, bucket.fragmentId());
-				ps.setString(3, bucket.memberId());
-				// Add it to the batch
-				ps.addBatch();
-			}
-			ps.executeBatch();
-		}
+		final List<Object[]> batchArgs = bucketisedMembers.getItems().stream()
+				.map(bucketisedMember -> new Object[]{bucketisedMember.bucketId(), bucketisedMember.memberId()})
+				.toList();
 
+		jdbcTemplate.batchUpdate(SQL, batchArgs);
 	}
 }

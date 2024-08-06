@@ -1,23 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository;
 
-
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-
-@Primary
 public interface MemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
-	boolean existsByOldIdIn(List<String> oldIds);
+	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
+			"FROM members " +
+			"WHERE collection_id = :collectionId " +
+			"AND subject IN :subjects",
+			nativeQuery = true)
+	boolean existsByCollectionAndSubjectIn(int collectionId, List<String> subjects);
 
 	List<MemberEntity> findAllByOldIdIn(List<String> oldIds);
 
-	@Query("SELECT m FROM MemberEntity m LEFT JOIN EventStreamEntity e ON m.collection = e WHERE e.name = :collectionName")
-	List<MemberEntity> findAllByCollectionName(String collectionName);
+	List<MemberEntity> findAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
-	void deleteAllByOldIdIn(List<String> oldIds);
+	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 }

@@ -51,7 +51,7 @@ class TreeNodeConverterImplTest {
 
     @Test
     void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
                 COLLECTION_NAME, null);
         ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
@@ -67,7 +67,7 @@ class TreeNodeConverterImplTest {
 
     @Test
     void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, false, List.of(), List.of(),
                 COLLECTION_NAME, null);
         Model model = treeNodeConverter.toModel(treeNode);
 
@@ -84,11 +84,11 @@ class TreeNodeConverterImplTest {
                 <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
                 .""").lang(Lang.NQUADS).toModel();
         Member member = new Member(
-                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
         TreeRelation treeRelation = new TreeRelation("path",
                 new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
                 "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
+        TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, false, List.of(treeRelation),
                 List.of(member), COLLECTION_NAME, null);
 
         Model model = treeNodeConverter.toModel(treeNode);

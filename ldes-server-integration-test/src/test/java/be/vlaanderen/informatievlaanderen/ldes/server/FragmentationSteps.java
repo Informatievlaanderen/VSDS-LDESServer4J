@@ -173,7 +173,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.mapWith(FragmentationSteps::countSkolemizedIds)
 				.toList();
 
-	assertThat(skolemizedIdCountPerMember)
+		assertThat(skolemizedIdCountPerMember)
 				.hasSize(memberCount)
 				.allSatisfy(actualSkolemizedIdCount -> assertThat(actualSkolemizedIdCount).isEqualTo(skolemizedIdCount));
 	}

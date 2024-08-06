@@ -12,7 +12,6 @@
     <modules>
         <module>postgres-liquibase</module>
         <module>postgres-admin-repository</module>
-        <module>postgres-fetch-repository</module>
         <module>postgres-fragmentation-repository</module>
         <module>postgres-ingest-repository</module>
         <module>postgres-retention-repository</module>

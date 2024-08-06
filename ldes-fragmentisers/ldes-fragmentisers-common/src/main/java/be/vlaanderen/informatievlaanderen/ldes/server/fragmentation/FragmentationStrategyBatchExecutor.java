@@ -14,15 +14,15 @@ public class FragmentationStrategyBatchExecutor {
 
 	private final FragmentationStrategy fragmentationStrategy;
 	private final ViewName viewName;
-	private final RootFragmentRetriever rootFragmentRetriever;
+	private final RootBucketRetriever rootBucketRetriever;
 	private final ObservationRegistry observationRegistry;
 
 	@SuppressWarnings("java:S107")
 	public FragmentationStrategyBatchExecutor(ViewName viewName,
 	                                          FragmentationStrategy fragmentationStrategy,
-	                                          RootFragmentRetriever rootFragmentRetriever,
+	                                          RootBucketRetriever rootBucketRetriever,
 	                                          ObservationRegistry observationRegistry) {
-		this.rootFragmentRetriever = rootFragmentRetriever;
+		this.rootBucketRetriever = rootBucketRetriever;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
@@ -30,11 +30,10 @@ public class FragmentationStrategyBatchExecutor {
 
 	public List<BucketisedMember> bucketise(FragmentationMember member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
-		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView,
-				member, parentObservation);
+		final var rootBucket = rootBucketRetriever.retrieveRootBucket(parentObservation);
+		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
-		return members;
+		return bucketisedMembers;
 	}
 
 	public boolean isPartOfCollection(String collectionName) {

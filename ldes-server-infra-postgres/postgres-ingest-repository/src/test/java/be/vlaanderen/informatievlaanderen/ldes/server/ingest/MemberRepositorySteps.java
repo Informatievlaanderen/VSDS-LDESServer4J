@@ -8,11 +8,17 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.AssertFactory;
+import org.assertj.core.api.InstanceOfAssertFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
@@ -22,7 +28,11 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@When("I save the members using the MemberRepository")
 	public void iSaveTheMembers(List<IngestedMember> members) {
-		List<IngestedMember> actualIngestedMembers = memberRepository.insertAll(members);
+		List<IngestedMember> actualIngestedMembers = members.stream()
+				.collect(Collectors.groupingBy(IngestedMember::getCollectionName))
+				.values().stream()
+				.flatMap(groupedMembers -> memberRepository.insertAll(groupedMembers).stream())
+				.toList();
 		this.members.addAll(actualIngestedMembers);
 	}
 
@@ -38,29 +48,29 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 				ModelFactory.createDefaultModel());
 	}
 
-	@Then("The member with id {string} can be retrieved from the database")
-	public void theMemberWithIdCanBeRetrievedFromTheDatabase(String id) {
-		retrievedMember = memberRepository.findAllByIds(List.of(id)).findFirst();
-		assertTrue(retrievedMember.isPresent());
+	@Then("The member with collection {string} and subject {string} can be retrieved from the database")
+	public void theMemberWithIdCanBeRetrievedFromTheDatabase(String collection, String id) {
+		retrievedMember = memberRepository.findAllByCollectionAndSubject(collection, List.of(id)).findFirst();
+		assertThat(retrievedMember).isPresent();
 	}
 
 	@And("The retrieved member has the same properties as the {int} member in the table")
 	public void theRetrievedMemberHasTheSamePropertiesAsTheMemberInTheTable(int index) {
-		assertTrue(retrievedMember.isPresent());
-		IngestedMember retrievedMemberPresent = retrievedMember.get();
 		IngestedMember member = members.get(index - 1);
-		assertEquals(member.getSubject(), retrievedMemberPresent.getSubject());
-		assertEquals(member.getCollectionName(), retrievedMemberPresent.getCollectionName());
+		assertThat(retrievedMember)
+				.isPresent()
+				.get(new InstanceOfAssertFactory<>(IngestedMember.class, (AssertFactory<IngestedMember, AbstractAssert<?, ?>>) IngestedMemberAssert::new))
+				.isEqualTo(member);
 	}
 
-	@Then("The member with id {string} will exist")
-	public void theMemberWithIdWillExist(String id) {
-		assertEquals(1, memberRepository.findAllByIds(List.of(id)).count());
+	@Then("The member with collection {string} and subject {string} will exist")
+	public void theMemberWithCollectionAndSubjectWillExist(String collection, String subject) {
+		assertThat(memberRepository.findAllByCollectionAndSubject(collection, List.of(subject))).isNotEmpty();
 	}
 
-	@And("The member with id {string} will not exist")
-	public void thenTheMemberWithIdWillNotExist(String id) {
-		assertEquals(0, memberRepository.findAllByIds(List.of(id)).count());
+	@And("The member with collection {string} and subject {string} will not exist")
+	public void thenTheMemberWithCollectionAndSubjectWillNotExist(String collection, String subject) {
+		assertThat(memberRepository.findAllByCollectionAndSubject(collection, List.of(subject))).isEmpty();
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -78,13 +88,32 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 		assertEquals(memberCount, members.size());
 	}
 
-	@When("I delete the member with id {string}")
-	public void iDeleteMemberWithId(String memberId) {
-		memberRepository.deleteMembers(List.of(memberId));
+	@When("I delete the member with collection {string} and subject {string}")
+	public void iDeleteMemberWithCollectionAndSubject(String collection, String subject) {
+		memberRepository.deleteMembersByCollectionNameAndSubjects(collection, List.of(subject));
 	}
 
-	@Then("The retrieved member is empty")
-	public void theRetrievedMemberIsEmpty() {
-		assertTrue(retrievedMember.isEmpty());
+	@When("I delete collection {string}")
+	public void iDeleteCollection(String collection) {
+		new JdbcTemplate(dataSource).update("DELETE FROM collections WHERE name = ?", collection);
+	}
+
+	private static class IngestedMemberAssert extends AbstractAssert<IngestedMemberAssert, IngestedMember> {
+		protected IngestedMemberAssert(IngestedMember ingestedMember) {
+			super(ingestedMember, IngestedMemberAssert.class);
+		}
+
+		@Override
+		public IngestedMemberAssert isEqualTo(Object expected) {
+			isNotNull();
+
+			if (!(expected instanceof IngestedMember expectedMember)) {
+				failWithMessage("Incompatible comparison types: expected = %s, actual = %s", expected.getClass(), actual.getClass());
+			} else if (!expectedMember.getSubject().equals(actual.getSubject()) || !expectedMember.getCollectionName().equals(actual.getCollectionName())) {
+				failWithMessage("Expected fields does not match");
+			}
+
+			return this;
+		}
 	}
 }
