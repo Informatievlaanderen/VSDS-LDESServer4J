@@ -6,9 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.skolemization.SkolemizedMemberExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,5 +72,47 @@ class MemberExtractorCollectionImplTest {
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .containsInstanceOf(StateObjectMemberExtractor.class);
+    }
+
+    @Test
+    void test_HandleStateObjectSkolemizationDomeinEventStreamCreatedEvent() {
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true, "http://example.org");
+
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+
+        assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
+                .containsInstanceOf(SkolemizedMemberExtractor.class)
+                .get()
+                .extracting(extractor -> {
+	                try {
+		                Field field = extractor.getClass().getSuperclass().getDeclaredField("memberExtractor");
+                        field.setAccessible(true);
+                        return field.get(extractor);
+	                } catch (Exception e) {
+		                throw new RuntimeException(e);
+	                }
+                })
+                .isInstanceOf(StateObjectMemberExtractor.class);
+    }
+
+    @Test
+    void test_HandleVersionObjectsSkolemizationDomeinEventStreamCreatedEvent() {
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, "http://example.org");
+
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+
+        assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
+                .containsInstanceOf(SkolemizedMemberExtractor.class)
+                .get()
+                .extracting(extractor -> {
+                    try {
+                        Field field = extractor.getClass().getSuperclass().getDeclaredField("memberExtractor");
+                        field.setAccessible(true);
+                        return field.get(extractor);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .isInstanceOf(VersionObjectMemberExtractor.class);
     }
 }

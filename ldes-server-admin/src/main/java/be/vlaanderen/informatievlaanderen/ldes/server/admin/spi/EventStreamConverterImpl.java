@@ -38,13 +38,16 @@ public class EventStreamConverterImpl implements EventStreamConverter {
     public EventStreamTO fromModel(Model model) {
         final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
                 .orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
-        final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH).orElse(null);
-        final String versionOfPath = getResource(model, LDES_VERSION_OF).orElse(null);
-        final boolean versionCreationEnabled = getBooleanResource(model, LDES_CREATE_VERSIONS).orElse(false);
-        final List<ViewSpecification> views = getViews(model, collection);
-        final Model shacl = getShaclFromModel(model);
-        final List<Model> eventSourceRetentionModels = getEventSourceRetentionPolicies(model);
-        return new EventStreamTO(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, eventSourceRetentionModels);
+        return new EventStreamTO.Builder()
+                .withCollection(collection)
+                .withTimestampPath(getResource(model, LDES_TIMESTAMP_PATH).orElse(null))
+                .withVersionOfPath(getResource(model, LDES_VERSION_OF).orElse(null))
+                .withVersionCreationEnabled(getBooleanResource(model, LDES_CREATE_VERSIONS).orElse(false))
+                .withSkolemizationDomain(getResource(model, LDES_SKOLEMIZATION_DOMAIN).orElse(null))
+                .withViews(getViews(model, collection))
+                .withShacl(getShaclFromModel(model))
+                .withEventSourceRetentionPolicies(getEventSourceRetentionPolicies(model))
+                .build();
     }
 
     @Override
@@ -147,9 +150,10 @@ public class EventStreamConverterImpl implements EventStreamConverter {
     }
 
     private Optional<String> getResource(Model model, Property predicate) {
-        return model.listStatements(null, predicate, (Resource) null)
+        return model.listObjectsOfProperty(predicate)
+                .filterKeep(RDFNode::isResource)
                 .nextOptional()
-                .map(statement -> statement.getObject().toString());
+                .map(RDFNode::toString);
     }
 
     private Optional<Boolean> getBooleanResource(Model model, Property predicate) {

@@ -41,7 +41,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,9 +56,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ActiveProfiles({ "test", "rest" })
-@Import({ EventStreamControllerTest.EventStreamControllerTestConfiguration.class })
-@ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
+@ActiveProfiles({"test", "rest"})
+@Import({EventStreamControllerTest.EventStreamControllerTestConfiguration.class})
+@ContextConfiguration(classes = {EventStreamController.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
@@ -78,11 +77,13 @@ class EventStreamControllerTest {
 	@BeforeEach
 	void setUp() {
 		hostname = "http://localhost:8080";
-		EventStreamTO eventStream = new EventStreamTO(COLLECTION,
-				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf",
-				false, List.of(),
-				ModelFactory.createDefaultModel(), List.of());
+
+		EventStreamTO eventStream = new EventStreamTO.Builder()
+				.withCollection(COLLECTION)
+				.withTimestampPath("http://www.w3.org/ns/prov#generatedAtTime")
+				.withVersionOfPath("http://purl.org/dc/terms/isVersionOf")
+				.withShacl(ModelFactory.createDefaultModel())
+				.build();
 
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 	}
@@ -90,9 +91,9 @@ class EventStreamControllerTest {
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang,
-			String expectedEtagHeaderValue) throws Exception {
+	                                                           String expectedEtagHeaderValue) throws Exception {
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}", COLLECTION)
-				.accept(mediaType))
+						.accept(mediaType))
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
@@ -172,7 +173,7 @@ class EventStreamControllerTest {
 			when(eventStreamService.getComposedDcat()).thenReturn(model);
 
 			mockMvc.perform(get("/")
-					.accept(MediaType.ALL))
+							.accept(MediaType.ALL))
 					.andExpect(status().isOk())
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
@@ -189,7 +190,7 @@ class EventStreamControllerTest {
 					.getComposedDcat();
 
 			mockMvc.perform(get("/")
-					.accept(MediaType.ALL))
+							.accept(MediaType.ALL))
 					.andExpect(status().isInternalServerError());
 
 			verify(eventStreamService).getComposedDcat();

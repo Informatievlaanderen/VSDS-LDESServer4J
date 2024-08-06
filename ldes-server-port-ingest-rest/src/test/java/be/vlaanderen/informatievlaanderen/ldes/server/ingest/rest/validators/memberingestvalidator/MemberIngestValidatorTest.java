@@ -79,7 +79,7 @@ class MemberIngestValidatorTest {
 
     @Test
     void when_ClosedEventStreamInit_Then_EventstreamAddedToMap() {
-        EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, false, true);
+        EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, false, true, null);
 
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 

@@ -1,0 +1,8 @@
+<acct:sally@example.org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/activitystreams#Person> .
+<acct:sally@example.org> <https://www.w3.org/ns/activitystreams#name> "Sally" .
+_:b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/activitystreams#Create> .
+_:b0 <https://www.w3.org/ns/activitystreams#actor> <acct:sally@example.org> .
+_:b0 <https://www.w3.org/ns/activitystreams#object> _:b1 .
+_:b0 <https://www.w3.org/ns/activitystreams#published> "2015-01-25T12:34:56Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+_:b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/activitystreams#Note> .
+_:b1 <https://www.w3.org/ns/activitystreams#content> "This is a simple note" .
