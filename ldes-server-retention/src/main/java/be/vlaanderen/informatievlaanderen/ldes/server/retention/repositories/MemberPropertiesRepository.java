@@ -7,34 +7,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	void insertAll(List<MemberProperties> memberProperties);
+	void removePageMemberEntity(Long id, String collectionName, String viewName);
 
-	Optional<MemberProperties> retrieve(String id);
+	void deleteAllByIds(List<Long> id);
 
-	void addViewToAll(ViewName viewName);
-
-	List<MemberProperties> getMemberPropertiesOfVersionAndView(String versionOf, String viewName);
-
-	Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName);
-
-	void removeViewReference(String id, String viewName);
-
-	void removePageMemberEntity(String id, String viewName);
-
-	void removePageMemberEntity(Long id, String viewName);
-
-	void removeViewReference(String viewName);
-
-	void removeMemberPropertiesOfCollection(String collectionName);
-
-	void deleteAllByIds(List<String> id);
-
-	void removeFromEventSource(List<String> id);
+	void removeFromEventSource(List<Long> id);
 
 	/**
 	 * Finds all
@@ -42,10 +23,10 @@ public interface MemberPropertiesRepository {
 	 * @param viewName
 	 * @param policy
 	 */
-	void findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy);
-	void findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy);
-	void findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
-	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeBasedRetentionPolicy policy);
-	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, VersionBasedRetentionPolicy policy);
-	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeAndVersionBasedRetentionPolicy policy);
+	void removeExpiredMembers(ViewName viewName, TimeBasedRetentionPolicy policy);
+	void removeExpiredMembers(ViewName viewName, VersionBasedRetentionPolicy policy);
+	void removeExpiredMembers(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
+	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeBasedRetentionPolicy policy);
+	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, VersionBasedRetentionPolicy policy);
+	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeAndVersionBasedRetentionPolicy policy);
 }

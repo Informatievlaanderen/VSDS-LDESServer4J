@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
@@ -30,7 +29,6 @@ class ReferenceFragmentationStrategyTest {
 
 	private ReferenceBucketiser referenceBucketiser;
 	private ReferenceBucketCreator bucketCreator;
-	private final FragmentRepository treeRelationsRepository = mock(FragmentRepository.class);
 	private FragmentationStrategy decoratedFragmentationStrategy;
 	private ReferenceFragmentationStrategy referenceFragmentationStrategy;
 

@@ -36,11 +36,11 @@ public class PageEntity {
 	public PageEntity() {
 	}
 
-	public PageEntity(Long id, BucketEntity bucket, LocalDateTime expiration, String partialUrl) {
-		this.id = id;
+	public PageEntity(BucketEntity bucket, String partialUrl, List<RelationEntity> relations) {
 		this.bucket = bucket;
-		this.expiration = expiration;
+		this.immutable = true;
 		this.partialUrl = partialUrl;
+		this.relations = relations;
 	}
 
 	public Long getId() {

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.PostgresFragmentationIntegrationTest;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.PostgresBucketisationIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.Chunk;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BucketisedMemberWriterTest extends PostgresFragmentationIntegrationTest {
+class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 	@Autowired
 	BucketisedMemberWriter writer;
 	@Autowired

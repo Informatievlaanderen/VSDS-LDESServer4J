@@ -18,6 +18,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -38,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -266,7 +268,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
 		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
-				.until(() -> memberRepository.getMembersOfCollection(collection).size() == expectedMemberCount);
+				.until(() -> jdbcTemplate
+						.queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
+								Integer.class, collection)
+						== expectedMemberCount);
 	}
 
 	@After

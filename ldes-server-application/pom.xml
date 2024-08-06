@@ -34,6 +34,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
@@ -106,11 +110,6 @@
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-port-fetch-rest</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-fetch-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
