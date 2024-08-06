@@ -1,10 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 public class CompactionCandidate {

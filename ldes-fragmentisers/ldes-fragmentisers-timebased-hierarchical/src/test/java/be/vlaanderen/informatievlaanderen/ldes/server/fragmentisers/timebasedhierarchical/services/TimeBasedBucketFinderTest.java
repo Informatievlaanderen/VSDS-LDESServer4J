@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,8 +18,6 @@ import static org.mockito.Mockito.*;
 
 class TimeBasedBucketFinderTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final List<FragmentPair> timePairs = List.of(new FragmentPair(Granularity.YEAR.getValue(), "2023"),
-			new FragmentPair(Granularity.MONTH.getValue(), "01"), new FragmentPair(Granularity.DAY.getValue(), "01"));
 	private static final Bucket PARENT = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.DAY);

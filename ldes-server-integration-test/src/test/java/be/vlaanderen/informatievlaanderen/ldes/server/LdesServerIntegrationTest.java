@@ -4,8 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PageRelationPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.BucketRelationsEventListener;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import jakarta.persistence.EntityManager;

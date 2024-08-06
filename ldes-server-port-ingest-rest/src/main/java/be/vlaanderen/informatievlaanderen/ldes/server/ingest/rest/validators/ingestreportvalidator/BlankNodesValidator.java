@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Order(1)
 @Component
@@ -21,9 +20,11 @@ public class BlankNodesValidator implements IngestReportValidator {
     private static class BlankNodeInfo {
         public BlankNodeInfo(Resource s) { this.subject = s; }
         public final Resource subject;
-        public final ArrayList<Statement> statements = new ArrayList<>();
-        public int referenceCount = 0;
-        public final ArrayList<Statement> references = new ArrayList<>();
+        public final List<Statement> statements = new ArrayList<>();
+        public final List<Statement> references = new ArrayList<>();
+        public int referenceCount() {
+            return references.size();
+        }
     }
 
     private Map<Resource, BlankNodeInfo> createBlankNodeReferenceCounts(Model model) {
@@ -39,7 +40,6 @@ public class BlankNodesValidator implements IngestReportValidator {
             if (object.isAnon()) {
                 Resource blankNode = object.asResource();
                 BlankNodeInfo info = infoPerBlankNode.computeIfAbsent(blankNode, BlankNodeInfo::new);
-                info.referenceCount += 1;
                 info.references.add(statement);
             }
         });
@@ -55,14 +55,18 @@ public class BlankNodesValidator implements IngestReportValidator {
     }
 
     private void validateDanglingBlankNodes(Map<Resource, BlankNodeInfo> blankNodeReferenceCounts, ShaclReportManager reportManager) {
-        blankNodeReferenceCounts.values().stream().filter(x -> x.referenceCount == 0).toList().forEach(x -> {
-            reportManager.addEntry(x.subject, x.statements, "Object graphs don't allow blank nodes to occur outside of a named object.");
-        });
+        blankNodeReferenceCounts.values()
+                .stream()
+                .filter(x -> x.referenceCount() == 0)
+                .toList()
+                .forEach(x -> reportManager.addEntry(x.subject, x.statements, "Object graphs don't allow blank nodes to occur outside of a named object."));
     }
 
     private void validateBlankNodeScope(Map<Resource, BlankNodeInfo> blankNodeReferenceCounts, ShaclReportManager reportManager) {
-        blankNodeReferenceCounts.values().stream().filter(x -> x.referenceCount > 1).toList().forEach(x -> {
-            reportManager.addEntry(x.subject, x.references, "Blank nodes must be scoped to one object.");
-        });
+        blankNodeReferenceCounts.values()
+                .stream()
+                .filter(x -> x.referenceCount() > 1)
+                .toList()
+                .forEach(x -> reportManager.addEntry(x.subject, x.references, "Blank nodes must be scoped to one object."));
     }
 }

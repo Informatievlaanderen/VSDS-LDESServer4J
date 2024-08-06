@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
@@ -52,7 +51,6 @@ class PaginationServiceTest {
 	private PaginationService paginationService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
-	private List<MemberAllocation> output;
 	private final Page page = new Page(1,
 			1,
 			"/%s".formatted(VIEW_NAME_1.asString()),

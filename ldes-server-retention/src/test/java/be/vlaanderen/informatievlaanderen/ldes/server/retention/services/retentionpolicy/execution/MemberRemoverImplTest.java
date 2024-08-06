@@ -1,9 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberUnallocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersRemovedFromEventSourceEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.inOrder;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +37,7 @@ class MemberRemoverImplTest {
 		memberRemover.removeMembersFromEventSource(List.of(memberProperties, memberProperties2));
 
 		InOrder inOrder = inOrder(memberPropertiesRepository);
-		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties2.getId()));
+		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties2.id()));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -55,7 +49,7 @@ class MemberRemoverImplTest {
 		memberRemover.deleteMembers(List.of(memberProperties));
 
 		InOrder inOrder = inOrder(memberPropertiesRepository);
-		inOrder.verify(memberPropertiesRepository).deleteAllByIds(List.of(memberProperties.getId()));
+		inOrder.verify(memberPropertiesRepository).deleteAllByIds(List.of(memberProperties.id()));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

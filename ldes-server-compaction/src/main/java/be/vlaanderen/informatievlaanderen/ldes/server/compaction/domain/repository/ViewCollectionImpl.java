@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Map;

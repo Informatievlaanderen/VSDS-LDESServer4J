@@ -1,17 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.COMPACTION_CRON_KEY;
 

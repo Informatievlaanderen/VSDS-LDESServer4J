@@ -25,8 +25,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BucketPostgresRepositoryTest {
-	private final ViewName VIEW_NAME = new ViewName("collection", "name");
-	private final BucketDescriptor BUCKET_DESCRIPTOR = BucketDescriptor.fromString("key=value&k=v");
+	private static final ViewName VIEW_NAME = new ViewName("collection", "name");
+	private static final BucketDescriptor BUCKET_DESCRIPTOR = BucketDescriptor.fromString("key=value&k=v");
 	@Mock
 	private BucketEntityRepository bucketEntityRepository;
 	@Mock

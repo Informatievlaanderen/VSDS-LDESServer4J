@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class MemberModelExtractor {
     private static class ModelInfo {
-        public final ArrayList<Statement> statements = new ArrayList<>();
-        public final ArrayList<Resource> references = new ArrayList<>();
-        public boolean processed = false;
+        public final List<Statement> statements = new ArrayList<>();
+        public final List<Resource> references = new ArrayList<>();
+        public boolean processed;
     }
 
     private final Model model;

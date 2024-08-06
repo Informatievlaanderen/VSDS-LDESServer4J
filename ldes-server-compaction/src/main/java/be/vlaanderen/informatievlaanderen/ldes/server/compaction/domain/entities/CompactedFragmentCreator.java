@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.PageListSortException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import org.apache.jena.rdf.model.EmptyListException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;

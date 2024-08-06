@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
@@ -18,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.List;
-
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer.TREE_REFERENCE_EQUALS_RELATION;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -31,7 +27,6 @@ class ReferenceFragmentRelationsAttributerTest {
     private static final String fragmentReference =
             "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
     private static final ViewName viewName = new ViewName("collectionName", "view");
-    private static final Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));;
     private static final Bucket parentBucket = new Bucket(BucketDescriptor.empty(), viewName);
 
     @Mock
