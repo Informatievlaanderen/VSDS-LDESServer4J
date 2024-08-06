@@ -83,8 +83,6 @@ jobs:
         with:
           name: artifacts
           path: .github
-      - name: List downloaded artifacts
-        run: ls -R .github
       - name: Define docker variables
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
