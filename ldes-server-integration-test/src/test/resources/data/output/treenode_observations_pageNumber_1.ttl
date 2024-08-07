@@ -23,6 +23,7 @@
 
 <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C/2024-08-06T17:04:09.896854600>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
@@ -60,6 +61,7 @@
                 11 .
 <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C/2024-08-06T17:04:09.923488900>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
@@ -97,6 +99,7 @@
                 11 .
 <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C/2024-08-06T17:04:09.857053700>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
@@ -135,6 +138,7 @@
 
 <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1/2024-08-06T17:04:09.923488900>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
@@ -172,6 +176,7 @@
                 4 .
 <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1/2024-08-06T17:04:09.896854600>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
@@ -209,6 +214,7 @@
                 4 .
 <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1/2024-08-06T17:04:09.857053700>
         rdf:type           <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        terms:isVersionOf  <https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1>;
         <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
                 [ rdf:type             time:TemporalEntity;
                   time:hasBeginning    [ rdf:type                 time:Instant;
