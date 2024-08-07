@@ -1,0 +1,14 @@
+@prefix ldes:  <https://w3id.org/ldes#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix terms: <http://purl.org/dc/terms/> .
+@prefix tree:  <https://w3id.org/tree#> .
+
+<http://localhost:8080/mobility-hindrances/paged>
+        rdf:type        tree:Node;
+        terms:isPartOf  <http://localhost:8080/mobility-hindrances>;
+        tree:relation   [ rdf:type   tree:Relation;
+                          tree:node  <http://localhost:8080/mobility-hindrances/paged?pageNumber=1>
+                        ] .
+
+<http://localhost:8080/mobility-hindrances>
+        rdf:type  ldes:EventStream .

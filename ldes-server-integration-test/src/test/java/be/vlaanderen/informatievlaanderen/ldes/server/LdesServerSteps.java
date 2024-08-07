@@ -10,9 +10,7 @@ import io.cucumber.java.en.When;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
 import org.awaitility.Awaitility;
@@ -38,12 +36,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -143,16 +141,44 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				});
 	}
 
+	@Then("I can fetch the TreeNode {string} and it contains {int} relations")
+	public void iCanFetchTheTreeNodeAndItContainsRelations(String url, int expectedNumberOfRelations) {
+		await()
+				.atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+				.untilAsserted(() -> {
+					responseModel = fetchFragment(url);
+					assertNotNull(responseModel);
+					assertEquals(expectedNumberOfRelations, responseModel.listObjectsOfProperty(TREE_RELATION).toList().size());
+				});
+	}
+
 	@And("The expected response is equal to {string}")
 	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException {
-		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
-		Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
+		Model expectedModel = replaceTimestamps(readModelFromFile(expectedOutputFile));
+		Model actualModel = replaceTimestamps(responseModel);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
+	}
+
+	private Model replaceTimestamps(Model model) {
+		String TIMESTAMP_REGEX = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T(2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]\\.[0-9]*";
+		List<RDFNode> memberSubjects = model.listStatements(null, TREE_MEMBER, (RDFNode) null).mapWith(Statement::getObject).toList();
+		memberSubjects.forEach(memberSubject -> {
+			List<Statement> memberStatements = model.listStatements(memberSubject.asResource(), null, (RDFNode) null).toList();
+			String newSubject = memberSubject.asResource().getURI().replaceAll(TIMESTAMP_REGEX, "TIMESTAMP");
+			model.remove(memberStatements);
+			model.add(memberStatements.stream()
+					.map(statement -> model.createStatement(createResource(newSubject), statement.getPredicate(), statement.getObject())).toList());
+		});
+
+		return stripGeneratedAtTimeOfModel(
+				model.remove(model.listStatements(null, TREE_MEMBER, (RDFNode) null)));
 	}
 
 	private Model stripGeneratedAtTimeOfModel(Model model) {
 		return model.remove(
 				model.listStatements(null, model.createProperty("http://www.w3.org/ns/prov#generatedAtTime"),
+						(Resource) null))
+				.remove(model.listStatements(null, model.createProperty("http://purl.org/dc/terms/created"),
 						(Resource) null));
 	}
 
@@ -309,7 +335,6 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
-
 
 	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
 	public void iFetchAStreamingFragment(String url, String compareUrl) {
