@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
-
+	private final String TIMESTAMP_REGEX = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T(2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]\\.[0-9]*";
 	@Autowired
 	private WebApplicationContext wac;
 	private WebTestClient client;
@@ -160,7 +160,6 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	private Model replaceTimestamps(Model model) {
-		String TIMESTAMP_REGEX = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T(2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]\\.[0-9]*";
 		List<RDFNode> memberSubjects = model.listStatements(null, TREE_MEMBER, (RDFNode) null).mapWith(Statement::getObject).toList();
 		memberSubjects.forEach(memberSubject -> {
 			List<Statement> memberStatements = model.listStatements(memberSubject.asResource(), null, (RDFNode) null).toList();
