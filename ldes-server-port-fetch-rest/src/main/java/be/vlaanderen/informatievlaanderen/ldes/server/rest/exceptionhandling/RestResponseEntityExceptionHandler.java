@@ -4,10 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,22 +36,18 @@ public class RestResponseEntityExceptionHandler
 	}
 
 	@ExceptionHandler(value = { ShaclValidationException.class })
-	protected ResponseEntity<Object> handleInternalServerError(
-			RuntimeException ex, WebRequest request) {
-		return handleExceptionWithoutDetails(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+	protected ResponseEntity<Object> handleShaclValidationException(
+			ShaclValidationException ex, WebRequest request) {
+		final Lang contentType = Lang.TTL;
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		final String validationReport = RDFWriter.source(ex.getValidationReportModel()).lang(contentType).asString();
+		httpHeaders.setContentType(MediaType.valueOf(contentType.getHeaderString()));
+		return handleExceptionInternal(ex, validationReport, httpHeaders, HttpStatus.BAD_REQUEST, request);
 	}
 
-	private ResponseEntity<Object> handleException(
-			RuntimeException ex, HttpStatus status, WebRequest request) {
+	private ResponseEntity<Object> handleException(RuntimeException ex, HttpStatus status, WebRequest request) {
 		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
-		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), status, request);
-	}
-
-	private ResponseEntity<Object> handleExceptionWithoutDetails(
-			RuntimeException ex, HttpStatus status, WebRequest request) {
-		log.error(ex.getMessage());
-		return handleExceptionInternal(ex, null, new HttpHeaders(), status, request);
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), status, request);
 	}
 }

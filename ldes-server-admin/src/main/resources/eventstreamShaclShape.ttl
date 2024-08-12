@@ -21,12 +21,14 @@
     sh:nodeKind sh:IRI ;
     sh:description "The object property of the members that indicates how members relate to each other from the time perspective."@en;
     sh:maxCount 1;
+    sh:minCount 1;
     sh:name "timestampPath"@en;
     sh:path <https://w3id.org/ldes#timestampPath>
   ], [
     sh:nodeKind sh:IRI ;
     sh:description "The object property that indicates the object identifier in a version object."@en;
     sh:maxCount 1;
+    sh:minCount 1;
     sh:name "versionOfPath"@en;
     sh:path <https://w3id.org/ldes#versionOfPath>
   ], [
