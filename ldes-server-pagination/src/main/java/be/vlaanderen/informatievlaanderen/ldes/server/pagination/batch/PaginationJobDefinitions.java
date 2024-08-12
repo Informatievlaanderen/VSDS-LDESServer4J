@@ -20,8 +20,7 @@ import java.util.List;
 
 @Configuration
 public class PaginationJobDefinitions {
-	public static final String PAGINATION_JOB = "pagination";
-	public static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
+	public static final String PAGINATION_STEP = "pagination";
 	private static final int CHUNK_SIZE = 1000;
 
 	@Bean
@@ -30,28 +29,7 @@ public class PaginationJobDefinitions {
 	                           ItemProcessor<Page, List<PageAssignment>> pageRelationsProcessor,
 	                           ItemWriter<List<PageAssignment>> memberAssigner,
 	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
-		return new StepBuilder("paginationMasterStep", jobRepository)
-				.partitioner("memberBucketPartitionStep", bucketPartitioner)
-				.step(new StepBuilder("paginationStep", jobRepository)
-						.<Page, List<PageAssignment>>chunk(CHUNK_SIZE, transactionManager)
-						.reader(pageItemReader)
-						.processor(pageRelationsProcessor)
-						.writer(memberAssigner)
-						.allowStartIfComplete(true)
-						.build()
-				)
-				.allowStartIfComplete(true)
-				.taskExecutor(taskExecutor)
-				.build();
-	}
-
-	@Bean
-	public Step newViewPaginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                                  Partitioner bucketPartitioner, ItemReader<Page> pageItemReader,
-	                                  ItemProcessor<Page, List<PageAssignment>> pageRelationsProcessor,
-	                                  ItemWriter<List<PageAssignment>> memberAssigner,
-	                                  @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
-		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
+		return new StepBuilder(PAGINATION_STEP, jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
 						.<Page, List<PageAssignment>>chunk(CHUNK_SIZE, transactionManager)
@@ -68,6 +46,8 @@ public class PaginationJobDefinitions {
 
 	@Bean("paginationTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
-		return new SimpleAsyncTaskExecutor("spring_batch");
+		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
+		taskExecutor.setConcurrencyLimit(10);
+		return taskExecutor;
 	}
 }

@@ -29,7 +29,7 @@ public class BucketPartitioner implements Partitioner {
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		return jdbcTemplate.queryForList(SQL, Long.class, gridSize).stream()
 				.collect(Collectors.toMap(
-						"bucket: %d"::formatted,
+						"bucket:%d"::formatted,
 						bucketId -> new ExecutionContext(Map.of("bucketId", bucketId))
 				));
 	}

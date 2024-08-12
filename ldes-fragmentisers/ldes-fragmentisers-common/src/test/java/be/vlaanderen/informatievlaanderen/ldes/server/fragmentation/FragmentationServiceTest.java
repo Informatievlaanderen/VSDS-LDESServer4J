@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessors;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
@@ -11,6 +13,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -44,22 +48,28 @@ import static org.mockito.Mockito.*;
 class FragmentationServiceTest {
 	private static final int FRAGMENTATION_INTERVAL = 1000;
 
+
+	@MockBean(name = "viewPartitioner")
+	private Partitioner viewPartitioner;
 	@MockBean(name = "newMemberReader")
 	private ItemReader<FragmentationMember> newMemberReader;
 	@MockBean(name = "refragmentEventStream")
 	private ItemReader<FragmentationMember> rebucketiseMemberReader;
-
 	@MockBean
 	ItemWriter<List<BucketisedMember>> itemWriter;
-
+	@MockBean(name = "paginationStep")
+	Step paginationStep;
+	@MockBean
+	ServerMetrics serverMetrics;
 	@MockBean
 	FragmentationStrategyCollection strategyCollection;
-
+	@MockBean
+	MemberMetricsRepository memberMetricsRepository;
 	@Autowired
 	private FragmentationService fragmentationService;
-
 	@Autowired
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
+
 
 	private final String collectionName = "es";
 	private final EventStreamProperties eventStreamProperties = new EventStreamProperties(collectionName, "versionOfPath", "timestampPath", false);
@@ -81,7 +91,9 @@ class FragmentationServiceTest {
 		mockReader(members);
 		mockWriter();
 
-		fragmentationService.executeFragmentation();
+		when(memberMetricsRepository.getUnprocessedCollections()).thenReturn(List.of(new ViewName("collection", "v")));
+
+		fragmentationService.scheduledJobLauncher();
 
 		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));

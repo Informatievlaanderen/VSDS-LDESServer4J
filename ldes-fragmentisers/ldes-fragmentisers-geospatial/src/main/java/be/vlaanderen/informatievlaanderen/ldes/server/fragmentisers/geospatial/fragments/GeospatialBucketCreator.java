@@ -4,14 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileBucketRelationsAttributer;
-import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.GeospatialFragmentationStrategy.GEOSPATIAL_FRAGMENTATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 
 public class GeospatialBucketCreator {
@@ -32,8 +27,6 @@ public class GeospatialBucketCreator {
 				.orElseGet(() -> {
 					final Bucket childBucket = bucketRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
 					tileBucketRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, childBucket);
-					String viewName = parentBucket.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
 					LOGGER.debug("Geospatial fragment created with id: {}", childBucket.getBucketDescriptorAsString());
 					return childBucket;
 				});
@@ -45,9 +38,6 @@ public class GeospatialBucketCreator {
 				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
 					final Bucket childBucket = bucketRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
-					
-					String viewName = parentBucket.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, GEOSPATIAL_FRAGMENTATION).increment();
 					LOGGER.debug("Geospatial rootfragment created with id: {}", childBucket.getBucketDescriptorAsString());
 					return childBucket;
 				});

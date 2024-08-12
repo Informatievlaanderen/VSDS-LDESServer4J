@@ -12,8 +12,9 @@ open module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction;
+	exports be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
-    requires spring.web;
+	requires spring.web;
     requires spring.context;
     requires spring.beans;
     requires spring.boot;

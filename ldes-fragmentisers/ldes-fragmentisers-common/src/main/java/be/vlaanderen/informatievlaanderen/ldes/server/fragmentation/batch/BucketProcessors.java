@@ -16,7 +16,7 @@ import java.util.List;
 public class BucketProcessors {
 	@Bean
 	@StepScope
-	public ItemProcessor<FragmentationMember, List<BucketisedMember>> singleViewBucketProcessor(
+	public ItemProcessor<FragmentationMember, List<BucketisedMember>> viewBucketProcessor(
 			FragmentationStrategyCollection fragmentationStrategyCollection,
 			@Value("#{jobParameters['collectionName']}") String collectionName,
 			@Value("#{jobParameters['viewName']}") String viewName

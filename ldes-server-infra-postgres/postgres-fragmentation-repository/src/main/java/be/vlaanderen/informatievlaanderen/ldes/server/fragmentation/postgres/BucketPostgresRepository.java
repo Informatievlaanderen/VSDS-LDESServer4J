@@ -8,8 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.B
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,18 +35,26 @@ public class BucketPostgresRepository implements BucketRepository {
 	@Override
 	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		final String sql = """
-				WITH view_names AS (SELECT v.view_id, concat(c.name, '/' , v.name) AS view_name FROM views v JOIN collections c ON v.collection_id = c.collection_id)
-				INSERT INTO buckets (bucket, view_id) SELECT :bucket, v.view_id FROM view_names v WHERE v.view_name = :viewName
+				    WITH ins AS (
+				        INSERT INTO buckets (bucket, view_id)
+				                SELECT :bucket, v.view_id
+				                FROM views v
+				                INNER JOIN collections c ON c.name = :collectionName
+				                WHERE v.name = :viewName
+				                ON CONFLICT (bucket, view_id) DO UPDATE SET bucket = EXCLUDED.bucket
+				                RETURNING bucket_id
+				          )
+				          SELECT bucket_id FROM ins;
 				""";
 		MapSqlParameterSource params = new MapSqlParameterSource(Map.of(
 				"bucket", bucket.getBucketDescriptorAsString(),
-				"viewName", bucket.getViewName().asString()
+				"viewName", bucket.getViewName().getViewName(),
+				"collectionName", bucket.getViewName().getCollectionName()
 		));
-		jdbcTemplate.update(sql, params, keyHolder, new String[]{"bucket_id"});
+		Long bucketId = jdbcTemplate.queryForObject(sql, params, Long.class);
 		return new Bucket(
-				Objects.requireNonNull(keyHolder.getKeyAs(Long.class)),
+				Objects.requireNonNull(bucketId),
 				bucket.getBucketDescriptor(),
 				bucket.getViewName()
 		);

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public interface MemberRepository {
-
 	List<IngestedMember> insertAll(List<IngestedMember> members);
 
 	Stream<IngestedMember> findAllByIds(List<String> memberIds);
