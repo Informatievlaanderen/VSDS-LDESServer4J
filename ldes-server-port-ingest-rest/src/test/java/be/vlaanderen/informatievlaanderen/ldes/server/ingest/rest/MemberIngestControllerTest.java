@@ -150,7 +150,7 @@ class MemberIngestControllerTest {
     @Test
     void whenIngestValidationExceptionIsThrown_thenStatus400IsReturned() throws Exception {
         String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
-        doThrow(ShaclValidationException.class).when(memberIngester).ingest(anyString(), any(Model.class));
+        doThrow(new ShaclValidationException("", ModelFactory.createDefaultModel())).when(memberIngester).ingest(anyString(), any(Model.class));
 
         mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
                 .andExpect(status().isBadRequest());
