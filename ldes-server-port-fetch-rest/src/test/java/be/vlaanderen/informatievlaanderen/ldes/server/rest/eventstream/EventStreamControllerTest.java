@@ -186,12 +186,12 @@ class EventStreamControllerTest {
 
 		@Test
 		void should_ReturnValidationReport_when_Invalid() throws Exception {
-			doThrow(new ShaclValidationException("validation-report", null)).when(eventStreamService)
+			doThrow(new ShaclValidationException("validation-report", ModelFactory.createDefaultModel())).when(eventStreamService)
 					.getComposedDcat();
 
 			mockMvc.perform(get("/")
 							.accept(MediaType.ALL))
-					.andExpect(status().isInternalServerError());
+					.andExpect(status().isBadRequest());
 
 			verify(eventStreamService).getComposedDcat();
 		}
