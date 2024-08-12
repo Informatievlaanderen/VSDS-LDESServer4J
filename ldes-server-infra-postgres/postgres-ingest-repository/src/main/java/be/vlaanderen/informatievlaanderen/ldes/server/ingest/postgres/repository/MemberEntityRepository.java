@@ -19,15 +19,14 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	int countMemberEntitiesByColl(String collectionName);
 
 	@Query(value = """
-			   SELECT c.name, v.name
-			   FROM page_members mb
-			           JOIN buckets b on b.bucket_id = mb.bucket_id
-			           RIGHT OUTER JOIN members m on m.member_id = mb.member_id
-			           JOIN collections c on c.collection_id = m.collection_id
-			           JOIN views v on v.collection_id = c.collection_id
-			   WHERE mb.member_id IS NULL
-			   OR mb.page_id IS NULL
-			   GROUP BY c.name, v.name
+			   select col, view
+			   from (select c.name as col, v.name as view, max(pm.member_id) = (select max(member_id) from members) as keptUp
+			         from views v
+			                  JOIN collections c on v.collection_id = c.collection_id
+			                  JOIN buckets b on v.view_id = b.view_id
+			                  JOIN page_members pm on b.bucket_id = pm.bucket_id
+			         GROUP BY c.name, v.name) as fragmentProcess
+			   where keptUp = false
 			""", nativeQuery = true)
 	List<Tuple> getUnprocessedCollections();
 
