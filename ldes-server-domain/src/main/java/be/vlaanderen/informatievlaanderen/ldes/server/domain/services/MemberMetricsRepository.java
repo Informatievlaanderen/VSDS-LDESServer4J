@@ -7,5 +7,4 @@ import java.util.List;
 public interface MemberMetricsRepository {
 	int getTotalCount(String collectionName);
 	List<ViewName> getUnprocessedCollections();
-	boolean viewIsUnprocessed(ViewName viewName);
 }

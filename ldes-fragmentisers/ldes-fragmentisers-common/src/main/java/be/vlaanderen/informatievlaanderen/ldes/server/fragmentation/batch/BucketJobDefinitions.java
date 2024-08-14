@@ -25,8 +25,7 @@ import java.util.List;
 @Configuration
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_STEP = "bucketisation";
-	public static final String REBUCKETISATION_STEP = "rebucketisation";
-	private static final int CHUNK_SIZE = 250;
+	private static final int CHUNK_SIZE = 1000;
 
 	@Bean(BUCKETISATION_STEP)
 	public Step bucketiseMembersStep(JobRepository jobRepository,
@@ -36,7 +35,7 @@ public class BucketJobDefinitions {
 	                                 ItemWriter<List<BucketisedMember>> writer,
 	                                 ServerMetrics serverMetrics,
 	                                 @Qualifier("bucketTaskExecutor") TaskExecutor taskExecutor) {
-		return new StepBuilder(REBUCKETISATION_STEP, jobRepository)
+		return new StepBuilder(BUCKETISATION_STEP, jobRepository)
 				.<FragmentationMember, List<BucketisedMember>>chunk(CHUNK_SIZE, transactionManager)
 				.reader(memberReader)
 				.processor(viewBucketProcessor)

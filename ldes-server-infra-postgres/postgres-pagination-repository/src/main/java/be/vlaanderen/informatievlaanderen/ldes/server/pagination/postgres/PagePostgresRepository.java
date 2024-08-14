@@ -4,6 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +23,9 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	@Transactional
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	public void setChildrenImmutableByBucketId(long bucketId) {
-		List<Long> pageIds = pageEntityRepository.findPageIdsByBucketId(bucketId);
-		pageEntityRepository.setAllChildrenImmutable(pageIds);
+		pageEntityRepository.setAllChildrenImmutableByBucketId(bucketId);
 	}
 
     @Override

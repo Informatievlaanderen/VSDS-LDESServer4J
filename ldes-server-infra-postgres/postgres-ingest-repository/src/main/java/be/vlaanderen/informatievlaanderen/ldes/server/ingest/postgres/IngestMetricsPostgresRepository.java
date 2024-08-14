@@ -30,10 +30,4 @@ public class IngestMetricsPostgresRepository implements MemberMetricsRepository 
 				.map(tuple -> new ViewName(tuple.get(0, String.class), tuple.get(1, String.class)))
 				.toList();
 	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public boolean viewIsUnprocessed(ViewName viewName) {
-		return repository.viewIsUnprocessed(viewName.getCollectionName(), viewName.getViewName());
-	}
 }

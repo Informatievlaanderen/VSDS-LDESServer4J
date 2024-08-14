@@ -14,7 +14,6 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	private static final String SQL = """
 			INSERT INTO page_members (bucket_id, member_id)
 			VALUES (?, ?)
-			ON CONFLICT DO NOTHING;
 			""";
 
 	private final JdbcTemplate jdbcTemplate;

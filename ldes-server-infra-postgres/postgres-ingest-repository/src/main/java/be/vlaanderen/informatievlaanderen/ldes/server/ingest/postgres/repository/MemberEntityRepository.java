@@ -19,20 +19,32 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	int countMemberEntitiesByColl(String collectionName);
 
 	@Query(value = """
-			   select col, view
-			   from (select c.name as col, v.name as view, count(*), (select count(*) from members) , count(*) = (select count(*) from members) as keptUp
-			         from views v
-			                  JOIN collections c on v.collection_id = c.collection_id
-			                  LEFT JOIN buckets b on v.view_id = b.view_id
-			                  LEFT JOIN page_members pm on b.bucket_id = pm.bucket_id
-			         where pm.member_id IS NOT NULL
-			         GROUP BY c.name, v.name) as fragmentProcess
-			   where keptUp = false
-			   UNION
-			   select DISTINCT c.name as col, v.name as view from views v
-			       JOIN collections c on v.collection_id = c.collection_id
-			       LEFT OUTER JOIN buckets b ON b.view_id = v.view_id
-			       WHERE b.bucket_id IS NULL
+
+			WITH unprocessed AS (
+			    select m.collection_id, v.view_id, count(*)
+			    from members m
+			             LEFT JOIN views v on v.collection_id = m.collection_id
+			    WHERE not exists (select 1
+			                      from page_members pm
+			                               LEFT JOIN buckets b on b.bucket_id = pm.bucket_id
+			                               LEFT JOIN views v2 on b.view_id = v2.view_id
+			                      where pm.member_id = m.member_id
+			                        and v.view_id = v2.view_id
+			                        AND v2.collection_id = m.collection_id)
+			    OR EXISTS(select 1
+			              from page_members pm
+			                       LEFT JOIN buckets b on b.bucket_id = pm.bucket_id
+			                       LEFT JOIN views v2 on b.view_id = v2.view_id
+			              where pm.member_id = m.member_id
+			                and v.view_id = v2.view_id
+			                AND v2.collection_id = m.collection_id
+			              AND pm.page_id IS NULL)
+			    GROUP BY m.collection_id, v.view_id
+			    HAVING count(*) > 0
+			)
+			SELECT c.name, v.name from unprocessed u
+			LEFT JOIN collections c ON c.collection_id = u.collection_id
+			LEFT JOIN views v on v.view_id = u.view_id
 			""", nativeQuery = true)
 	List<Tuple> getUnprocessedCollections();
 
@@ -49,16 +61,4 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
-	@Query(value = """
-        SELECT count(*) > 0
-        FROM members m
-                 LEFT JOIN collections c ON c.name = :collectionName
-        WHERE NOT EXISTS (
-            select * from page_members mb
-                              LEFT JOIN views v ON v.name = :viewName AND v.collection_id = c.collection_id
-                              LEFT JOIN buckets b ON b.view_id = v.view_id
-            where mb.member_id = m.member_id and mb.bucket_id = b.bucket_id
-        )
-    """, nativeQuery = true)
-	Boolean viewIsUnprocessed(String collectionName, String viewName);
 }

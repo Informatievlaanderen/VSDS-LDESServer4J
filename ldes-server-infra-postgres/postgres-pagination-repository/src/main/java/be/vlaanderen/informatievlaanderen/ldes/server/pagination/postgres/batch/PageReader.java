@@ -25,7 +25,6 @@ public class PageReader {
 				.queryProvider(openPageQuery())
 				.parameterValues(Map.of("bucket", stepExecutionContext.get("bucketId")))
 				.rowMapper(new PaginationRowMapper())
-				.saveState(false)
 				.build();
 	}
 

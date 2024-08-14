@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.config.MeterFilter;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,9 @@ public class ServerMetrics {
 	public ServerMetrics(FragmentationMetricsRepository fragmentationMetricsRepository, MemberMetricsRepository memberMetricsRepository) {
 		this.fragmentationMetricsRepository = fragmentationMetricsRepository;
 		this.memberMetricsRepository = memberMetricsRepository;
+		Metrics.globalRegistry.config()
+				.meterFilter(MeterFilter.denyNameStartsWith("spring.batch.item"))
+				.meterFilter(MeterFilter.denyNameStartsWith("spring.batch.chunk"));
 	}
 
 	public synchronized void incrementIngestCount(String collection, int count) {

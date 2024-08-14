@@ -3,9 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repos
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.CompactionCandidateProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeNodeProjection;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,30 +16,16 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	Optional<TreeNodeProjection> findTreeNodeByPartialUrl(String partialUrl);
 
 	@Modifying
-	@Query("""
-			UPDATE PageEntity p SET p.immutable = true
-			WHERE p.id IN (
-				SELECT r.toPage.id
-				FROM RelationEntity r
-				JOIN r.fromPage p WHERE p.bucket.bucketId = :bucketId
+	@Query(value = """
+			update pages set immutable = true
+			where page_id in (
+			  select distinct r.to_page_id from pages p
+			  inner join buckets b on b.bucket_id = p.bucket_id
+			  inner join page_relations r on r.from_page_id = p.page_id
+			  where b.bucket_id = :bucketId
 			)
-			""")
+			""", nativeQuery = true)
 	void setAllChildrenImmutableByBucketId(long bucketId);
-
-	@Modifying
-	@Query("""
-        UPDATE PageEntity p SET p.immutable = true
-        WHERE p.id IN :pageIds
-        """)
-	void setAllChildrenImmutable(@Param("pageIds") List<Long> pageIds);
-
-	@Query("""
-        SELECT r.toPage.id
-        FROM RelationEntity r
-        JOIN r.fromPage p WHERE p.bucket.bucketId = :bucketId
-        """)
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	List<Long> findPageIdsByBucketId(@Param("bucketId") long bucketId);
 
 	@Modifying
 	@Query(value = """
@@ -54,20 +38,20 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 			""", nativeQuery = true)
 	void markAllPagesImmutableByCollectionName(String collectionName);
 
-    @Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.immutable AS immutable, " +
-            "p.expiration AS expiration, " +
-            "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
-            "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN RelationEntity r ON p = r.fromPage " +
-            "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
-            "GROUP BY p.id, r.toPage.id " +
-            "HAVING COUNT(*) < :capacityPerPage")
-    List<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
-                                                                 @Param("viewName") String viewName,
-                                                                 @Param("capacityPerPage") Integer capacityPerPage);
+	@Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.immutable AS immutable, " +
+	               "p.expiration AS expiration, " +
+	               "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
+	               "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN RelationEntity r ON p = r.fromPage " +
+	               "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
+	               "GROUP BY p.id, r.toPage.id " +
+	               "HAVING COUNT(*) < :capacityPerPage")
+	List<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
+	                                                             @Param("viewName") String viewName,
+	                                                             @Param("capacityPerPage") Integer capacityPerPage);
 
-    @Modifying
-    @Query("DELETE FROM PageEntity p WHERE CAST(p.expiration AS timestamp) < CAST(:expiration AS timestamp)")
-    void deleteByExpirationBefore(@Param("expiration") LocalDateTime expiration);
+	@Modifying
+	@Query("DELETE FROM PageEntity p WHERE CAST(p.expiration AS timestamp) < CAST(:expiration AS timestamp)")
+	void deleteByExpirationBefore(@Param("expiration") LocalDateTime expiration);
 
 	@Modifying
 	@Query("UPDATE PageEntity p SET p.expiration = :expiration WHERE p.id IN :ids")

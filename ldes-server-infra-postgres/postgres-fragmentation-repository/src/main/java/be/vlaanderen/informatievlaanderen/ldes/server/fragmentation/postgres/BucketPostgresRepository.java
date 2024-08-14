@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
@@ -27,7 +26,6 @@ public class BucketPostgresRepository implements BucketRepository {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Optional<Bucket> retrieveBucket(ViewName viewName, BucketDescriptor bucketDescriptor) {
 		return bucketEntityRepository
 				.findBucketEntityByBucketDescriptor(viewName.asString(), bucketDescriptor.asDecodedString())
@@ -35,7 +33,7 @@ public class BucketPostgresRepository implements BucketRepository {
 	}
 
 	@Override
-	@Transactional(isolation = Isolation.SERIALIZABLE)
+	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
 		final String sql = """
 				    WITH ins AS (
@@ -65,7 +63,6 @@ public class BucketPostgresRepository implements BucketRepository {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Optional<Bucket> retrieveRootBucket(ViewName viewName) {
 		return bucketEntityRepository
 				.findBucketEntityByBucketDescriptor(viewName.asString(), "")
