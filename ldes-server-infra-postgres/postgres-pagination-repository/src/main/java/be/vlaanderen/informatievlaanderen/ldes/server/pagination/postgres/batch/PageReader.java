@@ -21,6 +21,7 @@ public class PageReader {
 	public ItemReader<Page> pageItemReader(DataSource dataSource,
 	                                       @Value("#{stepExecutionContext}") Map<String, Object> stepExecutionContext) {
 		return new JdbcPagingItemReaderBuilder<Page>()
+				.name("pageItemReader")
 				.dataSource(dataSource)
 				.queryProvider(openPageQuery())
 				.parameterValues(Map.of("bucket", stepExecutionContext.get("bucketId")))
