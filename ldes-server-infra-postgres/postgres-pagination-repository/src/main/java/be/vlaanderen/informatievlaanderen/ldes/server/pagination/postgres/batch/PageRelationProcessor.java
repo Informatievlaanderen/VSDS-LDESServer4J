@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class PageRelationProcessor implements ItemProcessor<Page, List<PageAssig
 	}
 
 	@Override
+	@Transactional
 	public List<PageAssignment> process(@NotNull Page page) {
 		// Get Items count to process
 		int unprocessedMemberCount = Objects.requireNonNull(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, page.getBucketId()));

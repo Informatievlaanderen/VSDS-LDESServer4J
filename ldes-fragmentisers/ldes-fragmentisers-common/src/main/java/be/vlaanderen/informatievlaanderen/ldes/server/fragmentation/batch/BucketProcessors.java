@@ -26,15 +26,4 @@ public class BucketProcessors {
 				.map(executor -> executor.bucketise(item))
 				.orElse(null);
 	}
-
-	@Bean
-	public ItemProcessor<FragmentationMember, List<BucketisedMember>> multiViewBucketProcessor(
-			FragmentationStrategyCollection fragmentationStrategyCollection
-	) {
-		return item -> fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(item.getCollectionName())
-				.parallelStream()
-				.map(executor -> executor.bucketise(item))
-				.flatMap(List::stream)
-				.toList();
-	}
 }

@@ -21,18 +21,21 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 	@Query(value = """
          select v.name, count(*)
          from page_members
-         JOIN buckets b on b.bucket_id = page_members.bucket_id
-         JOIN views v on v.view_id = b.view_id
-         group by v.name;
+                  JOIN buckets b on b.bucket_id = page_members.bucket_id
+                  JOIN views v on v.view_id = b.view_id
+                  JOIN collections c on c.collection_id = v.collection_id
+         WHERE c.name = :collectionName
+         group by v.name
         """, nativeQuery = true)
 	List<Tuple> getBucketisedMemberCounts(String collectionName);
 
 	@Query(value = """
 		  select v.name, count(*)
 		  from page_members
-		  JOIN public.buckets b on b.bucket_id = page_members.bucket_id
-		  JOIN public.views v on v.view_id = b.view_id
-		  WHERE page_id IS NOT NULL
+		  JOIN buckets b on b.bucket_id = page_members.bucket_id
+		  JOIN views v on v.view_id = b.view_id
+		  JOIN collections c on c.collection_id = v.collection_id
+		  WHERE page_id IS NOT NULL AND c.name = :collectionName
 		  group by v.name
 		""", nativeQuery = true)
 	List<Tuple> getPaginatedMemberCounts(String collectionName);

@@ -20,13 +20,19 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	@Query(value = """
 			   select col, view
-			   from (select c.name as col, v.name as view, max(pm.member_id) = (select max(member_id) from members) as keptUp
+			   from (select c.name as col, v.name as view, count(*), (select count(*) from members) , count(*) = (select count(*) from members) as keptUp
 			         from views v
 			                  JOIN collections c on v.collection_id = c.collection_id
-			                  JOIN buckets b on v.view_id = b.view_id
-			                  JOIN page_members pm on b.bucket_id = pm.bucket_id
+			                  LEFT JOIN buckets b on v.view_id = b.view_id
+			                  LEFT JOIN page_members pm on b.bucket_id = pm.bucket_id
+			         where pm.member_id IS NOT NULL
 			         GROUP BY c.name, v.name) as fragmentProcess
 			   where keptUp = false
+			   UNION
+			   select DISTINCT c.name as col, v.name as view from views v
+			       JOIN collections c on v.collection_id = c.collection_id
+			       LEFT OUTER JOIN buckets b ON b.view_id = v.view_id
+			       WHERE b.bucket_id IS NULL
 			""", nativeQuery = true)
 	List<Tuple> getUnprocessedCollections();
 

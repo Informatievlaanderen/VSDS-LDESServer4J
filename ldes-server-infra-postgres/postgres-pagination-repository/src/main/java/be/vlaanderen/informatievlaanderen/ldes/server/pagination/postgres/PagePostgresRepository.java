@@ -22,7 +22,8 @@ public class PagePostgresRepository implements PageRepository {
 	@Override
 	@Transactional
 	public void setChildrenImmutableByBucketId(long bucketId) {
-		pageEntityRepository.setAllChildrenImmutableByBucketId(bucketId);
+		List<Long> pageIds = pageEntityRepository.findPageIdsByBucketId(bucketId);
+		pageEntityRepository.setAllChildrenImmutable(pageIds);
 	}
 
     @Override
