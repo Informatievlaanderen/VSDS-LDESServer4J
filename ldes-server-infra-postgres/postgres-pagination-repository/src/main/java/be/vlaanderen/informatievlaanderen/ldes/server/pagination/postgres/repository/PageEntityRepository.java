@@ -16,6 +16,10 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	Optional<TreeNodeProjection> findTreeNodeByPartialUrl(String partialUrl);
 
 	@Modifying
+	@Query(value = "UPDATE pages SET immutable = true WHERE page_id = ?", nativeQuery = true)
+	void setPageImmutable(long pageId);
+
+	@Modifying
 	@Query(value = """
 			update pages set immutable = true
 			where page_id in (

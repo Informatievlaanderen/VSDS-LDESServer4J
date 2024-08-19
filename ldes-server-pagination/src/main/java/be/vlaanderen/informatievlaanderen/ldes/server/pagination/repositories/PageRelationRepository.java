@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import java.util.List;
 
 public interface PageRelationRepository {
+	void insertGenericBucketRelation(long fromPageId, long toPageId);
 	void insertBucketRelation(BucketRelation bucketRelation);
 
 	void updateCompactionBucketRelations(List<Long> compactedPageIds, long targetId);

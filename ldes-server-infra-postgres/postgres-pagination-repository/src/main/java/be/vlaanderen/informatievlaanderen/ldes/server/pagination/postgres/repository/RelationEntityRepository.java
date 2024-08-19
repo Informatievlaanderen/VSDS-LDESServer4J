@@ -13,6 +13,12 @@ public interface RelationEntityRepository extends JpaRepository<RelationEntity, 
 
 	@Modifying
 	@Query(value = """
+			INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, ?)
+			""", nativeQuery = true)
+	void insertRelation(Long fromPageId, Long toPageId, String treeRelationType);
+
+	@Modifying
+	@Query(value = """
 			INSERT INTO page_relations (from_page_id, to_page_id, relation_type, value, value_type, path)
 			SELECT (SELECT page_id FROM pages WHERE partial_url = :fromPagePartialUrl),
 			       (SELECT page_id FROM pages WHERE partial_url = :toPagePartialUrl),

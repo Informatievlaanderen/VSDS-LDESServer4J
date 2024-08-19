@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
@@ -53,8 +51,6 @@ class FragmentationServiceTest {
 	private Partitioner viewPartitioner;
 	@MockBean(name = "newMemberReader")
 	private ItemReader<FragmentationMember> newMemberReader;
-	@MockBean(name = "refragmentEventStream")
-	private ItemReader<FragmentationMember> rebucketiseMemberReader;
 	@MockBean
 	ItemWriter<List<BucketisedMember>> itemWriter;
 	@MockBean(name = "paginationStep")
@@ -100,10 +96,9 @@ class FragmentationServiceTest {
 
 		output.clear();
 
-		ViewSpecification newView = new ViewSpecification(ViewName.fromString(collectionName + "/v3"), List.of(), List.of(), 100);
 		mockBasicViews(3);
 
-		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
+		fragmentationService.scheduledJobLauncher();
 
 		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 	}
@@ -127,8 +122,6 @@ class FragmentationServiceTest {
 		final FragmentationMember[] additionalMembers = members.subList(1, 4).toArray(new FragmentationMember[4]);
 		additionalMembers[3] = null;
 		when(newMemberReader.read())
-				.thenReturn(firstMembers, additionalMembers);
-		when(rebucketiseMemberReader.read())
 				.thenReturn(firstMembers, additionalMembers);
 	}
 

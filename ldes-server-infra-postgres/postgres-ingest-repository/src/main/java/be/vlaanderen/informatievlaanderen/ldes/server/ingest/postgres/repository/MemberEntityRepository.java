@@ -19,32 +19,13 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	int countMemberEntitiesByColl(String collectionName);
 
 	@Query(value = """
-
-			WITH unprocessed AS (
-			    select m.collection_id, v.view_id, count(*)
-			    from members m
-			             LEFT JOIN views v on v.collection_id = m.collection_id
-			    WHERE not exists (select 1
-			                      from page_members pm
-			                               LEFT JOIN buckets b on b.bucket_id = pm.bucket_id
-			                               LEFT JOIN views v2 on b.view_id = v2.view_id
-			                      where pm.member_id = m.member_id
-			                        and v.view_id = v2.view_id
-			                        AND v2.collection_id = m.collection_id)
-			    OR EXISTS(select 1
-			              from page_members pm
-			                       LEFT JOIN buckets b on b.bucket_id = pm.bucket_id
-			                       LEFT JOIN views v2 on b.view_id = v2.view_id
-			              where pm.member_id = m.member_id
-			                and v.view_id = v2.view_id
-			                AND v2.collection_id = m.collection_id
-			              AND pm.page_id IS NULL)
-			    GROUP BY m.collection_id, v.view_id
-			    HAVING count(*) > 0
-			)
-			SELECT c.name, v.name from unprocessed u
-			LEFT JOIN collections c ON c.collection_id = u.collection_id
-			LEFT JOIN views v on v.view_id = u.view_id
+			select c.name, v.name, (ms.member_count - COALESCE(bs.bucketized,0)) + ps.unpaged as unprocessed, ms.member_count
+			from member_stats ms
+			inner join page_stats ps on ms.collection_id = ps.collection_id
+			left join bucket_stats bs on ms.collection_id = bs.collection_id and ps.view_id = bs.view_id
+			inner join collections c on ms.collection_id = c.collection_id
+			inner join views v on ps.view_id = v.view_id
+			where ((ms.member_count - COALESCE(bs.bucketized, 0)) + ps.unpaged) != 0
 			""", nativeQuery = true)
 	List<Tuple> getUnprocessedCollections();
 

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
@@ -14,6 +15,12 @@ public class PageRelationPostgresRepository implements PageRelationRepository {
 
 	public PageRelationPostgresRepository(RelationEntityRepository relationEntityRepository) {
 		this.relationEntityRepository = relationEntityRepository;
+	}
+
+	@Override
+	@Transactional
+	public void insertGenericBucketRelation(long fromPageId, long toPageId) {
+		relationEntityRepository.insertRelation(fromPageId, toPageId, RdfConstants.GENERIC_TREE_RELATION);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class PageAssignmentsWriter implements ItemWriter<List<PageAssignment>> {
 	static final String SQL = """
 			UPDATE page_members
 			SET page_id = ?
-			WHERE (bucket_id, member_id) IN (SELECT bucket_id, member_id FROM page_members WHERE bucket_id = ? AND page_id IS NULL LIMIT ?)
+			WHERE (bucket_id, member_id) IN (SELECT bucket_id, member_id FROM page_members WHERE bucket_id = ? AND page_id IS NULL ORDER BY page_members.member_id LIMIT ?)
 			""";
 	private final JdbcTemplate jdbcTemplate;
 

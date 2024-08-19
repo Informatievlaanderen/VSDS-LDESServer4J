@@ -45,7 +45,7 @@ public class FragmentationService {
 		this.jobRepository = jobRepository;
 		this.serverMetrics = serverMetrics;
 		this.memberRepository = memberRepository;
-		this.bucketiseJob = createJob(FRAGMENTATION_JOB, jobRepository, bucketiseMembersStep, paginationStep);
+		this.bucketiseJob = createJob(jobRepository, bucketiseMembersStep, paginationStep);
 		this.cleanupOldJobs();
 	}
 
@@ -79,8 +79,8 @@ public class FragmentationService {
 		return jobExplorer.findRunningJobExecutions(jobName).isEmpty();
 	}
 
-	private Job createJob(String jobName, JobRepository jobRepository, Step step, Step paginationStep) {
-		return new JobBuilder(jobName, jobRepository)
+	private Job createJob(JobRepository jobRepository, Step step, Step paginationStep) {
+		return new JobBuilder(FRAGMENTATION_JOB, jobRepository)
 				.start(step)
 				.next(paginationStep)
 				.build();
