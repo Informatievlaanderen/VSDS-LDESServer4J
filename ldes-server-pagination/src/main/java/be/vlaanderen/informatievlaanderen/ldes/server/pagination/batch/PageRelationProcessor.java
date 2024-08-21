@@ -1,22 +1,21 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.UnpagedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 @Component
-public class PageRelationProcessor implements ItemProcessor<List<Long>, List<PageAssignment>> {
-	static final String SELECT_UNPROCESSED_MEMBER_COUNT = "SELECT count(*) FROM page_members WHERE bucket_id = ? AND page_id IS NULL";
-//	static final String INSERT_PAGE_RELATION_SQL = "INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, '" + RdfConstants.GENERIC_TREE_RELATION + "')";
-
+public class PageRelationProcessor implements ItemProcessor<List<UnpagedMember>, List<PageAssignment>> {
 	private final PageRepository pageRepository;
 	private final PageRelationRepository pageRelationRepository;
 
@@ -26,18 +25,24 @@ public class PageRelationProcessor implements ItemProcessor<List<Long>, List<Pag
 	}
 
 	@Override
-	@Transactional
-	public List<PageAssignment> process(List<Long> items) throws Exception {
-		int unprocessedMemberCount = items.size();
-		Page pageToFill = pageRepository.getOpenPage(items.getFirst().intValue());
+	public List<PageAssignment> process(List<UnpagedMember> items) {
+		if (items.isEmpty()) {
+			return List.of();
+		}
 
+		Page pageToFill = pageRepository.getOpenPage(items.getFirst().bucketId());
+
+		Queue<UnpagedMember> unpagedMembers = new ArrayDeque<>(items);
 		List<PageAssignment> pageAssignments = new ArrayList<>();
 
-		while (0 < unprocessedMemberCount) {
+		while (!unpagedMembers.isEmpty()) {
 			pageToFill = getPageWithSpace(pageToFill);
-			int membersAdded = fillPage(pageToFill, unprocessedMemberCount);
-			unprocessedMemberCount -= membersAdded;
-			pageAssignments.add(new PageAssignment(pageToFill.getId(), pageToFill.getBucketId(), membersAdded));
+			int membersAdded = fillPage(pageToFill, unpagedMembers.size());
+			for (int i = 0; i < membersAdded; i++) {
+				UnpagedMember member = unpagedMembers.poll();
+				assert member != null;
+				pageAssignments.add(new PageAssignment(pageToFill.getId(), pageToFill.getBucketId(), member.memberId()));
+			}
 		}
 
 		return pageAssignments;

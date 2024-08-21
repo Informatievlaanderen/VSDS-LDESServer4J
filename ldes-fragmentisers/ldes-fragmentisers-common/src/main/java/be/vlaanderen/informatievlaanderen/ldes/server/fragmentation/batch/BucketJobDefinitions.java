@@ -25,7 +25,7 @@ import java.util.List;
 @Configuration
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_STEP = "bucketisation";
-	private static final int CHUNK_SIZE = 1000;
+	public static final int CHUNK_SIZE = 250;
 
 	@Bean(BUCKETISATION_STEP)
 	public Step bucketiseMembersStep(JobRepository jobRepository,

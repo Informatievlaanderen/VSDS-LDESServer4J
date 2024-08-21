@@ -1,24 +1,21 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PageRelationProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.UnpagedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PageRelationProcessor.INSERT_PAGE_RELATION_SQL;
-import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PageRelationProcessor.SELECT_UNPROCESSED_MEMBER_COUNT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -30,82 +27,87 @@ class PageRelationProcessorTest {
 	private static final long CHILD_PAGE_ID = PARENT_PAGE_ID + 1;
 
 	@Mock
-	private JdbcTemplate jdbcTemplate;
+	private PageRepository pageRepository;
+	@Mock
+	private PageRelationRepository pageRelationRepository;
 	@InjectMocks
 	private PageRelationProcessor pageRelationProcessor;
 
 	@Test
 	void given_FullPage_when_Process_then_CreateNewPage() {
-		final PageAssignment expectedPageAssignment = new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, UNPROCESSED_MEMBER_COUNT);
 		final Page parentPage = new Page(PARENT_PAGE_ID, BUCKET_ID, "/mobility-hindrances/by-page?pageNumber=2", PAGE_SIZE, PAGE_SIZE);
-		when(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID)).thenReturn(UNPROCESSED_MEMBER_COUNT);
-		when(jdbcTemplate.update(any(PreparedStatementCreator.class), any(GeneratedKeyHolder.class)))
-				.thenAnswer(invocationOnMock -> {
-					invocationOnMock.getArgument(1, GeneratedKeyHolder.class).getKeyList().add(Map.of("page_id", CHILD_PAGE_ID));
-					return 1;
-				});
+		when(pageRepository.getOpenPage(BUCKET_ID)).thenReturn(parentPage);
+		when(pageRepository.createPage(BUCKET_ID, parentPage.createChildPartialUrl().asString())).thenReturn((int) CHILD_PAGE_ID);
 
-		final List<PageAssignment> result = pageRelationProcessor.process(parentPage);
+		final List<PageAssignment> result = pageRelationProcessor.process(
+				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		verify(jdbcTemplate).update(INSERT_PAGE_RELATION_SQL, PARENT_PAGE_ID, CHILD_PAGE_ID);
-		assertThat(result).containsExactly(expectedPageAssignment);
+		verify(pageRepository).createPage(parentPage.getBucketId(), parentPage.createChildPartialUrl().asString());
+		verify(pageRelationRepository).insertGenericBucketRelation(eq(parentPage.getId()), anyLong());
+		assertThat(result).isNotNull();
+		assertThat(result)
+				.filteredOn("pageId", CHILD_PAGE_ID)
+				.filteredOn("bucketId", BUCKET_ID)
+				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
 	@Test
 	void given_RootPage_when_Process_then_CreateNewPage() {
-		final PageAssignment expectedPageAssignment = new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, UNPROCESSED_MEMBER_COUNT);
 		final Page rootPage = new Page(PARENT_PAGE_ID, BUCKET_ID, "/mobility-hindrances/by-page", PAGE_SIZE, 0);
-		when(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID)).thenReturn(UNPROCESSED_MEMBER_COUNT);
-		when(jdbcTemplate.update(any(PreparedStatementCreator.class), any(GeneratedKeyHolder.class)))
-				.thenAnswer(invocationOnMock -> {
-					invocationOnMock.getArgument(1, GeneratedKeyHolder.class).getKeyList().add(Map.of("page_id", CHILD_PAGE_ID));
-					return 1;
-				});
+		when(pageRepository.getOpenPage(BUCKET_ID)).thenReturn(rootPage);
+		when(pageRepository.createPage(BUCKET_ID, rootPage.createChildPartialUrl().asString())).thenReturn((int) CHILD_PAGE_ID);
 
-		final List<PageAssignment> result = pageRelationProcessor.process(rootPage);
+		final List<PageAssignment> result = pageRelationProcessor.process(
+				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		verify(jdbcTemplate).update(INSERT_PAGE_RELATION_SQL, PARENT_PAGE_ID, CHILD_PAGE_ID);
-		assertThat(result).containsExactly(expectedPageAssignment);
+		verify(pageRepository).createPage(rootPage.getBucketId(), rootPage.createChildPartialUrl().asString());
+		verify(pageRelationRepository).insertGenericBucketRelation(eq(rootPage.getId()), anyLong());
+		assertThat(result).isNotNull();
+		assertThat(result)
+				.filteredOn("pageId", CHILD_PAGE_ID)
+				.filteredOn("bucketId", BUCKET_ID)
+				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
 	@Test
 	void given_PageWithSpace_when_Process_then_UseExistingPage() {
-		final PageAssignment expectedPageAssignment = new PageAssignment(PARENT_PAGE_ID, BUCKET_ID, UNPROCESSED_MEMBER_COUNT);
 		final Page rootPage = new Page(PARENT_PAGE_ID, BUCKET_ID, "/mobility-hindrances/by-page?pageNumber=3", PAGE_SIZE, 100);
-		when(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID)).thenReturn(UNPROCESSED_MEMBER_COUNT);
+		when(pageRepository.getOpenPage(BUCKET_ID)).thenReturn(rootPage);
 
-		final List<PageAssignment> result = pageRelationProcessor.process(rootPage);
+		final List<PageAssignment> result = pageRelationProcessor.process(
+				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		verify(jdbcTemplate).queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID);
-		verifyNoMoreInteractions(jdbcTemplate);
-		assertThat(result).containsExactly(expectedPageAssignment);
+		assertThat(result).isNotNull();
+		assertThat(result)
+				.filteredOn("pageId", PARENT_PAGE_ID)
+				.filteredOn("bucketId", BUCKET_ID)
+				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
 	@Test
 	void given_PageWithInsufficientSpace_when_Process_then_UseBothExistingAndNewPage() {
 		final int alreadyAssignedMemberCount = 132;
-		final List<PageAssignment> expectedPageAssignments = List.of(
-				new PageAssignment(PARENT_PAGE_ID, BUCKET_ID, PAGE_SIZE - alreadyAssignedMemberCount),
-				new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, UNPROCESSED_MEMBER_COUNT - (PAGE_SIZE - alreadyAssignedMemberCount))
-		);
 		final Page page = new Page(PARENT_PAGE_ID, BUCKET_ID, "/mobility-hindrances/by-page?pageNumber=3", PAGE_SIZE, alreadyAssignedMemberCount);
-		when(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID)).thenReturn(UNPROCESSED_MEMBER_COUNT);
-		when(jdbcTemplate.update(any(PreparedStatementCreator.class), any(GeneratedKeyHolder.class)))
-				.thenAnswer(invocationOnMock -> {
-					invocationOnMock.getArgument(1, GeneratedKeyHolder.class).getKeyList().add(Map.of("page_id", CHILD_PAGE_ID));
-					return 1;
-				});
+		when(pageRepository.getOpenPage(BUCKET_ID)).thenReturn(page);
+		when(pageRepository.createPage(BUCKET_ID, page.createChildPartialUrl().asString())).thenReturn((int) CHILD_PAGE_ID);
 
-		final List<PageAssignment> result = pageRelationProcessor.process(page);
+		final List<PageAssignment> result = pageRelationProcessor.process(
+				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		assertThat(result).containsExactlyElementsOf(expectedPageAssignments);
+		assertThat(result).isNotNull();
+		assertThat(result)
+				.filteredOn("pageId", PARENT_PAGE_ID)
+				.filteredOn("bucketId", BUCKET_ID)
+				.hasSize(PAGE_SIZE - alreadyAssignedMemberCount);
+		assertThat(result)
+				.filteredOn("pageId", CHILD_PAGE_ID)
+				.filteredOn("bucketId", BUCKET_ID)
+				.hasSize(UNPROCESSED_MEMBER_COUNT - (PAGE_SIZE - alreadyAssignedMemberCount));
 	}
 
 	@Test
 	void given_ZeroAssignedMembers_when_Process_then_ReturnEmptyList() {
-		when(jdbcTemplate.queryForObject(SELECT_UNPROCESSED_MEMBER_COUNT, Integer.class, BUCKET_ID)).thenReturn(0);
-
-		final List<PageAssignment> result = pageRelationProcessor.process(new Page(PARENT_PAGE_ID, 12, (PartialUrl) null, PAGE_SIZE));
+		final List<PageAssignment> result = pageRelationProcessor.process(List.of());
 
 		assertThat(result).isEmpty();
 	}

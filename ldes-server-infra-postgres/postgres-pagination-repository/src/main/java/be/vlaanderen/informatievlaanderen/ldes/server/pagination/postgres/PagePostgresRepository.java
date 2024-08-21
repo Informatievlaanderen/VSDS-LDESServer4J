@@ -52,9 +52,9 @@ public class PagePostgresRepository implements PageRepository {
 	public int createPage(Long bucketId, String partialUrl) {
 		String sql = """
 				INSERT INTO pages (bucket_id, expiration, partial_url)
-				VALUES (?, NULL, ?)
-				ON CONFLICT DO NOTHING
-				RETURNING page_id
+                VALUES (?, NULL, ?)
+                ON CONFLICT (partial_url) DO UPDATE SET bucket_id = pages.bucket_id
+			    RETURNING page_id;
 				""";
 
 		return Objects.requireNonNull(jdbcTemplate.queryForObject(sql, Long.class, bucketId, partialUrl)).intValue();
