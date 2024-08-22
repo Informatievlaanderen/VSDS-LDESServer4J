@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface MemberMetricsRepository {
 	int getTotalCount(String collectionName);
-	List<ViewName> getUnprocessedCollections();
+	List<ViewName> getUnprocessedViews();
 }

@@ -3,56 +3,37 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketProcessors;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.test.JobRepositoryTestUtils;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.LongStream;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.COLLECTION_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.VIEW_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBatchTest
 @EnableAutoConfiguration
-@ActiveProfiles("test")
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessors.class, BucketJobDefinitions.class })
-@TestPropertySource(properties = { "spring.batch.jdbc.initialize-schema=always", "ldes-server.fragmentation-cron=*/1 * * * * *"})
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class })
+@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *"})
 class FragmentationServiceTest {
-	private static final int FRAGMENTATION_INTERVAL = 1000;
-
-
-	@MockBean(name = "viewPartitioner")
-	private Partitioner viewPartitioner;
-	@MockBean(name = "newMemberReader")
-	private ItemReader<FragmentationMember> newMemberReader;
-	@MockBean
-	ItemWriter<List<BucketisedMember>> itemWriter;
+	@MockBean(name = BUCKETISATION_STEP)
+	Step bucketStep;
 	@MockBean(name = "paginationStep")
 	Step paginationStep;
 	@MockBean
@@ -61,76 +42,39 @@ class FragmentationServiceTest {
 	FragmentationStrategyCollection strategyCollection;
 	@MockBean
 	MemberMetricsRepository memberMetricsRepository;
+	@MockBean
+	JobLauncher jobLauncher;
 	@Autowired
 	private FragmentationService fragmentationService;
-	@Autowired
-	private JobRepositoryTestUtils jobRepositoryTestUtils;
 
+	@Test
+	void when_unprocessedViews_then_triggerJobsForEachView() throws Exception {
+		String COLLECTION = "collection";
 
-	private final String collectionName = "es";
-	private final EventStreamProperties eventStreamProperties = new EventStreamProperties(collectionName, "versionOfPath", "timestampPath", false);
-	private final String versionOf = "x";
-	private final List<BucketisedMember> output = new ArrayList<>();
+		when(memberMetricsRepository.getUnprocessedViews())
+				.thenReturn(List.of(new ViewName(COLLECTION, "v1"),
+						new ViewName(COLLECTION, "v2")));
 
-	@AfterEach
-	public void cleanUp() {
-		jobRepositoryTestUtils.removeJobExecutions();
+		fragmentationService.scheduledJobLauncher();
+
+		ArgumentCaptor<JobParameters> captor = ArgumentCaptor.forClass(JobParameters.class);
+		verify(jobLauncher, times(2)).run(any(), captor.capture());
+		assertThat(captor.getAllValues())
+				.extracting(obj -> obj.getString(COLLECTION_NAME), obj -> obj.getString(VIEW_NAME))
+				.containsExactlyInAnyOrder(
+						tuple(COLLECTION, "v1"),
+						tuple(COLLECTION, "v2")
+				);
 	}
 
 	@Test
-	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() throws Exception {
-		final List<FragmentationMember> members = LongStream.range(1, 5)
-				.mapToObj(id -> new FragmentationMember(id, "subject", versionOf, LocalDateTime.now(), eventStreamProperties, null))
-				.toList();
-
-		mockBasicViews(2);
-		mockReader(members);
-		mockWriter();
-
-		when(memberMetricsRepository.getUnprocessedCollections()).thenReturn(List.of(new ViewName("collection", "v")));
+	void when_noUnprocessedViews_then_triggerNone() {
+		when(memberMetricsRepository.getUnprocessedViews()).thenReturn(List.of());
 
 		fragmentationService.scheduledJobLauncher();
 
-		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS)
-				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
-
-		output.clear();
-
-		mockBasicViews(3);
-
-		fragmentationService.scheduledJobLauncher();
-
-		await().atMost(FRAGMENTATION_INTERVAL * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
-	}
-
-	private void mockBasicViews(int count) {
-		List<FragmentationStrategyBatchExecutor> fragmentationExecutors = new ArrayList<>();
-
-		for (int i = 1; i <= count; i++) {
-			final FragmentationStrategyBatchExecutor executor = mock(FragmentationStrategyBatchExecutor.class);
-			when(executor.bucketise(any())).thenReturn(List.of(
-					new BucketisedMember(1, 1)));
-			fragmentationExecutors.add(executor);
-			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
-		}
-
-		when(strategyCollection.getAllFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);
-	}
-
-	private void mockReader(List<FragmentationMember> members) throws Exception {
-		final FragmentationMember firstMembers = members.getFirst();
-		final FragmentationMember[] additionalMembers = members.subList(1, 4).toArray(new FragmentationMember[4]);
-		additionalMembers[3] = null;
-		when(newMemberReader.read())
-				.thenReturn(firstMembers, additionalMembers);
+		verifyNoInteractions(jobLauncher);
 	}
 
 
-	private void mockWriter() throws Exception {
-		doAnswer(invocation -> {
-			Chunk<List<BucketisedMember>> items = invocation.getArgument(0);
-			output.addAll(items.getItems().stream().flatMap(List::stream).toList());
-			return mock();
-		}).when(itemWriter).write(any());
-	}
 }

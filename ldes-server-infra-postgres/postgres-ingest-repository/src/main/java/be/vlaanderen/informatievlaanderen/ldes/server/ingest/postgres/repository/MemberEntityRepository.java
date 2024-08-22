@@ -27,7 +27,7 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 			inner join views v on ps.view_id = v.view_id
 			where ((ms.member_count - COALESCE(bs.bucketized, 0)) + ps.unpaged) != 0
 			""", nativeQuery = true)
-	List<Tuple> getUnprocessedCollections();
+	List<Tuple> getUnprocessedViews();
 
 	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
 			"FROM members " +

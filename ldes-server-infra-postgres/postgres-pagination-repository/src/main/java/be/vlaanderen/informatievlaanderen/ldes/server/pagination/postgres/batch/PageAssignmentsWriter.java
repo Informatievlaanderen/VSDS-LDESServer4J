@@ -5,6 +5,7 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -20,8 +21,25 @@ public class PageAssignmentsWriter implements ItemWriter<List<PageAssignment>> {
 			""";
 	private final JdbcBatchItemWriter<PageAssignment> delegateWriter;
 
-	public PageAssignmentsWriter(DataSource dataSource) {
-		this.delegateWriter = new JdbcBatchItemWriterBuilder<PageAssignment>()
+	public PageAssignmentsWriter(JdbcBatchItemWriter<PageAssignment> batchItemWriter) {
+		this.delegateWriter = batchItemWriter;
+	}
+
+	@Override
+	public void write(Chunk<? extends List<PageAssignment>> chunk) throws Exception {
+		var items = chunk.getItems()
+				.stream()
+				.flatMap(Collection::stream)
+				.toList();
+
+		if (!items.isEmpty()) {
+			delegateWriter.write(new Chunk<>(items));
+		}
+	}
+
+	@Bean
+	JdbcBatchItemWriter<PageAssignment> batchItemWriter(DataSource dataSource) {
+		return new JdbcBatchItemWriterBuilder<PageAssignment>()
 				.dataSource(dataSource)
 				.sql(SQL)
 				.itemPreparedStatementSetter((item, ps) -> {
@@ -32,12 +50,4 @@ public class PageAssignmentsWriter implements ItemWriter<List<PageAssignment>> {
 				.build();
 	}
 
-	@Override
-	public void write(Chunk<? extends List<PageAssignment>> chunk) throws Exception {
-		var items = chunk.getItems()
-				.stream()
-				.flatMap(Collection::stream)
-				.toList();
-		delegateWriter.write(new Chunk<>(items));
-	}
 }

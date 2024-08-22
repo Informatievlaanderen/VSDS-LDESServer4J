@@ -52,7 +52,7 @@ public class FragmentationService {
 	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduledJobLauncher() {
 		if (noJobsRunning(FRAGMENTATION_JOB) && noJobsRunning(REFRAGMENTATION_JOB)) {
-			memberRepository.getUnprocessedCollections()
+			memberRepository.getUnprocessedViews()
 					.parallelStream()
 					.forEach(viewName -> {
 						try {

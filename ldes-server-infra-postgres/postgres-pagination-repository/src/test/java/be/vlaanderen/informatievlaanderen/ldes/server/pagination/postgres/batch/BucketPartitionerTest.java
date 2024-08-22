@@ -39,8 +39,8 @@ class BucketPartitionerTest {
 	@ParameterizedTest
 	void test_Partition(List<Long> bucketIds) {
 		final Map<String, ExecutionContext> expectedContexts = bucketIds.stream()
-						.collect(Collectors.toMap("bucket: %d"::formatted, id -> new ExecutionContext(Map.of("bucket_id", id))));
-		when(jdbcTemplate.queryForList(SQL, Long.class, GRID_SIZE)).thenReturn(bucketIds);
+						.collect(Collectors.toMap("bucket:%d"::formatted, id -> new ExecutionContext(Map.of("bucket_id", id))));
+		when(jdbcTemplate.queryForList(SQL, Long.class)).thenReturn(bucketIds);
 
 		final Map<String, ExecutionContext> contexts = bucketPartitioner.partition(GRID_SIZE);
 

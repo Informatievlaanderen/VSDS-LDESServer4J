@@ -24,8 +24,8 @@ public class IngestMetricsPostgresRepository implements MemberMetricsRepository 
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ViewName> getUnprocessedCollections() {
-		return repository.getUnprocessedCollections()
+	public List<ViewName> getUnprocessedViews() {
+		return repository.getUnprocessedViews()
 				.stream()
 				.map(tuple -> new ViewName(tuple.get(0, String.class), tuple.get(1, String.class)))
 				.toList();
