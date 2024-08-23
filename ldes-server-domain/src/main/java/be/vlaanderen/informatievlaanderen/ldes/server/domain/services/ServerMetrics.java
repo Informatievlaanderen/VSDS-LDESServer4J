@@ -35,6 +35,7 @@ public class ServerMetrics {
 	}
 
 	public synchronized void incrementIngestCount(String collection, int count) {
+		System.out.println(collection);
 		membersIngested.computeIfAbsent(collection, s ->
 				Metrics.gauge(INGEST, Tags.of("collection", collection),
 						new AtomicInteger(0)));

@@ -1,28 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.BucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.BucketMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.BucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class BucketPostgresRepository implements BucketRepository {
+	private final ViewEntityRepository viewEntityRepository;
 	private final BucketEntityRepository bucketEntityRepository;
-	private final NamedParameterJdbcTemplate jdbcTemplate;
 
-	public BucketPostgresRepository(BucketEntityRepository bucketEntityRepository, NamedParameterJdbcTemplate jdbcTemplate) {
+	public BucketPostgresRepository(ViewEntityRepository viewEntityRepository, BucketEntityRepository bucketEntityRepository) {
+		this.viewEntityRepository = viewEntityRepository;
 		this.bucketEntityRepository = bucketEntityRepository;
-		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
@@ -35,28 +35,14 @@ public class BucketPostgresRepository implements BucketRepository {
 	@Override
 	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
-		final String sql = """
-				    WITH ins AS (
-				        INSERT INTO buckets (bucket, view_id)
-				                SELECT :bucket, v.view_id
-				                FROM views v
-				                INNER JOIN collections c ON c.name = :collectionName AND c.collection_id = v.collection_id
-				                WHERE v.name = :viewName
-				                ON CONFLICT (bucket, view_id) DO UPDATE SET bucket = EXCLUDED.bucket
-				                RETURNING bucket_id
-				          )
-				          SELECT bucket_id FROM ins
-				""";
+		ViewEntity view = viewEntityRepository.findByViewName(bucket.getViewName().getCollectionName(), bucket.getViewName().getViewName())
+				.orElseThrow();
 
-		MapSqlParameterSource params = new MapSqlParameterSource(Map.of(
-				"bucket", bucket.getBucketDescriptorAsString(),
-				"viewName", bucket.getViewName().getViewName(),
-				"collectionName", bucket.getViewName().getCollectionName()
-		));
+		BucketEntity bucketEntity = new BucketEntity(null, view, bucket.getBucketDescriptorAsString());
+		bucketEntity = bucketEntityRepository.save(bucketEntity);
 
-		Long bucketId = jdbcTemplate.queryForObject(sql, params, Long.class);
 		return new Bucket(
-				Objects.requireNonNull(bucketId),
+				Objects.requireNonNull(bucketEntity.getBucketId()),
 				bucket.getBucketDescriptor(),
 				bucket.getViewName()
 		);

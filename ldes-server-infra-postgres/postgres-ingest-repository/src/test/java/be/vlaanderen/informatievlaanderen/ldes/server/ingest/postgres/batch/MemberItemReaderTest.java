@@ -6,17 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.scope.context.StepContext;
-import org.springframework.batch.core.scope.context.StepSynchronizationManager;
+import org.springframework.batch.core.scope.context.JobContext;
+import org.springframework.batch.core.scope.context.JobSynchronizationManager;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.test.StepScopeTestExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = {MemberItemReader.class})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemberItemReaderTest {
 	private static final String SUBJECT_TEMPLATE = "http://test-data/mobility-hindrance/1/";
 	private static final LocalDateTime START_TIME = LocalDateTime.now();
@@ -58,8 +56,6 @@ class MemberItemReaderTest {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private ItemReader<FragmentationMember> newMemberReader;
-	@Autowired
-	private ItemReader<FragmentationMember> refragmentEventStream;
 
 	@BeforeEach
 	void setUp() {
@@ -72,7 +68,8 @@ class MemberItemReaderTest {
 				INSERT INTO views VALUES (2, 1, 'paged', '[]', '', 300);
 				
 				INSERT INTO buckets VALUES (1, '', 1);
-				INSERT INTO buckets VALUES (2, '', 2)""";
+				INSERT INTO buckets VALUES (2, '', 2);
+				""";
 
 		jdbcTemplate.update(sql);
 	}
@@ -84,19 +81,9 @@ class MemberItemReaderTest {
 
 	@Test
 	void given_EmptyMembersTable_when_ReadNewMembers_then_ReturnNull() throws Exception {
-		setupStepScope();
+		setupJobScope(COLLECTION_NAME, VIEW_NAME);
 
 		final FragmentationMember result = newMemberReader.read();
-
-		assertThat(result).isNull();
-	}
-
-
-	@Test
-	void given_EmptyMembersTable_when_RefragmentMembers_then_ReturnNull() throws Exception {
-		setupStepScope(COLLECTION_NAME, VIEW_NAME);
-
-		final FragmentationMember result = refragmentEventStream.read();
 
 		assertThat(result).isNull();
 	}
@@ -105,47 +92,29 @@ class MemberItemReaderTest {
 	@ValueSource(strings = {"fantasy/non-existing", "mobility-hindrances/fantasy-view", "fantasy/by-page"})
 	void given_AbsentCollectionsAndViews_when_RefragmentMembers_then_ReturnNull(String viewNameAsString) throws Exception {
 		final ViewName viewName = ViewName.fromString(viewNameAsString);
-		setupStepScope(viewName.getCollectionName(), viewName.getViewName());
+		setupJobScope(viewName.getCollectionName(), viewName.getViewName());
 
-		final FragmentationMember result = refragmentEventStream.read();
+		final FragmentationMember result = newMemberReader.read();
 
 		assertThat(result).isNull();
 	}
 
+	@Order(1)
 	@Test
 	void given_MembersPresentInDb_test_ReadNewMembers() throws Exception {
 		int count = 5;
-		insertMembers(count);
-		setupStepScope();
-
-		final List<FragmentationMember> readMembers = new ArrayList<>();
-		do {
-			readMembers.add(newMemberReader.read());
-		} while (!readMembers.remove(null));
-
-		assertThat(readMembers)
-				.hasSize(count * 2)
-				.filteredOn(member -> member.getMemberId() == 1)
-				.hasSize(2)
-				.first()
-				.usingRecursiveComparison()
-				.ignoringFields("model", "timestamp")
-				.isEqualTo(expectedMember())
-				.asInstanceOf(InstanceOfAssertFactories.type(FragmentationMember.class))
-				.extracting("timestamp", InstanceOfAssertFactories.LOCAL_DATE_TIME)
-				.isEqualToIgnoringNanos(START_TIME);
-	}
-
-	@Test
-	void given_MembersPresentInDb_test_ReadRefragmentation() throws Exception {
-		int count = 5;
-		setupStepScope(COLLECTION_NAME, VIEW_NAME);
+		setupJobScope(COLLECTION_NAME, VIEW_NAME);
 		insertMembers(count);
 
 		final List<FragmentationMember> readMembers = new ArrayList<>();
+		FragmentationMember member;
 		do {
-			readMembers.add(refragmentEventStream.read());
-		} while (!readMembers.remove(null));
+			member = newMemberReader.read();
+			if (member != null) {
+				readMembers.add(member);
+			}
+
+		} while (member != null);
 
 		assertThat(readMembers)
 				.hasSize(count)
@@ -159,23 +128,19 @@ class MemberItemReaderTest {
 				.isEqualToIgnoringNanos(START_TIME);
 	}
 
-	private void setupStepScope() {
-		setupStepScope(new JobParameters());
-	}
-
-	private void setupStepScope(String collectionName, String viewName) {
+	private void setupJobScope(String collectionName, String viewName) {
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("collectionName", collectionName)
 				.addString("viewName", viewName)
 				.toJobParameters();
-		setupStepScope(jobParameters);
+		setupJobScope(jobParameters);
 	}
 
-	private void setupStepScope(JobParameters jobParameters) {
-		StepExecution stepExecution = new StepExecution("step", new JobExecution(1L, jobParameters), 1L);
-		StepSynchronizationManager.register(stepExecution);
-		StepContext stepContext = new StepContext(stepExecution);
-		stepContext.setAttribute("refragmentEventStream", refragmentEventStream);
+	private void setupJobScope(JobParameters jobParameters) {
+		JobExecution jobExecution = new JobExecution(1L, jobParameters);
+		JobSynchronizationManager.register(jobExecution);
+		JobContext jobContext = new JobContext(jobExecution);
+		jobContext.setAttribute("memberReader", newMemberReader);
 	}
 
 	private void insertMembers(int count) {

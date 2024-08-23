@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.FragmentationMemberRowMapper;
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
@@ -20,7 +20,7 @@ public class MemberItemReader {
 	private static final int PAGE_SIZE = 500;
 
 	@Bean
-	@StepScope
+	@JobScope
 	public JdbcPagingItemReader<FragmentationMember> memberReader(@Value("#{jobParameters}") Map<String, Object> jobParameters,
 	                                                              DataSource dataSource) {
 		return new JdbcPagingItemReaderBuilder<FragmentationMember>()
