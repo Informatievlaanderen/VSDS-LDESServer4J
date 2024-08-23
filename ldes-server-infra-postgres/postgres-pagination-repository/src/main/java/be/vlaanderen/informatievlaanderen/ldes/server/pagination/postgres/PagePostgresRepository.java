@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PaginationRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
-import jakarta.persistence.LockModeType;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +46,6 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	@Transactional
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	public int createPage(Long bucketId, String partialUrl) {
 		String sql = """
 				INSERT INTO pages (bucket_id, expiration, partial_url)
@@ -68,7 +65,6 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	@Transactional
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	public void setChildrenImmutableByBucketId(long bucketId) {
 		pageEntityRepository.setAllChildrenImmutableByBucketId(bucketId);
 	}
