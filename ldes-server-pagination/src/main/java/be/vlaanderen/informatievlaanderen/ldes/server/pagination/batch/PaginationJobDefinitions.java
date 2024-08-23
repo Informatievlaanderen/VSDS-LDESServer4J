@@ -34,7 +34,7 @@ public class PaginationJobDefinitions {
 		return new StepBuilder(PAGINATION_STEP, jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<List<UnpagedMember>, List<PageAssignment>>chunk(CHUNK_SIZE, transactionManager)
+						.<List<UnpagedMember>, List<PageAssignment>>chunk(1, transactionManager)
 						.reader(pageItemReader)
 						.processor(pageRelationsProcessor)
 						.writer(memberAssigner)

@@ -22,7 +22,7 @@ class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 
 	@Test
 	@Sql("./init-writer-test.sql")
-	void testWriter() {
+	void testWriter() throws Exception {
 		List<BucketisedMember> bucketisedMembers = initBucketisedMembers();
 		writer.write(Chunk.of(List.of(bucketisedMembers.get(0), bucketisedMembers.get(1)),
 				List.of(bucketisedMembers.get(2))));
