@@ -20,5 +20,4 @@ spring:
 
 logging:
   level:
-    org.springframework.batch.core.step: WARN
-    org.springframework.batch.core.job.SimpleStepHandler: WARN
+    org.springframework.batch.core: WARN

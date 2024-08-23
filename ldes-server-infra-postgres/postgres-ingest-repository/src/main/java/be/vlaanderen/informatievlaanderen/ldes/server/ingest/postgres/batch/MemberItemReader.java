@@ -50,7 +50,7 @@ public class MemberItemReader {
 				        JOIN views v ON v.view_id = b.view_id AND v.collection_id = c.collection_id
 				        WHERE mb.member_id = m.member_id
 				      )
-				      AND v.name = :viewName  AND c.name = :collectionName
+				      AND v.name = :viewName AND c.name = :collectionName
 				""");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;

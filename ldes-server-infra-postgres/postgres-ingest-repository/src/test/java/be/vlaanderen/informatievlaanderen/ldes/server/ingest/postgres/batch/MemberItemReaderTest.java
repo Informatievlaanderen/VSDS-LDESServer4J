@@ -12,10 +12,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.scope.context.JobContext;
-import org.springframework.batch.core.scope.context.JobSynchronizationManager;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.scope.context.StepContext;
+import org.springframework.batch.core.scope.context.StepSynchronizationManager;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.test.StepScopeTestExecutionListener;
+import org.springframework.batch.test.JobScopeTestExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableAutoConfiguration
 @SpringBootTest
-@TestExecutionListeners(listeners = {StepScopeTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
+@TestExecutionListeners(listeners = {JobScopeTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = {MemberItemReader.class})
@@ -81,7 +82,7 @@ class MemberItemReaderTest {
 
 	@Test
 	void given_EmptyMembersTable_when_ReadNewMembers_then_ReturnNull() throws Exception {
-		setupJobScope(COLLECTION_NAME, VIEW_NAME);
+		setupStepScope(COLLECTION_NAME, VIEW_NAME);
 
 		final FragmentationMember result = newMemberReader.read();
 
@@ -92,7 +93,7 @@ class MemberItemReaderTest {
 	@ValueSource(strings = {"fantasy/non-existing", "mobility-hindrances/fantasy-view", "fantasy/by-page"})
 	void given_AbsentCollectionsAndViews_when_RefragmentMembers_then_ReturnNull(String viewNameAsString) throws Exception {
 		final ViewName viewName = ViewName.fromString(viewNameAsString);
-		setupJobScope(viewName.getCollectionName(), viewName.getViewName());
+		setupStepScope(viewName.getCollectionName(), viewName.getViewName());
 
 		final FragmentationMember result = newMemberReader.read();
 
@@ -103,7 +104,7 @@ class MemberItemReaderTest {
 	@Test
 	void given_MembersPresentInDb_test_ReadNewMembers() throws Exception {
 		int count = 5;
-		setupJobScope(COLLECTION_NAME, VIEW_NAME);
+		setupStepScope(COLLECTION_NAME, VIEW_NAME);
 		insertMembers(count);
 
 		final List<FragmentationMember> readMembers = new ArrayList<>();
@@ -128,19 +129,19 @@ class MemberItemReaderTest {
 				.isEqualToIgnoringNanos(START_TIME);
 	}
 
-	private void setupJobScope(String collectionName, String viewName) {
+	private void setupStepScope(String collectionName, String viewName) {
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("collectionName", collectionName)
 				.addString("viewName", viewName)
 				.toJobParameters();
-		setupJobScope(jobParameters);
+		setupStepScope(jobParameters);
 	}
 
-	private void setupJobScope(JobParameters jobParameters) {
-		JobExecution jobExecution = new JobExecution(1L, jobParameters);
-		JobSynchronizationManager.register(jobExecution);
-		JobContext jobContext = new JobContext(jobExecution);
-		jobContext.setAttribute("memberReader", newMemberReader);
+	private void setupStepScope(JobParameters jobParameters) {
+		StepExecution stepExecution = new StepExecution("step", new JobExecution(1L, jobParameters), 1L);
+		StepSynchronizationManager.register(stepExecution);
+		StepContext stepContext = new StepContext(stepExecution);
+		stepContext.setAttribute("memberReader", newMemberReader);
 	}
 
 	private void insertMembers(int count) {
