@@ -6,7 +6,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.batch.core.JobExecution;
@@ -16,7 +18,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.core.scope.context.StepSynchronizationManager;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.test.JobScopeTestExecutionListener;
+import org.springframework.batch.test.StepScopeTestExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,11 +38,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableAutoConfiguration
 @SpringBootTest
-@TestExecutionListeners(listeners = {JobScopeTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
+@TestExecutionListeners(listeners = {StepScopeTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = {MemberItemReader.class})
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemberItemReaderTest {
 	private static final String SUBJECT_TEMPLATE = "http://test-data/mobility-hindrance/1/";
 	private static final LocalDateTime START_TIME = LocalDateTime.now();
@@ -100,7 +101,6 @@ class MemberItemReaderTest {
 		assertThat(result).isNull();
 	}
 
-	@Order(1)
 	@Test
 	void given_MembersPresentInDb_test_ReadNewMembers() throws Exception {
 		int count = 5;
