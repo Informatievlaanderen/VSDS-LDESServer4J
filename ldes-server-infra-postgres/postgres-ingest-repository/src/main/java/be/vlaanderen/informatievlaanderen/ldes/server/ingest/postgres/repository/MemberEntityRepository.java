@@ -10,11 +10,11 @@ import java.util.List;
 public interface MemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
 	@Query(value = """
-					select count(*)
-			           from members m
-			        INNER JOIN public.collections c on c.collection_id = m.collection_id
-			        WHERE c.name = :collectionName
-			        LIMIT 1
+			select count(*)
+			from members m
+			INNER JOIN public.collections c on c.collection_id = m.collection_id
+			WHERE c.name = :collectionName
+			LIMIT 1
 			""", nativeQuery = true)
 	int countMemberEntitiesByColl(String collectionName);
 
