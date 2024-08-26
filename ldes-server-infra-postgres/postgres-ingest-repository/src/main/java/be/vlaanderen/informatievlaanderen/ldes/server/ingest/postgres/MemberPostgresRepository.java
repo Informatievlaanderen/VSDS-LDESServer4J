@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import io.micrometer.core.instrument.Metrics;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +16,6 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.PostgresIngestMemberConstants.LDES_SERVER_DELETED_MEMBERS_COUNT;
 
 @Repository
 public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
@@ -92,7 +89,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	@Transactional
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(subjects.size());
 	}
 
 	@Override

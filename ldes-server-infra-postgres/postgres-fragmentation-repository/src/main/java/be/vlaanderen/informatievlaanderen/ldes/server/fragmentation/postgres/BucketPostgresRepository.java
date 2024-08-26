@@ -1,30 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.BucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.BucketMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.BucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class BucketPostgresRepository implements BucketRepository {
+	private final ViewEntityRepository viewEntityRepository;
 	private final BucketEntityRepository bucketEntityRepository;
-	private final NamedParameterJdbcTemplate jdbcTemplate;
 
-	public BucketPostgresRepository(BucketEntityRepository bucketEntityRepository, NamedParameterJdbcTemplate jdbcTemplate) {
+	public BucketPostgresRepository(ViewEntityRepository viewEntityRepository, BucketEntityRepository bucketEntityRepository) {
+		this.viewEntityRepository = viewEntityRepository;
 		this.bucketEntityRepository = bucketEntityRepository;
-		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
@@ -37,18 +35,14 @@ public class BucketPostgresRepository implements BucketRepository {
 	@Override
 	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		final String sql = """
-				WITH view_names AS (SELECT v.view_id, concat(c.name, '/' , v.name) AS view_name FROM views v JOIN collections c ON v.collection_id = c.collection_id)
-				INSERT INTO buckets (bucket, view_id) SELECT :bucket, v.view_id FROM view_names v WHERE v.view_name = :viewName
-				""";
-		MapSqlParameterSource params = new MapSqlParameterSource(Map.of(
-				"bucket", bucket.getBucketDescriptorAsString(),
-				"viewName", bucket.getViewName().asString()
-		));
-		jdbcTemplate.update(sql, params, keyHolder, new String[]{"bucket_id"});
+		ViewEntity view = viewEntityRepository.findByViewName(bucket.getViewName().getCollectionName(), bucket.getViewName().getViewName())
+				.orElseThrow();
+
+		BucketEntity bucketEntity = new BucketEntity(null, view, bucket.getBucketDescriptorAsString());
+		bucketEntity = bucketEntityRepository.save(bucketEntity);
+
 		return new Bucket(
-				Objects.requireNonNull(keyHolder.getKeyAs(Long.class)),
+				Objects.requireNonNull(bucketEntity.getBucketId()),
 				bucket.getBucketDescriptor(),
 				bucket.getViewName()
 		);

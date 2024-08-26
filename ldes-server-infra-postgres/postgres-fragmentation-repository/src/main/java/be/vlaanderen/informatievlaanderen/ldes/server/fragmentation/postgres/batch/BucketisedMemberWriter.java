@@ -3,7 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -11,29 +14,41 @@ import java.util.List;
 
 @Component
 public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
-	private static final String SQL = """
-			INSERT INTO page_members (bucket_id, member_id)
-			VALUES (?, ?)
-			ON CONFLICT DO NOTHING;
-			""";
+	private final JdbcBatchItemWriter<BucketisedMember> delegateWriter;
 
-	private final JdbcTemplate jdbcTemplate;
-
-	public BucketisedMemberWriter(DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	public BucketisedMemberWriter(JdbcBatchItemWriter<BucketisedMember> delegateWriter) {
+		this.delegateWriter = delegateWriter;
 	}
 
 	@Override
-	public void write(Chunk<? extends List<BucketisedMember>> chunk) {
+	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
 		Chunk<BucketisedMember> bucketisedMembers = new Chunk<>(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
 				.toList());
 
-		final List<Object[]> batchArgs = bucketisedMembers.getItems().stream()
-				.map(bucketisedMember -> new Object[]{bucketisedMember.bucketId(), bucketisedMember.memberId()})
-				.toList();
+		if (!bucketisedMembers.isEmpty()) {
+			delegateWriter.write(bucketisedMembers);
+		}
+	}
 
-		jdbcTemplate.batchUpdate(SQL, batchArgs);
+	@Configuration
+	public static class BatchBucketWriterConfig {
+		private static final String SQL = """
+				 INSERT INTO page_members (bucket_id, member_id)
+				 VALUES (?, ?)
+				""";
+
+		@Bean
+		JdbcBatchItemWriter<BucketisedMember> batchBucketWriter(DataSource dataSource) {
+			return new JdbcBatchItemWriterBuilder<BucketisedMember>()
+					.dataSource(dataSource)
+					.sql(SQL)
+					.itemPreparedStatementSetter((item, ps) -> {
+						ps.setLong(1, item.bucketId());
+						ps.setLong(2, item.memberId());
+					})
+					.build();
+		}
 	}
 }

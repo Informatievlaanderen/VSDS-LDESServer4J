@@ -14,6 +14,7 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
+      isolation-level-for-create: READ_COMMITTED
   liquibase:
     change-log: classpath:/db/changelog/master.xml
 

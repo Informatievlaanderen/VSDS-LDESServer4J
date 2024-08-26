@@ -46,10 +46,16 @@ public class Page {
 	}
 
 	public int getAvailableMemberSpace() {
+		if (pageSize - assignedMemberCount < 0) {
+			throw new IllegalArgumentException("Available member count is less than zero");
+		}
 		return pageSize - assignedMemberCount;
 	}
 
 	public void incrementAssignedMemberCount(int assignedMemberCount) {
+		if (this.assignedMemberCount + assignedMemberCount > this.pageSize) {
+			throw new IllegalArgumentException("Newly assigned member count exceeds page size");
+		}
 		this.assignedMemberCount += assignedMemberCount;
 	}
 

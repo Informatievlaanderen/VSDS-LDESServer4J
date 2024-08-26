@@ -1,5 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetricsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.BucketisedMemberWriter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -29,10 +33,12 @@ import static org.mockito.Mockito.mock;
 @ActiveProfiles("postgres-test")
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @ComponentScan(basePackages = {
-		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation",
-		"be.vlaanderen.informatievlaanderen.ldes.server.ingest",
-		"be.vlaanderen.informatievlaanderen.ldes.server.retention",
+		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain"
+})
+@EnableJpaRepositories(basePackages = {
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view",
+		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres"
 })
 @ContextConfiguration(classes = {BucketisedMemberWriter.class})
 @Import(PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class)
@@ -52,6 +58,11 @@ public class PostgresBucketisationIntegrationTest {
 		@Bean
 		public MemberPropertiesRepository memberPropertiesRepository() {
 			return mock(MemberPropertiesRepository.class);
+		}
+
+		@Bean
+		ServerMetrics serverMetrics() {
+			return new ServerMetrics(mock(FragmentationMetricsRepository.class), mock(MemberMetricsRepository.class));
 		}
 	}
 }

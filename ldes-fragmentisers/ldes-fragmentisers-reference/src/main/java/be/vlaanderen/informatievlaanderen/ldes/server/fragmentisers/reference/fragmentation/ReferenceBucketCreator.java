@@ -4,15 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
-import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategy.REFERENCE_FRAGMENTATION;
 
 public class ReferenceBucketCreator {
 
@@ -41,7 +36,7 @@ public class ReferenceBucketCreator {
 					} else {
 						relationsAttributer.addRelationFromRootToBottom(rootBucket, childBucket);
 					}
-					logBucketation(parentBucket, childBucket);
+					LOGGER.debug("Reference fragment created with id: {}", childBucket.getBucketDescriptorAsString());
 					return childBucket;
 				});
 	}
@@ -52,16 +47,9 @@ public class ReferenceBucketCreator {
 				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
 				.orElseGet(() -> {
 					final Bucket childBucket = fragmentRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
-					logBucketation(parentBucket, childBucket);
+					LOGGER.debug("Reference fragment created with id: {}", childBucket.getBucketDescriptorAsString());
 					return childBucket;
 				});
-	}
-
-	private void logBucketation(Bucket parentBucket, Bucket child) {
-		String viewName = parentBucket.getViewName().asString();
-		Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT,
-				VIEW, viewName, FRAGMENTATION_STRATEGY, REFERENCE_FRAGMENTATION).increment();
-		LOGGER.debug("Reference fragment created with id: {}", child.getBucketDescriptorAsString());
 	}
 
 }

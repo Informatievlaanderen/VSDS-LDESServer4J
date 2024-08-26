@@ -1,20 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PageAssignmentsWriter.SQL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.assertArg;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -25,41 +24,42 @@ class PageAssignmentsWriterTest {
 	private static final long CHILD_PAGE_ID = 12345;
 
 	@Mock
-	private JdbcTemplate jdbcTemplate;
-	@InjectMocks
+	private JdbcBatchItemWriter<PageAssignment> delegateWriter;
 	private PageAssignmentsWriter pageAssignmentsWriter;
+	@Captor
+	private ArgumentCaptor<Chunk<? extends PageAssignment>> captor;
+
+	@BeforeEach
+	public void setup() {
+		pageAssignmentsWriter = new PageAssignmentsWriter(delegateWriter);
+	}
 
 	@Test
-	void test_write() {
+	void test_write() throws Exception {
 		Chunk<List<PageAssignment>> chunk = Chunk.of(
-				List.of(new PageAssignment(PAGE_ID, BUCKET_ID, 34),
-						new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, 12))
-		);
-		final List<Object[]> batchArgs = List.of(
-				new Object[]{PAGE_ID, BUCKET_ID, 34},
-				new Object[]{CHILD_PAGE_ID, BUCKET_ID, 12}
+				List.of(new PageAssignment(PAGE_ID, BUCKET_ID, 1),
+						new PageAssignment(PAGE_ID, BUCKET_ID, 2)),
+				List.of(new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, 3),
+						new PageAssignment(CHILD_PAGE_ID, BUCKET_ID, 4))
 		);
 
 		pageAssignmentsWriter.write(chunk);
 
-		verify(jdbcTemplate).batchUpdate(eq(SQL), assertArg((List<Object[]> actual) -> {
-			assertThat(actual)
-					.usingRecursiveComparison()
-					.isEqualTo(batchArgs);
-		}));
+		verify(delegateWriter).write(captor.capture());
+		assertThat(captor.getValue().size()).isEqualTo(4);
 	}
 
 	@Test
-	void given_emptyChunk_test_write() {
+	void given_emptyChunk_test_write() throws Exception {
 		pageAssignmentsWriter.write(new Chunk<>());
 
-		verifyNoInteractions(jdbcTemplate);
+		verifyNoInteractions(delegateWriter);
 	}
 
 	@Test
-	void given_chunkWithEmptyLists_test_write() {
+	void given_chunkWithEmptyLists_test_write() throws Exception {
 		pageAssignmentsWriter.write(Chunk.of(List.of()));
 
-		verifyNoInteractions(jdbcTemplate);
+		verifyNoInteractions(delegateWriter);
 	}
 }

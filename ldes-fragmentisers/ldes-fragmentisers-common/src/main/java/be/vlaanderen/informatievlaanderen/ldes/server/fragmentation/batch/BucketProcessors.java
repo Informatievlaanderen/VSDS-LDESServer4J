@@ -16,7 +16,7 @@ import java.util.List;
 public class BucketProcessors {
 	@Bean
 	@StepScope
-	public ItemProcessor<FragmentationMember, List<BucketisedMember>> singleViewBucketProcessor(
+	public ItemProcessor<FragmentationMember, List<BucketisedMember>> viewBucketProcessor(
 			FragmentationStrategyCollection fragmentationStrategyCollection,
 			@Value("#{jobParameters['collectionName']}") String collectionName,
 			@Value("#{jobParameters['viewName']}") String viewName
@@ -25,16 +25,5 @@ public class BucketProcessors {
 		return item -> fragmentationStrategyCollection.getFragmentationStrategyExecutor(composedViewName)
 				.map(executor -> executor.bucketise(item))
 				.orElse(null);
-	}
-
-	@Bean
-	public ItemProcessor<FragmentationMember, List<BucketisedMember>> multiViewBucketProcessor(
-			FragmentationStrategyCollection fragmentationStrategyCollection
-	) {
-		return item -> fragmentationStrategyCollection.getAllFragmentationStrategyExecutors(item.getCollectionName())
-				.parallelStream()
-				.map(executor -> executor.bucketise(item))
-				.flatMap(List::stream)
-				.toList();
 	}
 }

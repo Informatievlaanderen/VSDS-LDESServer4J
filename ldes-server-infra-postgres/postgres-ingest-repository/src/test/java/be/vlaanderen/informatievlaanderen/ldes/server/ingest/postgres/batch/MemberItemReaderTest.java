@@ -58,8 +58,6 @@ class MemberItemReaderTest {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private ItemReader<FragmentationMember> newMemberReader;
-	@Autowired
-	private ItemReader<FragmentationMember> refragmentEventStream;
 
 	@BeforeEach
 	void setUp() {
@@ -72,7 +70,8 @@ class MemberItemReaderTest {
 				INSERT INTO views VALUES (2, 1, 'paged', '[]', '', 300);
 				
 				INSERT INTO buckets VALUES (1, '', 1);
-				INSERT INTO buckets VALUES (2, '', 2)""";
+				INSERT INTO buckets VALUES (2, '', 2);
+				""";
 
 		jdbcTemplate.update(sql);
 	}
@@ -84,19 +83,9 @@ class MemberItemReaderTest {
 
 	@Test
 	void given_EmptyMembersTable_when_ReadNewMembers_then_ReturnNull() throws Exception {
-		setupStepScope();
-
-		final FragmentationMember result = newMemberReader.read();
-
-		assertThat(result).isNull();
-	}
-
-
-	@Test
-	void given_EmptyMembersTable_when_RefragmentMembers_then_ReturnNull() throws Exception {
 		setupStepScope(COLLECTION_NAME, VIEW_NAME);
 
-		final FragmentationMember result = refragmentEventStream.read();
+		final FragmentationMember result = newMemberReader.read();
 
 		assertThat(result).isNull();
 	}
@@ -107,7 +96,7 @@ class MemberItemReaderTest {
 		final ViewName viewName = ViewName.fromString(viewNameAsString);
 		setupStepScope(viewName.getCollectionName(), viewName.getViewName());
 
-		final FragmentationMember result = refragmentEventStream.read();
+		final FragmentationMember result = newMemberReader.read();
 
 		assertThat(result).isNull();
 	}
@@ -115,37 +104,18 @@ class MemberItemReaderTest {
 	@Test
 	void given_MembersPresentInDb_test_ReadNewMembers() throws Exception {
 		int count = 5;
-		insertMembers(count);
-		setupStepScope();
-
-		final List<FragmentationMember> readMembers = new ArrayList<>();
-		do {
-			readMembers.add(newMemberReader.read());
-		} while (!readMembers.remove(null));
-
-		assertThat(readMembers)
-				.hasSize(count * 2)
-				.filteredOn(member -> member.getMemberId() == 1)
-				.hasSize(2)
-				.first()
-				.usingRecursiveComparison()
-				.ignoringFields("model", "timestamp")
-				.isEqualTo(expectedMember())
-				.asInstanceOf(InstanceOfAssertFactories.type(FragmentationMember.class))
-				.extracting("timestamp", InstanceOfAssertFactories.LOCAL_DATE_TIME)
-				.isEqualToIgnoringNanos(START_TIME);
-	}
-
-	@Test
-	void given_MembersPresentInDb_test_ReadRefragmentation() throws Exception {
-		int count = 5;
 		setupStepScope(COLLECTION_NAME, VIEW_NAME);
 		insertMembers(count);
 
 		final List<FragmentationMember> readMembers = new ArrayList<>();
+		FragmentationMember member;
 		do {
-			readMembers.add(refragmentEventStream.read());
-		} while (!readMembers.remove(null));
+			member = newMemberReader.read();
+			if (member != null) {
+				readMembers.add(member);
+			}
+
+		} while (member != null);
 
 		assertThat(readMembers)
 				.hasSize(count)
@@ -157,10 +127,6 @@ class MemberItemReaderTest {
 				.asInstanceOf(InstanceOfAssertFactories.type(FragmentationMember.class))
 				.extracting("timestamp", InstanceOfAssertFactories.LOCAL_DATE_TIME)
 				.isEqualToIgnoringNanos(START_TIME);
-	}
-
-	private void setupStepScope() {
-		setupStepScope(new JobParameters());
 	}
 
 	private void setupStepScope(String collectionName, String viewName) {
@@ -175,7 +141,7 @@ class MemberItemReaderTest {
 		StepExecution stepExecution = new StepExecution("step", new JobExecution(1L, jobParameters), 1L);
 		StepSynchronizationManager.register(stepExecution);
 		StepContext stepContext = new StepContext(stepExecution);
-		stepContext.setAttribute("refragmentEventStream", refragmentEventStream);
+		stepContext.setAttribute("memberReader", newMemberReader);
 	}
 
 	private void insertMembers(int count) {

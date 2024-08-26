@@ -11,7 +11,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AssertFactory;
 import org.assertj.core.api.InstanceOfAssertFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -95,7 +94,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@When("I delete collection {string}")
 	public void iDeleteCollection(String collection) {
-		new JdbcTemplate(dataSource).update("DELETE FROM collections WHERE name = ?", collection);
+		eventStreamRepository.deleteEventStream(collection);
 	}
 
 	private static class IngestedMemberAssert extends AbstractAssert<IngestedMemberAssert, IngestedMember> {
