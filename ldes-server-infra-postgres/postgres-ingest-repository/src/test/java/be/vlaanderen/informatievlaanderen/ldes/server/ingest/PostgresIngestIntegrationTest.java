@@ -29,7 +29,6 @@ import org.springframework.test.context.jdbc.Sql;
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream"})
 @ContextConfiguration(classes = {MemberEntityRepository.class})
 @EnableJpaRepositories(basePackageClasses = {MemberEntityRepository.class, EventStreamEntityRepository.class})
-//@Import(PostgresIngestIntegrationTest.IngestTestConfiguration.class)
 @Sql(value = {"init-collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(statements = "DELETE FROM collections;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SuppressWarnings("java:S2187")
