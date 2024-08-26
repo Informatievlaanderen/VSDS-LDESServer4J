@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetric;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationMetric;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageMemberEntityRepository;
 import org.springframework.stereotype.Repository;

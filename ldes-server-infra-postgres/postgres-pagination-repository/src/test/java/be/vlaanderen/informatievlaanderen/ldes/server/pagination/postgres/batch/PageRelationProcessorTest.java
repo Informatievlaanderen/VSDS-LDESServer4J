@@ -44,10 +44,10 @@ class PageRelationProcessorTest {
 
 		verify(pageRepository).createPage(parentPage.getBucketId(), parentPage.createChildPartialUrl().asString());
 		verify(pageRelationRepository).insertGenericBucketRelation(eq(parentPage.getId()), anyLong());
-		assertThat(result).isNotNull();
 		assertThat(result)
-				.filteredOn("pageId", CHILD_PAGE_ID)
-				.filteredOn("bucketId", BUCKET_ID)
+				.isNotNull()
+				.filteredOn(PageAssignment::pageId, CHILD_PAGE_ID)
+				.filteredOn(PageAssignment::bucketId, BUCKET_ID)
 				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
@@ -62,10 +62,10 @@ class PageRelationProcessorTest {
 
 		verify(pageRepository).createPage(rootPage.getBucketId(), rootPage.createChildPartialUrl().asString());
 		verify(pageRelationRepository).insertGenericBucketRelation(eq(rootPage.getId()), anyLong());
-		assertThat(result).isNotNull();
 		assertThat(result)
-				.filteredOn("pageId", CHILD_PAGE_ID)
-				.filteredOn("bucketId", BUCKET_ID)
+				.isNotNull()
+				.filteredOn(PageAssignment::pageId, CHILD_PAGE_ID)
+				.filteredOn(PageAssignment::bucketId, BUCKET_ID)
 				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
@@ -77,10 +77,10 @@ class PageRelationProcessorTest {
 		final List<PageAssignment> result = pageRelationProcessor.process(
 				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		assertThat(result).isNotNull();
 		assertThat(result)
-				.filteredOn("pageId", PARENT_PAGE_ID)
-				.filteredOn("bucketId", BUCKET_ID)
+				.isNotNull()
+				.filteredOn(PageAssignment::pageId, PARENT_PAGE_ID)
+				.filteredOn(PageAssignment::bucketId, BUCKET_ID)
 				.hasSize(UNPROCESSED_MEMBER_COUNT);
 	}
 
@@ -94,14 +94,15 @@ class PageRelationProcessorTest {
 		final List<PageAssignment> result = pageRelationProcessor.process(
 				Collections.nCopies(UNPROCESSED_MEMBER_COUNT, new UnpagedMember(0, BUCKET_ID)));
 
-		assertThat(result).isNotNull();
 		assertThat(result)
-				.filteredOn("pageId", PARENT_PAGE_ID)
-				.filteredOn("bucketId", BUCKET_ID)
+				.isNotNull()
+				.filteredOn(PageAssignment::pageId, PARENT_PAGE_ID)
+				.filteredOn(PageAssignment::bucketId, BUCKET_ID)
 				.hasSize(PAGE_SIZE - alreadyAssignedMemberCount);
 		assertThat(result)
-				.filteredOn("pageId", CHILD_PAGE_ID)
-				.filteredOn("bucketId", BUCKET_ID)
+				.isNotNull()
+				.filteredOn(PageAssignment::pageId, CHILD_PAGE_ID)
+				.filteredOn(PageAssignment::bucketId, BUCKET_ID)
 				.hasSize(UNPROCESSED_MEMBER_COUNT - (PAGE_SIZE - alreadyAssignedMemberCount));
 	}
 

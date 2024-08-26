@@ -37,10 +37,10 @@ public class PageAssignmentsWriter implements ItemWriter<List<PageAssignment>> {
 	@Configuration
 	public static class BatchPageAssignmentWriterConfig {
 		private static final String SQL = """
-			UPDATE page_members
-			SET page_id = ?
-			WHERE bucket_id = ? AND member_id = ?
-			""";
+				UPDATE page_members
+				SET page_id = ?
+				WHERE bucket_id = ? AND member_id = ?
+				""";
 
 		@Bean
 		JdbcBatchItemWriter<PageAssignment> batchPageAssignmentWriter(DataSource dataSource) {

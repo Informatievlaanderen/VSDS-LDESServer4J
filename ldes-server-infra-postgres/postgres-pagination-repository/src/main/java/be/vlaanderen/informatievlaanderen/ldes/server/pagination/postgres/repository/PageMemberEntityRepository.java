@@ -7,8 +7,6 @@ import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,11 +39,4 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 		  group by v.name
 		""", nativeQuery = true)
 	List<Tuple> getPaginatedMemberCounts(String collectionName);
-
-	@Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-	@Query(value = """
-         SELECT member_id, bucket_id FROM page_members WHERE bucket_id = ? AND page_id IS NULL
-         ORDER BY member_id
-        """, nativeQuery = true)
-	List<Tuple> getUnpaginatedMembers(Long bucketId);
 }

@@ -21,6 +21,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.Pa
 @Component
 @StepScope
 public class UnpagedReader implements ItemStreamReader<List<UnpagedMember>> {
+	private static final String SQL = """
+			SELECT member_id, bucket_id
+			FROM page_members
+			WHERE bucket_id = ?
+			AND page_id IS NULL
+			ORDER BY member_id
+			""";
 	private final ItemStreamReader<UnpagedMember> delegate;
 
 	public UnpagedReader(ItemStreamReader<UnpagedMember> delegate) {
@@ -61,17 +68,11 @@ public class UnpagedReader implements ItemStreamReader<List<UnpagedMember>> {
 	@Bean
 	@StepScope
 	JdbcCursorItemReader<UnpagedMember> delegateReader(DataSource dataSource,
-	                                                     @Value("#{stepExecutionContext['bucketId']}") Long bucketId) {
+	                                                   @Value("#{stepExecutionContext['bucketId']}") Long bucketId) {
 		return new JdbcCursorItemReaderBuilder<UnpagedMember>()
 				.name("unpagedReader")
 				.dataSource(dataSource)
-				.sql("""
-						SELECT member_id, bucket_id
-						FROM page_members
-						WHERE bucket_id = ?
-						AND page_id IS NULL
-						ORDER BY member_id
-						""")
+				.sql(SQL)
 				.preparedStatementSetter(ps -> ps.setLong(1, bucketId))
 				.rowMapper((rs, rowNum) -> new UnpagedMember(rs.getLong(1), rs.getLong(2)))
 				.build();

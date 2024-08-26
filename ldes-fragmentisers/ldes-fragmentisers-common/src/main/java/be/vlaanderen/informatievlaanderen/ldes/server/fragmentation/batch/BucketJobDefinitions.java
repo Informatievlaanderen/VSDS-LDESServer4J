@@ -54,7 +54,7 @@ public class BucketJobDefinitions {
 	@Bean("bucketTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
 		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
-		taskExecutor.setConcurrencyLimit(10);
+		taskExecutor.setConcurrencyLimit(5);
 		return taskExecutor;
 	}
 }

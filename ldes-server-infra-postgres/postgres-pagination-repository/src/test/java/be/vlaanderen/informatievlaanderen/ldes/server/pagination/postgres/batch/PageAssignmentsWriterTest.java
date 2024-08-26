@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
@@ -25,6 +26,8 @@ class PageAssignmentsWriterTest {
 	@Mock
 	private JdbcBatchItemWriter<PageAssignment> delegateWriter;
 	private PageAssignmentsWriter pageAssignmentsWriter;
+	@Captor
+	private ArgumentCaptor<Chunk<? extends PageAssignment>> captor;
 
 	@BeforeEach
 	public void setup() {
@@ -42,7 +45,6 @@ class PageAssignmentsWriterTest {
 
 		pageAssignmentsWriter.write(chunk);
 
-		ArgumentCaptor<Chunk<? extends PageAssignment>> captor = ArgumentCaptor.forClass(Chunk.class);
 		verify(delegateWriter).write(captor.capture());
 		assertThat(captor.getValue().size()).isEqualTo(4);
 	}
