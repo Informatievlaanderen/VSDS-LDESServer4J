@@ -20,6 +20,8 @@ public class ServerMetrics {
 	public static final String INGEST = "ldes_server_ingested_members_count";
 	public static final String BUCKET = "ldes_server_bucket_members_count";
 	public static final String PAGINATE = "ldes_server_pagination_members_count";
+	public static final String COLLECTION = "collection";
+	public static final String VIEW = "view";
 	private final FragmentationMetricsRepository fragmentationMetricsRepository;
 	private final MemberMetricsRepository memberMetricsRepository;
 	private final Map<String, AtomicInteger> membersIngested = new HashMap<>();
@@ -36,14 +38,14 @@ public class ServerMetrics {
 
 	public synchronized void incrementIngestCount(String collection, int count) {
 		membersIngested.computeIfAbsent(collection, s ->
-				Metrics.gauge(INGEST, Tags.of("collection", collection),
+				Metrics.gauge(INGEST, Tags.of(COLLECTION, collection),
 						new AtomicInteger(0)));
 		membersIngested.get(collection).addAndGet(count);
 	}
 
 	public synchronized void resetIngestCount(String collection) {
 		membersIngested.computeIfAbsent(collection, s ->
-				Metrics.gauge(INGEST, Tags.of("collection", collection),
+				Metrics.gauge(INGEST, Tags.of(COLLECTION, collection),
 						new AtomicInteger(0)));
 		membersIngested.get(collection).set(0);
 	}
@@ -51,7 +53,7 @@ public class ServerMetrics {
 	public synchronized void updateIngestCount(String collection) {
 		int count = memberMetricsRepository.getTotalCount(collection);
 		membersIngested.computeIfAbsent(collection, s ->
-				Metrics.gauge(INGEST, Tags.of("collection", collection),
+				Metrics.gauge(INGEST, Tags.of(COLLECTION, collection),
 						new AtomicInteger(count)));
 		membersIngested.get(collection).set(count);
 	}
@@ -61,7 +63,7 @@ public class ServerMetrics {
 				.forEach(metric -> {
 					var viewName = new ViewName(collection, metric.view());
 					membersBucketised.computeIfAbsent(viewName, v ->
-							Metrics.gauge(BUCKET, Tags.of("collection", v.getCollectionName(), "view",
+							Metrics.gauge(BUCKET, Tags.of(COLLECTION, v.getCollectionName(), VIEW,
 											metric.view()),
 									new AtomicInteger(metric.count())));
 					membersBucketised.get(viewName).set(metric.count());
@@ -70,7 +72,7 @@ public class ServerMetrics {
 
 	public synchronized void resetBucketCount(ViewName viewName) {
 		membersBucketised.computeIfAbsent(viewName, v ->
-				Metrics.gauge(BUCKET, Tags.of("collection", v.getCollectionName(), "view",
+				Metrics.gauge(BUCKET, Tags.of(COLLECTION, v.getCollectionName(), VIEW,
 								viewName.getViewName()),
 						new AtomicInteger(0)));
 		membersBucketised.get(viewName).set(0);
@@ -81,7 +83,7 @@ public class ServerMetrics {
 				.forEach(metric -> {
 					var viewName = new ViewName(collection, metric.view());
 					membersPaginated.computeIfAbsent(viewName, v ->
-							Metrics.gauge(PAGINATE, Tags.of("collection", v.getCollectionName(), "view",
+							Metrics.gauge(PAGINATE, Tags.of(COLLECTION, v.getCollectionName(), VIEW,
 											metric.view()),
 									new AtomicInteger(metric.count())));
 					membersPaginated.get(viewName).set(metric.count());
@@ -90,7 +92,7 @@ public class ServerMetrics {
 
 	public synchronized void resetPaginationCount(ViewName viewName) {
 		membersPaginated.computeIfAbsent(viewName, v ->
-				Metrics.gauge(PAGINATE, Tags.of("collection", v.getCollectionName(), "view",
+				Metrics.gauge(PAGINATE, Tags.of(COLLECTION, v.getCollectionName(), VIEW,
 								viewName.getViewName()),
 						new AtomicInteger(0)));
 		membersPaginated.get(viewName).set(0);

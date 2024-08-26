@@ -49,11 +49,11 @@ class FragmentationServiceTest {
 
 	@Test
 	void when_unprocessedViews_then_triggerJobsForEachView() throws Exception {
-		String COLLECTION = "collection";
+		String collection = "collection";
 
 		when(memberMetricsRepository.getUnprocessedViews())
-				.thenReturn(List.of(new ViewName(COLLECTION, "v1"),
-						new ViewName(COLLECTION, "v2")));
+				.thenReturn(List.of(new ViewName(collection, "v1"),
+						new ViewName(collection, "v2")));
 
 		fragmentationService.scheduledJobLauncher();
 
@@ -62,8 +62,8 @@ class FragmentationServiceTest {
 		assertThat(captor.getAllValues())
 				.extracting(obj -> obj.getString(COLLECTION_NAME), obj -> obj.getString(VIEW_NAME))
 				.containsExactlyInAnyOrder(
-						tuple(COLLECTION, "v1"),
-						tuple(COLLECTION, "v2")
+						tuple(collection, "v1"),
+						tuple(collection, "v2")
 				);
 	}
 

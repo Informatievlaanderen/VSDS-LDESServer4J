@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -63,7 +64,7 @@ public class FragmentationService {
 									.toJobParameters());
 						} catch (JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
 						         JobParametersInvalidException | JobRestartException e) {
-							throw new RuntimeException(e);
+							throw new FragmentationJobException(e);
 						}
 					});
 		}
