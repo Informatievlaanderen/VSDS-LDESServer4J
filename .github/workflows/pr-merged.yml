@@ -52,7 +52,7 @@ jobs:
 
       - name: Analyse & publish package
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage -Dparallel=all -DperCoreThreadCount=true
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_ENV
         env:
