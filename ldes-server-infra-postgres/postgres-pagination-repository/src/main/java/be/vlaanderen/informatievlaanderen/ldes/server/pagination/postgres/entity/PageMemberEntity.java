@@ -26,6 +26,6 @@ public class PageMemberEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "page_id", nullable = false, columnDefinition = "BIGINT")
+	@JoinColumn(name = "page_id", nullable = true, columnDefinition = "BIGINT")
 	private PageEntity page;
 }

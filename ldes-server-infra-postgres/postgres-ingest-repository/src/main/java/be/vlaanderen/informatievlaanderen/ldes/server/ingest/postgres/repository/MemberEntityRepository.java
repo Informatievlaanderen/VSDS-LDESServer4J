@@ -19,13 +19,20 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	int countMemberEntitiesByColl(String collectionName);
 
 	@Query(value = """
-			select c.name, v.name, (ms.member_count - COALESCE(bs.bucketized,0)) + ps.unpaged as unprocessed, ms.member_count
-			from member_stats ms
-			inner join page_stats ps on ms.collection_id = ps.collection_id
-			left join bucket_stats bs on ms.collection_id = bs.collection_id and ps.view_id = bs.view_id
-			inner join collections c on ms.collection_id = c.collection_id
-			inner join views v on ps.view_id = v.view_id
-			where ((ms.member_count - COALESCE(bs.bucketized, 0)) + ps.unpaged) != 0
+			select c.name, v.name, count(*)
+			from page_members pm
+			         RIGHT JOIN members m on pm.member_id = m.member_id
+			         JOIN collections c on c.collection_id = m.collection_id
+			         JOIN views v on c.collection_id = v.collection_id
+			where (pm.member_id IS NULL OR pm.page_id IS NULL)
+			  AND (NOT EXISTS (SELECT 1 FROM page_members) OR m.member_id >  (select max(member_id)
+			                     from page_members pmx
+			                              JOIN public.buckets b on b.bucket_id = pmx.bucket_id
+			                              JOIN public.views v2 on v2.view_id = b.view_id
+			                     WHERE v2.view_id = v.view_id
+			                       AND v2.collection_id = c.collection_id))
+			GROUP BY c.collection_id, v.view_id
+			HAVING (count(*) > 0)
 			""", nativeQuery = true)
 	List<Tuple> getUnprocessedViews();
 
