@@ -39,4 +39,6 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 		  group by v.name
 		""", nativeQuery = true)
 	List<Tuple> getPaginatedMemberCounts(String collectionName);
+
+	void deleteAllByBucket_View_EventStream_NameAndBucket_View_NameAndMember_IdIn(String collectionName, String viewName, List<Long> memberIds);
 }

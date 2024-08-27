@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,40 +61,44 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 
 	@Override
 	@Transactional
-	public void removeExpiredMembers(ViewName viewName,
-									 TimeBasedRetentionPolicy policy) {
-		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
+	public List<Long> findExpiredMembers(ViewName viewName,
+	                                     TimeBasedRetentionPolicy policy) {
+		return memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
+				.sorted(Comparator.comparing(MemberEntity::getId).reversed())
+				.map(MemberEntity::getId)
+				.toList();
 	}
 
 	@Override
 	@Transactional
-	public void removeExpiredMembers(ViewName viewName,
-									 VersionBasedRetentionPolicy policy) {
+	public List<Long> findExpiredMembers(ViewName viewName,
+	                                     VersionBasedRetentionPolicy policy) {
 
-		memberEntityRepository.findAllByViewName(viewName.getViewName(), viewName.getCollectionName())
-				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+		return memberEntityRepository.findAllByViewName(viewName.getViewName(), viewName.getCollectionName())
 				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.sorted(Comparator.comparing(MemberEntity::getId).reversed())
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
+				.map(MemberEntity::getId)
+				.toList();
 
 	}
 
 	@Override
 	@Transactional
-	public void removeExpiredMembers(ViewName viewName,
-									 TimeAndVersionBasedRetentionPolicy policy) {
-		memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+	public List<Long> findExpiredMembers(ViewName viewName,
+	                                     TimeAndVersionBasedRetentionPolicy policy) {
+		return memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
 				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.sorted(Comparator.comparing(MemberEntity::getId).reversed())
 						.skip(policy.numberOfMembersToKeep()))
-				.forEach(m -> removePageMemberEntity(m.getId(), viewName.getCollectionName(), viewName.getViewName()));
+				.map(MemberEntity::getId)
+				.toList();
 	}
 
 	@Override
@@ -108,7 +113,6 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, VersionBasedRetentionPolicy policy) {
 		return memberEntityRepository.findAllByCollectionName(collectionName)
 				.stream()
-				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(RetentionMemberProjection::getVersionOf))
 				.values()
 				.stream()
@@ -121,7 +125,6 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Transactional
 	public Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeAndVersionBasedRetentionPolicy policy) {
 		return memberEntityRepository.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration())).stream()
-				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
 				.collect(Collectors.groupingBy(RetentionMemberProjection::getVersionOf))
 				.values()
 				.stream()
