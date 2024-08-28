@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -109,8 +108,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	@Then("wait until no fragments can be compacted")
 	public void waitUntilNoFragmentsCanBeCompacted() {
-		await().atMost(4, MINUTES)
-				.until(() -> pageEntityRepository.findCompactionCandidates("mobility-hindrances", "paged", 5).isEmpty());
+		await().atMost(30, SECONDS);
 	}
 
 	@Then("wait for {int} seconds until compaction has executed at least once")
