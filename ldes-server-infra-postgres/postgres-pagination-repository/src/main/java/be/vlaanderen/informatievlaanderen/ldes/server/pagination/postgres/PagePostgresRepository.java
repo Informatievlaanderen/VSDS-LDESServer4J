@@ -76,7 +76,6 @@ public class PagePostgresRepository implements PageRepository {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
 		return pageEntityRepository.findCompactionCandidates(viewName.getCollectionName(), viewName.getViewName(), capacityPerPage)
 				.stream().map(projection -> new CompactionCandidate(projection.getFragmentId(), projection.getSize(), projection.getToPage(),
