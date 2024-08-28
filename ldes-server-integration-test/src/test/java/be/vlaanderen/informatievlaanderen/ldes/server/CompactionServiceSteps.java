@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 
@@ -62,12 +61,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	@And("verify the following pages have no relation pointing to them")
 	public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
-		var count = relationEntityRepository.findAll()
-				.stream()
-				.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
-				.count();
+		await().untilAsserted(() -> {
+			var count = relationEntityRepository.findAll()
+					.stream()
+					.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
+					.count();
 
-		assertThat(count).isEqualTo(0L);
+			assertThat(count).isEqualTo(0L);
+		});
 	}
 
 	@And("verify the following pages no longer exist")
@@ -84,22 +85,25 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	@And("verify {long} pages have a relation pointing to the new page {long}")
 	public void verifyUpdateOfPredecessorRelations(long pointingCount, long id) {
-		var countNewPage = relationEntityRepository.findAll()
-				.stream()
-				.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
-				.count();
+		await().untilAsserted(() -> {
+			var countNewPage = relationEntityRepository.findAll()
+					.stream()
+					.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
+					.count();
 
-		assertThat(countNewPage).isEqualTo(pointingCount);
-
+			assertThat(countNewPage).isEqualTo(pointingCount);
+		});
 	}
 
 	@And("verify the following pages have no members")
 	public void verifyFragmentationOfMembers(List<Long> ids) {
-		var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
-				.setParameter("ids", ids).getSingleResult();
+		await().untilAsserted(() -> {
+			var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
+					.setParameter("ids", ids).getSingleResult();
 
 
-		assertThat(count).isEqualTo(0L);
+			assertThat(count).isEqualTo(0L);
+		});
 	}
 
 	@Then("wait until no fragments can be compacted")
@@ -114,12 +118,6 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 				.timeout(secondsToWait + 1, SECONDS)
 				.pollDelay(secondsToWait, SECONDS)
 				.untilAsserted(() -> assertThat(true).isTrue());
-	}
-
-	public record FragmentAllocations(String fragmentId, List<MemberAllocation> memberAllocations) {
-	}
-
-	public record MemberFragmentations(String fragmentId, List<String> memberIds) {
 	}
 
 	private String readMemberTemplate(String fileName) throws IOException, URISyntaxException {
