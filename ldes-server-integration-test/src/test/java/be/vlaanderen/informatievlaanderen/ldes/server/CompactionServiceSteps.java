@@ -54,8 +54,8 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	}
 
 	@And("verify there are {int} pages")
-	public void verifyCreationOfTheFollowingFragments(long i) {
-		await().untilAsserted(() -> assertThat(pageEntityRepository.findAll().size()).isEqualTo(i));
+	public void verifyCreationOfTheFollowingFragments(int i) {
+		await().untilAsserted(() -> assertThat(pageEntityRepository.findAll()).hasSize(i));
 
 	}
 
@@ -67,7 +67,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 					.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
 					.count();
 
-			assertThat(count).isEqualTo(0L);
+			assertThat(count).isZero();
 		});
 	}
 
@@ -79,7 +79,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 							.stream()
 							.filter(pageEntity -> ids.contains(pageEntity.getId()))
 							.count();
-					assertThat(count).isEqualTo(0L);
+					assertThat(count).isZero();
 				});
 	}
 

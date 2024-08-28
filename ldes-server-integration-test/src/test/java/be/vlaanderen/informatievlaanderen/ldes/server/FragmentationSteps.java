@@ -87,7 +87,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();
 			log.debug(currentPath);
-			log.debug("relationcounts: " + relationCount);
+			log.debug("relationcounts: {}", relationCount);
 			return relationCount == expectedRelationCount;
 		});
 	}
