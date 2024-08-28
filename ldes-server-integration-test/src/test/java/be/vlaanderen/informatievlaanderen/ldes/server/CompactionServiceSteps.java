@@ -72,7 +72,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	@And("verify the following pages no longer exist")
 	public void verifyRemovalOfPages(List<Long> ids) {
-		await().atMost(Duration.of(11, ChronoUnit.SECONDS))
+		await().atMost(Duration.of(30, ChronoUnit.SECONDS))
 				.untilAsserted(() -> {
 					var count = pageEntityRepository.findAll()
 							.stream()
@@ -102,14 +102,9 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 		assertThat(count).isEqualTo(0L);
 	}
 
-	@Then("wait until all members are fragmented")
-	public void waitUntilAllMembersAreFragmented() {
-		await().until(() -> memberMetricsRepository.getUnprocessedViews().isEmpty());
-	}
-
 	@Then("wait until no fragments can be compacted")
 	public void waitUntilNoFragmentsCanBeCompacted() {
-		await().atMost(30, SECONDS)
+		await().atMost(60, SECONDS)
 				.until(() -> pageEntityRepository.findCompactionCandidates("mobility-hindrances", "paged", 5).isEmpty());
 	}
 

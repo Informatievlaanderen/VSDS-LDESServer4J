@@ -1,8 +1,8 @@
 ldes-server:
   host-name: "http://localhost:8080"
-  compaction-duration: "PT1M"
-  retention-cron: "*/5 * * * * *"
-  fragmentation-cron: "*/5 * * * * *"
+  compaction-duration: "*/10 * * * * *"
+  retention-cron: "*/10 * * * * *"
+  deletion-cron: "*/5 * * * * *"
 
 springdoc.swaggerui.path: "/swagger"
 management:
@@ -17,8 +17,6 @@ spring:
     jdbc:
       initialize-schema: always
       isolation-level-for-create: READ_COMMITTED
-  liquibase:
-    change-log: classpath:/db/changelog/master.xml
 
 #logging:
 #  level:

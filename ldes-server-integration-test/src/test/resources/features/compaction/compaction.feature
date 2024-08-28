@@ -8,7 +8,7 @@ Feature: Execute CompactionService
     And I ingest 3 members of different versions
 
   Scenario: Execution Compaction
-    Then wait until all members are fragmented
+    Then I wait until all members are fragmented
     Then wait until no fragments can be compacted
     And verify there are 5 pages
     And verify the following pages have no relation pointing to them

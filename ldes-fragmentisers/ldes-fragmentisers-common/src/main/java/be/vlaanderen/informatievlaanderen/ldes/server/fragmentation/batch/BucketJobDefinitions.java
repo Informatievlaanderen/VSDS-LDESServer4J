@@ -47,14 +47,13 @@ public class BucketJobDefinitions {
 						return StepExecutionListener.super.afterStep(stepExecution);
 					}
 				})
-				.taskExecutor(taskExecutor)
 				.build();
 	}
 
 	@Bean("bucketTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
 		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
-		taskExecutor.setConcurrencyLimit(5);
+		taskExecutor.setConcurrencyLimit(1);
 		return taskExecutor;
 	}
 }

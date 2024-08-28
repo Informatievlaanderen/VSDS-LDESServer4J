@@ -38,7 +38,7 @@ public class BucketPostgresRepository implements BucketRepository {
 		ViewEntity view = viewEntityRepository.findByViewName(bucket.getViewName().getCollectionName(), bucket.getViewName().getViewName())
 				.orElseThrow();
 
-		BucketEntity bucketEntity = new BucketEntity(null, view, bucket.getBucketDescriptorAsString());
+		BucketEntity bucketEntity = new BucketEntity(view, bucket.getBucketDescriptorAsString());
 		bucketEntity = bucketEntityRepository.save(bucketEntity);
 
 		return new Bucket(
