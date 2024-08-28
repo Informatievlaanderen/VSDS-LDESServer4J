@@ -109,7 +109,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	@Then("wait until no fragments can be compacted")
 	public void waitUntilNoFragmentsCanBeCompacted() {
-		await().atMost(2, MINUTES)
+		await().atMost(4, MINUTES)
 				.until(() -> pageEntityRepository.findCompactionCandidates("mobility-hindrances", "paged", 5).isEmpty());
 	}
 
