@@ -27,8 +27,8 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 			where (pm.member_id IS NULL OR pm.page_id IS NULL)
 			  AND (NOT EXISTS (SELECT 1 FROM page_members) OR m.member_id >  (select max(member_id)
 			                     from page_members pmx
-			                              JOIN public.buckets b on b.bucket_id = pmx.bucket_id
-			                              JOIN public.views v2 on v2.view_id = b.view_id
+			                              JOIN buckets b on b.bucket_id = pmx.bucket_id
+			                              JOIN views v2 on v2.view_id = b.view_id
 			                     WHERE v2.view_id = v.view_id
 			                       AND v2.collection_id = c.collection_id))
 			GROUP BY c.collection_id, v.view_id

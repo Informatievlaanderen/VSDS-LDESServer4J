@@ -60,6 +60,9 @@ class RetentionServiceTest {
 		verify(memberPropertiesRepository).findExpiredMembers(VIEW_A, timeBasedRetentionPolicy);
 		verify(memberPropertiesRepository).findExpiredMembers(VIEW_B, versionBasedRetentionPolicy);
 		verify(memberPropertiesRepository).findExpiredMembers(VIEW_C, timeAndVersionBasedRetentionPolicy);
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_A), anyList());
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_B), anyList());
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_C), anyList());
 	}
 
 	@Test
