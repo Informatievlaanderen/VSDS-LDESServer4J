@@ -23,9 +23,9 @@ public interface MemberPropertiesRepository {
 	 * @param viewName
 	 * @param policy
 	 */
-	void removeExpiredMembers(ViewName viewName, TimeBasedRetentionPolicy policy);
-	void removeExpiredMembers(ViewName viewName, VersionBasedRetentionPolicy policy);
-	void removeExpiredMembers(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
+	List<Long> findExpiredMembers(ViewName viewName, TimeBasedRetentionPolicy policy);
+	List<Long> findExpiredMembers(ViewName viewName, VersionBasedRetentionPolicy policy);
+	List<Long> findExpiredMembers(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
 	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeBasedRetentionPolicy policy);
 	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, VersionBasedRetentionPolicy policy);
 	Stream<MemberProperties> retrieveExpiredMembers(String collectionName, TimeAndVersionBasedRetentionPolicy policy);

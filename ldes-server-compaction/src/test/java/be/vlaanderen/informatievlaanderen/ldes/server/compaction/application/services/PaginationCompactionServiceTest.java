@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

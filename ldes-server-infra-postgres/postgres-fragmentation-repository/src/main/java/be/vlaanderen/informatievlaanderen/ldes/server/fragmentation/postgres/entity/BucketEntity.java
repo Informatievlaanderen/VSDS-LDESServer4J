@@ -23,8 +23,8 @@ public class BucketEntity {
 
 	public BucketEntity() {}
 
-	public BucketEntity(Long bucketId, ViewEntity view, String bucketDescriptor) {
-		this.bucketId = bucketId;
+
+	public BucketEntity(ViewEntity view, String bucketDescriptor) {
 		this.view = view;
 		this.bucketDescriptor = bucketDescriptor;
 	}

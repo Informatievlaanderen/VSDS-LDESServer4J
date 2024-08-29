@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.DeletionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -27,6 +28,7 @@ class RetentionServiceTest {
 	public static final ViewName VIEW_C = new ViewName(COLLECTION, "viewC");
 
 	private final MemberPropertiesRepository memberPropertiesRepository = mock(MemberPropertiesRepository.class);
+	private final PageMemberRepository pageMemberRepository = mock(PageMemberRepository.class);
 	private final MemberRemover memberRemover = mock(MemberRemover.class);
 	private final RetentionPolicyCollection retentionPolicyCollection = mock(RetentionPolicyCollection.class);
 	private final DeletionPolicyCollection deletionPolicyCollection = mock(DeletionPolicyCollection.class);
@@ -34,7 +36,7 @@ class RetentionServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		retentionService = new RetentionService(memberPropertiesRepository, memberRemover, retentionPolicyCollection, deletionPolicyCollection);
+		retentionService = new RetentionService(memberPropertiesRepository, pageMemberRepository, memberRemover, retentionPolicyCollection, deletionPolicyCollection);
 	}
 
 	@Test
@@ -55,9 +57,12 @@ class RetentionServiceTest {
 
 		retentionService.executeRetentionPolicies();
 
-		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_A, timeBasedRetentionPolicy);
-		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_B, versionBasedRetentionPolicy);
-		verify(memberPropertiesRepository).removeExpiredMembers(VIEW_C, timeAndVersionBasedRetentionPolicy);
+		verify(memberPropertiesRepository).findExpiredMembers(VIEW_A, timeBasedRetentionPolicy);
+		verify(memberPropertiesRepository).findExpiredMembers(VIEW_B, versionBasedRetentionPolicy);
+		verify(memberPropertiesRepository).findExpiredMembers(VIEW_C, timeAndVersionBasedRetentionPolicy);
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_A), anyList());
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_B), anyList());
+		verify(pageMemberRepository).deleteByViewNameAndMembersIds(eq(VIEW_C), anyList());
 	}
 
 	@Test

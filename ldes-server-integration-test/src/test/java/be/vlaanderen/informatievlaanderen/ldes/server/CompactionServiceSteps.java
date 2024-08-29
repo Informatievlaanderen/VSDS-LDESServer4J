@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 
@@ -9,8 +8,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,39 +54,61 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	}
 
 	@And("verify there are {int} pages")
-	public void verifyCreationOfTheFollowingFragments(long i) {
-		assertThat(entityManager.createQuery("SELECT COUNT(*) FROM PageEntity p").getSingleResult()).isEqualTo(i);
+	public void verifyCreationOfTheFollowingFragments(int i) {
+		await().untilAsserted(() -> assertThat(pageEntityRepository.findAll()).hasSize(i));
+
 	}
 
 	@And("verify the following pages have no relation pointing to them")
 	public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
-		var count = entityManager.createQuery("SELECT COUNT(*) FROM RelationEntity r JOIN PageEntity p ON r.toPage = p WHERE p.id IN :ids")
-				.setParameter("ids", ids).getSingleResult();
-		assertThat(count).isEqualTo(0L);
+		await().untilAsserted(() -> {
+			var count = relationEntityRepository.findAll()
+					.stream()
+					.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
+					.count();
+
+			assertThat(count).isZero();
+		});
 	}
 
 	@And("verify the following pages no longer exist")
 	public void verifyRemovalOfPages(List<Long> ids) {
-		await().untilAsserted(() -> {
-			var count = entityManager.createQuery("SELECT COUNT(*) FROM PageEntity p WHERE p.id IN :ids")
-					.setParameter("ids", ids).getSingleResult();
-			assertThat(count).isEqualTo(0L);
-		});
-
+		await().atMost(Duration.of(30, ChronoUnit.SECONDS))
+				.untilAsserted(() -> {
+					var count = pageEntityRepository.findAll()
+							.stream()
+							.filter(pageEntity -> ids.contains(pageEntity.getId()))
+							.count();
+					assertThat(count).isZero();
+				});
 	}
 
-	@And("verify the pages have a relation pointing to the new page {long}")
-	public void verifyUpdateOfPredecessorRelations(long id) {
-		var countNewPage = entityManager.createQuery("SELECT COUNT(*) FROM RelationEntity r JOIN PageEntity p ON r.toPage = p WHERE p.id = :id")
-				.setParameter("id", id).getSingleResult();
-		assertThat(countNewPage).isEqualTo(3L);
+	@And("verify {long} pages have a relation pointing to the new page {long}")
+	public void verifyUpdateOfPredecessorRelations(long pointingCount, long id) {
+		await().untilAsserted(() -> {
+			var countNewPage = relationEntityRepository.findAll()
+					.stream()
+					.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
+					.count();
+
+			assertThat(countNewPage).isEqualTo(pointingCount);
+		});
 	}
 
 	@And("verify the following pages have no members")
 	public void verifyFragmentationOfMembers(List<Long> ids) {
-		var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
-				.setParameter("ids", ids).getSingleResult();
-		assertThat(count).isEqualTo(0L);
+		await().untilAsserted(() -> {
+			var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
+					.setParameter("ids", ids).getSingleResult();
+
+
+			assertThat(count).isEqualTo(0L);
+		});
+	}
+
+	@Then("wait until no fragments can be compacted")
+	public void waitUntilNoFragmentsCanBeCompacted() {
+		await().atMost(30, SECONDS);
 	}
 
 	@Then("wait for {int} seconds until compaction has executed at least once")
@@ -94,20 +117,6 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 				.timeout(secondsToWait + 1, SECONDS)
 				.pollDelay(secondsToWait, SECONDS)
 				.untilAsserted(() -> assertThat(true).isTrue());
-	}
-
-	@Then("wait for {int} seconds until deletion has executed at least once")
-	public void waitForSecondsUntilDeltionHasExecutedAtLeastOnce(int secondsToWait) {
-		await()
-				.timeout(secondsToWait + 1, SECONDS)
-				.pollDelay(secondsToWait, SECONDS)
-				.untilAsserted(() -> assertThat(true).isTrue());
-	}
-
-	public record FragmentAllocations(String fragmentId, List<MemberAllocation> memberAllocations) {
-	}
-
-	public record MemberFragmentations(String fragmentId, List<String> memberIds) {
 	}
 
 	private String readMemberTemplate(String fileName) throws IOException, URISyntaxException {

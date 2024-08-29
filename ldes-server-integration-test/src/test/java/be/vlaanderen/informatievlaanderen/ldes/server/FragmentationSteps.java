@@ -8,6 +8,8 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 import org.awaitility.Awaitility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.net.URI;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class FragmentationSteps extends LdesServerIntegrationTest {
+	private static final Logger log = LoggerFactory.getLogger(LdesServerIntegrationTest.class);
 	private static final String TREE = "https://w3id.org/tree#";
 	private Model currentFragment;
 	private String currentPath;
@@ -83,8 +86,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 			fetchFragment(currentPath);
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();
-			System.out.println(currentPath);
-			System.out.println("relationcounts: " + relationCount);
+			log.debug(currentPath);
+			log.debug("relationcounts: {}", relationCount);
 			return relationCount == expectedRelationCount;
 		});
 	}
@@ -176,6 +179,11 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		assertThat(skolemizedIdCountPerMember)
 				.hasSize(memberCount)
 				.allSatisfy(actualSkolemizedIdCount -> assertThat(actualSkolemizedIdCount).isEqualTo(skolemizedIdCount));
+	}
+
+	@Then("I wait until all members are fragmented")
+	public void waitUntilAllMembersAreFragmented() {
+		await().until(() -> memberMetricsRepository.getUnprocessedViews().isEmpty());
 	}
 
 	private static Integer countSkolemizedIds(StmtIterator stmtIterator) {

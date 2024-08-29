@@ -7,12 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
+	@Transactional(readOnly = true)
 	Optional<TreeNodeProjection> findTreeNodeByPartialUrl(String partialUrl);
 
 	@Modifying
@@ -49,6 +51,7 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	               "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
 	               "GROUP BY p.id, r.toPage.id " +
 	               "HAVING COUNT(*) < :capacityPerPage")
+	@Transactional(readOnly = true)
 	List<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
 	                                                             @Param("viewName") String viewName,
 	                                                             @Param("capacityPerPage") Integer capacityPerPage);

@@ -44,7 +44,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.createNotStarted("geospatial bucketisation", observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
-		getRootTileBucket(parentBucket);
+		setRootTileBucket(parentBucket);
 
 		Set<String> tiles = geospatialBucketiser.bucketise(member.getSubject(), member.getVersionModel());
 
@@ -68,7 +68,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	}
 
 
-	private void getRootTileBucket(Bucket parentBucket) {
+	private void setRootTileBucket(Bucket parentBucket) {
 		if (rootTileBucket == null) {
 			rootTileBucket = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT);
 			super.addRelationFromParentToChild(parentBucket, rootTileBucket);
