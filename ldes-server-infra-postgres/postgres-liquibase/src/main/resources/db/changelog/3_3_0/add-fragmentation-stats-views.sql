@@ -24,14 +24,21 @@ select ms.collection_id, ms.view_id, (ms.last > bs.last) as should_bucketize
 from member_stats ms
          inner join bucket_stats bs on bs.collection_id = ms.collection_id and bs.view_id = ms.view_id;
 
-CREATE OR REPLACE VIEW needs_pagination as
-select c.collection_id, v.view_id, (exists (
-    select * from page_members pm
-                      inner join buckets b on b.bucket_id = pm.bucket_id
-    where pm.page_id is null)) as should_paginate
-from collections c
-         inner join views v on c.collection_id = v.collection_id
-group by c.collection_id, v.view_id;
+CREATE OR REPLACE VIEW "needs_pagination" AS
+SELECT c.collection_id,
+       v.view_id,
+       (EXISTS ( SELECT pm.bucket_id,
+                        pm.member_id,
+                        pm.page_id,
+                        b.bucket_id,
+                        b.bucket,
+                        b.view_id
+                 FROM (page_members pm
+                     JOIN buckets b ON ((b.bucket_id = pm.bucket_id)))
+                 WHERE ((pm.page_id IS NULL) AND (b.view_id = v.view_id)))) AS should_paginate
+FROM (collections c
+    JOIN views v ON ((c.collection_id = v.collection_id)))
+GROUP BY c.collection_id, v.view_id;
 
 CREATE OR REPLACE VIEW unprocessed_views as
 select c.name as collection_name, v.name as view_name
