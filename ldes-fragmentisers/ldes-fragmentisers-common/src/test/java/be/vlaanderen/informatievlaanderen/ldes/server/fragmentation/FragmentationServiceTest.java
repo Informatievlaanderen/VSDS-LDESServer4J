@@ -6,8 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetr
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +21,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.COLLECTION_NAME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.VIEW_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
@@ -44,6 +47,8 @@ class FragmentationServiceTest {
 	MemberMetricsRepository memberMetricsRepository;
 	@MockBean
 	JobLauncher jobLauncher;
+	@MockBean
+	JobExplorer jobExplorer;
 	@Autowired
 	private FragmentationService fragmentationService;
 
@@ -74,6 +79,33 @@ class FragmentationServiceTest {
 		fragmentationService.scheduledJobLauncher();
 
 		verifyNoInteractions(jobLauncher);
+	}
+
+	@Test
+	void when_unprocessedViews_then_triggerJobsForEachViewThatIsntRunningAlready() throws Exception {
+		String collection = "collection";
+
+		when(memberMetricsRepository.getUnprocessedViews())
+				.thenReturn(List.of(new ViewName(collection, "v1"),
+						new ViewName(collection, "v2")));
+
+		JobExecution jobExecution = mock(JobExecution.class);
+		JobParameters jobParameters = new JobParametersBuilder()
+				.addString(VIEW_NAME, "v1")
+				.addString(COLLECTION_NAME, collection)
+				.toJobParameters();
+		when(jobExecution.getJobParameters()).thenReturn(jobParameters);
+		when(jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB)).thenReturn(Set.of(jobExecution));
+
+		fragmentationService.scheduledJobLauncher();
+
+		ArgumentCaptor<JobParameters> captor = ArgumentCaptor.forClass(JobParameters.class);
+		verify(jobLauncher, times(1)).run(any(), captor.capture());
+		assertThat(captor.getAllValues())
+				.extracting(obj -> obj.getString(COLLECTION_NAME), obj -> obj.getString(VIEW_NAME))
+				.containsExactlyInAnyOrder(
+						tuple(collection, "v2")
+				);
 	}
 
 

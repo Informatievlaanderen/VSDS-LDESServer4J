@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
@@ -25,7 +27,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch
 @EnableScheduling
 public class FragmentationService {
 	public static final String FRAGMENTATION_JOB = "fragmentation";
-	public static final String REFRAGMENTATION_JOB = "refragmentation";
 	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW_NAME = "viewName";
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
@@ -52,22 +53,21 @@ public class FragmentationService {
 
 	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduledJobLauncher() {
-		if (noJobsRunning(FRAGMENTATION_JOB) && noJobsRunning(REFRAGMENTATION_JOB)) {
-			memberRepository.getUnprocessedViews()
-					.parallelStream()
-					.forEach(viewName -> {
-						try {
-							launchJob(bucketiseJob, new JobParametersBuilder()
-									.addString(VIEW_NAME, viewName.getViewName())
-									.addString(COLLECTION_NAME, viewName.getCollectionName())
-									.addLocalDateTime("triggered", LocalDateTime.now())
-									.toJobParameters());
-						} catch (JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
-						         JobParametersInvalidException | JobRestartException e) {
-							throw new FragmentationJobException(e);
-						}
-					});
-		}
+		memberRepository.getUnprocessedViews()
+				.parallelStream()
+				.filter(this::noJobsRunning)
+				.forEach(viewName -> {
+					try {
+						launchJob(bucketiseJob, new JobParametersBuilder()
+								.addString(VIEW_NAME, viewName.getViewName())
+								.addString(COLLECTION_NAME, viewName.getCollectionName())
+								.addLocalDateTime("triggered", LocalDateTime.now())
+								.toJobParameters());
+					} catch (JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
+					         JobParametersInvalidException | JobRestartException e) {
+						throw new FragmentationJobException(e);
+					}
+				});
 	}
 
 	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
@@ -76,8 +76,15 @@ public class FragmentationService {
 		serverMetrics.updatePaginationCounts(jobParameters.getString(COLLECTION_NAME));
 	}
 
-	private boolean noJobsRunning(String jobName) {
-		return jobExplorer.findRunningJobExecutions(jobName).isEmpty();
+	private boolean noJobsRunning(ViewName viewName) {
+		return jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB)
+				.stream()
+				.noneMatch(jobExecution -> {
+					var params = jobExecution.getJobParameters();
+					String view = Objects.requireNonNull(params.getString(VIEW_NAME));
+					String collection = Objects.requireNonNull(params.getString(COLLECTION_NAME));
+					return view.equals(viewName.getViewName()) && collection.equals(viewName.getCollectionName());
+				});
 	}
 
 	private Job createJob(JobRepository jobRepository, Step step, Step paginationStep) {
