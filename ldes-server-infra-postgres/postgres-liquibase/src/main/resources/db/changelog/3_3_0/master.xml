@@ -13,4 +13,5 @@
     <include file="/db/changelog/3_3_0/add-skolemization-domain-column.xml" />
     <include file="/db/changelog/3_3_0/update-children-performance-tweaks.xml" />
     <include file="/db/changelog/3_3_0/add-fragmentation-stats-views.sql" />
+    <include file="/db/changelog/3_3_0/remove-old-tables.xml" />
 </databaseChangeLog>
