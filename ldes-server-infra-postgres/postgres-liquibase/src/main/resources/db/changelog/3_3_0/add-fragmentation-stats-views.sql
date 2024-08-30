@@ -1,8 +1,12 @@
-CREATE OR REPLACE VIEW member_stats as
-select m.collection_id, v.view_id, coalesce(max(m.member_id),0) as last
-from members m
-         inner join views v on v.collection_id = m.collection_id
-group by m.collection_id, v.view_id;
+CREATE OR REPLACE VIEW "member_stats" AS
+SELECT c.collection_id,
+       v.view_id,
+       COALESCE(( SELECT max(m.member_id) AS max
+                  FROM members m
+                  WHERE (m.collection_id = c.collection_id)), (0)::bigint) AS last
+FROM (collections c
+    JOIN views v ON ((v.collection_id = c.collection_id)))
+GROUP BY c.collection_id, v.view_id;
 
 CREATE OR REPLACE VIEW bucket_stats as
 select c.collection_id, v.view_id, coalesce(
