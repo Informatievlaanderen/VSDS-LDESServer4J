@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BatchConfiguration.ASYNC_JOB_LAUNCHER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
@@ -45,7 +46,7 @@ class FragmentationServiceTest {
 	FragmentationStrategyCollection strategyCollection;
 	@MockBean
 	MemberMetricsRepository memberMetricsRepository;
-	@MockBean
+	@MockBean(name = ASYNC_JOB_LAUNCHER)
 	JobLauncher jobLauncher;
 	@MockBean
 	JobExplorer jobExplorer;

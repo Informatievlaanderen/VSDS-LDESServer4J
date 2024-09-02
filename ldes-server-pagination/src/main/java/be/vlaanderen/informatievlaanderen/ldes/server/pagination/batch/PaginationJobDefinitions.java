@@ -30,6 +30,7 @@ public class PaginationJobDefinitions {
 	                           Partitioner bucketPartitioner, ItemReader<List<UnpagedMember>> pageItemReader,
 	                           ItemProcessor<List<UnpagedMember>, List<PageAssignment>> pageRelationsProcessor,
 	                           ItemWriter<List<PageAssignment>> memberAssigner,
+							   PaginationMetricUpdater paginationMetricUpdater,
 	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder(PAGINATION_STEP, jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
@@ -46,6 +47,7 @@ public class PaginationJobDefinitions {
 				)
 				.allowStartIfComplete(true)
 				.taskExecutor(taskExecutor)
+				.listener(paginationMetricUpdater)
 				.build();
 	}
 

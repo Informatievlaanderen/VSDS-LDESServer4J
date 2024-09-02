@@ -30,28 +30,25 @@ public class MemberItemReader {
 				.queryProvider(memberQuery())
 				.parameterValues(jobParameters)
 				.pageSize(PAGE_SIZE)
+				.maxItemCount(20 * PAGE_SIZE)
 				.build();
 	}
 
 	private PostgresPagingQueryProvider memberQuery() {
 		Map<String, Order> sortKeys = new HashMap<>();
-		sortKeys.put("timestamp", Order.ASCENDING);
+		sortKeys.put("member_id", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
 		queryProvider.setFromClause("""
-				        members m
-				        JOIN collections c ON c.collection_id = m.collection_id
-				        JOIN views v ON v.collection_id = m.collection_id
-				""");
+                     collections c
+                      join views v on v.collection_id = c.collection_id
+                      join bucket_stats bs on bs.collection_id = c.collection_id and bs.view_id = v.view_id
+                      join members m on m.collection_id = c.collection_id
+             """);
 		queryProvider.setWhereClause("""
-				      NOT EXISTS (
-				        SELECT 1 FROM page_members mb
-				        JOIN buckets b ON mb.bucket_id = b.bucket_id
-				        JOIN views v ON v.view_id = b.view_id AND v.collection_id = c.collection_id
-				        WHERE mb.member_id = m.member_id
-				      )
-				      AND v.name = :viewName AND c.name = :collectionName
-				""");
+                   m.member_id > bs.last
+                    AND v.name = :viewName AND c.name = :collectionName
+             """);
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
