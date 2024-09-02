@@ -1,13 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.UnpagedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -25,8 +20,6 @@ import org.springframework.transaction.TransactionException;
 import java.sql.SQLException;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.COLLECTION_NAME;
-
 @Configuration
 public class PaginationJobDefinitions {
 	public static final String PAGINATION_STEP = "pagination";
@@ -37,7 +30,7 @@ public class PaginationJobDefinitions {
 	                           Partitioner bucketPartitioner, ItemReader<List<UnpagedMember>> pageItemReader,
 	                           ItemProcessor<List<UnpagedMember>, List<PageAssignment>> pageRelationsProcessor,
 	                           ItemWriter<List<PageAssignment>> memberAssigner,
-							   ServerMetrics serverMetrics,
+							   PaginationMetricUpdater paginationMetricUpdater,
 	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder(PAGINATION_STEP, jobRepository)
 				.partitioner("memberBucketPartitionStep", bucketPartitioner)
@@ -54,13 +47,7 @@ public class PaginationJobDefinitions {
 				)
 				.allowStartIfComplete(true)
 				.taskExecutor(taskExecutor)
-				.listener(new StepExecutionListener() {
-					@Override
-					public ExitStatus afterStep(@NotNull StepExecution stepExecution) {
-						serverMetrics.updatePaginationCounts(stepExecution.getJobParameters().getString(COLLECTION_NAME));
-						return StepExecutionListener.super.afterStep(stepExecution);
-					}
-				})
+				.listener(paginationMetricUpdater)
 				.build();
 	}
 
