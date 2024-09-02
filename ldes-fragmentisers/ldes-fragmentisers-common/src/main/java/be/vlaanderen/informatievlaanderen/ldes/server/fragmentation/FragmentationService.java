@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BatchConfiguration.ASYNC_JOB_LAUNCHER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
 
 @Service
@@ -35,7 +36,7 @@ public class FragmentationService {
 	private final Job bucketiseJob;
 	private final MemberMetricsRepository memberRepository;
 
-	public FragmentationService(@Qualifier("asyncJobLauncher") JobLauncher jobLauncher, JobRepository jobRepository, JobExplorer jobExplorer,
+	public FragmentationService(@Qualifier(ASYNC_JOB_LAUNCHER) JobLauncher jobLauncher, JobRepository jobRepository, JobExplorer jobExplorer,
 	                            @Qualifier(BUCKETISATION_STEP) Step bucketiseMembersStep, Step paginationStep,
 	                            MemberMetricsRepository memberRepository) {
 		this.jobLauncher = jobLauncher;
