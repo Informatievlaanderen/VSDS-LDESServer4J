@@ -22,6 +22,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.COLLECTION_NAME;
+
 @Configuration
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_STEP = "bucketisation";
@@ -43,7 +45,7 @@ public class BucketJobDefinitions {
 				.listener(new StepExecutionListener() {
 					@Override
 					public ExitStatus afterStep(@NotNull StepExecution stepExecution) {
-						serverMetrics.updateBucketCounts(stepExecution.getJobParameters().getString("collectionName"));
+						serverMetrics.updateBucketCounts(stepExecution.getJobParameters().getString(COLLECTION_NAME));
 						return StepExecutionListener.super.afterStep(stepExecution);
 					}
 				})

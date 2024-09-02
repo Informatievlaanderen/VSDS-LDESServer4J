@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -34,18 +33,14 @@ public class FragmentationService {
 	private final JobExplorer jobExplorer;
 	private final JobRepository jobRepository;
 	private final Job bucketiseJob;
-	private final ServerMetrics serverMetrics;
 	private final MemberMetricsRepository memberRepository;
 
-	public FragmentationService(JobLauncher jobLauncher, JobRepository jobRepository, JobExplorer jobExplorer,
-	                            @Qualifier(BUCKETISATION_STEP) Step bucketiseMembersStep,
-	                            Step paginationStep,
-	                            ServerMetrics serverMetrics,
+	public FragmentationService(@Qualifier("asyncJobLauncher") JobLauncher jobLauncher, JobRepository jobRepository, JobExplorer jobExplorer,
+	                            @Qualifier(BUCKETISATION_STEP) Step bucketiseMembersStep, Step paginationStep,
 	                            MemberMetricsRepository memberRepository) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.jobRepository = jobRepository;
-		this.serverMetrics = serverMetrics;
 		this.memberRepository = memberRepository;
 		this.bucketiseJob = createJob(jobRepository, bucketiseMembersStep, paginationStep);
 		this.cleanupOldJobs();
@@ -58,7 +53,7 @@ public class FragmentationService {
 				.filter(this::noJobsRunning)
 				.forEach(viewName -> {
 					try {
-						launchJob(bucketiseJob, new JobParametersBuilder()
+						jobLauncher.run(bucketiseJob, new JobParametersBuilder()
 								.addString(VIEW_NAME, viewName.getViewName())
 								.addString(COLLECTION_NAME, viewName.getCollectionName())
 								.addLocalDateTime("triggered", LocalDateTime.now())
@@ -68,12 +63,6 @@ public class FragmentationService {
 						throw new FragmentationJobException(e);
 					}
 				});
-	}
-
-	private void launchJob(Job job, JobParameters jobParameters) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		jobLauncher.run(job, jobParameters);
-
-		serverMetrics.updatePaginationCounts(jobParameters.getString(COLLECTION_NAME));
 	}
 
 	private boolean noJobsRunning(ViewName viewName) {
