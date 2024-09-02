@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Configuration
 public class MemberItemReader {
-	private static final int PAGE_SIZE = 5000;
+	private static final int PAGE_SIZE = 500;
 
 	@Bean
 	@StepScope
@@ -29,8 +29,8 @@ public class MemberItemReader {
 				.rowMapper(new FragmentationMemberRowMapper())
 				.queryProvider(memberQuery())
 				.parameterValues(jobParameters)
-				//.pageSize(PAGE_SIZE)
-				.maxItemCount(PAGE_SIZE)
+				.pageSize(PAGE_SIZE)
+				.maxItemCount(20 * PAGE_SIZE)
 				.build();
 	}
 
