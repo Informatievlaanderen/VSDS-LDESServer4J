@@ -53,15 +53,12 @@ jobs:
       - name: Analyse & publish package
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
-          export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
-
       - name: Upload JARs
         uses: actions/upload-artifact@v2
         with:
@@ -85,6 +82,9 @@ jobs:
           path: .github
       - name: Define docker variables
         run: |
+          export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
             echo "IMAGES=ldes/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
