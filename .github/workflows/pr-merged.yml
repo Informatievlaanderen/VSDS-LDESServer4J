@@ -19,6 +19,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      version: ${{ steps.determine-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 18
@@ -50,6 +52,11 @@ jobs:
           gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
+      - name: Determine version
+        id: determine-version
+        run: |
+          export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
+          echo "::set-output name=version::$VERSION"
       - name: Analyse & publish package
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
@@ -82,13 +89,10 @@ jobs:
           path: .github
       - name: Define docker variables
         run: |
-          export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_ENV
-          
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${{ needs.build.outputs.version }}" >> $GITHUB_ENV
             echo "IMAGES=ldes/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
-            if [[ "${{ env.version }}" != *"SNAPSHOT"* ]]; then
+            if [[ "${{ needs.build.outputs.version }}" != *"SNAPSHOT"* ]]; then
               echo "LATEST=latest" >> $GITHUB_ENV
             fi
           else
