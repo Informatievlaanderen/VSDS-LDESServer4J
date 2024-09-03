@@ -1,0 +1,3 @@
+@prefix ns0: <http://example.com/vocab#> .
+
+<http://temporary.org#bart> http://example.com/vocab#name "Bart" .

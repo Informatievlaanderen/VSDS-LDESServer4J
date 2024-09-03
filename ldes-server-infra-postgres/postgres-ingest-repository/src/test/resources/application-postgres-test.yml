@@ -1,4 +1,5 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
+  main:
+    allow-bean-definition-overriding: true

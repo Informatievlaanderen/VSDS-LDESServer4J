@@ -15,7 +15,7 @@ class ReferenceBucketiserTest {
     private final ReferenceConfig config = new ReferenceConfig(RDF.type.getURI());
     private ReferenceBucketiser referenceBucketiser;
 
-    private final String memberId = "parcels/https://data.vlaanderen.be/id/perceel/13374D0779-00D003/2022-11-29T11:37:27+01:00";
+    private final String memberId = "https://data.vlaanderen.be/id/perceel/13374D0779-00D003/2022-11-29T11:37:27+01:00";
 
     @BeforeEach
     void setUp() {

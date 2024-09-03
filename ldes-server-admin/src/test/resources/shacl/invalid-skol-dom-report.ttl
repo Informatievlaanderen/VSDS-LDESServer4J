@@ -1,0 +1,24 @@
+@prefix dcterms:      <http://purl.org/dc/terms/> .
+@prefix event-stream: <http://localhost:8080/event-stream/> .
+@prefix ldes:         <https://w3id.org/ldes#> .
+@prefix rdf:          <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:         <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix server:       <http://localhost:8080/> .
+@prefix sh:           <http://www.w3.org/ns/shacl#> .
+@prefix shsh:         <http://www.w3.org/ns/shacl-shacl#> .
+@prefix test:         <http://validation-rules/#> .
+@prefix tree:         <https://w3id.org/tree#> .
+@prefix xsd:          <http://www.w3.org/2001/XMLSchema#> .
+
+[ rdf:type     sh:ValidationReport;
+  sh:conforms  false;
+  sh:result    [ rdf:type                      sh:ValidationResult;
+                 sh:focusNode                  server:name1;
+                 sh:resultMessage              "NodeKind[IRI] : Expected IRI for \"http://example.org\"";
+                 sh:resultPath                 ldes:skolemizationDomain;
+                 sh:resultSeverity             sh:Violation;
+                 sh:sourceConstraintComponent  sh:NodeKindConstraintComponent ;
+                 sh:sourceShape                [] ;
+                 sh:value                      "http://example.org"
+               ]
+] .

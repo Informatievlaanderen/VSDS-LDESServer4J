@@ -1,83 +1,60 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import org.springframework.batch.core.Job;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.UnpagedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageAssignment;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
 
+import java.sql.SQLException;
 import java.util.List;
 
+@Configuration
 public class PaginationJobDefinitions {
-	private PaginationJobDefinitions() {}
-	private static final String PAGINATION_JOB = "pagination";
-	private static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
+	public static final String PAGINATION_STEP = "pagination";
+	public static final int CHUNK_SIZE = 250;
 
-	public static Job paginationJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                          Partitioner partitioner, ItemReader<List<BucketisedMember>> reader,
-	                          PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer,
-	                          TaskExecutor taskExecutor) {
-		return new JobBuilder(PAGINATION_JOB, jobRepository)
-				.start(paginationStep(jobRepository, transactionManager, partitioner, reader, processor,
-						writer, taskExecutor))
-				.incrementer(new RunIdIncrementer())
-				.build();
-	}
-
-	public static Job newViewPaginationJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                                 Partitioner partitioner, ItemReader<List<BucketisedMember>> reader,
-	                                 PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer,
-	                                 TaskExecutor taskExecutor) {
-		return new JobBuilder(NEW_VIEW_PAGINATION_JOB, jobRepository)
-				.start(newViewPaginationStep(jobRepository, transactionManager, partitioner, reader, processor,
-						writer, taskExecutor))
-				.incrementer(new RunIdIncrementer())
-				.build();
-	}
-
-	private static Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                            Partitioner partitioner, ItemReader<List<BucketisedMember>> reader,
-	                            PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer,
-	                            TaskExecutor taskExecutor) {
-		return new StepBuilder("paginationMasterStep", jobRepository)
-				.partitioner("memberBucketPartitionStep", partitioner)
+	@Bean
+	public Step paginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+	                           Partitioner bucketPartitioner, ItemReader<List<UnpagedMember>> pageItemReader,
+	                           ItemProcessor<List<UnpagedMember>, List<PageAssignment>> pageRelationsProcessor,
+	                           ItemWriter<List<PageAssignment>> memberAssigner,
+							   PaginationMetricUpdater paginationMetricUpdater,
+	                           @Qualifier("paginationTaskExecutor") TaskExecutor taskExecutor) {
+		return new StepBuilder(PAGINATION_STEP, jobRepository)
+				.partitioner("memberBucketPartitionStep", bucketPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
-						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
-						.reader(reader)
-						.processor(processor)
-						.writer(writer)
-						.allowStartIfComplete(true)
+						.<List<UnpagedMember>, List<PageAssignment>>chunk(1, transactionManager)
+						.reader(pageItemReader)
+						.processor(pageRelationsProcessor)
+						.writer(memberAssigner)
+						.faultTolerant()
+						.retryLimit(3)
+						.retry(SQLException.class)
+						.retry(TransactionException.class)
 						.build()
 				)
-				.taskExecutor(taskExecutor)
 				.allowStartIfComplete(true)
+				.taskExecutor(taskExecutor)
+				.listener(paginationMetricUpdater)
 				.build();
 	}
 
-	private static Step newViewPaginationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-	                                   Partitioner partitioner, ItemReader<List<BucketisedMember>> reader,
-	                                   PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer,
-	                                   TaskExecutor taskExecutor) {
-		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
-				.partitioner("memberBucketPartitionStep", partitioner)
-				.step(new StepBuilder("paginationStep", jobRepository)
-						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
-						.reader(reader)
-						.processor(processor)
-						.writer(writer)
-						.allowStartIfComplete(true)
-						.build()
-				)
-				.taskExecutor(taskExecutor)
-				.allowStartIfComplete(true)
-				.build();
+	@Bean("paginationTaskExecutor")
+	public TaskExecutor paginationTaskExecutor() {
+		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
+		taskExecutor.setConcurrencyLimit(5);
+		return taskExecutor;
 	}
 }

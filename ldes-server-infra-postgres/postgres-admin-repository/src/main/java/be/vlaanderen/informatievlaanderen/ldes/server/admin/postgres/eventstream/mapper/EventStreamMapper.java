@@ -17,21 +17,29 @@ public class EventStreamMapper {
     }
 
     public static EventStreamTO fromEntity(EventStreamEntity entity) {
-        return new EventStreamTO(
-                entity.getName(),
-                entity.getTimestampPath(),
-                entity.getVersionOfPath(),
-                entity.isVersionCreationEnabled(),
-                entity.isClosed(),
-                entity.getViews().stream().map(ViewSpecificationMapper::fromEntity).toList(),
-                entity.getShaclShapeEntity().getModel(),
-                entity.getEventSourceEntity().getRetentionPolicies(),
-                entity.getDcat().map(dcat -> new DcatDataset(entity.getName(), dcat)).orElseGet(() -> new DcatDataset(entity.getName()))
-        );
+        return new EventStreamTO.Builder()
+                .withCollection(entity.getName())
+                .withTimestampPath(entity.getTimestampPath())
+                .withVersionOfPath(entity.getVersionOfPath())
+                .withVersionCreationEnabled(entity.isVersionCreationEnabled())
+                .withClosed(entity.isClosed())
+                .withSkolemizationDomain(entity.getSkolemizationDomain())
+                .withViews(entity.getViews().stream().map(ViewSpecificationMapper::fromEntity).toList())
+                .withShacl(entity.getShaclShapeEntity().getModel())
+                .withEventSourceRetentionPolicies(entity.getEventSourceEntity().getRetentionPolicies())
+                .withDcatDataset(entity.getDcat().map(dcat -> new DcatDataset(entity.getName(), dcat)).orElseGet(() -> new DcatDataset(entity.getName())))
+                .build();
     }
 
     public static EventStream fromPropertiesProjection(EventStreamProperties projection) {
-        return new EventStream(projection.getName(), projection.getTimestampPath(), projection.getVersionOfPath(), projection.isVersionCreationEnabled(), projection.isClosed());
+        return new EventStream(
+                projection.getName(),
+                projection.getTimestampPath(),
+                projection.getVersionOfPath(),
+                projection.isVersionCreationEnabled(),
+                projection.isClosed(),
+                projection.getSkolemizationDomain()
+        );
     }
 
     public static EventStreamEntity toEntity(EventStreamTO eventStream) {
@@ -39,7 +47,8 @@ public class EventStreamMapper {
                 eventStream.getTimestampPath(),
                 eventStream.getVersionOfPath(),
                 eventStream.isVersionCreationEnabled(),
-                false);
+                eventStream.isClosed(),
+                eventStream.getSkolemizationDomain());
         final List<ViewEntity> views = eventStream.getViews().stream()
                 .map(viewSpec -> {
                     final var viewEntity = ViewSpecificationMapper.toEntity(viewSpec);

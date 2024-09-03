@@ -108,7 +108,13 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
     public void theDatabaseAlreadyContainsAnotherDcatView() {
         final ViewName otherViewName = new ViewName(OTHER_COLLECTION_NAME, VIEW);
         final ViewSpecification view = new ViewSpecification(otherViewName, List.of(), List.of(), 150);
-        final EventStreamTO eventStreamTO = new EventStreamTO(OTHER_COLLECTION_NAME, "", "", false, List.of(view), ModelFactory.createDefaultModel(), List.of());
+        final EventStreamTO eventStreamTO = new EventStreamTO.Builder()
+                .withCollection(OTHER_COLLECTION_NAME)
+                .withTimestampPath("")
+                .withVersionOfPath("")
+                .withViews(List.of(view))
+                .withShacl(ModelFactory.createDefaultModel())
+                .build();
         eventStreamRepository.saveEventStream(eventStreamTO);
         final var otherDcatView = DcatView.from(otherViewName, ModelFactory.createDefaultModel());
         dcatViewPostgresRepository.save(otherDcatView);
@@ -122,7 +128,13 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
     @Given("I have an eventstream with a view")
     public void iHaveAnEventstreamWithAView() {
         final ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of(), 250);
-        final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION_NAME, "", "", false, List.of(viewSpecification), ModelFactory.createDefaultModel(), List.of());
+        final EventStreamTO eventStreamTO = new EventStreamTO.Builder()
+                .withCollection(COLLECTION_NAME)
+                .withTimestampPath("")
+                .withVersionOfPath("")
+                .withViews(List.of(viewSpecification))
+                .withShacl(ModelFactory.createDefaultModel())
+                .build();
         eventStreamRepository.saveEventStream(eventStreamTO);
     }
 }

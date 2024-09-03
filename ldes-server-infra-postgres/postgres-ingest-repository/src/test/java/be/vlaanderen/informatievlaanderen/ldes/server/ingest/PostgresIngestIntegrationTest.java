@@ -1,13 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.entity.DcatDataServiceEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity.DcatDatasetEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource.entity.EventSourceEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.MemberPostgresRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -15,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -25,16 +23,21 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class})
-@EntityScan(basePackageClasses = {EventStreamEntity.class, MemberEntity.class, ViewEntity.class, DcatDatasetEntity.class,
-DcatDataServiceEntity.class, EventSourceEntity.class, ShaclShapeEntity.class})
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest"})
-@Sql(value = {"./collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"./remove.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
+@ComponentScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server.ingest",
+		"be.vlaanderen.informatievlaanderen.ldes.server.domain",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream"})
+@ContextConfiguration(classes = {MemberEntityRepository.class})
+@EnableJpaRepositories(basePackageClasses = {MemberEntityRepository.class, EventStreamEntityRepository.class})
+@Sql(value = {"init-collections.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(statements = "DELETE FROM collections;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SuppressWarnings("java:S2187")
 public class PostgresIngestIntegrationTest {
 
 	@Autowired
 	MemberPostgresRepository memberRepository;
-
+	@Autowired
+	EventStreamRepository eventStreamRepository;
+	@MockBean
+	ServerMetrics serverMetrics;
 }

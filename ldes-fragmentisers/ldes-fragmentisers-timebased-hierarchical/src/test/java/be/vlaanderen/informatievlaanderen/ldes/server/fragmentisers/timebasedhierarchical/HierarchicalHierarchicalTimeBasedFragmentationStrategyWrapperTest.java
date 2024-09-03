@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class HierarchicalHierarchicalTimeBasedFragmentationStrategyWrapperTest {
@@ -29,7 +29,8 @@ class HierarchicalHierarchicalTimeBasedFragmentationStrategyWrapperTest {
 						"http://www.w3.org/ns/prov#generatedAtTime"));
 		FragmentationStrategy decoratedFragmentationStrategy = fragmentationStrategyWrapper
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
-		assertTrue(decoratedFragmentationStrategy instanceof HierarchicalTimeBasedFragmentationStrategy);
+		assertThat(decoratedFragmentationStrategy)
+				.isInstanceOf(HierarchicalTimeBasedFragmentationStrategy.class);
 	}
 
 }

@@ -36,11 +36,11 @@ public class TreeNodeStreamConverterImpl implements TreeNodeStreamConverter {
     @Override
     public Model getMemberStatements(Member member, String collectionName) {
         Model memberModel = member.model();
-        memberModel.add(createStatement(createResource(prefix + "/" + collectionName), TREE_MEMBER, createResource(member.getMemberIdWithoutPrefix())));
+        memberModel.add(createStatement(createResource(prefix + "/" + collectionName), TREE_MEMBER, createResource(member.subject())));
         return memberModel;
     }
 
     private Statement getTreeNodeStatement(String treeNodeId) {
-        return createStatement(createResource(treeNodeId), RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE));
+        return createStatement(createResource(prefix + treeNodeId), RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE));
     }
 }

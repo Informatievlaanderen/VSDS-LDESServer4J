@@ -96,17 +96,6 @@ public class Fragment {
 		return identifier.getParentId().map(LdesFragmentIdentifier::asDecodedFragmentId).orElse(ROOT);
 	}
 
-	public boolean isReadyForDeletion() {
-		if (deleteTime != null) {
-			return LocalDateTime.now().isAfter(deleteTime);
-		}
-		return false;
-	}
-
-	public void setDeleteTime(LocalDateTime localDateTime) {
-		this.deleteTime = localDateTime;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

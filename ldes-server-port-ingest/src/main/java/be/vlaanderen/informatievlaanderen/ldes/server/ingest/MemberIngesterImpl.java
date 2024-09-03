@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
-import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.constants.IngestConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.constants.IngestConstants.DUPLICATE_MEMBERS_DETECTED;
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.constants.IngestConstants.MEMBER_WITH_ID_INGESTED;
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
@@ -25,15 +26,18 @@ public class MemberIngesterImpl implements MemberIngester {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final MemberExtractorCollection memberExtractorCollection;
+    private final ServerMetrics serverMetrics;
 
     private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
     public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-                              ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection) {
+                              ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection,
+                              ServerMetrics serverMetrics) {
         this.validator = validator;
         this.memberRepository = memberRepository;
         this.eventPublisher = eventPublisher;
         this.memberExtractorCollection = memberExtractorCollection;
+	    this.serverMetrics = serverMetrics;
     }
 
     @Override
@@ -50,7 +54,7 @@ public class MemberIngesterImpl implements MemberIngester {
             return false;
         }
         publishIngestedEvent(collectionName, members);
-        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT, "collection", collectionName).increment(ingestedMembersCount);
+        serverMetrics.incrementIngestCount(collectionName, ingestedMembersCount);
         members.forEach(member -> logSuccessfulMemberIngestion(member.getSubject()));
         return true;
     }

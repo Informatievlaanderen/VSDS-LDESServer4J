@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.MemberPropertiesPostgresRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberPropertiesEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberViewEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberPropertiesEntityRepository.class, MemberViewEntityRepository.class })
+@ContextConfiguration(classes = {})
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.retention" })
 @SuppressWarnings("java:S2187")
 public class PostgresRetentionIntegrationTest {

@@ -48,6 +48,18 @@ public class ViewEntity {
         this.pageSize = pageSize;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public EventStreamEntity getEventStream() {
+        return eventStream;
+    }
+
     public Integer getPageSize() {
         return pageSize;
     }
@@ -66,5 +78,9 @@ public class ViewEntity {
 
     public void setEventStream(EventStreamEntity eventStream) {
         this.eventStream = eventStream;
+    }
+
+    public String getName() {
+        return name;
     }
 }

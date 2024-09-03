@@ -51,6 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
@@ -107,8 +108,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@When("I ingest {int} members of template {string} to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
 			throws Exception {
+		final String memberContentTemplate = readMemberTemplate(memberTemplate);
 		for (int i = 0; i < numberOfMembers; i++) {
-			String memberContent = readMemberTemplate(memberTemplate)
+			String memberContent = memberContentTemplate
 					.replace("ID", String.valueOf(i))
 					.replace("DATETIME", getCurrentTimestamp());
 			mockMvc.perform(post("/" + collectionName)
@@ -200,6 +202,18 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		interactedStreams.push(eventStreamName);
 	}
 
+	@Then("^I create the view ([^ ]+)")
+	public void iCreateTheViewViewDescriptionFile(String viewDescriptionFile) throws Exception {
+		String viewDescriptionFileSanitized = viewDescriptionFile.replace("\"", "");
+		String view = readBodyFromFile(viewDescriptionFileSanitized)
+				.replace("CURRENTTIME", getCurrentTimestamp());
+
+		mockMvc.perform(post("/admin/api/v1/eventstreams/%s/views".formatted(interactedStreams.getFirst()))
+						.contentType(RDFLanguages.guessContentType(viewDescriptionFileSanitized).getContentTypeStr())
+						.content(view))
+				.andExpect(status().isCreated());
+	}
+
 	@Then("^I delete the eventstream ([^ ]+)")
 	public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
 		String eventStreamNameSanitized = eventStreamName.replace("\"", "");
@@ -210,22 +224,22 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("^I can fetch the TreeNode ([^ ]+) using content-type ([^ ]+)")
 	public void iCanFetchTheTreeNodeTreeNodeUrlUsingContentTypeContentType(String treeNodeUrl, String contentType)
 			throws Exception {
+		await().atMost(Duration.ofSeconds(4));
 		assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), contentType.replace("\"", "")).listStatements()
 				.toList().isEmpty());
 	}
 
 	@Then("The response from requesting the url {string} has access control headers and an etag")
 	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) {
-
 		await()
 				.atMost(Duration.of(20, ChronoUnit.SECONDS))
 				.untilAsserted(() -> {
-					MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
+					mockMvc.perform(get(url).accept("text/turtle")
 									.header("Access-Control-Request-Method", "GET")
 									.header("Origin", "http://www.someurl.com"))
-							.andExpect(status().isOk()).andReturn().getResponse();
-					assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
-					assertNotNull(response.getHeader("ETag"));
+							.andExpect(status().isOk())
+							.andExpect(header().exists("Etag"))
+							.andExpect(header().string("Access-Control-Allow-Origin", "*"));
 				});
 	}
 
@@ -253,7 +267,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
 		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
-				.until(() -> memberRepository.getMembersOfCollection(collection).size() == expectedMemberCount);
+				.until(() -> jdbcTemplate
+						.queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
+								Integer.class, collection)
+						== expectedMemberCount);
 	}
 
 	@After

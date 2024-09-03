@@ -1,74 +1,43 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction.FragmentsCompactedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-
 @Component
 public class PaginationCompactionService {
-	private final FragmentRepository fragmentRepository;
-	private final AllocationRepository allocationRepository;
-	private final ApplicationEventPublisher applicationEventPublisher;
+	private final PageRelationRepository pageRelationRepository;
+	private final PageMemberRepository pageMemberRepository;
+	private final CompactedFragmentCreator compactedFragmentCreator;
+	private final PageDeletionTimeSetter pageDeletionTimeSetter;
 	private final ObservationRegistry observationRegistry;
-	private final ApplicationEventPublisher eventPublisher;
 
-	public PaginationCompactionService(FragmentRepository fragmentRepository,
-	                                   AllocationRepository allocationRepository,
-	                                   ApplicationEventPublisher applicationEventPublisher, ObservationRegistry observationRegistry, ApplicationEventPublisher eventPublisher) {
-		this.fragmentRepository = fragmentRepository;
-		this.allocationRepository = allocationRepository;
-		this.applicationEventPublisher = applicationEventPublisher;
-		this.observationRegistry = observationRegistry;
-		this.eventPublisher = eventPublisher;
+	public PaginationCompactionService(PageRelationRepository pageRelationRepository, PageMemberRepository pageMemberRepository,
+                                       CompactedFragmentCreator compactedFragmentCreator, PageDeletionTimeSetter pageDeletionTimeSetter, ObservationRegistry observationRegistry) {
+        this.pageRelationRepository = pageRelationRepository;
+        this.pageMemberRepository = pageMemberRepository;
+        this.compactedFragmentCreator = compactedFragmentCreator;
+        this.pageDeletionTimeSetter = pageDeletionTimeSetter;
+        this.observationRegistry = observationRegistry;
 	}
 
 	public void applyCompactionForFragments(Set<CompactionCandidate> toBeCompactedFragments) {
 		Observation compactionObservation = Observation.createNotStarted("compaction", observationRegistry).start();
-		CompactedFragment compacted = new CompactedFragment(toBeCompactedFragments);
 
-		Fragment compactedFragment = compacted.getFragment();
+		long compactedFragmentId = compactedFragmentCreator.createCompactedPage(toBeCompactedFragments);
+		List<Long> compactedPageIds = toBeCompactedFragments.stream().map(CompactionCandidate::getId).toList();
 
-		fragmentRepository.saveFragment(compactedFragment);
+		pageMemberRepository.setPageMembersToNewPage(compactedFragmentId, compactedPageIds);
+		pageRelationRepository.updateCompactionBucketRelations(compactedPageIds, compactedFragmentId);
+		pageDeletionTimeSetter.setDeleteTimeOfFragment(compactedPageIds);
 
-		var membersOfCompactedFragments =
-				allocationRepository.getMemberAllocationIdsByFragmentIds(compacted.getImpactedFragmentIds());
-
-		updateRelationsOfPredecessorFragments(compactedFragment, compacted.getFirstImpactedFragment());
-		addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
-		applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(compacted.getImpactedFragmentIdentifiers()));
 		compactionObservation.stop();
-	}
-
-	private void addMembersOfFragmentsToCompactedFragment(List<String> membersOfCompactedFragments, Fragment fragment) {
-		eventPublisher.publishEvent(
-				new BulkMemberAllocatedEvent(membersOfCompactedFragments, fragment.getViewName().getCollectionName(),
-						fragment.getViewName().getViewName(), fragment.getFragmentIdString()));
-
-		fragmentRepository.incrementNrOfMembersAdded(fragment.getFragmentId(), membersOfCompactedFragments.size());
-	}
-
-	private void updateRelationsOfPredecessorFragments(Fragment compactedFragment, Fragment firstlyCompactedFragment) {
-		List<Fragment> predecessorFragments = fragmentRepository
-				.retrieveFragmentsByOutgoingRelation(firstlyCompactedFragment.getFragmentId());
-		predecessorFragments.forEach(predecessorFragment -> {
-			predecessorFragment
-					.addRelation(new TreeRelation("", compactedFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
-			predecessorFragment.removeRelationToIdentifier(firstlyCompactedFragment.getFragmentId());
-			fragmentRepository.saveFragment(predecessorFragment);
-		});
 	}
 }

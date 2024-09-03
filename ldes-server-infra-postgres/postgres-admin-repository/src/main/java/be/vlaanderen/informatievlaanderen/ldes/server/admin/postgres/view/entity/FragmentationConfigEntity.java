@@ -41,4 +41,18 @@ public class FragmentationConfigEntity {
     public void setConfig(Map<String, String> config) {
         this.config = config;
     }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FragmentationConfigEntity that)) return false;
+
+	    return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

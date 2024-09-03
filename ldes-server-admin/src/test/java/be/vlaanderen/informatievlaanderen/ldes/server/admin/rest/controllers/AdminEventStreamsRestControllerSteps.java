@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -76,8 +77,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 						List.of(fragmentationConfig), 100));
 
 		when(eventStreamRepository.retrieveAllEventStreamTOs()).thenReturn(List.of(
-				new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, views, shape1, List.of()),
-				new EventStreamTO(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(singleView), shape2, List.of())
+				new EventStreamTO.Builder().withEventStream(eventStream).withViews(views).withShacl(shape1).build(),
+				new EventStreamTO.Builder().withEventStream(eventStream2).withViews(List.of(singleView)).withShacl(shape2).build()
 		));
 	}
 
@@ -101,7 +102,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void aDbContainingOneEventStream() throws URISyntaxException {
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		Model shape = readModelFromFile("shacl/server-shape.ttl");
-		final EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), shape, List.of());
+		final EventStreamTO eventStreamTO = new EventStreamTO.Builder().withEventStream(eventStream).withShacl(shape).build();
 		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTO));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 	}
@@ -139,8 +140,12 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void iVerifyTheEventStreamInTheResponseBody(String filename) throws Exception {
 		final Model expectedModel = readModelFromFile(filename);
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
+	}
 
+	@And("I verify the event stream is saved to the db")
+	public void iVerifyTheEventStreamIsSavedToTheDb() {
 		verify(eventStreamRepository).saveEventStream(any(EventStreamTO.class));
+
 	}
 
 	@When("^the client posts model from file (.*)$")
@@ -205,5 +210,20 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db containing one deletable event stream")
 	public void aDbContainingOneDeletableEventStream() {
 		when(eventStreamRepository.deleteEventStream(COLLECTION)).thenReturn(1);
+	}
+
+	@And("I verify the saved event stream has a skolemization domain")
+	public void iVerifyTheSavedEventStreamHasASkolemizationDomain() {
+		verify(eventStreamRepository).saveEventStream(assertArg(actual -> assertThat(actual.getSkolemizationDomain()).isNotNull()));
+	}
+
+	@And("I verify the saved event stream has no skolemization domain")
+	public void iVerifyTheSavedEventStreamHasNoSkolemizationDomain() {
+		verify(eventStreamRepository).saveEventStream(assertArg(actual -> assertThat(actual.getSkolemizationDomain()).isNull()));
+	}
+
+	@And("I verify no event stream has been saved to the db")
+	public void iVerifyNoEventStreamHasBeenSavedToTheDb() {
+		verify(eventStreamRepository, never()).saveEventStream(any());
 	}
 }

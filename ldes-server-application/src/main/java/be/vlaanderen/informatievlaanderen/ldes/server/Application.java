@@ -9,6 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application {
 	public static void main(String[] args) {
+		// Auto create Spring Batch Tables
+		System.setProperty("spring.batch.jdbc.initialize-schema", "always");
+		System.setProperty("spring.batch.jdbc.isolation-level-for-create", "READ_COMMITTED");
 		SpringApplication.run(Application.class, args);
 	}
+
+
 }

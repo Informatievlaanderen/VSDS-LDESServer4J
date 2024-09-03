@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="drop-2.x-tables" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="fetch_allocation"/>
+                <tableExists tableName="fragmentation_bucketisation"/>
+                <tableExists tableName="fragmentation_fragment"/>
+                <tableExists tableName="fragmentation_fragment_relations"/>
+                <tableExists tableName="fragmentation_sequence"/>
+                <tableExists tableName="retention_member_properties"/>
+                <tableExists tableName="retention_member_views"/>
+            </not>
+        </preConditions>
+        <dropTable tableName="fetch_allocation"/>
+        <dropTable tableName="fragmentation_bucketisation"/>
+        <dropTable tableName="fragmentation_fragment"/>
+        <dropTable tableName="fragmentation_fragment_relations"/>
+        <dropTable tableName="fragmentation_sequence"/>
+        <dropTable tableName="retention_member_properties"/>
+        <dropTable tableName="retention_member_views"/>
+    </changeSet>
+</databaseChangeLog>

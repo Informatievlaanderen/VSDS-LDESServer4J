@@ -5,5 +5,6 @@ import org.springframework.context.ApplicationContext;
 
 public interface FragmentationStrategyWrapper {
 	FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
-			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties);
+	                                                FragmentationStrategy fragmentationStrategy,
+	                                                ConfigProperties fragmentationProperties);
 }

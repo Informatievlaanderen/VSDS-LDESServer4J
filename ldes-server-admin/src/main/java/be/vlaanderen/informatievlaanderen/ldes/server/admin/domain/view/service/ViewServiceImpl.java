@@ -48,8 +48,8 @@ public class ViewServiceImpl implements ViewService {
 
         checkIfViewAlreadyExists(viewSpecification);
         viewValidator.validateView(viewSpecification);
-        viewRepository.saveView(viewSpecification);
 
+        viewRepository.saveView(viewSpecification);
         CompletableFuture.runAsync(() -> eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification)));
         log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
     }

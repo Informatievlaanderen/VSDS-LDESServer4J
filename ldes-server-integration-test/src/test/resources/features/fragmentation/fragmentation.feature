@@ -5,6 +5,7 @@ Feature: LDES Server Fragmentation
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 617 members of template <template> to the collection <collection>
     Then the LDES <collection> contains <ingestedMemberCount> members
+    And I wait until all members are fragmented
     When I fetch the root "paged" fragment of <collection>
     And I fetch the next fragment through the first "Relation"
     Then this fragment only has 1 "Relation" relation
@@ -21,11 +22,34 @@ Feature: LDES Server Fragmentation
       | "data/input/eventstreams/fragmentation/mobility-hindrances.paged.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 617                 | 17        |
       | "data/input/eventstreams/fragmentation/observations/paged.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 1234                | 34        |
 
+  @refragmentation
+  Scenario Outline: Server Can Refragment an LDES
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 617 members of template <template> to the collection <collection>
+    Then the LDES <collection> contains <ingestedMemberCount> members
+    And I wait until all members are fragmented
+    And I create the view <viewDescriptionFile>
+    When I fetch the root "paged" fragment of <collection>
+    And I fetch the next fragment through the first "Relation"
+    Then this fragment only has 1 "Relation" relation
+    And this fragment is immutable
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment only has 1 "Relation" relation
+    And this fragment is immutable
+    When I fetch the next fragment through the first "Relation"
+    And this fragment contains <restCount> members
+    And this fragment is mutable
+    And this fragment has no relations
+    Examples:
+      | eventStreamDescriptionFile                                      | viewDescriptionFile                                                       | template                                   | collection            | ingestedMemberCount | restCount |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.ttl" | "data/input/eventstreams/fragmentation/mobility-hindrances.view.paged.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 617                 | 17        |
+
   @geospatial
   Scenario Outline: Server Can Geospatially Fragment an LDES
     Given I create the eventstream <eventStreamDescriptionFile>
     And I ingest 6 members of template <template> to the collection <collection>
     And the LDES <collection> contains <expectedMemberCount> members
+    And I wait until all members are fragmented
     When I fetch the root "by-loc" fragment of <collection>
     Then this fragment only has 1 "Relation" relation
     When I fetch the next fragment through the first "Relation"
@@ -53,6 +77,7 @@ Feature: LDES Server Fragmentation
     Given I create the eventstream <eventStreamDescriptionFile>
     And I ingest 5 members of template <template> to the collection <collection>
     And the LDES <collection> contains <ingestedMembers> members
+    And I wait until all members are fragmented
     When I fetch the timebased fragment "by-time" fragment of this month of <collection>
     And I fetch the next fragment through the first "GreaterThanOrEqualToRelation"
     And I fetch the next fragment through the first "Relation"
@@ -66,6 +91,7 @@ Feature: LDES Server Fragmentation
     Given I create the eventstream <eventStreamDescriptionFile>
     And I ingest 6 members of template <memberTemplate> to the collection <collection>
     And the LDES <collection> contains <ingestedMemberCount> members
+    And I wait until all members are fragmented
     When I fetch the root "by-ref" fragment of <collection>
     Then this fragment only has 1 "Relation" relation
     When I fetch the next fragment through the first "Relation"
@@ -86,6 +112,7 @@ Feature: LDES Server Fragmentation
     When I ingest 2 members of template <firstTemplate> to the collection <collection>
     And I ingest 5 members of template <secondTemplate> to the collection <collection>
     Then the LDES <collection> contains <expectedMemberCount> members
+    And I wait until all members are fragmented
     When I fetch the root "by-nested-ref" fragment of <collection>
     Then this fragment only has 1 "Relation" relation
     When I fetch the next fragment through the first "Relation"
@@ -118,6 +145,7 @@ Feature: LDES Server Fragmentation
   Scenario Outline: Server Allows Multiple Views in an LDES
     Given I create the eventstream <eventStreamDescriptionFile>
     And I ingest 6 members of template <template> to the collection <collection>
+    And I wait until all members are fragmented
     When I fetch the root "by-loc" fragment of <collection>
     And I fetch the next fragment through the first "Relation"
     Then this fragment only has 3 "GeospatiallyContainsRelation" relation
@@ -131,6 +159,7 @@ Feature: LDES Server Fragmentation
   Scenario Outline: Server can close an event stream
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 317 members of template <template> to the collection <collection>
+    And I wait until all members are fragmented
     Then the following fragment URL <fragmentUrl> contains member with ID <memberId>
     When I close the collection <collection>
     And I fetch the root "paged" fragment of <collection>

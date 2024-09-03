@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="update-children-performance-tweaks-14082024">
+        <createIndex tableName="pages" indexName="pages_bucketId_idx">
+            <column name="bucket_id" />
+        </createIndex>
+        <createIndex tableName="page_relations" indexName="page_relations_fromPageId_idx">
+            <column name="from_page_id" />
+        </createIndex>
+        <createIndex tableName="page_relations" indexName="page_relations_toPageId_idx">
+            <column name="to_page_id" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
