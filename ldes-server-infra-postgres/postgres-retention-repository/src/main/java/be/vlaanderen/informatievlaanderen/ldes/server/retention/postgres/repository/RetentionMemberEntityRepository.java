@@ -12,10 +12,10 @@ import java.util.stream.Stream;
 public interface RetentionMemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
     void deleteAllByIdIn(List<Long> oldIds);
-    @Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream JOIN PageMemberEntity pm ON pm.member = m WHERE v.name = :viewName AND v.eventStream.name = :collectionName AND CAST(m.timestamp as timestamp) < CAST(:timestamp as timestamp)")
+    @Query("SELECT p FROM PageMemberEntity p JOIN ViewEntity v ON p.bucket.view = v WHERE v.name = :viewName AND v.eventStream.name = :collectionName AND CAST(p.member.timestamp as timestamp) < CAST(:timestamp as timestamp)")
     Stream<MemberEntity> findAllByViewNameAndTimestampBefore(String viewName, String collectionName, LocalDateTime timestamp);
 
-    @Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream JOIN PageMemberEntity pm ON pm.member = m WHERE v.name = :viewName AND v.eventStream.name = :collectionName")
+    @Query("SELECT p.member FROM PageMemberEntity p JOIN ViewEntity v ON p.bucket.view = v WHERE v.name = :viewName AND v.eventStream.name = :collectionName")
     Stream<MemberEntity> findAllByViewName(String viewName, String collectionName);
 
     @Query("SELECT m.id AS id, m.versionOf AS versionOf, m.timestamp AS timestamp, CASE WHEN (SELECT COUNT(p.id) FROM PageMemberEntity p WHERE p.member.id = m.id) > 0 THEN true ELSE false END AS inView, m.isInEventSource AS inEventSource, c.name AS collectionName FROM MemberEntity m JOIN EventStreamEntity c ON m.collection = c WHERE c.name = :collectionName GROUP BY m.id, c.name")
