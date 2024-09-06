@@ -48,6 +48,7 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	               "p.expiration AS expiration, " +
 	               "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
 	               "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN RelationEntity r ON p = r.fromPage " +
+				   "JOIN PageMemberEntity m ON p = m.page " +
 	               "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
 	               "GROUP BY p.id, r.toPage.id " +
 	               "HAVING COUNT(*) < :capacityPerPage")
