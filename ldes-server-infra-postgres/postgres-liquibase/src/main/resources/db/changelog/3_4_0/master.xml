@@ -3,10 +3,8 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="/db/changelog/3_0_0/master.xml" />
-    <include file="/db/changelog/3_1_0/master.xml" />
-    <include file="/db/changelog/3_2_0/master.xml" />
-    <include file="/db/changelog/3_3_0/master.xml" />
-    <include file="/db/changelog/3_4_0/master.xml" />
-
+    <include file="/db/changelog/3_4_0/add-view-id-to-page-members.xml" />
+    <include file="/db/changelog/3_4_0/initialize-view-id.sql" />
+    <include file="/db/changelog/3_4_0/redefine-bucket-stats.sql" />
+    <include file="/db/changelog/3_4_0/redefine-needs-pagination.sql" />
 </databaseChangeLog>
