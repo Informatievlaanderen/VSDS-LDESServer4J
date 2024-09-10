@@ -30,11 +30,12 @@ public class PagePostgresRepository implements PageRepository {
 	public Page getOpenPage(long bucketId) {
 		String sql = """
 				select p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
-				from views v
-				join page_members pm on pm.view_id = v.view_id
-				join pages p on p.page_id = pm.page_id
-				join bucket_lastpage blp on blp.bucket_id = pm.bucket_id AND blp.last_page_id = p.page_id
-				where pm.bucket_id = ?
+				from pages p
+				left join page_members pm on pm.page_id = p.page_id
+				JOIN buckets b ON p.bucket_id = b.bucket_id
+				JOIN views v ON v.view_id = b.view_id
+				join bucket_lastpage blp on blp.bucket_id = b.bucket_id AND blp.last_page_id = p.page_id
+				where b.bucket_id = ?
 				group by p.page_id, v.page_size
 				order by page_id
 				""";
