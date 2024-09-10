@@ -41,13 +41,16 @@ public class MemberItemReader {
 		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
 		queryProvider.setFromClause("""
                      collections c
-                      join views v on v.collection_id = c.collection_id
-                      join bucket_stats bs on bs.collection_id = c.collection_id and bs.view_id = v.view_id
                       join members m on m.collection_id = c.collection_id
              """);
 		queryProvider.setWhereClause("""
-                   m.member_id > bs.last
-                    AND v.name = :viewName AND c.name = :collectionName
+                   m.member_id > (
+				       select last
+				       from collections cs
+				       join views vs on vs.collection_id = cs.collection_id
+				       join bucket_stats bs on bs.collection_id = cs.collection_id and bs.view_id = vs.view_id
+				       where vs.name = :viewName AND cs.name = :collectionName
+				      )
              """);
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
