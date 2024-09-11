@@ -21,7 +21,9 @@ An Event Stream config needs to contain a couple of items:
       ingest state objects.
       The default value of this object is `false` and the property can be omitted.
     * `ldes:eventSource` object that defines which members are to be retained in the event stream.
-      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-the-member-deletion-on-a-ldes-stream)
+      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-member-deletion-on-an-event-stream)
+    * `ldes:skolemizationDomain` object that defines the [skolemization](../features/skolemization) domain. 
+      Using `"http://example.com"` as domain will result in all blank nodes being transformed to `http://example.org/.well-known/genid/{unique_id}`.
 
     * For more info, visit the [Swagger API documentation.](./admin-api)
 
@@ -126,7 +128,7 @@ Before introduction of the event source in the LDES Server, members were directl
 With the event source, it is possible to delete all views of an Event Stream without losing members so that you can create new views without having to ingest data again.
 If members need to be deleted directly from the Event Stream when they aren't part of any view, a timebased retention policy of a few seconds can be set on the event source of the Event Stream. 
 
-Example:
+### Example:
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
 
@@ -134,16 +136,4 @@ ldes:retentionPolicy [
         a ldes:LatestVersionSubset ;
         ldes:amount 0 ;
       ] ;
-````
-
-### Example
-
-````turtle
-@prefix ldes: <https://w3id.org/ldes#> .
-
-<> a ldes:EventSource ;
-    ldes:retentionPolicy [
-        a ldes:DurationAgoPolicy ;
-        tree:value "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> ;
-      ] .
 ````
