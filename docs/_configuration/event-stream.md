@@ -126,7 +126,7 @@ Before introduction of the event source in the LDES Server, members were directl
 With the event source, it is possible to delete all views of an Event Stream without losing members so that you can create new views without having to ingest data again.
 If members need to be deleted directly from the Event Stream when they aren't part of any view, a timebased retention policy of a few seconds can be set on the event source of the Event Stream. 
 
-Example:
+### Example:
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
 
@@ -136,14 +136,29 @@ ldes:retentionPolicy [
       ] ;
 ````
 
-### Example
+## Skolemization
+
+To transform blank nodes into Skolem Uniform Resource Identifiers (URIs), 
+the [skolemization feature](../features/skolemization) can be used;
+
+An example configuration could look like this:
 
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix genericES: <http://localhost:8080/generic-eventstream/> .
 
-<> a ldes:EventSource ;
-    ldes:retentionPolicy [
-        a ldes:DurationAgoPolicy ;
-        tree:value "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> ;
-      ] .
+server:generic-eventstream a ldes:EventStream ;
+    ldes:timestampPath dcterms:created ;
+    ldes:versionOfPath dcterms:isVersionOf ;
+    ldes:skolemizationDomain "http://example.org" ;
+    tree:shape genericES:shape .
+
+genericES:shape a sh:NodeShape .
 ````
+
+This will transform all blank nodes to `http://example.org/.well-known/genid/{unique_id}`.

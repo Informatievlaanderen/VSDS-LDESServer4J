@@ -51,6 +51,4 @@ This is a simple example, but it illustrates the basic process of Skolemization 
 
 ## Skolemization in LDES Server
 
-To enable Skolemization, define the `<https://w3id.org/ldes#skolemizationDomain>` property when [setting up your Event Stream](../configuration/event-stream#configuring-a-new-event-stream) with for example with value `"http://example.org"`.
-
-This will transform all blank nodes to `http://example.org/.well-known/genid/{unique_id}`.
+Skolemization can be configured on [Event Stream level](../configuration/event-stream#skolemization).
