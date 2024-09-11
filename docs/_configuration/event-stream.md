@@ -22,6 +22,8 @@ An Event Stream config needs to contain a couple of items:
       The default value of this object is `false` and the property can be omitted.
     * `ldes:eventSource` object that defines which members are to be retained in the event stream.
       When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-member-deletion-on-an-event-stream)
+    * `ldes:skolemizationDomain` object that defines the [skolemization](../features/skolemization) domain. 
+      Using `"http://example.com"` as domain will result in all blank nodes being transformed to `http://example.org/.well-known/genid/{unique_id}`.
 
     * For more info, visit the [Swagger API documentation.](./admin-api)
 
@@ -135,30 +137,3 @@ ldes:retentionPolicy [
         ldes:amount 0 ;
       ] ;
 ````
-
-## Skolemization
-
-To transform blank nodes into Skolem Uniform Resource Identifiers (URIs), 
-the [skolemization feature](../features/skolemization) can be used;
-
-An example configuration could look like this:
-
-````turtle
-@prefix ldes: <https://w3id.org/ldes#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix tree: <https://w3id.org/tree#>.
-@prefix sh:   <http://www.w3.org/ns/shacl#> .
-@prefix server: <http://localhost:8080/> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix genericES: <http://localhost:8080/generic-eventstream/> .
-
-server:generic-eventstream a ldes:EventStream ;
-    ldes:timestampPath dcterms:created ;
-    ldes:versionOfPath dcterms:isVersionOf ;
-    ldes:skolemizationDomain "http://example.org" ;
-    tree:shape genericES:shape .
-
-genericES:shape a sh:NodeShape .
-````
-
-This will transform all blank nodes to `http://example.org/.well-known/genid/{unique_id}`.
