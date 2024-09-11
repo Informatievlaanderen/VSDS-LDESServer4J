@@ -21,7 +21,7 @@ An Event Stream config needs to contain a couple of items:
       ingest state objects.
       The default value of this object is `false` and the property can be omitted.
     * `ldes:eventSource` object that defines which members are to be retained in the event stream.
-      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-the-member-deletion-on-a-ldes-stream)
+      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-member-deletion-on-an-event-stream)
 
     * For more info, visit the [Swagger API documentation.](./admin-api)
 
