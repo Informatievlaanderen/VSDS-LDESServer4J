@@ -120,10 +120,10 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   </tr>
 <tr><td colspan="4"><b>Bucketisation & pagination batching</b></td></tr>
   <tr>
-    <td>spring.batch.jdbc.initialize-schema</td>
-    <td>Indicates whether the database should be initialized with the tables required for the batching process. This can be either `always`, `embedded` (embedded databases) or `never`</td>
-    <td>Yes (to let the bucketisation and pagination process run)</td>
-    <td></td>
+    <td>ldes-server.fragmentation-cron</td>
+    <td>Defines how often Fragmentation Service will check for unprocessed members (when present, trigger fragmentation job).</td>
+    <td>No</td>
+    <td>*/30 * * * * *</td>
   </tr>
   <tr><td colspan="4"><b><a href="./features/compaction">Fragment Compaction</a></b></td></tr>
   <tr>
