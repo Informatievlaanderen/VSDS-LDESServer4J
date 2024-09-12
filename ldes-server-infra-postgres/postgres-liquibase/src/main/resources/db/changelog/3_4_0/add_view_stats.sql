@@ -41,7 +41,7 @@ set
 -- create function to increase view stats count when member bucketized
 create function on_page_member_inserted() returns trigger language plpgsql as $$
 begin
-  update view_stats set bucketized_count = bucketized_count + 1;
+  update view_stats set bucketized_count = bucketized_count + 1 where view_id = NEW.view_id;
   return null;
 end
 $$;
@@ -54,7 +54,7 @@ for each row execute procedure on_page_member_inserted();
 create function on_page_member_updating() returns trigger language plpgsql as $$
 begin
   if (OLD.page_id is null and NEW.page_id is not null) then
-    update view_stats set paginated_count = paginated_count + 1;
+    update view_stats set paginated_count = paginated_count + 1 where view_id = NEW.view_id;
   end if;
   return NEW;
 end
