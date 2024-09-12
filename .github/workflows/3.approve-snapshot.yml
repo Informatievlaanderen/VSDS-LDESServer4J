@@ -1,6 +1,8 @@
 name: 3. Approve Snapshot
 
 on:
+  release:
+    types: [ published ]
   workflow_dispatch:
 
 env:
@@ -47,9 +49,8 @@ jobs:
           branch: ci/promote-snapshot
           delete-branch: true
           title: '[ci] Promote snapshot ${{ env.NEW_VERSION }}'
-          reviewers: xdxxxdx
           body: |
             As part of QA process, the snapshot version is being promoted to a release version.
           labels: |
-            report
+            promotion
             automated pr
