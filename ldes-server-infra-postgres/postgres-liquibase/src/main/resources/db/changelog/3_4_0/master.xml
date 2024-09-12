@@ -9,4 +9,5 @@
     <include file="/db/changelog/3_4_0/redefine-needs-pagination.sql" />
     <include file="/db/changelog/3_4_0/define-bucket-last-page-view.sql" />
     <include file="/db/changelog/3_4_0/add_view_stats.sql" />
+    <include file="/db/changelog/3_4_0/redefine-needs-bucketization.sql" />
 </databaseChangeLog>
