@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.ChildBucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
@@ -23,13 +24,22 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToBucket(Bucket rootFragmentOfView, FragmentationMember member, Observation parentObservation) {
-		return fragmentationStrategy.addMemberToBucket(rootFragmentOfView, member, parentObservation);
+	public List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket rootFragmentOfView, FragmentationMember member, Observation parentObservation) {
+		return fragmentationStrategy.addMemberToBucketAndReturnMembers(rootFragmentOfView, member, parentObservation);
+	}
+
+	@Override
+	public Bucket addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation) {
+		return fragmentationStrategy.addMemberToBucket(rootBucketOfView, member, parentObservation);
 	}
 
 	protected void addRelationFromParentToChild(Bucket parentBucket, Bucket childBucket) {
 		BucketRelation bucketRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
 		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
+	}
+
+	protected void addRelationFromParentToChild(Bucket parentBucket, ChildBucket childBucket) {
+		parentBucket.addChildBucket(childBucket);
 	}
 
 }

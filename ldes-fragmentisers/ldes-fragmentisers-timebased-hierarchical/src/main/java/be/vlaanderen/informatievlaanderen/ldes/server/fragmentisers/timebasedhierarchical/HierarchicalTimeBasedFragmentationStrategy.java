@@ -42,16 +42,29 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+	public List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
 		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
 
 		Bucket bucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
 				.map(timestamp -> bucketFinder.getLowestBucket(parentBucket, timestamp, Granularity.YEAR))
 				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
 
-		List<BucketisedMember> members = super.addMemberToBucket(bucket, member, parentObservation);
+		List<BucketisedMember> members = super.addMemberToBucketAndReturnMembers(bucket, member, parentObservation);
 		bucketisationObservation.stop();
 		return members;
+	}
+
+	@Override
+	public Bucket addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
+
+		Bucket childBucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
+				.map(timestamp -> bucketFinder.getLowestBucket(parentBucket, timestamp, Granularity.YEAR))
+				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
+
+		super.addMemberToBucket(childBucket, member, parentObservation);
+		bucketisationObservation.stop();
+		return parentBucket;
 	}
 
 	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String subject, Model memberModel) {

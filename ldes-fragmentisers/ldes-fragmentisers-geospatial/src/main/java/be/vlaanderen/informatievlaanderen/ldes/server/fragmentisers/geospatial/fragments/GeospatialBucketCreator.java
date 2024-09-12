@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.ChildBucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileBucketRelationsAttributer;

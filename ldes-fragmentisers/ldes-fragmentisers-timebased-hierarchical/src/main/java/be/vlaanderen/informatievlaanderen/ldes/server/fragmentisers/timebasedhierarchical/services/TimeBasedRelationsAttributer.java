@@ -4,8 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationDefinition;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -32,37 +31,14 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
 	public void addInBetweenRelation(Bucket parentBucket, Bucket childBucket) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childBucket);
-		BucketRelation parentGteRelation = new BucketRelation(
-				parentBucket,
-				childBucket,
-				TREE_GTE_RELATION,
-				timestamp.getTime().toString(),
-				XSD_DATETIME,
-				config.getFragmentationPath()
-		);
-		BucketRelation parentLtRelation = new BucketRelation(
-				parentBucket,
-				childBucket,
-				TREE_LT_RELATION,
-				timestamp.getLtBoundary().toString(),
-				XSD_DATETIME,
-				config.getFragmentationPath()
-		);
-		saveRelation(parentGteRelation, timestamp.getNextUpdateTs());
-		saveRelation(parentLtRelation, timestamp.getNextUpdateTs());
+		addInBetweenRelation(parentBucket, childBucket, TREE_GTE_RELATION, timestamp.getTime().toString());
+		addInBetweenRelation(parentBucket, childBucket, TREE_LT_RELATION, timestamp.getLtBoundary().toString());
+		triggerTimeBasedLinearCachingIfNeeded(parentBucket.getBucketId(), timestamp.getNextUpdateTs());
 	}
 
 	public void addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
-		final BucketRelation defaultRelation = BucketRelation.createGenericRelation(parentBucket, childBucket);
-		saveRelation(defaultRelation, null);
-	}
-
-	private void saveRelation(BucketRelation bucketRelation, LocalDateTime nextUpdateTs) {
-		if (config.isLinearTimeCachingEnabled()) {
-			applicationEventPublisher.publishEvent(new TimeBasedLinearCachingTriggered(bucketRelation.fromBucket().getBucketId(), nextUpdateTs));
-		}
-		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
-
+		parentBucket.addChildBucket(childBucket.asChildBucket(BucketRelationDefinition.generic()));
+		triggerTimeBasedLinearCachingIfNeeded(parentBucket.getBucketId(), null);
 	}
 
 	private FragmentationTimestamp timestampFromFragmentPairs(Bucket bucket) {
@@ -71,6 +47,19 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 						.anyMatch(t -> t.equals(descriptorPair.key())))
 				.collect(Collectors.toMap(BucketDescriptorPair::key, pair -> Integer.parseInt(pair.value())));
 		return createTimestampFromMap(timeMap);
+	}
+
+	private void addInBetweenRelation(Bucket parentBucket, Bucket childBucket, String type, String timestamp) {
+		final BucketRelationDefinition relation = new BucketRelationDefinition(
+				type, timestamp, XSD_DATETIME, config.getFragmentationPath()
+		);
+		parentBucket.addChildBucket(childBucket.asChildBucket(relation));
+	}
+
+	private void triggerTimeBasedLinearCachingIfNeeded(long bucketId, LocalDateTime nextUpdateTs) {
+		if (config.isLinearTimeCachingEnabled()) {
+			applicationEventPublisher.publishEvent(new TimeBasedLinearCachingTriggered(bucketId, nextUpdateTs));
+		}
 	}
 
 	private static @NotNull FragmentationTimestamp createTimestampFromMap(Map<String, Integer> timeMap) {

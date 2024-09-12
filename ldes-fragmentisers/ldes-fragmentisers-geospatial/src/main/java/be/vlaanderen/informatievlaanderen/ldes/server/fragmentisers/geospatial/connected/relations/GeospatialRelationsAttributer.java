@@ -15,6 +15,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialRelationsAttributer implements RelationsAttributer {
 
+	// TODO: cleanup
 	public TreeRelation getRelationToParentFragment(Fragment childFragment) {
 		String targetWKT = getWKT(childFragment);
 

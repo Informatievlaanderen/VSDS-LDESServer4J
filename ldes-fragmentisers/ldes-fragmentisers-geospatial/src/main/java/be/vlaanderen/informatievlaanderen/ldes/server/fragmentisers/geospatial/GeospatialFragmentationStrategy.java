@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationDefinition;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialBucketCreator;
 import io.micrometer.observation.Observation;
@@ -38,8 +39,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member,
-	                                                Observation parentObservation) {
+	public List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket parentBucket, FragmentationMember member,
+	                                                                Observation parentObservation) {
 		Observation geospatialFragmentationObservation = Observation
 				.createNotStarted("geospatial bucketisation", observationRegistry)
 				.parentObservation(parentObservation)
@@ -60,18 +61,42 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 		List<BucketisedMember> members = buckets
 				.parallelStream()
-				.map(bucket -> super.addMemberToBucket(bucket, member, geospatialFragmentationObservation))
+				.map(bucket -> super.addMemberToBucketAndReturnMembers(bucket, member, geospatialFragmentationObservation))
 				.flatMap(Collection::stream)
 				.toList();
 		geospatialFragmentationObservation.stop();
 		return members;
 	}
 
+	@Override
+	public Bucket addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+		Observation geospatialFragmentationObservation = Observation
+				.createNotStarted("geospatial bucketisation", observationRegistry)
+				.parentObservation(parentObservation)
+				.start();
+		setRootTileBucket(parentBucket);
+
+		geospatialBucketiser.bucketise(member.getSubject(), member.getVersionModel())
+				.stream()
+				.map(tile -> {
+					if (tile.equals(DEFAULT_BUCKET_STRING)) {
+						// HERE MUST CHANGES HAPPEN
+						return bucketCreator.getOrCreateTileBucket(parentBucket, tile, parentBucket);
+					} else {
+						return bucketCreator.getOrCreateTileBucket(parentBucket, tile, rootTileBucket);
+					}
+				})
+				.parallel()
+				.forEach(bucket -> super.addMemberToBucket(bucket, member, geospatialFragmentationObservation));
+		geospatialFragmentationObservation.stop();
+		return parentBucket;
+	}
 
 	private void setRootTileBucket(Bucket parentBucket) {
 		if (rootTileBucket == null) {
 			rootTileBucket = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT);
 			super.addRelationFromParentToChild(parentBucket, rootTileBucket);
+			super.addRelationFromParentToChild(parentBucket, rootTileBucket.asChildBucket(BucketRelationDefinition.generic()));
 		}
 	}
 }

@@ -56,11 +56,11 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		when(bucketFinder.getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR))
 				.thenReturn(CHILD_BUCKET);
 
-		fragmentationStrategy.addMemberToBucket(PARENT_BUCKET, fragmentationMember, mock());
+		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, fragmentationMember, mock());
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
 		inOrder.verify(bucketFinder).getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR);
-		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucket(eq(CHILD_BUCKET), any(), any());
+		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(), any());
 	}
 
 	@Test
@@ -71,12 +71,12 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		when(bucketFinder.getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR))
 				.thenReturn(CHILD_BUCKET);
 
-		fragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
 		inOrder.verify(bucketFinder).getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR);
 		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(CHILD_BUCKET), any(),
+				times(1)).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(),
 				any(Observation.class));
 	}
 
@@ -85,11 +85,11 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(bucketFinder.getDefaultFragment(PARENT_BUCKET)).thenReturn(CHILD_BUCKET);
 
-		fragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member, mock());
+		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock());
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
 		inOrder.verify(bucketFinder).getDefaultFragment(PARENT_BUCKET);
-		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucket(eq(CHILD_BUCKET), any(), any());
+		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(), any());
 	}
 
 	@Test
@@ -98,13 +98,13 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		when(bucketFinder.getDefaultFragment(PARENT_BUCKET))
 				.thenReturn(CHILD_BUCKET);
 
-		fragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member,
+		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member,
 				mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
 		inOrder.verify(bucketFinder).getDefaultFragment(PARENT_BUCKET);
 		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(CHILD_BUCKET), any(),
+				times(1)).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(),
 				any(Observation.class));
 	}
 

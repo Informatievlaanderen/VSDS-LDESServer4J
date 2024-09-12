@@ -27,7 +27,7 @@ class FragmentationStrategyImplTest {
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.getMemberId()).thenReturn(MEMBER_ID);
 
-		List<BucketisedMember> members = fragmentationStrategy.addMemberToBucket(bucket, member, mock(Observation.class));
+		List<BucketisedMember> members = fragmentationStrategy.addMemberToBucketAndReturnMembers(bucket, member, mock(Observation.class));
 
 		assertThat(members)
 				.hasSize(1)

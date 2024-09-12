@@ -64,6 +64,6 @@ class RootBucketRetrieverTest {
 
 		assertThatThrownBy(() -> rootBucketRetriever.retrieveRootBucket(observation))
 				.isInstanceOf(MissingRootFragmentException.class)
-						.hasMessage("Could not retrieve root fragment for view %s", VIEW_NAME.asString());
+				.hasMessage("Could not retrieve root fragment for view %s", VIEW_NAME.asString());
 	}
 }

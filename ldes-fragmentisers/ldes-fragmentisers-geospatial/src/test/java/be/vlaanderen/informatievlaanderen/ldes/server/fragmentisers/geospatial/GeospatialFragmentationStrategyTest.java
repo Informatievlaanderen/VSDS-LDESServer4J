@@ -51,10 +51,10 @@ class GeospatialFragmentationStrategyTest {
 		when(bucketCreator.getOrCreateTileBucket(PARENT_BUCKET, DEFAULT_BUCKET_STRING, PARENT_BUCKET))
 				.thenReturn(defaultTileBucket);
 
-		geospatialFragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
 		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(defaultTileBucket),
+				times(1)).addMemberToBucketAndReturnMembers(eq(defaultTileBucket),
 				any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
@@ -69,11 +69,11 @@ class GeospatialFragmentationStrategyTest {
 		Bucket tileBucketTwo = mockCreationGeospatialBucket("2/2/2");
 		Bucket tileBucketThree = mockCreationGeospatialBucket("3/3/3");
 
-		geospatialFragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(tileBucketOne), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(tileBucketTwo), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(tileBucketThree), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(tileBucketOne), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(tileBucketTwo), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(tileBucketThree), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
@@ -86,9 +86,9 @@ class GeospatialFragmentationStrategyTest {
 		when(bucketCreator.getOrCreateTileBucket(PARENT_BUCKET, DEFAULT_BUCKET_STRING, PARENT_BUCKET))
 				.thenReturn(defaultTileBucket);
 
-		geospatialFragmentationStrategy.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(defaultTileBucket), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(defaultTileBucket), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 

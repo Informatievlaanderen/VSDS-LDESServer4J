@@ -1,6 +1,5 @@
 open module ldes.fragmentation.domain {
     requires ldes.ingest.domain;
-    requires ldes.server.retention;
     requires ldes.domain;
     requires spring.batch.core;
     requires spring.batch.infrastructure;
@@ -18,5 +17,4 @@ open module ldes.fragmentation.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects;
-
 }

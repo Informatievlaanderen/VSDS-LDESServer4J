@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +16,15 @@ public class Bucket {
 	private final long bucketId;
 	private final BucketDescriptor bucketDescriptor;
 	private final ViewName viewName;
+	private final List<ChildBucket> children;
+	private final List<BucketisedMember> members;
 
 	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName) {
 		this.bucketId = bucketId;
 		this.bucketDescriptor = bucketDescriptor;
 		this.viewName = viewName;
+		children = new ArrayList<>();
+		members = new ArrayList<>();
 	}
 
 	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
@@ -50,6 +55,26 @@ public class Bucket {
 		return bucketDescriptor.asDecodedString();
 	}
 
+	public ChildBucket addChildBucket(BucketDescriptorPair descriptorPair, BucketRelationDefinition relationDefinition) {
+		final ChildBucket child = new ChildBucket(createChildDescriptor(descriptorPair), viewName, relationDefinition);
+		children.add(child);
+		return child;
+	}
+
+	public ChildBucket addChildBucket(ChildBucket childBucket) {
+		children.add(childBucket);
+		return childBucket;
+	}
+
+	public ChildBucket asChildBucket(BucketRelationDefinition relationDefinition) {
+		return new ChildBucket(
+				bucketId,
+				bucketDescriptor,
+				viewName,
+				relationDefinition
+		);
+	}
+
 	public Bucket createChild(BucketDescriptorPair descriptorPair) {
 		return new Bucket(createChildDescriptor(descriptorPair), viewName);
 	}
@@ -61,6 +86,18 @@ public class Bucket {
 		}
 		childFragmentPairs.add(descriptorPair);
 		return new BucketDescriptor(childFragmentPairs);
+	}
+
+	public void addMember(long memberId) {
+		members.add(new BucketisedMember(bucketId, memberId));
+	}
+
+	public List<BucketisedMember> getMembers() {
+		return List.copyOf(members);
+	}
+
+	public List<ChildBucket> getChildren() {
+		return List.copyOf(children);
 	}
 
 	public String createPartialUrl() {

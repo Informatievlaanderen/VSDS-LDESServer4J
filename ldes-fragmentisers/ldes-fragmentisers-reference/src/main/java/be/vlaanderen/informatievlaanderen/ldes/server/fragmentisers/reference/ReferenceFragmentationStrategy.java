@@ -36,8 +36,8 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     }
 
     @Override
-    public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member,
-                                                    Observation parentObservation) {
+    public List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket parentBucket, FragmentationMember member,
+                                                                    Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
         final var rootFragment = getOrCreateRootBucket(parentBucket);
         var fragments =
@@ -48,7 +48,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                         .toList();
 
         List<BucketisedMember> members = fragments.parallelStream()
-                .map(bucket -> super.addMemberToBucket(bucket, member, fragmentationObservation))
+                .map(bucket -> super.addMemberToBucketAndReturnMembers(bucket, member, fragmentationObservation))
                 .flatMap(Collection::stream)
                 .toList();
         fragmentationObservation.stop();

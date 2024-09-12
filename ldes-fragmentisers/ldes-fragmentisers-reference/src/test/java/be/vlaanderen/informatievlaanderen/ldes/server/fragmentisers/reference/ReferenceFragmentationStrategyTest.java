@@ -58,16 +58,16 @@ class ReferenceFragmentationStrategyTest {
 		Bucket referenceBucketThree = mockCreationReferenceBucket(typeAdres);
 
 		referenceFragmentationStrategy
-				.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+				.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
 		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(referenceBucketOne),
+				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketOne),
 				any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(referenceBucketTwo),
+				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketTwo),
 				any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucket(eq(referenceBucketThree),
+				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketThree),
 				any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
@@ -87,11 +87,11 @@ class ReferenceFragmentationStrategyTest {
 		Bucket referenceBucketThree = mockCreationReferenceBucket(typeAddress);
 
 		referenceFragmentationStrategy
-				.addMemberToBucket(PARENT_BUCKET, member, mock(Observation.class));
+				.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
 
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketOne), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketTwo), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketThree), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketOne), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketTwo), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketThree), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
