@@ -15,9 +15,11 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.CHUNK_SIZE;
+
 @Configuration
 public class MemberItemReader {
-	private static final int PAGE_SIZE = 500;
+	private static final int PAGE_SIZE = CHUNK_SIZE * 2;
 
 	@Bean
 	@StepScope
@@ -30,6 +32,7 @@ public class MemberItemReader {
 				.queryProvider(memberQuery())
 				.parameterValues(jobParameters)
 				.pageSize(PAGE_SIZE)
+				// TODO: verify if this needs to be changed
 				.maxItemCount(20 * PAGE_SIZE)
 				.build();
 	}

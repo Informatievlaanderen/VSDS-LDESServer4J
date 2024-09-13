@@ -20,6 +20,7 @@ import java.util.List;
 @Configuration
 public class BucketJobDefinitions {
 	public static final String BUCKETISATION_STEP = "bucketisation";
+	// TODO: verify if this needs to be changed
 	public static final int CHUNK_SIZE = 250;
 
 	@Bean(BUCKETISATION_STEP)
@@ -42,6 +43,7 @@ public class BucketJobDefinitions {
 	@Bean("bucketTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
 		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
+		// TODO: higher this limit: Jan will help me with this, as he wants this dynamically
 		taskExecutor.setConcurrencyLimit(1);
 		return taskExecutor;
 	}
