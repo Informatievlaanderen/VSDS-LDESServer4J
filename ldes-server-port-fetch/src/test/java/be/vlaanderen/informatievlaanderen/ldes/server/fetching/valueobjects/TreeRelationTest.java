@@ -1,7 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -12,8 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TreeRelationTest {
 

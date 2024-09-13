@@ -1,4 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 
 import java.util.Objects;
 

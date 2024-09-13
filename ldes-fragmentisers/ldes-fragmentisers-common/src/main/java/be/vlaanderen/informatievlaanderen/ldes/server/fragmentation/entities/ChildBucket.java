@@ -12,11 +12,6 @@ public class ChildBucket extends Bucket {
 		this.relation = relation;
 	}
 
-	public ChildBucket(BucketDescriptor bucketDescriptor, ViewName viewName, BucketRelation relation) {
-		super(bucketDescriptor, viewName);
-		this.relation = relation;
-	}
-
 	public BucketRelation getRelation() {
 		return relation;
 	}

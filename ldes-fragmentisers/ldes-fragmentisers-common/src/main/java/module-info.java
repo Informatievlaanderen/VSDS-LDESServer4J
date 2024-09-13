@@ -15,6 +15,5 @@ open module ldes.fragmentation.domain {
 	requires spring.core;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects;
 }

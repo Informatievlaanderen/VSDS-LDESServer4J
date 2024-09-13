@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.TreeRelation;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
