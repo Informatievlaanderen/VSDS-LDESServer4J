@@ -49,7 +49,7 @@ class FragmentationStrategyBatchExecutorTest {
 			executor.bucketise(member);
 
 			verify(rootBucketRetriever).retrieveRootBucket(any());
-			verify(fragmentationStrategy).addMemberToBucketAndReturnMembers(any(), eq(member), any());
+			verify(fragmentationStrategy).addMemberToBucket(any(), eq(member), any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootBucketRetriever);
 		}
 	}

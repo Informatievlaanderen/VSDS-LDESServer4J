@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDate
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -37,19 +35,6 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 		this.observationRegistry = observationRegistry;
 		this.bucketFinder = bucketFinder;
 		this.config = config;
-	}
-
-	@Override
-	public List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
-		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
-
-		Bucket bucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
-				.map(timestamp -> bucketFinder.getLowestBucket(parentBucket, timestamp, Granularity.YEAR))
-				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
-
-		List<BucketisedMember> members = super.addMemberToBucketAndReturnMembers(bucket, member, parentObservation);
-		bucketisationObservation.stop();
-		return members;
 	}
 
 	@Override

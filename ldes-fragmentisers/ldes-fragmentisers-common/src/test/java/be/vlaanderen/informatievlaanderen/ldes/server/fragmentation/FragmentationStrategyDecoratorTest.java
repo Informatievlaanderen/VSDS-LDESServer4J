@@ -29,9 +29,9 @@ class FragmentationStrategyDecoratorTest {
 		FragmentationMember member = mock(FragmentationMember.class);
 		Observation span = mock(Observation.class);
 
-		fragmentationStrategyDecorator.addMemberToBucketAndReturnMembers(parentBucket, member, span);
+		fragmentationStrategyDecorator.addMemberToBucket(parentBucket, member, span);
 
-		verify(fragmentationStrategy).addMemberToBucketAndReturnMembers(parentBucket, member, span);
+		verify(fragmentationStrategy).addMemberToBucket(parentBucket, member, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends FragmentationStrategyDecorator {

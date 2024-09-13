@@ -2,12 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
-import java.util.List;
 import java.util.Objects;
 
 import static io.micrometer.observation.Observation.createNotStarted;
@@ -29,14 +27,6 @@ public class FragmentationStrategyBatchExecutor {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
     }
-
-	public List<BucketisedMember> bucketiseAndReturnMembers(FragmentationMember member) {
-		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-		final var rootBucket = rootBucketRetriever.retrieveRootBucket(parentObservation);
-		List<BucketisedMember> bucketisedMembers = fragmentationStrategy.addMemberToBucketAndReturnMembers(rootBucket, member, parentObservation);
-		parentObservation.stop();
-		return bucketisedMembers;
-	}
 
 	public Bucket bucketise(FragmentationMember member) {
 		final Observation parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();

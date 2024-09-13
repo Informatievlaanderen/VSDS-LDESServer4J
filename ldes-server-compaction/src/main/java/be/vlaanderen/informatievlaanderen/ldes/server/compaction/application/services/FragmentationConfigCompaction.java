@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class FragmentationConfigCompaction {
 
 	@Bean("compactionFragmentation")
-	public FragmentationStrategy compactionFragmentationStrategy(ApplicationEventPublisher eventPublisher) {
+	public FragmentationStrategy compactionFragmentationStrategy() {
 		return new FragmentationStrategyImpl();
 	}
 }

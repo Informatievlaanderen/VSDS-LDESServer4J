@@ -8,8 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,15 +19,15 @@ class FragmentationStrategyImplTest {
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl();
 
 	@Test
-	void when_memberIsAddedToBucket_FragmentationStrategyImplSavesUpdatedFragment() {
+	void when_memberIsAddedToBucket_FragmentationStrategyImplAddsMemberToBucket() {
 		BucketisedMember expectedBucketisedMember = new BucketisedMember(BUCKET_ID, MEMBER_ID);
 		Bucket bucket = new Bucket(2, BucketDescriptor.empty(), VIEW_NAME);
 		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.getMemberId()).thenReturn(MEMBER_ID);
 
-		List<BucketisedMember> members = fragmentationStrategy.addMemberToBucketAndReturnMembers(bucket, member, mock(Observation.class));
+		fragmentationStrategy.addMemberToBucket(bucket, member, mock(Observation.class));
 
-		assertThat(members)
+		assertThat(bucket.getMembers())
 				.hasSize(1)
 				.first()
 				.usingRecursiveComparison()

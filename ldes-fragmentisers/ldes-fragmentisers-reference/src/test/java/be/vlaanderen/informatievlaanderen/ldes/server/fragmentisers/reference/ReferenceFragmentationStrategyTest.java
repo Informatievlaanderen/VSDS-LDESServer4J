@@ -24,8 +24,11 @@ import static org.mockito.Mockito.*;
 class ReferenceFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final Bucket PARENT_BUCKET = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
-	private static final Bucket ROOT_TILE_BUCKET = PARENT_BUCKET.createChild(new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT));
+	private static final String TYPE_PARCEL = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
+	private static final String TYPE_BUILDING = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
+	private static final String TYPE_ADDRESS = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Adres";
+	private Bucket parentBucket;
+	private Bucket rootTileBucket;
 
 	private ReferenceBucketiser referenceBucketiser;
 	private ReferenceBucketCreator bucketCreator;
@@ -34,70 +37,38 @@ class ReferenceFragmentationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
+		parentBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		rootTileBucket = parentBucket.createChild(new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT));
+
 		referenceBucketiser = mock(ReferenceBucketiser.class);
 		bucketCreator = mock(ReferenceBucketCreator.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-		when(bucketCreator.getOrCreateRootBucket(PARENT_BUCKET, FRAGMENT_KEY_REFERENCE_ROOT))
-				.thenReturn(ROOT_TILE_BUCKET);
+		when(bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_REFERENCE_ROOT))
+				.thenReturn(rootTileBucket);
 		referenceFragmentationStrategy = new ReferenceFragmentationStrategy(decoratedFragmentationStrategy,
 				referenceBucketiser, bucketCreator, ObservationRegistry.create());
 	}
 
 	@Test
-	void when_MemberIsAddedToFragment_ThenReferenceFragmentationIsApplied() {
-		FragmentationMember member = mock(FragmentationMember.class);
-
-		final var typePerceel = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
-		final var typeGebouw = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
-		final var typeAdres = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Adres";
-
-		when(referenceBucketiser.createReferences(member.getSubject(), member.getVersionModel()))
-				.thenReturn(Set.of(typePerceel, typeGebouw, typeAdres));
-		Bucket referenceBucketOne = mockCreationReferenceBucket(typePerceel);
-		Bucket referenceBucketTwo = mockCreationReferenceBucket(typeGebouw);
-		Bucket referenceBucketThree = mockCreationReferenceBucket(typeAdres);
-
-		referenceFragmentationStrategy
-				.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
-
-		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketOne),
-				any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketTwo),
-				any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucketAndReturnMembers(eq(referenceBucketThree),
-				any(), any(Observation.class));
-		verifyNoMoreInteractions(decoratedFragmentationStrategy);
-	}
-
-	@Test
 	void when_MemberIsAddedToBucket_ThenReferenceFragmentationIsApplied() {
 		FragmentationMember member = mock(FragmentationMember.class);
-
-		final var typeParcel = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
-		final var typeBuilding = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
-		final var typeAddress = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Adres";
-
 		when(referenceBucketiser.createReferences(member.getSubject(), member.getVersionModel()))
-				.thenReturn(Set.of(typeParcel, typeBuilding, typeAddress));
-		Bucket referenceBucketOne = mockCreationReferenceBucket(typeParcel);
-		Bucket referenceBucketTwo = mockCreationReferenceBucket(typeBuilding);
-		Bucket referenceBucketThree = mockCreationReferenceBucket(typeAddress);
+				.thenReturn(Set.of(TYPE_PARCEL, TYPE_BUILDING, TYPE_ADDRESS));
+		Bucket referenceBucketOne = mockCreationReferenceBucket(TYPE_PARCEL);
+		Bucket referenceBucketTwo = mockCreationReferenceBucket(TYPE_BUILDING);
+		Bucket referenceBucketThree = mockCreationReferenceBucket(TYPE_ADDRESS);
 
-		referenceFragmentationStrategy
-				.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
+		referenceFragmentationStrategy.addMemberToBucket(parentBucket, member, mock(Observation.class));
 
-		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketOne), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketTwo), any(), any(Observation.class));
-		verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(referenceBucketThree), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketOne), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketTwo), any(), any(Observation.class));
+		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(referenceBucketThree), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
 	private Bucket mockCreationReferenceBucket(String tile) {
-		Bucket referenceBucket = PARENT_BUCKET.createChild(new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, tile));
-		when(bucketCreator.getOrCreateBucket(PARENT_BUCKET, tile, ROOT_TILE_BUCKET))
+		Bucket referenceBucket = parentBucket.createChild(new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, tile));
+		when(bucketCreator.getOrCreateBucket(parentBucket, tile, rootTileBucket))
 				.thenReturn(referenceBucket);
 		return referenceBucket;
 	}

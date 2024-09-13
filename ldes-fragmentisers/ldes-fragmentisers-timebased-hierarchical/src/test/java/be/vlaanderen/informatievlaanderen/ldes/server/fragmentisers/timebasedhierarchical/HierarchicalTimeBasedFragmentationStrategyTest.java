@@ -30,14 +30,14 @@ import static org.mockito.Mockito.*;
 class HierarchicalTimeBasedFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final Bucket PARENT_BUCKET = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
-	private static final Bucket CHILD_BUCKET = new Bucket(new BucketDescriptor(List.of(new BucketDescriptorPair("is", "child"))), VIEW_NAME);
 	private static final LocalDateTime TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 	private static final Granularity GRANULARITY = Granularity.SECOND;
 	private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamProperties("collectionName", "versionOf", "timestampPath", false);
 	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;
 	private FragmentationStrategy decoratedFragmentationStrategy;
 	private TimeBasedBucketFinder bucketFinder;
+	private Bucket parentBucket;
+	private Bucket childBucket;
 
 	@BeforeEach
 	void setUp() {
@@ -46,21 +46,8 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), bucketFinder, config);
-	}
-
-	@Test
-	void when_FragmentationCalled_Then_FunctionsAreCalled() {
-		Model model = loadModel("member_with_created_property.nq");
-		FragmentationMember fragmentationMember = new FragmentationMember(1, "subject", "versionOf", TIME, EVENT_STREAM_PROPERTIES, model);
-		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
-		when(bucketFinder.getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR))
-				.thenReturn(CHILD_BUCKET);
-
-		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, fragmentationMember, mock());
-
-		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
-		inOrder.verify(bucketFinder).getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR);
-		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(), any());
+		parentBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+		childBucket = new Bucket(new BucketDescriptor(List.of(new BucketDescriptorPair("is", "child"))), VIEW_NAME);
 	}
 
 	@Test
@@ -68,44 +55,26 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		Model model = loadModel("member_with_created_property.nq");
 		FragmentationMember member = new FragmentationMember(1, "subject", "versionOf", TIME, EVENT_STREAM_PROPERTIES, model);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
-		when(bucketFinder.getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR))
-				.thenReturn(CHILD_BUCKET);
+		when(bucketFinder.getLowestBucket(parentBucket, fragmentationTimestamp, Granularity.YEAR))
+				.thenReturn(childBucket);
 
-		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock(Observation.class));
-
-		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
-		inOrder.verify(bucketFinder).getLowestBucket(PARENT_BUCKET, fragmentationTimestamp, Granularity.YEAR);
-		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(),
-				any(Observation.class));
-	}
-
-	@Test
-	void when_FragmentationCalledForMemberWithMissingTimestamp_Then_FunctionsAreCalled() {
-		FragmentationMember member = mock(FragmentationMember.class);
-		when(bucketFinder.getDefaultFragment(PARENT_BUCKET)).thenReturn(CHILD_BUCKET);
-
-		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member, mock());
+		fragmentationStrategy.addMemberToBucket(parentBucket, member, mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
-		inOrder.verify(bucketFinder).getDefaultFragment(PARENT_BUCKET);
-		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(), any());
+		inOrder.verify(bucketFinder).getLowestBucket(parentBucket, fragmentationTimestamp, Granularity.YEAR);
+		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucket(eq(childBucket), any(), any(Observation.class));
 	}
 
 	@Test
 	void when_BucketisationCalledForMemberWithMissingTimestamp_Then_FunctionsAreCalled() {
 		FragmentationMember member = mock(FragmentationMember.class);
-		when(bucketFinder.getDefaultFragment(PARENT_BUCKET))
-				.thenReturn(CHILD_BUCKET);
+		when(bucketFinder.getDefaultFragment(parentBucket)).thenReturn(childBucket);
 
-		fragmentationStrategy.addMemberToBucketAndReturnMembers(PARENT_BUCKET, member,
-				mock(Observation.class));
+		fragmentationStrategy.addMemberToBucket(parentBucket, member, mock());
 
 		InOrder inOrder = Mockito.inOrder(bucketFinder, decoratedFragmentationStrategy);
-		inOrder.verify(bucketFinder).getDefaultFragment(PARENT_BUCKET);
-		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToBucketAndReturnMembers(eq(CHILD_BUCKET), any(),
-				any(Observation.class));
+		inOrder.verify(bucketFinder).getDefaultFragment(parentBucket);
+		inOrder.verify(decoratedFragmentationStrategy).addMemberToBucket(eq(childBucket), any(), any(Observation.class));
 	}
 
 }
