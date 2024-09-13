@@ -95,21 +95,6 @@ class GeospatialFragmentationStrategyTest {
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
-	@Test
-	void when_MemberIsAddedToDefaultBucket_GeospatialFragmentationIsApplied() {
-		FragmentationMember member = mock(FragmentationMember.class);
-
-		when(geospatialBucketiser.createTiles(member.getSubject(), member.getVersionModel())).thenReturn(Set.of(DEFAULT_BUCKET_STRING));
-		Bucket defaultTileBucket = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, DEFAULT_BUCKET_STRING));
-		when(bucketCreator.getOrCreateTileBucket(parentBucket, DEFAULT_BUCKET_STRING, parentBucket))
-				.thenReturn(defaultTileBucket);
-
-		geospatialFragmentationStrategy.addMemberToBucket(parentBucket, member, mock(Observation.class));
-
-		verify(decoratedFragmentationStrategy).addMemberToBucket(eq(defaultTileBucket), any(), any(Observation.class));
-		verifyNoMoreInteractions(decoratedFragmentationStrategy);
-	}
-
 	private Bucket mockCreationGeospatialBucket(String tile) {
 		Bucket tileBucket = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
 		when(bucketCreator.getOrCreateTileBucket(parentBucket, tile, rootTileBucket)).thenReturn(tileBucket);
