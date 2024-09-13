@@ -45,7 +45,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		bucketFinder = mock(TimeBasedBucketFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
-				ObservationRegistry.create(), bucketFinder, mock(), config);
+				ObservationRegistry.create(), bucketFinder, config);
 	}
 
 	@Test

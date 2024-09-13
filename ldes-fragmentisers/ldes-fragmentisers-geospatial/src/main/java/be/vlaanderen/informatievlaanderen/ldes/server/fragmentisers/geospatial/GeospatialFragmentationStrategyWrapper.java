@@ -19,14 +19,14 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
-		TileBucketRelationsAttributer tileBucketRelationsAttributer = new TileBucketRelationsAttributer(applicationContext);
+		TileBucketRelationsAttributer tileBucketRelationsAttributer = new TileBucketRelationsAttributer();
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		GeospatialBucketCreator geospatialBucketCreator = new GeospatialBucketCreator(bucketRepository, tileBucketRelationsAttributer);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
-				geospatialBucketiser, geospatialBucketCreator, observationRegistry, applicationContext);
+				geospatialBucketiser, geospatialBucketCreator, observationRegistry);
 	}
 
 	private GeospatialConfig createGeospatialConfig(ConfigProperties properties) {

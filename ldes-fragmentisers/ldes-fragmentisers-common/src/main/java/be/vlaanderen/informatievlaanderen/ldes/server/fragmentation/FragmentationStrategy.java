@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface FragmentationStrategy {
 	List<BucketisedMember> addMemberToBucketAndReturnMembers(Bucket rootFragmentOfView, FragmentationMember member, Observation parentObservation);
-	// TODO: verify if bucket needs to be return
-	Bucket addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation);
+	void addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation);
 }

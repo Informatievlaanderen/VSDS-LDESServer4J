@@ -28,15 +28,15 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 		final var referenceConfig = new ReferenceConfig(fragmentationPath);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
 		final var fragmentationKey = properties.getOrDefault(FRAGMENTATION_KEY, DEFAULT_FRAGMENTATION_KEY);
-		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(applicationContext, fragmentationPath, fragmentationKey);
+		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentationPath, fragmentationKey);
 
 		final var referenceBucketCreator = new ReferenceBucketCreator(bucketRepository, relationsAttributer, fragmentationKey);
 		return new ReferenceFragmentationStrategy(
 				fragmentationStrategy,
 				referenceBucketiser,
 				referenceBucketCreator,
-				observationRegistry,
-				applicationContext);
+				observationRegistry
+		);
 	}
 
 }

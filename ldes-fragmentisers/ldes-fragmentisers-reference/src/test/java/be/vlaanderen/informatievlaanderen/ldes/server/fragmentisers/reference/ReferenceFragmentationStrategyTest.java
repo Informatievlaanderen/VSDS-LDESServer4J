@@ -40,7 +40,7 @@ class ReferenceFragmentationStrategyTest {
 		when(bucketCreator.getOrCreateRootBucket(PARENT_BUCKET, FRAGMENT_KEY_REFERENCE_ROOT))
 				.thenReturn(ROOT_TILE_BUCKET);
 		referenceFragmentationStrategy = new ReferenceFragmentationStrategy(decoratedFragmentationStrategy,
-				referenceBucketiser, bucketCreator, ObservationRegistry.create(), mock());
+				referenceBucketiser, bucketCreator, ObservationRegistry.create());
 	}
 
 	@Test
@@ -51,7 +51,7 @@ class ReferenceFragmentationStrategyTest {
 		final var typeGebouw = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
 		final var typeAdres = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Adres";
 
-		when(referenceBucketiser.bucketise(member.getSubject(), member.getVersionModel()))
+		when(referenceBucketiser.createReferences(member.getSubject(), member.getVersionModel()))
 				.thenReturn(Set.of(typePerceel, typeGebouw, typeAdres));
 		Bucket referenceBucketOne = mockCreationReferenceBucket(typePerceel);
 		Bucket referenceBucketTwo = mockCreationReferenceBucket(typeGebouw);
@@ -80,7 +80,7 @@ class ReferenceFragmentationStrategyTest {
 		final var typeBuilding = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw";
 		final var typeAddress = "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Adres";
 
-		when(referenceBucketiser.bucketise(member.getSubject(), member.getVersionModel()))
+		when(referenceBucketiser.createReferences(member.getSubject(), member.getVersionModel()))
 				.thenReturn(Set.of(typeParcel, typeBuilding, typeAddress));
 		Bucket referenceBucketOne = mockCreationReferenceBucket(typeParcel);
 		Bucket referenceBucketTwo = mockCreationReferenceBucket(typeBuilding);

@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationDefinition;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,24 +55,22 @@ public class Bucket {
 		return bucketDescriptor.asDecodedString();
 	}
 
-	public ChildBucket addChildBucket(BucketDescriptorPair descriptorPair, BucketRelationDefinition relationDefinition) {
-		final ChildBucket child = new ChildBucket(createChildDescriptor(descriptorPair), viewName, relationDefinition);
-		children.add(child);
-		return child;
-	}
-
 	public ChildBucket addChildBucket(ChildBucket childBucket) {
 		children.add(childBucket);
 		return childBucket;
 	}
 
-	public ChildBucket asChildBucket(BucketRelationDefinition relationDefinition) {
+	public ChildBucket withRelation(BucketRelation relationDefinition) {
 		return new ChildBucket(
 				bucketId,
 				bucketDescriptor,
 				viewName,
 				relationDefinition
 		);
+	}
+
+	public ChildBucket withGenericRelation() {
+		return withRelation(BucketRelation.generic());
 	}
 
 	public Bucket createChild(BucketDescriptorPair descriptorPair) {

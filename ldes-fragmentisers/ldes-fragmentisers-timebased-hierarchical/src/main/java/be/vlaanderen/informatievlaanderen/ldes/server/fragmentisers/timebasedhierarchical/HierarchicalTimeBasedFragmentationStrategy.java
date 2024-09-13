@@ -15,7 +15,6 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,9 +32,8 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 	                                                  ObservationRegistry observationRegistry,
 	                                                  TimeBasedBucketFinder bucketFinder,
-													  ApplicationEventPublisher applicationEventPublisher,
 	                                                  TimeBasedConfig config) {
-		super(fragmentationStrategy, applicationEventPublisher);
+		super(fragmentationStrategy);
 		this.observationRegistry = observationRegistry;
 		this.bucketFinder = bucketFinder;
 		this.config = config;
@@ -55,7 +53,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	}
 
 	@Override
-	public Bucket addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+	public void addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
 		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
 
 		Bucket childBucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
@@ -64,11 +62,10 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 
 		super.addMemberToBucket(childBucket, member, parentObservation);
 		bucketisationObservation.stop();
-		return parentBucket;
 	}
 
 	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String subject, Model memberModel) {
-		try{
+		try {
 			Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
 					config.getFragmenterSubjectFilter(),
 					config.getFragmentationPath());

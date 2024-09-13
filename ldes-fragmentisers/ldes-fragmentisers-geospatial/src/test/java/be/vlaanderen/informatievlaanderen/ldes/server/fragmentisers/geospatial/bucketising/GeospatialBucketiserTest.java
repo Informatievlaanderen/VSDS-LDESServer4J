@@ -40,7 +40,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
+		Set<String> actualBuckets = bucketiser.createTiles(member.getSubject(), member.getVersionModel());
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -56,7 +56,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
+		Set<String> actualBuckets = bucketiser.createTiles(member.getSubject(), member.getVersionModel());
 
 		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -72,7 +72,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising-faulty.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
+		Set<String> actualBuckets = bucketiser.createTiles(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -88,7 +88,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising-faulty.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
+		Set<String> actualBuckets = bucketiser.createTiles(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -103,7 +103,7 @@ class GeospatialBucketiserTest {
 		FragmentationMember member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising-invalid-coordinates.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getSubject(), member.getVersionModel());
+		Set<String> actualBuckets = bucketiser.createTiles(member.getSubject(), member.getVersionModel());
 
 		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);

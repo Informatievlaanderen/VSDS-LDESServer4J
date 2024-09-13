@@ -14,8 +14,7 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	}
 
 	@Override
-	public Bucket addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation) {
+	public void addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation) {
 		rootBucketOfView.addMember(member.getMemberId());
-		return rootBucketOfView;
 	}
 }

@@ -6,31 +6,25 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.M
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer.TREE_REFERENCE_EQUALS_RELATION;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ReferenceFragmentRelationsAttributerTest {
 
-    private static final String fragmentReference =
+    private static final String FRAGMENT_REFERENCE =
             "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
     private static final ViewName viewName = new ViewName("collectionName", "view");
     private static final Bucket parentBucket = new Bucket(BucketDescriptor.empty(), viewName);
-
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
 
     private final String fragmentationPath = RDF.type.getURI();
 
@@ -39,17 +33,14 @@ class ReferenceFragmentRelationsAttributerTest {
     @BeforeEach
     void setUp() {
         relationsAttributer =
-                new ReferenceFragmentRelationsAttributer(applicationEventPublisher, fragmentationPath, DEFAULT_FRAGMENTATION_KEY);
+                new ReferenceFragmentRelationsAttributer(fragmentationPath, DEFAULT_FRAGMENTATION_KEY);
     }
 
     @Test
     void when_ReferenceFragmentsAreCreated_RelationsBetweenRootAndCreatedFragmentsAreAdded() {
         Bucket rootBucket = createReferenceBuket("");
-        Bucket referenceBucket = createReferenceBuket(fragmentReference);
-
+        Bucket referenceBucket = createReferenceBuket(FRAGMENT_REFERENCE);
         BucketRelation expectedRelation = new BucketRelation(
-                rootBucket,
-                referenceBucket,
                 TREE_REFERENCE_EQUALS_RELATION,
                 "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel",
                 XSDDatatype.XSDanyURI.getURI(),
@@ -58,13 +49,27 @@ class ReferenceFragmentRelationsAttributerTest {
 
         relationsAttributer.addRelationFromRootToBottom(rootBucket, referenceBucket);
 
-        verify(applicationEventPublisher).publishEvent(new BucketRelationCreatedEvent(expectedRelation));
+        assertThat(rootBucket.getChildren())
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(referenceBucket.withRelation(expectedRelation));
+    }
+
+    @Test
+    void when_UnknownReferenceFragmentsAreCreated_RelationsBetweenRootAndCreatedFragmentsAreAdded() {
+        Bucket rootBucket = createReferenceBuket("");
+        Bucket referenceBucket = createReferenceBuket("unknown");
+
+        relationsAttributer.addDefaultRelation(rootBucket, referenceBucket);
+
+        assertThat(rootBucket.getChildren())
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactlyInAnyOrder(referenceBucket.withGenericRelation());
     }
 
     @Test
     void when_ReferenceFragmentHasNoReference_ThenAnExceptionIsThrown() {
         Bucket rootBucket = createReferenceBuket("");
-        Bucket referenceBucket = parentBucket.createChild(new BucketDescriptorPair("invalid-key", fragmentReference));
+        Bucket referenceBucket = parentBucket.createChild(new BucketDescriptorPair("invalid-key", FRAGMENT_REFERENCE));
 
         assertThatExceptionOfType(MissingFragmentValueException.class)
                 .isThrownBy(() -> relationsAttributer.addRelationFromRootToBottom(rootBucket, referenceBucket))

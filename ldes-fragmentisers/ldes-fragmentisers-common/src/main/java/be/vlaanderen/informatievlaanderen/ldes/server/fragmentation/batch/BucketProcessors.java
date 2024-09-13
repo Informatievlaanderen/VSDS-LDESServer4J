@@ -23,7 +23,7 @@ public class BucketProcessors {
 	) {
 		final String composedViewName = new ViewName(collectionName, viewName).asString();
 		return item -> fragmentationStrategyCollection.getFragmentationStrategyExecutor(composedViewName)
-				.map(executor -> executor.bucketise(item))
+				.map(executor -> executor.bucketiseAndReturnMembers(item))
 				.orElse(null);
 	}
 }

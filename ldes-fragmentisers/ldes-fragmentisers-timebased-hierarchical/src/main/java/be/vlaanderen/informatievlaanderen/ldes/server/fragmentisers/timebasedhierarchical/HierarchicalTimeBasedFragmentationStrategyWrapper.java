@@ -26,8 +26,7 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 				applicationContext, config);
 		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(bucketRepository, relationsAttributer);
 		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
-		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy,
-				observationRegistry, bucketFinder, applicationContext, config);
+		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy, observationRegistry, bucketFinder, config);
 	}
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {

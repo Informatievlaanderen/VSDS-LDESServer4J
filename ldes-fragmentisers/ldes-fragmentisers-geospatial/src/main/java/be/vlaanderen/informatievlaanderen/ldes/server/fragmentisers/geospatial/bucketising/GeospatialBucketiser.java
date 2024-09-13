@@ -26,11 +26,11 @@ public class GeospatialBucketiser {
 		this.geospatialConfig = geospatialConfig;
 	}
 
-	public Set<String> bucketise(String memberId, Model memberModel) {
+	public Set<String> createTiles(String memberId, Model memberModel) {
 		try {
             Set<String> tiles = getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(), geospatialConfig.fragmentationPath())
 					.flatMap(geometryWrapper -> calculateTiles(geometryWrapper.getXYGeometry().toText(), geospatialConfig.maxZoom()).stream())
-					.collect(Collectors.toSet());
+		            .collect(Collectors.toSet());
 
 			if(tiles.isEmpty()) {
 				tiles.add(DEFAULT_BUCKET_STRING);
