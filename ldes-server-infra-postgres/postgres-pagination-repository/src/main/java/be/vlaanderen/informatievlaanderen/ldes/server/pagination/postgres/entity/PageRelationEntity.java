@@ -6,7 +6,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "page_relations")
-public class RelationEntity {
+public class PageRelationEntity {
 	@EmbeddedId
 	private RelationId relationId;
 
@@ -35,10 +35,10 @@ public class RelationEntity {
 	private String treePath;
 
 
-	public RelationEntity() {
+	public PageRelationEntity() {
 	}
 
-	public RelationEntity(PageEntity fromPage, PageEntity toPage, String treeRelationType, String treeValue, String treeValueType, String treePath) {
+	public PageRelationEntity(PageEntity fromPage, PageEntity toPage, String treeRelationType, String treeValue, String treeValueType, String treePath) {
 		this.fromPage = fromPage;
 		this.toPage = toPage;
 		this.treeRelationType = treeRelationType;
@@ -47,7 +47,7 @@ public class RelationEntity {
 		this.treePath = treePath;
 	}
 
-	public RelationEntity(RelationId relationId, String treeRelationType, String treeValue, String treeValueType, String treePath) {
+	public PageRelationEntity(RelationId relationId, String treeRelationType, String treeValue, String treeValueType, String treePath) {
 		this.relationId = relationId;
 		this.treeRelationType = treeRelationType;
 		this.treeValue = treeValue;

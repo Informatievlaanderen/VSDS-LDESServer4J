@@ -2,19 +2,19 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.mappe
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.RelationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeRelationProjection;
 
 public class TreeRelationMapper {
 	private TreeRelationMapper() {}
 
-	public static TreeRelation fromRelationEntity(RelationEntity relationEntity) {
+	public static TreeRelation fromRelationEntity(PageRelationEntity pageRelationEntity) {
 		return new TreeRelation(
-				relationEntity.getTreePath(),
-				LdesFragmentIdentifier.fromFragmentId(relationEntity.getToPage().getPartialUrl()),
-				relationEntity.getTreeValue(),
-				relationEntity.getTreeValueType(),
-				relationEntity.getTreeRelationType()
+				pageRelationEntity.getTreePath(),
+				LdesFragmentIdentifier.fromFragmentId(pageRelationEntity.getToPage().getPartialUrl()),
+				pageRelationEntity.getTreeValue(),
+				pageRelationEntity.getTreeValueType(),
+				pageRelationEntity.getTreeRelationType()
 		);
 	}
 

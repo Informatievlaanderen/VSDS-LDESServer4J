@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PageRelationPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageRelationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import jakarta.persistence.EntityManager;
@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD,
 		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class, PageRelationPostgresRepository.class, RelationEntityRepository.class })
+@ContextConfiguration(classes = { MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
 @TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *", "ldes-server.compaction-cron=*/10 * * * * *",
 		"ldes-server.deletion-cron=*/20 * * * * *", "ldes-server.compaction-duration=PT1S" })
@@ -56,7 +56,7 @@ public class LdesServerIntegrationTest {
 	@Autowired
 	MemberMetricsRepository memberMetricsRepository;
 	@Autowired
-	RelationEntityRepository relationEntityRepository;
+	PageRelationEntityRepository pageRelationEntityRepository;
 	@Autowired
 	PageEntityRepository pageEntityRepository;
 

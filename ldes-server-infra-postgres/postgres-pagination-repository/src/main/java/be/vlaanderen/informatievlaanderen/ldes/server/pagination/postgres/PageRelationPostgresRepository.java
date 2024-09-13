@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageRelationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,22 +11,22 @@ import java.util.List;
 
 @Repository
 public class PageRelationPostgresRepository implements PageRelationRepository {
-	private final RelationEntityRepository relationEntityRepository;
+	private final PageRelationEntityRepository pageRelationEntityRepository;
 
-	public PageRelationPostgresRepository(RelationEntityRepository relationEntityRepository) {
-		this.relationEntityRepository = relationEntityRepository;
+	public PageRelationPostgresRepository(PageRelationEntityRepository pageRelationEntityRepository) {
+		this.pageRelationEntityRepository = pageRelationEntityRepository;
 	}
 
 	@Override
 	@Transactional
 	public void insertGenericBucketRelation(long fromPageId, long toPageId) {
-		relationEntityRepository.insertRelation(fromPageId, toPageId, RdfConstants.GENERIC_TREE_RELATION);
+		pageRelationEntityRepository.insertRelation(fromPageId, toPageId, RdfConstants.GENERIC_TREE_RELATION);
 	}
 
 	@Override
 	@Transactional
 	public void insertBucketRelation(BucketRelation bucketRelation) {
-		relationEntityRepository.insertRelation(
+		pageRelationEntityRepository.insertRelation(
 				bucketRelation.fromBucket().createPartialUrl(),
 				bucketRelation.toBucket().createPartialUrl(),
 				bucketRelation.treeRelationType(),
@@ -39,6 +39,6 @@ public class PageRelationPostgresRepository implements PageRelationRepository {
 	@Override
 	@Transactional
 	public void updateCompactionBucketRelations(List<Long> compactedPageIds, long targetId) {
-		relationEntityRepository.updateToPageRelations(compactedPageIds, targetId);
+		pageRelationEntityRepository.updateToPageRelations(compactedPageIds, targetId);
 	}
 }

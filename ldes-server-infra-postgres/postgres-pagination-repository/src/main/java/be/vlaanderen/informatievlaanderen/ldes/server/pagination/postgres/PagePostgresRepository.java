@@ -4,7 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PaginationRowMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,17 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @Repository
 public class PagePostgresRepository implements PageRepository {
 	private final JdbcTemplate jdbcTemplate;
 	private final PageEntityRepository pageEntityRepository;
+	private final PageRelationRepository pageRelationRepository;
 
-	public PagePostgresRepository(JdbcTemplate jdbcTemplate, PageEntityRepository pageEntityRepository) {
+	public PagePostgresRepository(JdbcTemplate jdbcTemplate, PageEntityRepository pageEntityRepository, PageRelationRepository pageRelationRepository) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.pageEntityRepository = pageEntityRepository;
+		this.pageRelationRepository = pageRelationRepository;
 	}
 
 	@Override
@@ -46,21 +49,15 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	@Transactional
-	public int createPage(Long bucketId, String partialUrl) {
-		String sql = """
-				INSERT INTO pages (bucket_id, expiration, partial_url)
-				            VALUES (?, NULL, ?)
-				            ON CONFLICT (partial_url) DO UPDATE SET bucket_id = pages.bucket_id
-				   RETURNING page_id;
-				""";
+	public Page createNewPage(Page parentPage) {
+		String partialUrl = parentPage.createChildPartialUrl().asString();
+		PageEntity newPage = new PageEntity(parentPage.getBucketId(), partialUrl);
 
-		return Objects.requireNonNull(jdbcTemplate.queryForObject(sql, Long.class, bucketId, partialUrl)).intValue();
-	}
+		pageEntityRepository.save(newPage);
+		pageRelationRepository.insertGenericBucketRelation(parentPage.getId(), newPage.getId());
+		pageEntityRepository.setPageImmutable(parentPage.getId());
 
-	@Override
-	@Transactional
-	public void setPageImmutable(long pageId) {
-		pageEntityRepository.setPageImmutable(pageId);
+		return new Page(newPage.getId(), parentPage.getBucketId(), partialUrl, parentPage.getPageSize());
 	}
 
 	@Override
