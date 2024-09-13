@@ -1,9 +1,12 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesFragmentIdentifierParseException;
-import org.springframework.data.annotation.PersistenceCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.LdesFragmentIdentifierParseException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.net.URLEncoder.encode;
@@ -14,7 +17,6 @@ public class LdesFragmentIdentifier {
 	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 
-	@PersistenceCreator
 	public LdesFragmentIdentifier(ViewName viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
@@ -23,20 +25,6 @@ public class LdesFragmentIdentifier {
 	public LdesFragmentIdentifier(String viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = ViewName.fromString(viewName);
 		this.fragmentPairs = fragmentPairs;
-	}
-
-	public ViewName getViewName() {
-		return viewName;
-	}
-
-	public List<FragmentPair> getFragmentPairs() {
-		return fragmentPairs;
-	}
-
-	public Optional<String> getValueOfFragmentPairKey(String key) {
-		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key))
-				.map(FragmentPair::fragmentValue)
-				.findFirst();
 	}
 
 	public static LdesFragmentIdentifier fromFragmentId(String fragmentId) {
@@ -81,17 +69,6 @@ public class LdesFragmentIdentifier {
 		}
 
 		return stringBuilder.toString();
-	}
-
-	public Optional<LdesFragmentIdentifier> getParentId() {
-
-		if (!this.fragmentPairs.isEmpty()) {
-			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
-			parentPairs.remove(parentPairs.size() - 1);
-
-			return Optional.of(new LdesFragmentIdentifier(viewName, parentPairs));
-		}
-		return Optional.empty();
 	}
 
 	@Override

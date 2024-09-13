@@ -60,7 +60,7 @@ class MemberIngesterImplTest {
 
         MemberExtractorCollection memberExtractorCollection = new MemberExtractorCollectionImpl();
         ServerMetrics serverMetrics = new ServerMetrics(mock(FragmentationMetricsRepository.class), mock(MemberMetricsRepository.class));
-        memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, memberExtractorCollection, serverMetrics);
+        memberIngestService = new MemberIngesterImpl(validator, memberRepository, memberExtractorCollection, serverMetrics);
 
         final MemberExtractor memberExtractor = new VersionObjectMemberExtractor(COLLECTION_NAME, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
         memberExtractorCollection.addMemberExtractor(COLLECTION_NAME, memberExtractor);

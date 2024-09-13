@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-
 import java.util.Objects;
 
 public record TreeRelation(String treePath, LdesFragmentIdentifier treeNode, String treeValue, String treeValueType, String relation) {

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;

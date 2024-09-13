@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions;
 
 public class LdesFragmentIdentifierParseException extends RuntimeException {
 

@@ -1,7 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesFragmentIdentifierParseException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.LdesFragmentIdentifierParseException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,16 +87,6 @@ class LdesFragmentIdentifierTest {
 	@Test
 	void when_NonRootFragmentIdentifier_Then_CreateEncodedFragmentIdString_withOnlyTheParametersBeingEncoded() {
 		assertEquals(encodedFragmentIdString, fragmentId.asEncodedFragmentId());
-	}
-
-	@Test
-	void when_KeyPresent_Then_ReturnKey() {
-		assertEquals(fragmentPairValue1, fragmentId.getValueOfFragmentPairKey(fragmentPairKey1).get());
-	}
-
-	@Test
-	void when_KeyNotPresent_Then_ReturnEmptyOptional() {
-		assertEquals(Optional.empty(), fragmentId.getValueOfFragmentPairKey("NotPresent"));
 	}
 
 }

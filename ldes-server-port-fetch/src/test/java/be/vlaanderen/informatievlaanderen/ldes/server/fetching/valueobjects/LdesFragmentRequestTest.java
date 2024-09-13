@@ -1,7 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LdesFragmentRequestTest {
 
@@ -49,14 +45,6 @@ class LdesFragmentRequestTest {
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
-	}
-
-	@Test
-	void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
-		final ViewName viewName = new ViewName("collection_name", "view_name");
-		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(viewName);
-		assertEquals(viewName, request.viewName());
-		assertTrue(isEmpty(request.fragmentPairs()));
 	}
 
 	static class LdesFragmentRequestArgumentsProvider implements
