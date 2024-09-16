@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedBucketCreator;
@@ -18,13 +17,12 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 	                                                       FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
-		BucketRepository bucketRepository = applicationContext.getBean(BucketRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);
 		TimeBasedRelationsAttributer relationsAttributer = new TimeBasedRelationsAttributer(
 				applicationContext, config);
-		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(bucketRepository, relationsAttributer);
+		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(relationsAttributer);
 		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy, observationRegistry, bucketFinder, config);
 	}

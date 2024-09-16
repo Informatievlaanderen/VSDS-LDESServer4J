@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator;
@@ -23,14 +22,13 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties properties) {
 		final var fragmentationPath = properties.getOrDefault(FRAGMENTATION_PATH, DEFAULT_FRAGMENTATION_PATH);
-		final var bucketRepository = applicationContext.getBean(BucketRepository.class);
 		final var observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		final var referenceConfig = new ReferenceConfig(fragmentationPath);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
 		final var fragmentationKey = properties.getOrDefault(FRAGMENTATION_KEY, DEFAULT_FRAGMENTATION_KEY);
 		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentationPath, fragmentationKey);
 
-		final var referenceBucketCreator = new ReferenceBucketCreator(bucketRepository, relationsAttributer, fragmentationKey);
+		final var referenceBucketCreator = new ReferenceBucketCreator(relationsAttributer, fragmentationKey);
 		return new ReferenceFragmentationStrategy(
 				fragmentationStrategy,
 				referenceBucketiser,
