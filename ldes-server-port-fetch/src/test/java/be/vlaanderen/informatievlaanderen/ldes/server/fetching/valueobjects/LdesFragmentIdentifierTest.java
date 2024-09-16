@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.LdesFragmentIdentifierParseException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +8,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LdesFragmentIdentifierTest {
 

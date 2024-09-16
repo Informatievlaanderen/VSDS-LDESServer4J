@@ -3,9 +3,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,4 +76,64 @@ class BucketTest {
 				.isNotEqualTo(otherBucket.hashCode());
 	}
 
+	@Nested
+	class CompositionTest {
+		private static final int DAY_14_BUCKET_ID = 10;
+		private static final int DAY_28_BUCKET_ID = 11;
+		private Bucket rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket;
+
+		@BeforeEach
+		void setUp() {
+			rootBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+			year2023Bucket = rootBucket.createChild(new BucketDescriptorPair("year", "2023"));
+			year2024Bucket = rootBucket.createChild(new BucketDescriptorPair("year", "2024"));
+			month01Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "01"));
+			month03Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "03"));
+			day14Bucket = new Bucket(DAY_14_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "14")).getBucketDescriptor(), VIEW_NAME);
+			day28Bucket = new Bucket(DAY_28_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "28")).getBucketDescriptor(), VIEW_NAME);
+			month03Bucket.addChildBucket(day14Bucket.withGenericRelation());
+			month03Bucket.addChildBucket(day28Bucket.withGenericRelation());
+			year2024Bucket.addChildBucket(month01Bucket.withGenericRelation());
+			year2024Bucket.addChildBucket(month03Bucket.withGenericRelation());
+			rootBucket.addChildBucket(year2023Bucket.withGenericRelation());
+			rootBucket.addChildBucket(year2024Bucket.withGenericRelation());
+		}
+
+		@Test
+		void test_GetBucketTree() {
+			final List<Bucket> descendants = rootBucket.getBucketTree();
+
+			assertThat(descendants).containsExactlyInAnyOrder(
+					rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket
+			);
+		}
+
+		@Test
+		void test_GetAllRelations() {
+			final List<BucketRelation> relations = rootBucket.getAllRelations();
+
+			assertThat(relations)
+					.containsExactlyInAnyOrder(
+							new BucketRelation(rootBucket, year2023Bucket, TreeRelation.generic()),
+							new BucketRelation(rootBucket, year2024Bucket, TreeRelation.generic()),
+							new BucketRelation(year2024Bucket, month01Bucket, TreeRelation.generic()),
+							new BucketRelation(year2024Bucket, month03Bucket, TreeRelation.generic()),
+							new BucketRelation(month03Bucket, day14Bucket, TreeRelation.generic()),
+							new BucketRelation(month03Bucket, day28Bucket, TreeRelation.generic())
+					);
+		}
+
+		@Test
+		void test_GetAllMembers() {
+			final List<BucketisedMember> day14Members = IntStream.range(1, 4).mapToObj(memberId -> new BucketisedMember(DAY_14_BUCKET_ID, memberId)).toList();
+			final List<BucketisedMember> day28Members = IntStream.range(1, 5).mapToObj(memberId -> new BucketisedMember(DAY_28_BUCKET_ID, memberId)).toList();
+			day14Members.forEach(member -> day14Bucket.addMember(member.memberId()));
+			day28Members.forEach(member -> day28Bucket.addMember(member.memberId()));
+			final List<BucketisedMember> expectedMembers = Stream.concat(day14Members.stream(), day28Members.stream()).toList();
+
+			final List<BucketisedMember> members = rootBucket.getAllMembers();
+
+			assertThat(members).containsExactlyInAnyOrderElementsOf(expectedMembers);
+		}
+	}
 }

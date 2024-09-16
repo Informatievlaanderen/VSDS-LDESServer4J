@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ class TileBucketRelationsAttributerTest {
 	void when_TileFragmentsAreCreated_RelationsBetweenRootAndCreatedFragmentsAreAdded() {
 		Bucket rootBucket = createTileBucket("0/0/0");
 		Bucket tileBucket = createTileBucket("1/1/1");
-		BucketRelation bucketRelation = new BucketRelation(
+		TreeRelation treeRelation = new TreeRelation(
 				"https://w3id.org/tree#GeospatiallyContainsRelation",
 				"<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POLYGON ((180 0, 180 -85.0511287798066, 0 -85.0511287798066, 0 0, 180 0))",
 				"http://www.opengis.net/ont/geosparql#wktLiteral",
@@ -42,7 +42,7 @@ class TileBucketRelationsAttributerTest {
 
 		assertThat(rootBucket.getChildren())
 				.usingRecursiveFieldByFieldElementComparator()
-				.containsExactlyInAnyOrder(tileBucket.withRelation(bucketRelation));
+				.containsExactlyInAnyOrder(tileBucket.withRelation(treeRelation));
 	}
 
 	@Test

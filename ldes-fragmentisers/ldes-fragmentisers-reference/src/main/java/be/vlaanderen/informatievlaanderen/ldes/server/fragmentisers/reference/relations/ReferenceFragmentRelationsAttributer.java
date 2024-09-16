@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.r
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE;
@@ -21,13 +21,13 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 	}
 
 	public void addRelationFromRootToBottom(Bucket rootBucket, Bucket referenceBucket) {
-		final BucketRelation bucketRelation = new BucketRelation(
+		final TreeRelation treeRelation = new TreeRelation(
 				TREE_REFERENCE_EQUALS_RELATION,
 				getTreeValue(referenceBucket),
 				XSDDatatype.XSDanyURI.getURI(),
 				fragmentationPath
 		);
-		rootBucket.addChildBucket(referenceBucket.withRelation(bucketRelation));
+		rootBucket.addChildBucket(referenceBucket.withRelation(treeRelation));
 	}
 
 

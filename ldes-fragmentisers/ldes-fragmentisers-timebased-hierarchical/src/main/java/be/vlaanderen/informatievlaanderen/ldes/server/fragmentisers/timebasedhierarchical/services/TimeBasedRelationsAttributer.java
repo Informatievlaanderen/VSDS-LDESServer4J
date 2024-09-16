@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -50,7 +50,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 	}
 
 	private void addInBetweenRelation(Bucket parentBucket, Bucket childBucket, String type, String timestamp) {
-		final BucketRelation relation = new BucketRelation(
+		final TreeRelation relation = new TreeRelation(
 				type, timestamp, XSD_DATETIME, config.getFragmentationPath()
 		);
 		parentBucket.addChildBucket(childBucket.withRelation(relation));

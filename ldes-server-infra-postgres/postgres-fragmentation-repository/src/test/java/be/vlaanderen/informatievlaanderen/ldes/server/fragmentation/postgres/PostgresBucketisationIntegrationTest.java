@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetr
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.BucketisedMemberWriter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -53,11 +52,6 @@ public class PostgresBucketisationIntegrationTest {
 		@Bean
 		public ObservationRegistry observationRegistry() {
 			return ObservationRegistry.NOOP;
-		}
-
-		@Bean
-		public MemberPropertiesRepository memberPropertiesRepository() {
-			return mock(MemberPropertiesRepository.class);
 		}
 
 		@Bean

@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ class ReferenceFragmentRelationsAttributerTest {
     void when_ReferenceFragmentsAreCreated_RelationsBetweenRootAndCreatedFragmentsAreAdded() {
         Bucket rootBucket = createReferenceBuket("");
         Bucket referenceBucket = createReferenceBuket(FRAGMENT_REFERENCE);
-        BucketRelation expectedRelation = new BucketRelation(
+        TreeRelation expectedRelation = new TreeRelation(
                 TREE_REFERENCE_EQUALS_RELATION,
                 "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel",
                 XSDDatatype.XSDanyURI.getURI(),

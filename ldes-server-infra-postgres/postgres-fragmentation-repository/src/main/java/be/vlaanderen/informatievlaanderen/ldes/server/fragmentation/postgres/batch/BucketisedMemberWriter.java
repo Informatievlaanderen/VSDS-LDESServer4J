@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -10,10 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 @Component
-public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
+public class BucketisedMemberWriter implements ItemWriter<Bucket> {
 	private final JdbcBatchItemWriter<BucketisedMember> delegateWriter;
 
 	public BucketisedMemberWriter(JdbcBatchItemWriter<BucketisedMember> delegateWriter) {
@@ -21,10 +21,10 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 	}
 
 	@Override
-	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
+	public void write(Chunk<? extends Bucket> chunk) throws Exception {
 		Chunk<BucketisedMember> bucketisedMembers = new Chunk<>(chunk.getItems()
 				.stream()
-				.flatMap(List::stream)
+				.flatMap(bucket -> bucket.getAllMembers().stream())
 				.toList());
 
 		if (!bucketisedMembers.isEmpty()) {

@@ -40,12 +40,12 @@ class TimeBasedRelationsAttributerTest {
 	void when_RelationNotPresent_AndCachingDisabled_ThenRelationIsAdded_NextUpdateTsIsNotSet_ChildrenStayMutable() {
 		Bucket child = parentBucket.createChild(monthPair);
 
-		BucketRelation gteRelation = new BucketRelation(
+		TreeRelation gteRelation = new TreeRelation(
 				TREE_GTE_RELATION,
 				LocalDateTime.of(2023,2,1,0,0).toString(),
 				XSD_DATETIME,
 				config.getFragmentationPath());
-		BucketRelation ltRelation = new BucketRelation(
+		TreeRelation ltRelation = new TreeRelation(
 				TREE_LT_RELATION,
 				LocalDateTime.of(2023,3,1,0,0).toString(),
 				XSD_DATETIME,
@@ -68,12 +68,12 @@ class TimeBasedRelationsAttributerTest {
 		relationsAttributer = new TimeBasedRelationsAttributer(applicationEventPublisher, config);
 		Bucket child = parentBucket.createChild(monthPair);
 
-		BucketRelation gteRelation = new BucketRelation(
+		TreeRelation gteRelation = new TreeRelation(
 				TREE_GTE_RELATION,
 				LocalDateTime.of(2023,2,1,0,0).toString(),
 				XSD_DATETIME,
 				config.getFragmentationPath());
-		BucketRelation ltRelation = new BucketRelation(
+		TreeRelation ltRelation = new TreeRelation(
 				TREE_LT_RELATION,
 				LocalDateTime.of(2023,3,1,0,0).toString(),
 				XSD_DATETIME,

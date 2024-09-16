@@ -40,4 +40,6 @@ VALUES (3, 'https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindran
         '2024-06-27 08:47:04.004000', '9f3a0219-e12d-4891-859f-6c9c5f967d48',
         'https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810400');
 
-INSERT INTO buckets (bucket_id, bucket, view_id) VALUES (1, 'year=2023&month=06', 1);
+INSERT INTO buckets (bucket_id, bucket, view_id) VALUES (1, '', 1);
+INSERT INTO buckets (bucket_id, bucket, view_id) VALUES (2, 'year=2023', 1);
+INSERT INTO buckets (bucket_id, bucket, view_id) VALUES (3, 'year=2023&month=06', 1);
