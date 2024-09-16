@@ -19,6 +19,6 @@ spring:
       initialize-schema: always
       isolation-level-for-create: READ_COMMITTED
 
-#logging:
-#  level:
-#    org.springframework.batch.core: WARN
+logging:
+  level:
+    org.springframework.batch.core: WARN
