@@ -11,7 +11,7 @@
         </createIndex>
         <addForeignKeyConstraint baseTableName="page_members" baseColumnNames="view_id"
                                  constraintName="fk_view_id"
-                                 referencedTableName="views" referencedColumnNames="view_id" />
+                                 referencedTableName="views" referencedColumnNames="view_id" onDelete="CASCADE" />
     </changeSet>
 
 </databaseChangeLog>
