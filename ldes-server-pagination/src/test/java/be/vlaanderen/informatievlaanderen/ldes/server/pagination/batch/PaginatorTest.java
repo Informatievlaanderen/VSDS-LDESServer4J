@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PaginatorTest {
+class PaginatorTest {
 	private static final long BUCKET = 1;
 	private static final String VIEW = "event-stream/paged";
 	private static final int PAGE_SIZE = 2;
