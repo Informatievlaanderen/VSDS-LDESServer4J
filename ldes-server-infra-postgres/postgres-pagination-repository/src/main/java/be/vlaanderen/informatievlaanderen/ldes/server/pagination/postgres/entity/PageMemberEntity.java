@@ -44,4 +44,20 @@ public class PageMemberEntity {
 	public void setMember(Long memberId) {
 		this.member = new MemberEntity(memberId);
 	}
+
+	public PageMemberId getPageMemberId() {
+		return pageMemberId;
+	}
+
+	public MemberEntity getMember() {
+		return member;
+	}
+
+	public BucketEntity getBucket() {
+		return bucket;
+	}
+
+	public PageEntity getPage() {
+		return page;
+	}
 }

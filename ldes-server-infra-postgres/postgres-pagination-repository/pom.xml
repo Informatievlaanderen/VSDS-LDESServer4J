@@ -44,6 +44,12 @@
             <artifactId>spring-batch-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>postgres-liquibase</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
