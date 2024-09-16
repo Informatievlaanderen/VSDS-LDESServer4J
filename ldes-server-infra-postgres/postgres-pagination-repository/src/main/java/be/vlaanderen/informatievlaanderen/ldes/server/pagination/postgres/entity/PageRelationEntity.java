@@ -34,7 +34,7 @@ public class PageRelationEntity {
 	@Column(name = "path", columnDefinition = "VARCHAR(255)")
 	private String treePath;
 
-	public PageRelationEntity() {
+	protected PageRelationEntity() {
 	}
 
 	public RelationId getRelationId() {
