@@ -39,8 +39,6 @@ import javax.sql.DataSource;
 		"ldes-server.deletion-cron=*/20 * * * * *", "ldes-server.compaction-duration=PT1S" })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
-	static final int FRAGMENTATION_POLLING_RATE = 1000;
-
 	@Autowired
 	MockMvc mockMvc;
 

@@ -135,7 +135,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
-				.atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+				.atMost(60, SECONDS)
 				.untilAsserted(() -> {
 					responseModel = fetchFragment(url);
 					assertNotNull(responseModel);
@@ -255,7 +255,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).next().toString();
 
 
-		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+		await().atMost(60, SECONDS)
 				.until(() -> {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
@@ -266,7 +266,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+		await().atMost(60, SECONDS)
 				.until(() -> jdbcTemplate
 						.queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
 								Integer.class, collection)
@@ -313,7 +313,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
 	public void iFetchAStreamingFragment(String url, String compareUrl) {
-		await().atMost(FRAGMENTATION_POLLING_RATE, SECONDS)
+		await().atMost(60, SECONDS)
 				.untilAsserted(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
