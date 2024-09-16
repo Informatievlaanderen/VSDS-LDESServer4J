@@ -14,7 +14,6 @@ public class FragmentationStrategyBatchExecutor {
 
 	private final FragmentationStrategy fragmentationStrategy;
 	private final ViewName viewName;
-	private final RootBucketRetriever rootBucketRetriever;
 	private final ObservationRegistry observationRegistry;
 
 	@SuppressWarnings("java:S107")
@@ -22,7 +21,6 @@ public class FragmentationStrategyBatchExecutor {
 	                                          FragmentationStrategy fragmentationStrategy,
 	                                          RootBucketRetriever rootBucketRetriever,
 	                                          ObservationRegistry observationRegistry) {
-		this.rootBucketRetriever = rootBucketRetriever;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
@@ -30,7 +28,7 @@ public class FragmentationStrategyBatchExecutor {
 
 	public Bucket bucketise(FragmentationMember member) {
 		final Observation parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-		final Bucket rootBucket = rootBucketRetriever.retrieveRootBucket(parentObservation);
+		final Bucket rootBucket = Bucket.createRootBucketForView(viewName);
 		fragmentationStrategy.addMemberToBucket(rootBucket, member, parentObservation);
 		parentObservation.stop();
 		return rootBucket;

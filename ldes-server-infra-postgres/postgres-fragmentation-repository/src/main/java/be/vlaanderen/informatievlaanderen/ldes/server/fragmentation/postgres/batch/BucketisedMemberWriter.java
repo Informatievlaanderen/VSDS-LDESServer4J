@@ -40,7 +40,7 @@ public class BucketisedMemberWriter implements ItemWriter<Bucket> {
 				""";
 
 		@Bean
-		JdbcBatchItemWriter<BucketisedMember> batchBucketWriter(DataSource dataSource) {
+		JdbcBatchItemWriter<BucketisedMember> batchBucketisedMemberWriter(DataSource dataSource) {
 			return new JdbcBatchItemWriterBuilder<BucketisedMember>()
 					.dataSource(dataSource)
 					.sql(SQL)
