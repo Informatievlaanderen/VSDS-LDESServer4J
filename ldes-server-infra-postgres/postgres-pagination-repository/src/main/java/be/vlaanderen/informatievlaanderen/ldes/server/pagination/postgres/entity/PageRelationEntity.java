@@ -34,33 +34,11 @@ public class PageRelationEntity {
 	@Column(name = "path", columnDefinition = "VARCHAR(255)")
 	private String treePath;
 
-
 	public PageRelationEntity() {
-	}
-
-	public PageRelationEntity(PageEntity fromPage, PageEntity toPage, String treeRelationType, String treeValue, String treeValueType, String treePath) {
-		this.fromPage = fromPage;
-		this.toPage = toPage;
-		this.treeRelationType = treeRelationType;
-		this.treeValue = treeValue;
-		this.treeValueType = treeValueType;
-		this.treePath = treePath;
-	}
-
-	public PageRelationEntity(RelationId relationId, String treeRelationType, String treeValue, String treeValueType, String treePath) {
-		this.relationId = relationId;
-		this.treeRelationType = treeRelationType;
-		this.treeValue = treeValue;
-		this.treeValueType = treeValueType;
-		this.treePath = treePath;
 	}
 
 	public RelationId getRelationId() {
 		return relationId;
-	}
-
-	public PageEntity getFromPage() {
-		return fromPage;
 	}
 
 	public PageEntity getToPage() {
