@@ -5,7 +5,7 @@ CREATE TABLE view_stats
     bucketized_count bigint NOT NULL default 0,
     paginated_count bigint NOT NULL default 0
 );
-ALTER TABLE "view_stats" ADD FOREIGN KEY ("view_id") REFERENCES "views" ("view_id");
+ALTER TABLE "view_stats" ADD FOREIGN KEY ("view_id") REFERENCES "views" ("view_id") ON DELETE CASCADE;
 
 -- create function to insert a stats row for the new view
 create function on_view_inserted() returns trigger language plpgsql as $$

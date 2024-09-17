@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet author="vsds" id="add-view-id-to-page-members">
@@ -9,9 +10,12 @@
         <createIndex indexName="page_members_view_id" tableName="page_members">
             <column name="view_id"/>
         </createIndex>
-        <addForeignKeyConstraint baseTableName="page_members" baseColumnNames="view_id"
+        <addForeignKeyConstraint baseTableName="page_members"
+                                 baseColumnNames="view_id"
                                  constraintName="fk_view_id"
-                                 referencedTableName="views" referencedColumnNames="view_id" />
+                                 referencedTableName="views"
+                                 referencedColumnNames="view_id"
+                                 onDelete="CASCADE" />
     </changeSet>
 
 </databaseChangeLog>
