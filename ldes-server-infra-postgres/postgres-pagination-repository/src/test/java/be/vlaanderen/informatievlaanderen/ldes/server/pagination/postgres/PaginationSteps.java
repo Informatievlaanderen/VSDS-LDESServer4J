@@ -63,7 +63,7 @@ public class PaginationSteps extends PostgresPaginationIntegrationTest {
 	@When("I create a page given the mutable page")
 	public void iCreateAPageGivenTheMutablePage() {
 		openPage = pageRepository.getOpenPage(bucketId);
-		pageRepository.createNewPage(openPage);
+		pageRepository.createNextPage(openPage);
 	}
 
 	@And("The old page has a generic relation to the new page")

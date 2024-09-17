@@ -56,9 +56,10 @@ class PaginatorTest {
 		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", new PageNumber(1)), PAGE_SIZE);
 
 		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET)).thenReturn(numberedPage);
+		when(pageRepository.getOpenPage(BUCKET))
+				.thenReturn(numberedPage);
 
-		when(pageMemberRepository.assignMembersToPage(any(), anyList()))
+		when(pageRepository.createNextPage(any()))
 				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
 				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
 
@@ -82,11 +83,11 @@ class PaginatorTest {
 		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", null), PAGE_SIZE);
 
 		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET)).thenReturn(unNumberedPage);
+		when(pageRepository.getOpenPage(BUCKET))
+				.thenReturn(unNumberedPage);
 
-		when(pageRepository.createNewPage(unNumberedPage)).thenReturn(numberedPage);
-
-		when(pageMemberRepository.assignMembersToPage(any(), anyList()))
+		when(pageRepository.createNextPage(any()))
+				.thenReturn(numberedPage)
 				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
 				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
 
@@ -109,9 +110,9 @@ class PaginatorTest {
 		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", new PageNumber(1)), PAGE_SIZE,1);
 
 		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET)).thenReturn(numberedPage);
-
-		when(pageMemberRepository.assignMembersToPage(any(), anyList()))
+		when(pageRepository.getOpenPage(BUCKET))
+				.thenReturn(numberedPage);
+		when(pageRepository.createNextPage(any()))
 				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
 				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
 
@@ -119,7 +120,12 @@ class PaginatorTest {
 
 		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
 		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET);
-		inOrder.verify(pageMemberRepository, times(3)).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageRepository).createNextPage(any());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageRepository).createNextPage(any());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageRepository).createNextPage(any());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(pageCaptor.getAllValues().stream().map(Page::getId).toList())

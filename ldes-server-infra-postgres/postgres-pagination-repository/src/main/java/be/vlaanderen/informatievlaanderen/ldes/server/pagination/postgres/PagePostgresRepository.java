@@ -49,7 +49,7 @@ public class PagePostgresRepository implements PageRepository {
 
 	@Override
 	@Transactional
-	public Page createNewPage(Page parentPage) {
+	public Page createNextPage(Page parentPage) {
 		String partialUrl = parentPage.createChildPartialUrl().asString();
 		PageEntity newPage = new PageEntity(parentPage.getBucketId(), partialUrl);
 

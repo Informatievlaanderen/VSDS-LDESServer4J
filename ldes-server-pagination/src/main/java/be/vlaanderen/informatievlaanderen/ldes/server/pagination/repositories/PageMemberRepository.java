@@ -15,9 +15,9 @@ public interface PageMemberRepository {
 
 	/**
 	 * Assigns Page Member to a Page
-	 * @param openPage Open page that will be used to assign members to
+	 *
+	 * @param openPage    Open page that will be used to assign members to
 	 * @param pageMembers A list of member ids that will be assigned to a page
-	 * @return An open page (either newly created page or the provided page if there is still available space)
 	 */
-	Page assignMembersToPage(Page openPage, List<Long> pageMembers);
+	void assignMembersToPage(Page openPage, List<Long> pageMembers);
 }

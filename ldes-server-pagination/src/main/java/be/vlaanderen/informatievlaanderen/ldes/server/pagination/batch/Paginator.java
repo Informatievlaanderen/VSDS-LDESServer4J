@@ -36,7 +36,7 @@ public class Paginator implements Tasklet {
 		Page openPage = pageRepository.getOpenPage(bucketId);
 
 		if (openPage.isNumberLess()) {
-			openPage = pageRepository.createNewPage(openPage);
+			openPage = pageRepository.createNextPage(openPage);
 		}
 
 		int membersInPage;
@@ -45,9 +45,21 @@ public class Paginator implements Tasklet {
 			List<Long> pageMembers = members.subList(i, Math.min(i + openPage.getAvailableMemberSpace(), members.size()));
 			membersInPage = pageMembers.size();
 
-			openPage = pageMemberRepository.assignMembersToPage(openPage, pageMembers);
+			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
 		return RepeatStatus.FINISHED;
+	}
+
+	private Page fillPageWithMembers(Page openPage, List<Long> pageMembers) {
+		openPage.incrementAssignedMemberCount(pageMembers.size());
+		pageMemberRepository.assignMembersToPage(openPage, pageMembers);
+
+		if (openPage.isFull()) {
+			return pageRepository.createNextPage(openPage);
+		}
+		else {
+			return openPage;
+		}
 	}
 }
