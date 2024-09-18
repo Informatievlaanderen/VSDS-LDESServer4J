@@ -31,7 +31,6 @@ import org.springframework.test.context.jdbc.Sql;
 @ComponentScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres",
 		"be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres",
 		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres",
-//		"be.vlaanderen.informatievlaanderen.ldes.server.domain",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream"
 })
 @ContextConfiguration(classes = {PageEntityRepository.class})

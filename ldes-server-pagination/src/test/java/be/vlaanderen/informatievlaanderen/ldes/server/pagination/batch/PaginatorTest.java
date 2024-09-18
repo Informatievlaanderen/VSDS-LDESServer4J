@@ -21,8 +21,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaginatorTest {
-	private static final long BUCKET = 1;
-	private static final String VIEW = "event-stream/paged";
+	private static final long BUCKET_ID = 1;
+	private static final String VIEW_NAME = "event-stream/paged";
 	private static final int PAGE_SIZE = 2;
 	@Mock
 	private ChunkContext chunkContext;
@@ -41,32 +41,32 @@ class PaginatorTest {
 	void when_Paginating_withNoUnexpectedMembers_doNothing() {
 		mockBucketId();
 
-		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of());
+		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of());
 
 		paginator.execute(null, chunkContext);
 
 		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
-		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET);
+		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_Paginating_withNumberedOpenPage_expectCorrectPages() {
 		mockBucketId();
-		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", new PageNumber(1)), PAGE_SIZE);
+		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(1)), PAGE_SIZE);
 
-		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET))
+		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
+		when(pageRepository.getOpenPage(BUCKET_ID))
 				.thenReturn(numberedPage);
 
 		when(pageRepository.createNextPage(any()))
-				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
 		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
-		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET);
+		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
 		inOrder.verify(pageMemberRepository, times(3)).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
@@ -79,22 +79,22 @@ class PaginatorTest {
 	@Test
 	void when_Paginating_withUnNumberedOpenPage_expectCorrectPages() {
 		mockBucketId();
-		Page unNumberedPage = new Page(0, BUCKET, new PartialUrl(VIEW, "", null), PAGE_SIZE);
-		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", null), PAGE_SIZE);
+		Page unNumberedPage = new Page(0, BUCKET_ID, new PartialUrl(VIEW_NAME, "", null), PAGE_SIZE);
+		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", null), PAGE_SIZE);
 
-		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET))
+		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
+		when(pageRepository.getOpenPage(BUCKET_ID))
 				.thenReturn(unNumberedPage);
 
 		when(pageRepository.createNextPage(any()))
 				.thenReturn(numberedPage)
-				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
 		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
-		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET);
+		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
 		inOrder.verify(pageMemberRepository, times(3)).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
@@ -107,19 +107,19 @@ class PaginatorTest {
 	@Test
 	void when_Paginating_withSemiFilledNumberedOpenPage_expectCorrectPages() {
 		mockBucketId();
-		Page numberedPage = new Page(1, BUCKET, new PartialUrl(VIEW, "", new PageNumber(1)), PAGE_SIZE,1);
+		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(1)), PAGE_SIZE,1);
 
-		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
-		when(pageRepository.getOpenPage(BUCKET))
+		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
+		when(pageRepository.getOpenPage(BUCKET_ID))
 				.thenReturn(numberedPage);
 		when(pageRepository.createNextPage(any()))
-				.thenReturn(new Page(2, BUCKET, new PartialUrl(VIEW, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET, new PartialUrl(VIEW, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
 		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
-		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET);
+		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
 		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verify(pageRepository).createNextPage(any());
 		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
@@ -143,6 +143,6 @@ class PaginatorTest {
 		when(chunkContext.getStepContext()).thenReturn(stepContext);
 		when(stepContext.getStepExecution()).thenReturn(stepExecution);
 		when(stepExecution.getExecutionContext()).thenReturn(executionContext);
-		when(executionContext.getLong("bucketId")).thenReturn(BUCKET);
+		when(executionContext.getLong("bucketId")).thenReturn(BUCKET_ID);
 	}
 }
