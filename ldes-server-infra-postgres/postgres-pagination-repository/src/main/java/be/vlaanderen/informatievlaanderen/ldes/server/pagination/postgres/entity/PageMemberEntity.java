@@ -28,4 +28,24 @@ public class PageMemberEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "page_id", columnDefinition = "BIGINT")
 	private PageEntity page;
+
+	public void setPage(PageEntity page) {
+		this.page = page;
+	}
+
+	public void setMember(Long memberId) {
+		this.member = new MemberEntity(memberId);
+	}
+
+	public MemberEntity getMember() {
+		return member;
+	}
+
+	public BucketEntity getBucket() {
+		return bucket;
+	}
+
+	public PageEntity getPage() {
+		return page;
+	}
 }

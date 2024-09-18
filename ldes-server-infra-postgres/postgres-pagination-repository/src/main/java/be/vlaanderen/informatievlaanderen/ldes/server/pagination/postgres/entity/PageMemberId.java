@@ -13,6 +13,14 @@ public class PageMemberId implements Serializable {
 	@Column(name = "bucket_id", nullable = false, columnDefinition = "BIGINT")
 	private Long bucketId;
 
+	public PageMemberId() {
+	}
+
+	public PageMemberId(Long memberId, Long bucketId) {
+		this.memberId = memberId;
+		this.bucketId = bucketId;
+	}
+
 	@Override
 	public final boolean equals(Object o) {
 		if (this == o) return true;
