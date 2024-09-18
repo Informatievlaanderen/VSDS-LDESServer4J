@@ -15,12 +15,10 @@ import java.util.List;
 public class PageMemberPostgresRepository implements PageMemberRepository, be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageMemberRepository {
 
     private final PageMemberEntityRepository entityRepository;
-    private final PagePostgresRepository pagePostgresRepository;
 
-    public PageMemberPostgresRepository(PageMemberEntityRepository entityRepository, PagePostgresRepository pagePostgresRepository) {
+	public PageMemberPostgresRepository(PageMemberEntityRepository entityRepository, PagePostgresRepository pagePostgresRepository) {
         this.entityRepository = entityRepository;
-	    this.pagePostgresRepository = pagePostgresRepository;
-    }
+	}
 
     @Override
     @Transactional
