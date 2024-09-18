@@ -42,7 +42,6 @@ public class PageMemberPostgresRepository implements PageMemberRepository, be.vl
 
     @Override
     public void assignMembersToPage(Page openPage, List<Long> pageMembers) {
-        openPage.incrementAssignedMemberCount(pageMembers.size());
         entityRepository.updatePageForMembers(new PageEntity(openPage.getId()), openPage.getBucketId(), pageMembers);
     }
 }
