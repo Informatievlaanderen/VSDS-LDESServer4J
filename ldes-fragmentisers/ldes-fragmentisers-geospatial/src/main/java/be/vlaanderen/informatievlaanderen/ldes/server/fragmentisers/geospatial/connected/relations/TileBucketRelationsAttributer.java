@@ -14,10 +14,10 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class TileBucketRelationsAttributer implements RelationsAttributer {
 
-	public void addRelationsFromRootToBottom(Bucket rootBucket, Bucket tileBucket) {
+	public Bucket addRelationsFromRootToBottom(Bucket rootBucket, Bucket tileBucket) {
 		boolean isDefaultBucket = tileBucket.getValueForKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING);
 		TreeRelation treeRelation = isDefaultBucket ? TreeRelation.generic() : createGeospatialRelationToParent(tileBucket);
-		rootBucket.addChildBucket(tileBucket.withRelation(treeRelation));
+		return rootBucket.addChildBucket(tileBucket.withRelation(treeRelation));
 	}
 
 	private TreeRelation createGeospatialRelationToParent(Bucket childBucket) {

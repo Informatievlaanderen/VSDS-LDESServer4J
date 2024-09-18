@@ -31,16 +31,15 @@ public class TimeBasedBucketCreator {
 	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
 		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(granularity.getValue(), timeValue);
 		final Bucket childBucket = parentBucket.createChild(childDescriptorPair);
-		addRelationToParent(parentBucket, childBucket);
 		logBucketisation(parentBucket, childBucket);
-		return childBucket;
+		return addRelationToParent(parentBucket, childBucket);
 	}
 
-	private void addRelationToParent(Bucket parentBucket, Bucket childBucket) {
+	private Bucket addRelationToParent(Bucket parentBucket, Bucket childBucket) {
 		if (isDefaultBucket(childBucket)) {
-			relationsAttributer.addDefaultRelation(parentBucket, childBucket);
+			return relationsAttributer.addDefaultRelation(parentBucket, childBucket);
 		} else {
-			relationsAttributer.addInBetweenRelation(parentBucket, childBucket);
+			return relationsAttributer.addInBetweenRelation(parentBucket, childBucket);
 		}
 	}
 

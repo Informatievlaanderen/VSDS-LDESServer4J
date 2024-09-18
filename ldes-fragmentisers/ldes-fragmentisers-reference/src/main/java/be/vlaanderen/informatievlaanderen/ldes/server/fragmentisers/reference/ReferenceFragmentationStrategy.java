@@ -32,12 +32,12 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
 	@Override
 	public void addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
 		final var fragmentationObservation = startObservation(parentObservation);
-		final var rootFragment = getOrCreateRootBucket(parentBucket);
+		final var rootBucket = getOrCreateRootBucket(parentBucket);
 
 		referenceBucketiser
 				.createReferences(member.getSubject(), member.getVersionModel())
 				.stream()
-				.map(reference -> bucketCreator.getOrCreateBucket(parentBucket, reference, rootFragment))
+				.map(reference -> bucketCreator.getOrCreateBucket(parentBucket, reference, rootBucket))
 				.parallel()
 				.forEach(bucket -> super.addMemberToBucket(bucket, member, fragmentationObservation));
 
@@ -52,8 +52,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
 
 	private Bucket getOrCreateRootBucket(Bucket parentBucket) {
 		Bucket referenceRootFragment = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_REFERENCE_ROOT);
-		parentBucket.addChildBucket(referenceRootFragment.withGenericRelation());
-		return referenceRootFragment;
+		return parentBucket.addChildBucket(referenceRootFragment.withGenericRelation());
 	}
 
 }

@@ -3,15 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -106,34 +102,6 @@ class BucketTest {
 			assertThat(descendants).containsExactlyInAnyOrder(
 					rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket
 			);
-		}
-
-		@Test
-		void test_GetAllRelations() {
-			final List<BucketRelation> relations = rootBucket.getAllRelations();
-
-			assertThat(relations)
-					.containsExactlyInAnyOrder(
-							new BucketRelation(rootBucket, year2023Bucket, TreeRelation.generic()),
-							new BucketRelation(rootBucket, year2024Bucket, TreeRelation.generic()),
-							new BucketRelation(year2024Bucket, month01Bucket, TreeRelation.generic()),
-							new BucketRelation(year2024Bucket, month03Bucket, TreeRelation.generic()),
-							new BucketRelation(month03Bucket, day14Bucket, TreeRelation.generic()),
-							new BucketRelation(month03Bucket, day28Bucket, TreeRelation.generic())
-					);
-		}
-
-		@Test
-		void test_GetAllMembers() {
-			final List<BucketisedMember> day14Members = IntStream.range(1, 4).mapToObj(memberId -> new BucketisedMember(DAY_14_BUCKET_ID, memberId)).toList();
-			final List<BucketisedMember> day28Members = IntStream.range(1, 5).mapToObj(memberId -> new BucketisedMember(DAY_28_BUCKET_ID, memberId)).toList();
-			day14Members.forEach(member -> day14Bucket.addMember(member.memberId()));
-			day28Members.forEach(member -> day28Bucket.addMember(member.memberId()));
-			final List<BucketisedMember> expectedMembers = Stream.concat(day14Members.stream(), day28Members.stream()).toList();
-
-			final List<BucketisedMember> members = rootBucket.getAllMembers();
-
-			assertThat(members).containsExactlyInAnyOrderElementsOf(expectedMembers);
 		}
 	}
 }

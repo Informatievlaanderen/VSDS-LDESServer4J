@@ -21,10 +21,9 @@ class FragmentationStrategyBatchCollectionTest {
 	private static final String COLLECTION_NAME = "collectionName";
 	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 	private final ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
-	private final BucketRepository bucketRepository = mock(BucketRepository.class);
 
 	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(
-			bucketRepository, fragmentationStrategyCreator, observationRegistry);
+			fragmentationStrategyCreator, observationRegistry);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -81,9 +80,8 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
-		final var rootBucketRetriever = new RootBucketRetriever(viewName, mock(), observationRegistry);
 		FragmentationStrategyBatchExecutor fragmentationStrategyExecutor =
-				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever, observationRegistry);
+				new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, observationRegistry);
 
 		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
 				fragmentationStrategyExecutor);

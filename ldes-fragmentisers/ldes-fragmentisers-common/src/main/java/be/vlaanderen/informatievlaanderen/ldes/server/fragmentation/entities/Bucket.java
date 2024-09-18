@@ -8,19 +8,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Bucket {
-	private final long bucketId;
+	private long bucketId;
 	private final BucketDescriptor bucketDescriptor;
 	private final ViewName viewName;
 	private final List<ChildBucket> children;
-	private final List<BucketisedMember> members;
+	private final List<Long> members;
 
-	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, List<BucketisedMember> members) {
+	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, List<Long> members) {
 		this.bucketId = bucketId;
 		this.bucketDescriptor = bucketDescriptor;
 		this.viewName = viewName;
@@ -44,6 +42,10 @@ public class Bucket {
 		return bucketId;
 	}
 
+	public void setBucketId(long bucketId) {
+		this.bucketId = bucketId;
+	}
+
 	public ViewName getViewName() {
 		return viewName;
 	}
@@ -60,19 +62,20 @@ public class Bucket {
 		return bucketDescriptor.asDecodedString();
 	}
 
-	public void addChildBucket(ChildBucket childBucket) {
-		children.add(childBucket);
+	public ChildBucket addChildBucket(ChildBucket childBucket) {
+		final int index = children.indexOf(childBucket);
+		if(index == -1) {
+			children.add(childBucket);
+			return childBucket;
+		}
+		ChildBucket existingChildBucket = children.get(index);
+		existingChildBucket.addRelations(childBucket.getRelations());
+		return existingChildBucket;
 	}
 
-	public ChildBucket withRelation(TreeRelation relationDefinition) {
-		return new ChildBucket(
-				bucketId,
-				bucketDescriptor,
-				viewName,
-				children,
-				members,
-				relationDefinition
-		);
+
+	public ChildBucket withRelation(TreeRelation... relationDefinition) {
+		return new ChildBucket(bucketId, bucketDescriptor, viewName, children, members, Set.of(relationDefinition));
 	}
 
 	public ChildBucket withGenericRelation() {
@@ -93,49 +96,48 @@ public class Bucket {
 	}
 
 	public void addMember(long memberId) {
-		members.add(new BucketisedMember(bucketId, memberId));
+		members.add(memberId);
 	}
 
-	public List<BucketisedMember> getMembers() {
+	public List<Long> getMembers() {
 		return List.copyOf(members);
+	}
+
+	public List<BucketisedMember> getBucketisedMembers() {
+		return members.stream().map(memberId -> new BucketisedMember(bucketId, memberId)).toList();
+	}
+
+	public List<BucketisedMember> getAllBucketisedMembers() {
+		return Stream.concat(
+				members.stream().map(memberId -> new BucketisedMember(bucketId, memberId)),
+				children.stream().flatMap(child -> child.getAllBucketisedMembers().stream())
+		).toList();
 	}
 
 	public List<ChildBucket> getChildren() {
 		return List.copyOf(children);
 	}
 
-	public List<Bucket> getBucketTree() {
-		return getDescendants(this);
-	}
-
-	public List<BucketisedMember> getAllMembers() {
-		return getDescendants(this).stream()
-				.flatMap(bucket -> bucket.getMembers().stream())
+	List<Bucket> getAllDescendants() {
+		return Stream.concat(
+						children.stream(),
+						children.stream().flatMap(child -> child.getAllDescendants().stream())
+				)
 				.toList();
 	}
 
-	private static List<Bucket> getDescendants(Bucket bucket) {
-		List<Bucket> descendants = new ArrayList<>();
-		descendants.add(bucket);
-		bucket.getChildren().stream()
-				.flatMap(child -> getDescendants(child).stream())
-				.forEach(descendants::add);
-		return descendants;
+	public List<Bucket> getBucketTree() {
+		final List<Bucket> bucketTree = new ArrayList<>(List.of(this));
+		getAllDescendants().stream().distinct().forEach(bucketTree::add);
+		return bucketTree;
 	}
 
-	public List<BucketRelation> getAllRelations() {
-		return getAllRelations(this);
-	}
-
-	private static List<BucketRelation> getAllRelations(Bucket bucket) {
-		List<BucketRelation> relations = new ArrayList<>();
-		bucket.getChildren().stream()
-				.map(child -> new BucketRelation(bucket, child, child.getRelation()))
-				.forEach(bucketrelation -> {
-					relations.addAll(getAllRelations(bucketrelation.toBucket()));
-					relations.add(bucketrelation);
-				});
-		return relations;
+	public List<BucketRelation> getChildRelations() {
+		return children.stream()
+				.flatMap(child -> child.getRelations().stream()
+						.map(relation -> new BucketRelation(createPartialUrl(), child.createPartialUrl(), relation))
+				)
+				.toList();
 	}
 
 	public String createPartialUrl() {
@@ -162,11 +164,6 @@ public class Bucket {
 		int result = Objects.hashCode(bucketDescriptor);
 		result = 31 * result + Objects.hashCode(viewName);
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		return createPartialUrl();
 	}
 
 	public Optional<String> getValueForKey(String key) {

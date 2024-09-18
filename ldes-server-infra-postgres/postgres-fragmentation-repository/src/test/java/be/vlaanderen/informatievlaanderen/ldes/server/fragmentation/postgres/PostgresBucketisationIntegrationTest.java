@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.Fragmentat
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.BucketisedMemberWriter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates.BucketisedMemberItemWriterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres"
 })
-@ContextConfiguration(classes = {BucketisedMemberWriter.class})
+@ContextConfiguration(classes = {BucketisedMemberItemWriterConfig.class})
 @Import(PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresBucketisationIntegrationTest {

@@ -8,7 +8,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,14 +26,14 @@ public class BucketJobDefinitions {
 	                                 PlatformTransactionManager transactionManager,
 	                                 ItemReader<FragmentationMember> memberReader,
 	                                 ItemProcessor<FragmentationMember, Bucket> bucketProcessor,
-	                                 ItemWriter<Bucket> compositeBucketWriter,
+	                                 ItemWriter<Bucket> compositeBucketItemWriter,
 	                                 BucketMetricUpdater bucketMetricUpdater,
 	                                 @Qualifier("bucketTaskExecutor") TaskExecutor taskExecutor) {
 		return new StepBuilder(BUCKETISATION_STEP, jobRepository)
 				.<FragmentationMember, Bucket>chunk(CHUNK_SIZE, transactionManager)
 				.reader(memberReader)
 				.processor(bucketProcessor)
-				.writer(compositeBucketWriter)
+				.writer(compositeBucketItemWriter)
 				.listener(bucketMetricUpdater)
 				.build();
 	}
@@ -45,12 +44,5 @@ public class BucketJobDefinitions {
 		// TODO: higher this limit: Jan will help me with this, as he wants this dynamically
 		taskExecutor.setConcurrencyLimit(1);
 		return taskExecutor;
-	}
-
-	@Bean
-	public ItemWriter<Bucket> compositeBucketWriter(ItemWriter<Bucket> bucketWriter, ItemWriter<Bucket> bucketisedMemberWriter) {
-		return new CompositeItemWriterBuilder<Bucket>()
-				.delegates(bucketWriter, bucketisedMemberWriter)
-				.build();
 	}
 }

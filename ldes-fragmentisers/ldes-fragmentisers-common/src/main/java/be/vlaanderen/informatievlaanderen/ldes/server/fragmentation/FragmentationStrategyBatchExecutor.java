@@ -19,7 +19,6 @@ public class FragmentationStrategyBatchExecutor {
 	@SuppressWarnings("java:S107")
 	public FragmentationStrategyBatchExecutor(ViewName viewName,
 	                                          FragmentationStrategy fragmentationStrategy,
-	                                          RootBucketRetriever rootBucketRetriever,
 	                                          ObservationRegistry observationRegistry) {
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategy = fragmentationStrategy;

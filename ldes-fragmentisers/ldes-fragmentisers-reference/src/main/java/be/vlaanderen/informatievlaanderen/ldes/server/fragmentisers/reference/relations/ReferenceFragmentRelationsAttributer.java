@@ -20,19 +20,19 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 		this.fragmentKeyReference = fragmentKeyReference;
 	}
 
-	public void addRelationFromRootToBottom(Bucket rootBucket, Bucket referenceBucket) {
+	public Bucket addRelationFromRootToBottom(Bucket rootBucket, Bucket referenceBucket) {
 		final TreeRelation treeRelation = new TreeRelation(
 				TREE_REFERENCE_EQUALS_RELATION,
 				getTreeValue(referenceBucket),
 				XSDDatatype.XSDanyURI.getURI(),
 				fragmentationPath
 		);
-		rootBucket.addChildBucket(referenceBucket.withRelation(treeRelation));
+		return rootBucket.addChildBucket(referenceBucket.withRelation(treeRelation));
 	}
 
 
-	public void addDefaultRelation(Bucket rootBucket, Bucket referenceBucket) {
-		rootBucket.addChildBucket(referenceBucket.withGenericRelation());
+	public Bucket addDefaultRelation(Bucket rootBucket, Bucket referenceBucket) {
+		return rootBucket.addChildBucket(referenceBucket.withGenericRelation());
 	}
 
 	private String getTreeValue(Bucket currentBucket) {

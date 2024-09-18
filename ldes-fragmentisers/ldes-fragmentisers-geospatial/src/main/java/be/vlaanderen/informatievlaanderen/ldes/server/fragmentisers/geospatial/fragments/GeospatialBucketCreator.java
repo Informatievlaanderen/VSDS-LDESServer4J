@@ -17,8 +17,7 @@ public class GeospatialBucketCreator {
 	public Bucket getOrCreateTileBucket(Bucket parentBucket, String tile, Bucket rootTileFragment) {
 		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile);
 		final Bucket childBucket = parentBucket.createChild(childDescriptorPair);
-		tileBucketRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, childBucket);
-		return childBucket;
+		return tileBucketRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, childBucket);
 	}
 
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String tile) {

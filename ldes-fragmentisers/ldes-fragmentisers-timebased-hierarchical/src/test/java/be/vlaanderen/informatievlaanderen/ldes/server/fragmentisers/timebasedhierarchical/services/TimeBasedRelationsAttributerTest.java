@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TimeBasedLinearCachingTriggered;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +15,7 @@ import java.time.LocalDateTime;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 class TimeBasedRelationsAttributerTest {
 
@@ -87,7 +86,6 @@ class TimeBasedRelationsAttributerTest {
 						child.withRelation(gteRelation),
 						child.withRelation(ltRelation)
 				);
-		verify(applicationEventPublisher).publishEvent(new TimeBasedLinearCachingTriggered(parentBucket.getBucketId(), any()));
 	}
 
 	@Test

@@ -41,7 +41,7 @@ class FragmentationStrategyBatchExecutorTest {
 		@Test
 		void when_ExecuteIsCalled_then_AllLogicIsWrappedByTheExecutorService() {
 			ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
-			var executor = new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever,
+			var executor = new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy,
 					observationRegistry);
 
 			var member = mock(FragmentationMember.class);
@@ -58,7 +58,7 @@ class FragmentationStrategyBatchExecutorTest {
 	void isPartOfCollection() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		var executorA = new FragmentationStrategyBatchExecutor(viewNameA, null,
-				null, null);
+				null);
 
 		assertTrue(executorA.isPartOfCollection(viewNameA.getCollectionName()));
 		assertFalse(executorA.isPartOfCollection("other"));
@@ -68,7 +68,7 @@ class FragmentationStrategyBatchExecutorTest {
 	void getViewName() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		var executorA = new FragmentationStrategyBatchExecutor(viewNameA, null,
-				null, null);
+				null);
 
 		assertEquals(viewNameA, executorA.getViewName());
 	}
@@ -88,19 +88,19 @@ class FragmentationStrategyBatchExecutorTest {
 
 		private static final ViewName viewNameA = ViewName.fromString("col/viewA");
 		private static final FragmentationStrategyBatchExecutor executorA = new FragmentationStrategyBatchExecutor(viewNameA,
-				null, null, null);
+				null, null);
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of(equals(), executorA, executorA),
 					Arguments.of(equals(), executorA,
-							new FragmentationStrategyBatchExecutor(viewNameA, null, null, null)),
+							new FragmentationStrategyBatchExecutor(viewNameA, null, null)),
 					Arguments.of(equals(), executorA,
 							new FragmentationStrategyBatchExecutor(viewNameA, mock(FragmentationStrategy.class),
-									mock(RootBucketRetriever.class), mock(ObservationRegistry.class))),
+									mock(ObservationRegistry.class))),
 					Arguments.of(notEquals(), executorA,
-							new FragmentationStrategyBatchExecutor(ViewName.fromString("col/viewB"), null, null, null)));
+							new FragmentationStrategyBatchExecutor(ViewName.fromString("col/viewB"), null, null)));
 		}
 
 		private static BiConsumer<Object, Object> equals() {
