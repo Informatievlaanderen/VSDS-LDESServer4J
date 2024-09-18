@@ -16,7 +16,7 @@ public class PageMemberPostgresRepository implements PageMemberRepository, be.vl
 
     private final PageMemberEntityRepository entityRepository;
 
-	public PageMemberPostgresRepository(PageMemberEntityRepository entityRepository, PagePostgresRepository pagePostgresRepository) {
+	public PageMemberPostgresRepository(PageMemberEntityRepository entityRepository) {
         this.entityRepository = entityRepository;
 	}
 
