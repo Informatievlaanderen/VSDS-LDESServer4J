@@ -31,16 +31,19 @@ public class PageEntity {
 	private String partialUrl;
 
 	@OneToMany(mappedBy = "fromPage")
-	private List<RelationEntity> relations;
+	private List<PageRelationEntity> relations;
 
 	public PageEntity() {
 	}
 
-	public PageEntity(BucketEntity bucket, String partialUrl, List<RelationEntity> relations) {
-		this.bucket = bucket;
-		this.immutable = true;
+	public PageEntity(Long pageId) {
+		this.id = pageId;
+	}
+
+	public PageEntity(Long bucketId, String partialUrl) {
+		this.bucket = new BucketEntity(bucketId);
+		this.immutable = false;
 		this.partialUrl = partialUrl;
-		this.relations = relations;
 	}
 
 	public Long getId() {
@@ -67,11 +70,15 @@ public class PageEntity {
 		return partialUrl;
 	}
 
-	public List<RelationEntity> getRelations() {
+	public List<PageRelationEntity> getRelations() {
 		return relations;
 	}
 
 	public boolean isView() {
 		return bucket.getView().getComposedViewName().equals("/%s".formatted(partialUrl));
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

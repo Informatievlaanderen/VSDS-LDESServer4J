@@ -10,8 +10,7 @@ import java.util.stream.Stream;
 
 public interface PageRepository {
 	Page getOpenPage(long bucketId);
-	int createPage(Long bucketId, String partialUrl);
-	void setPageImmutable(long pageId);
+	Page createNextPage(Page parentPage);
 	void setChildrenImmutableByBucketId(long bucketId);
     void markAllPagesImmutableByCollectionName(String collectionName);
     Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);

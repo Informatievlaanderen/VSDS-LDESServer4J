@@ -6,7 +6,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "page_relations")
-public class RelationEntity {
+public class PageRelationEntity {
 	@EmbeddedId
 	private RelationId relationId;
 
@@ -34,33 +34,11 @@ public class RelationEntity {
 	@Column(name = "path", columnDefinition = "VARCHAR(255)")
 	private String treePath;
 
-
-	public RelationEntity() {
-	}
-
-	public RelationEntity(PageEntity fromPage, PageEntity toPage, String treeRelationType, String treeValue, String treeValueType, String treePath) {
-		this.fromPage = fromPage;
-		this.toPage = toPage;
-		this.treeRelationType = treeRelationType;
-		this.treeValue = treeValue;
-		this.treeValueType = treeValueType;
-		this.treePath = treePath;
-	}
-
-	public RelationEntity(RelationId relationId, String treeRelationType, String treeValue, String treeValueType, String treePath) {
-		this.relationId = relationId;
-		this.treeRelationType = treeRelationType;
-		this.treeValue = treeValue;
-		this.treeValueType = treeValueType;
-		this.treePath = treePath;
+	protected PageRelationEntity() {
 	}
 
 	public RelationId getRelationId() {
 		return relationId;
-	}
-
-	public PageEntity getFromPage() {
-		return fromPage;
 	}
 
 	public PageEntity getToPage() {

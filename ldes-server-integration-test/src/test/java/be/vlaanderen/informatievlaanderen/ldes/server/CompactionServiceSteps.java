@@ -62,7 +62,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	@And("verify the following pages have no relation pointing to them")
 	public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
 		await().untilAsserted(() -> {
-			var count = relationEntityRepository.findAll()
+			var count = pageRelationEntityRepository.findAll()
 					.stream()
 					.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
 					.count();
@@ -86,7 +86,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	@And("verify {long} pages have a relation pointing to the new page {long}")
 	public void verifyUpdateOfPredecessorRelations(long pointingCount, long id) {
 		await().untilAsserted(() -> {
-			var countNewPage = relationEntityRepository.findAll()
+			var countNewPage = pageRelationEntityRepository.findAll()
 					.stream()
 					.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
 					.count();

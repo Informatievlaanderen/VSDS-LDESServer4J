@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.RelationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.RelationId;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeRelationProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface RelationEntityRepository extends JpaRepository<RelationEntity, RelationId> {
+public interface PageRelationEntityRepository extends JpaRepository<PageRelationEntity, RelationId> {
 
 	@Modifying
 	@Query(value = """
@@ -29,7 +29,7 @@ public interface RelationEntityRepository extends JpaRepository<RelationEntity, 
 	List<TreeRelationProjection> findDistinctByFromPageId(long pageId);
 
 	@Modifying
-	@Query("UPDATE RelationEntity r SET r.toPage = ( SELECT p FROM PageEntity p WHERE p.id = :targetId ) " +
+	@Query("UPDATE PageRelationEntity r SET r.toPage = ( SELECT p FROM PageEntity p WHERE p.id = :targetId ) " +
 	"WHERE r.toPage.id IN :ids OR r.fromPage.id IN : ids")
 	void updateToPageRelations(List<Long> ids, long targetId);
 }
