@@ -21,11 +21,10 @@ public class ReferenceBucketCreator {
 		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(fragmentKeyReference, reference);
 		final Bucket childBucket = parentBucket.createChild(childDescriptorPair);
 		if (reference.equals(DEFAULT_BUCKET_STRING)) {
-			relationsAttributer.addDefaultRelation(parentBucket, childBucket);
+			return relationsAttributer.addDefaultRelation(parentBucket, childBucket);
 		} else {
-			relationsAttributer.addRelationFromRootToBottom(rootBucket, childBucket);
+			return relationsAttributer.addRelationFromRootToBottom(rootBucket, childBucket);
 		}
-		return childBucket;
 	}
 
 	public Bucket getOrCreateRootBucket(Bucket parentBucket, String reference) {

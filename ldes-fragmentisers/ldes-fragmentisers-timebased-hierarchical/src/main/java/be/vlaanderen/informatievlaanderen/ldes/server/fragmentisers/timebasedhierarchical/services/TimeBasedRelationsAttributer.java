@@ -1,15 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.ChildBucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TimeBasedLinearCachingTriggered;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -22,27 +19,19 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timeb
 
 public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
-	private final ApplicationEventPublisher applicationEventPublisher;
-
 	private final TimeBasedConfig config;
 
-	public TimeBasedRelationsAttributer(ApplicationEventPublisher applicationEventPublisher, TimeBasedConfig config) {
-		this.applicationEventPublisher = applicationEventPublisher;
+	public TimeBasedRelationsAttributer(TimeBasedConfig config) {
 		this.config = config;
 	}
 
 	public Bucket addInBetweenRelation(Bucket parentBucket, Bucket childBucket) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childBucket);
-		final ChildBucket child = parentBucket.addChildBucket(childBucket.withRelations(createInBetweenRelations(timestamp)));
-		triggerTimeBasedLinearCachingIfNeeded(parentBucket.getBucketId(), timestamp.getNextUpdateTs());
-		return child;
+		return parentBucket.addChildBucket(childBucket.withRelations(createInBetweenRelations(timestamp)));
 	}
 
 	public Bucket addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
-		final ChildBucket child = parentBucket.addChildBucket(childBucket.withGenericRelation());
-		// TODO: use something else then bucket_id (as this probably won't be set yet)
-		triggerTimeBasedLinearCachingIfNeeded(parentBucket.getBucketId(), null);
-		return child;
+		return parentBucket.addChildBucket(childBucket.withGenericRelation());
 	}
 
 	private FragmentationTimestamp timestampFromFragmentPairs(Bucket bucket) {
@@ -57,12 +46,6 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				new TreeRelation(TREE_GTE_RELATION, timestamp.getTime().toString(), XSD_DATETIME, config.getFragmentationPath()),
 				new TreeRelation(TREE_LT_RELATION, timestamp.getLtBoundary().toString(), XSD_DATETIME, config.getFragmentationPath()),
 		};
-	}
-
-	private void triggerTimeBasedLinearCachingIfNeeded(long bucketId, LocalDateTime nextUpdateTs) {
-		if (config.isLinearTimeCachingEnabled()) {
-			applicationEventPublisher.publishEvent(new TimeBasedLinearCachingTriggered(bucketId, nextUpdateTs));
-		}
 	}
 
 	private static @NotNull FragmentationTimestamp createTimestampFromMap(Map<String, Optional<Integer>> timeMap) {

@@ -16,8 +16,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReferenceBucketCreatorTest {
@@ -40,6 +39,7 @@ class ReferenceBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 		Bucket referenceBucket = bucket.createChild(referencePair);
+		when(relationsAttributer.addRelationFromRootToBottom(rootBucket, bucket.createChild(referencePair))).thenReturn(referenceBucket);
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
 
@@ -61,6 +61,7 @@ class ReferenceBucketCreatorTest {
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
+		when(relationsAttributer.addRelationFromRootToBottom(rootBucket, bucket.createChild(referenceRootPair))).thenReturn(bucket.createChild(referenceRootPair));
 
 		Bucket returnedBucket = referenceBucketCreator.getOrCreateBucket(bucket, FRAGMENT_KEY_REFERENCE_ROOT, rootBucket);
 
@@ -72,6 +73,7 @@ class ReferenceBucketCreatorTest {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), viewName);
 		Bucket rootBucket = bucket.createChild(referenceRootPair);
 		Bucket defaultBucket = bucket.createChild(defaultPair);
+		when(relationsAttributer.addDefaultRelation(bucket, bucket.createChild(defaultPair))).thenReturn(defaultBucket);
 
 		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, DEFAULT_BUCKET_STRING, rootBucket);
 

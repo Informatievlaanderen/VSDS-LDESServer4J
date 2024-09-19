@@ -19,8 +19,8 @@ import static org.mockito.Mockito.*;
 class TimeBasedBucketCreatorTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final BucketDescriptorPair timePair = new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023");
-	private static final Bucket PARENT = new Bucket(new BucketDescriptor(List.of(timePair)), VIEW_NAME);
-	private static final Bucket ROOT = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+	private Bucket parent;
+	private Bucket root;
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.MONTH);
 
@@ -31,26 +31,32 @@ class TimeBasedBucketCreatorTest {
 	void setUp() {
 		relationsAttributer = mock(TimeBasedRelationsAttributer.class);
 		bucketCreator = new TimeBasedBucketCreator(relationsAttributer);
+		parent = new Bucket(new BucketDescriptor(List.of(timePair)), VIEW_NAME);
+		root = Bucket.createRootBucketForView(VIEW_NAME);
 	}
 
 	@Test
 	void test_GetOrCreateInBetweenBucket() {
-		final BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
+		final BucketDescriptor childDescriptor = new BucketDescriptor(List.of(timePair, new BucketDescriptorPair(Granularity.MONTH.getValue(), "01")));
+		when(relationsAttributer.addInBetweenRelation(parent, new Bucket(childDescriptor, VIEW_NAME)))
+				.thenReturn(new Bucket(childDescriptor, VIEW_NAME));
 
-		Bucket child = bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.MONTH);
+		Bucket child = bucketCreator.createBucket(parent, TIME, Granularity.MONTH);
 
-		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
-		verify(relationsAttributer).addInBetweenRelation(PARENT, child);
+		verify(relationsAttributer).addInBetweenRelation(eq(parent), any());
+		assertThat(child.getBucketDescriptor()).isEqualTo(childDescriptor);
 	}
 
 	@Test
 	void test_GetOrCreateDefaultBucket() {
-		BucketDescriptor expectedBucketDescriptor = new BucketDescriptor(
+		BucketDescriptor childDescriptor = new BucketDescriptor(
 				List.of(new BucketDescriptorPair(Granularity.YEAR.getValue(), DEFAULT_BUCKET_STRING)));
+		when(relationsAttributer.addDefaultRelation(root, new Bucket(childDescriptor, VIEW_NAME)))
+				.thenReturn(new Bucket(childDescriptor, VIEW_NAME));
 
-		Bucket child = bucketCreator.getOrCreateBucket(new Bucket(BucketDescriptor.empty(), VIEW_NAME), DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		Bucket child = bucketCreator.createBucket(root, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 
-		assertThat(child.getBucketDescriptor()).isEqualTo(expectedBucketDescriptor);
-		verify(relationsAttributer).addDefaultRelation(ROOT, child);
+		verify(relationsAttributer).addDefaultRelation(eq(root), any());
+		assertThat(child.getBucketDescriptor()).isEqualTo(childDescriptor);
 	}
 }

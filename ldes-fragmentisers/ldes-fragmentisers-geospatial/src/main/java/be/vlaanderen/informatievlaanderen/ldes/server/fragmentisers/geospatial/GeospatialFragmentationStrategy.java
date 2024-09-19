@@ -42,9 +42,9 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.stream()
 				.map(tile -> {
 					if (tile.equals(DEFAULT_BUCKET_STRING)) {
-						return bucketCreator.getOrCreateTileBucket(parentBucket, tile, parentBucket);
+						return bucketCreator.createTileBucket(parentBucket, tile, parentBucket);
 					} else {
-						return bucketCreator.getOrCreateTileBucket(parentBucket, tile, rootTileBucket);
+						return bucketCreator.createTileBucket(parentBucket, tile, rootTileBucket);
 					}
 				})
 				.parallel()

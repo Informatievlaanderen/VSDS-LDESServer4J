@@ -22,13 +22,13 @@ public class TimeBasedBucketCreator {
 		this.relationsAttributer = relationsAttributer;
 	}
 
-	public Bucket getOrCreateBucket(Bucket parentBucket,
-	                                FragmentationTimestamp fragmentationTimestamp,
-	                                Granularity granularity) {
-		return getOrCreateBucket(parentBucket, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
+	public Bucket createBucket(Bucket parentBucket,
+	                           FragmentationTimestamp fragmentationTimestamp,
+	                           Granularity granularity) {
+		return createBucket(parentBucket, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
 	}
 
-	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
+	public Bucket createBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
 		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(granularity.getValue(), timeValue);
 		final Bucket childBucket = parentBucket.createChild(childDescriptorPair);
 		logBucketisation(parentBucket, childBucket);

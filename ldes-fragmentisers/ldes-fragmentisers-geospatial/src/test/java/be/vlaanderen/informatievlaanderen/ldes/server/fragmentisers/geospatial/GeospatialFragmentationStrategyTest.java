@@ -50,7 +50,7 @@ class GeospatialFragmentationStrategyTest {
 		FragmentationMember member = mock(FragmentationMember.class);
 
 		when(geospatialBucketiser.createTiles(member.getSubject(), member.getVersionModel())).thenReturn(Set.of("dummy"));
-		when(bucketCreator.getOrCreateTileBucket(parentBucket, "dummy", parentBucket))
+		when(bucketCreator.createTileBucket(parentBucket, "dummy", parentBucket))
 				.thenReturn(mock(Bucket.class));
 
 		geospatialFragmentationStrategy.addMemberToBucket(parentBucket, member, mock(Observation.class));
@@ -68,7 +68,7 @@ class GeospatialFragmentationStrategyTest {
 
 		when(geospatialBucketiser.createTiles(member.getSubject(), member.getVersionModel())).thenReturn(Set.of(DEFAULT_BUCKET_STRING));
 		Bucket defaultTileBucket = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, DEFAULT_BUCKET_STRING));
-		when(bucketCreator.getOrCreateTileBucket(parentBucket, DEFAULT_BUCKET_STRING, parentBucket))
+		when(bucketCreator.createTileBucket(parentBucket, DEFAULT_BUCKET_STRING, parentBucket))
 				.thenReturn(defaultTileBucket);
 
 		geospatialFragmentationStrategy.addMemberToBucket(parentBucket, member, mock(Observation.class));
@@ -97,7 +97,7 @@ class GeospatialFragmentationStrategyTest {
 
 	private Bucket mockCreationGeospatialBucket(String tile) {
 		Bucket tileBucket = parentBucket.createChild(new BucketDescriptorPair(FRAGMENT_KEY_TILE, tile));
-		when(bucketCreator.getOrCreateTileBucket(parentBucket, tile, rootTileBucket)).thenReturn(tileBucket);
+		when(bucketCreator.createTileBucket(parentBucket, tile, rootTileBucket)).thenReturn(tileBucket);
 		return tileBucket;
 	}
 }

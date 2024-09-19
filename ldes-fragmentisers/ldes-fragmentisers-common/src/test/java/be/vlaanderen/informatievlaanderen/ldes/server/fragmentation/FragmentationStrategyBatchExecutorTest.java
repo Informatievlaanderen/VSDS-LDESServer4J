@@ -30,8 +30,6 @@ class FragmentationStrategyBatchExecutorTest {
 	private ExecutorService executorService;
 	@Mock
 	private FragmentationStrategy fragmentationStrategy;
-	@Mock
-	private RootBucketRetriever rootBucketRetriever;
 
 	@Nested
 	class ExecuteNext {
@@ -48,9 +46,8 @@ class FragmentationStrategyBatchExecutorTest {
 
 			executor.bucketise(member);
 
-			verify(rootBucketRetriever).retrieveRootBucket(any());
 			verify(fragmentationStrategy).addMemberToBucket(any(), eq(member), any());
-			verifyNoMoreInteractions(fragmentationStrategy, rootBucketRetriever);
+			verifyNoMoreInteractions(fragmentationStrategy);
 		}
 	}
 

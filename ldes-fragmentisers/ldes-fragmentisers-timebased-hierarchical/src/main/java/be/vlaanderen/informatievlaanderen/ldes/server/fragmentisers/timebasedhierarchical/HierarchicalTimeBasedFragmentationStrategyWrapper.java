@@ -20,8 +20,7 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		TimeBasedConfig config = createConfig(fragmentationProperties);
-		TimeBasedRelationsAttributer relationsAttributer = new TimeBasedRelationsAttributer(
-				applicationContext, config);
+		TimeBasedRelationsAttributer relationsAttributer = new TimeBasedRelationsAttributer(config);
 		TimeBasedBucketCreator bucketCreator = new TimeBasedBucketCreator(relationsAttributer);
 		TimeBasedBucketFinder bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy, observationRegistry, bucketFinder, config);
@@ -29,8 +28,7 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {
 		return new TimeBasedConfig(properties.getOrDefault(FRAGMENTATION_SUBJECT_FILTER, ".*"),
-				properties.get(FRAGMENTATION_PATH), Granularity.from(properties.get(MAX_GRANULARITY)),
-				Boolean.parseBoolean(properties.getOrDefault(LINEAR_TIME_CACHING_ENABLED, "false")));
+				properties.get(FRAGMENTATION_PATH), Granularity.from(properties.get(MAX_GRANULARITY)));
 	}
 
 }

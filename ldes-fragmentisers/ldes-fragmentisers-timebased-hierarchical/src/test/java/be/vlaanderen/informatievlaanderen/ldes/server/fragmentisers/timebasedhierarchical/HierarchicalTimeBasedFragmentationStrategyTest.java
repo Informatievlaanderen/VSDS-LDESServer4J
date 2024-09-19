@@ -41,7 +41,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
-		TimeBasedConfig config = new TimeBasedConfig(".*", "http://purl.org/dc/terms/created", GRANULARITY, false);
+		TimeBasedConfig config = new TimeBasedConfig(".*", "http://purl.org/dc/terms/created", GRANULARITY);
 		bucketFinder = mock(TimeBasedBucketFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,

@@ -9,13 +9,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 class TimeBasedRelationsAttributerTest {
 
@@ -24,14 +22,12 @@ class TimeBasedRelationsAttributerTest {
 	private static final BucketDescriptorPair monthPair = new BucketDescriptorPair(Granularity.MONTH.getValue(), "02");
 	private Bucket parentBucket;
 	private TimeBasedRelationsAttributer relationsAttributer;
-	private ApplicationEventPublisher applicationEventPublisher;
 	private TimeBasedConfig config;
 
 	@BeforeEach
 	void setUp() {
-		applicationEventPublisher = mock(ApplicationEventPublisher.class);
-		config = new TimeBasedConfig(".*", "", Granularity.SECOND, false);
-		relationsAttributer = new TimeBasedRelationsAttributer(applicationEventPublisher, config);
+		config = new TimeBasedConfig(".*", "", Granularity.SECOND);
+		relationsAttributer = new TimeBasedRelationsAttributer(config);
 		parentBucket = new Bucket(BucketDescriptor.of(timePair), VIEW_NAME);
 	}
 
@@ -55,35 +51,9 @@ class TimeBasedRelationsAttributerTest {
 		assertThat(parentBucket.getChildren())
 				.usingRecursiveFieldByFieldElementComparator()
 				.containsExactlyInAnyOrder(
-						child.withRelations(gteRelation),
-						child.withRelations(ltRelation)
+						child.withRelations(gteRelation, ltRelation)
 				);
 
-	}
-
-	@Test
-	void when_RelationNotPresent_AndCachingEnabled_ThenRelationIsAdded_NextUpdateTsIsSet_AndChildrenBecomeImmutable() {
-		config = new TimeBasedConfig(".*", "", Granularity.SECOND, true);
-		relationsAttributer = new TimeBasedRelationsAttributer(applicationEventPublisher, config);
-		Bucket child = parentBucket.createChild(monthPair);
-
-		TreeRelation gteRelation = new TreeRelation(
-				TREE_GTE_RELATION,
-				LocalDateTime.of(2023,2,1,0,0).toString(),
-				XSD_DATETIME,
-				config.getFragmentationPath());
-		TreeRelation ltRelation = new TreeRelation(
-				TREE_LT_RELATION,
-				LocalDateTime.of(2023,3,1,0,0).toString(),
-				XSD_DATETIME,
-				config.getFragmentationPath());
-
-		relationsAttributer.addInBetweenRelation(parentBucket, child);
-
-		assertThat(parentBucket.getChildren())
-				.first()
-				.usingRecursiveComparison()
-				.isEqualTo(child.withRelations(gteRelation, ltRelation));
 	}
 
 	@Test
