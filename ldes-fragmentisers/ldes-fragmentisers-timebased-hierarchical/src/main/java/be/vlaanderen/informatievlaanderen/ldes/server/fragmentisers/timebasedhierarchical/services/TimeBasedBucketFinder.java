@@ -31,7 +31,6 @@ public class TimeBasedBucketFinder {
 	}
 
 	private boolean isLowest(Bucket bucket) {
-		return bucket.getBucketDescriptorPairs().stream()
-				.anyMatch(descriptorPair -> descriptorPair.key().equals(config.getMaxGranularity().getValue()));
+		return bucket.getValueForKey(config.getMaxGranularity().getValue()).isPresent();
 	}
 }

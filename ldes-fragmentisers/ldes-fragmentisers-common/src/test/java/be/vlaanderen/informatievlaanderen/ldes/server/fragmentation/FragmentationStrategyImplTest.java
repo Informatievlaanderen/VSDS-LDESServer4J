@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,7 +22,7 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToBucket_FragmentationStrategyImplAddsMemberToBucket() {
-		Bucket bucket = new Bucket(BUCKET_ID, BucketDescriptor.empty(), VIEW_NAME);
+		Bucket bucket = new Bucket(BUCKET_ID, BucketDescriptor.empty(), VIEW_NAME, List.of(), List.of());
 		FragmentationMember member = mock(FragmentationMember.class);
 		BucketisedMember expected = new BucketisedMember(BUCKET_ID, MEMBER_ID);
 		when(member.getMemberId()).thenReturn(MEMBER_ID);

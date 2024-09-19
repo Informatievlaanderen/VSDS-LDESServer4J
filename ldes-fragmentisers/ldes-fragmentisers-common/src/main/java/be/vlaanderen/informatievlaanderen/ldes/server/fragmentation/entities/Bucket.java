@@ -22,16 +22,12 @@ public class Bucket {
 		this.bucketId = bucketId;
 		this.bucketDescriptor = bucketDescriptor;
 		this.viewName = viewName;
-		this.children = children;
-		this.members = members;
-	}
-
-	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName) {
-		this(bucketId, bucketDescriptor, viewName, new ArrayList<>(), new ArrayList<>());
+		this.children = new ArrayList<>(children);
+		this.members = new ArrayList<>(members);
 	}
 
 	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
-		this(0, bucketDescriptor, viewName);
+		this(0, bucketDescriptor, viewName, new ArrayList<>(), new ArrayList<>());
 	}
 
 	public static Bucket createRootBucketForView(ViewName viewName) {
@@ -50,10 +46,6 @@ public class Bucket {
 		return viewName;
 	}
 
-	public List<BucketDescriptorPair> getBucketDescriptorPairs() {
-		return bucketDescriptor.getDescriptorPairs();
-	}
-
 	public BucketDescriptor getBucketDescriptor() {
 		return bucketDescriptor;
 	}
@@ -64,7 +56,7 @@ public class Bucket {
 
 	public ChildBucket addChildBucket(ChildBucket childBucket) {
 		final int index = children.indexOf(childBucket);
-		if(index == -1) {
+		if (index == -1) {
 			children.add(childBucket);
 			return childBucket;
 		}
@@ -74,12 +66,12 @@ public class Bucket {
 	}
 
 
-	public ChildBucket withRelation(TreeRelation... relationDefinition) {
+	public ChildBucket withRelations(TreeRelation... relationDefinition) {
 		return new ChildBucket(bucketId, bucketDescriptor, viewName, children, members, Set.of(relationDefinition));
 	}
 
 	public ChildBucket withGenericRelation() {
-		return withRelation(TreeRelation.generic());
+		return withRelations(TreeRelation.generic());
 	}
 
 	public Bucket createChild(BucketDescriptorPair descriptorPair) {
@@ -99,19 +91,8 @@ public class Bucket {
 		members.add(memberId);
 	}
 
-	public List<Long> getMembers() {
-		return List.copyOf(members);
-	}
-
 	public List<BucketisedMember> getBucketisedMembers() {
 		return members.stream().map(memberId -> new BucketisedMember(bucketId, memberId)).toList();
-	}
-
-	public List<BucketisedMember> getAllBucketisedMembers() {
-		return Stream.concat(
-				members.stream().map(memberId -> new BucketisedMember(bucketId, memberId)),
-				children.stream().flatMap(child -> child.getAllBucketisedMembers().stream())
-		).toList();
 	}
 
 	public List<ChildBucket> getChildren() {
@@ -119,10 +100,8 @@ public class Bucket {
 	}
 
 	List<Bucket> getAllDescendants() {
-		return Stream.concat(
-						children.stream(),
-						children.stream().flatMap(child -> child.getAllDescendants().stream())
-				)
+		return children.stream()
+				.flatMap(child -> Stream.concat(Stream.of(child), child.getAllDescendants().stream()))
 				.toList();
 	}
 

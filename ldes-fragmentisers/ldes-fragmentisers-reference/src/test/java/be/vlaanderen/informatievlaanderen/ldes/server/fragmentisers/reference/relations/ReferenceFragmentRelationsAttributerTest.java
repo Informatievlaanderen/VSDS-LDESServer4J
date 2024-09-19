@@ -51,7 +51,7 @@ class ReferenceFragmentRelationsAttributerTest {
 
         assertThat(rootBucket.getChildren())
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsExactlyInAnyOrder(referenceBucket.withRelation(expectedRelation));
+                .containsExactlyInAnyOrder(referenceBucket.withRelations(expectedRelation));
     }
 
     @Test

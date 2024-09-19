@@ -85,8 +85,8 @@ class BucketTest {
 			year2024Bucket = rootBucket.createChild(new BucketDescriptorPair("year", "2024"));
 			month01Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "01"));
 			month03Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "03"));
-			day14Bucket = new Bucket(DAY_14_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "14")).getBucketDescriptor(), VIEW_NAME);
-			day28Bucket = new Bucket(DAY_28_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "28")).getBucketDescriptor(), VIEW_NAME);
+			day14Bucket = new Bucket(DAY_14_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "14")).getBucketDescriptor(), VIEW_NAME, List.of(), List.of());
+			day28Bucket = new Bucket(DAY_28_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "28")).getBucketDescriptor(), VIEW_NAME, List.of(), List.of());
 			month03Bucket.addChildBucket(day14Bucket.withGenericRelation());
 			month03Bucket.addChildBucket(day28Bucket.withGenericRelation());
 			year2024Bucket.addChildBucket(month01Bucket.withGenericRelation());

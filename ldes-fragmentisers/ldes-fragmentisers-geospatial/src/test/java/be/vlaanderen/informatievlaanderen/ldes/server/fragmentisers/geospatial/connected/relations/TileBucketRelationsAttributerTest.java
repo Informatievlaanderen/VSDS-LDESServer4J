@@ -42,7 +42,7 @@ class TileBucketRelationsAttributerTest {
 
 		assertThat(rootBucket.getChildren())
 				.usingRecursiveFieldByFieldElementComparator()
-				.containsExactlyInAnyOrder(tileBucket.withRelation(treeRelation));
+				.containsExactlyInAnyOrder(tileBucket.withRelations(treeRelation));
 	}
 
 	@Test

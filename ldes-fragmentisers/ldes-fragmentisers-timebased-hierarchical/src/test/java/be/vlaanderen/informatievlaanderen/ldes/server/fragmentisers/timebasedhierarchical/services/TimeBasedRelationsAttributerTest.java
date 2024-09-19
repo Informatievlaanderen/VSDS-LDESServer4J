@@ -55,8 +55,8 @@ class TimeBasedRelationsAttributerTest {
 		assertThat(parentBucket.getChildren())
 				.usingRecursiveFieldByFieldElementComparator()
 				.containsExactlyInAnyOrder(
-						child.withRelation(gteRelation),
-						child.withRelation(ltRelation)
+						child.withRelations(gteRelation),
+						child.withRelations(ltRelation)
 				);
 
 	}
@@ -81,11 +81,9 @@ class TimeBasedRelationsAttributerTest {
 		relationsAttributer.addInBetweenRelation(parentBucket, child);
 
 		assertThat(parentBucket.getChildren())
-				.usingRecursiveFieldByFieldElementComparator()
-				.containsExactlyInAnyOrder(
-						child.withRelation(gteRelation),
-						child.withRelation(ltRelation)
-				);
+				.first()
+				.usingRecursiveComparison()
+				.isEqualTo(child.withRelations(gteRelation, ltRelation));
 	}
 
 	@Test

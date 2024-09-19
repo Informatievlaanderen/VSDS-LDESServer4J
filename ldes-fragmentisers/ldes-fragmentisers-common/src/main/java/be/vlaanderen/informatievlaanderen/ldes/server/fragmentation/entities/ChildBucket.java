@@ -23,8 +23,4 @@ public class ChildBucket extends Bucket {
 	public void addRelations(Set<TreeRelation> relations) {
 		this.relations.addAll(relations);
 	}
-
-	public boolean hasSameBucketDescriptor(ChildBucket other) {
-		return getBucketDescriptor().equals(other.getBucketDescriptor());
-	}
 }

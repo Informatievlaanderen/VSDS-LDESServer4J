@@ -17,7 +17,7 @@ public class TileBucketRelationsAttributer implements RelationsAttributer {
 	public Bucket addRelationsFromRootToBottom(Bucket rootBucket, Bucket tileBucket) {
 		boolean isDefaultBucket = tileBucket.getValueForKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING);
 		TreeRelation treeRelation = isDefaultBucket ? TreeRelation.generic() : createGeospatialRelationToParent(tileBucket);
-		return rootBucket.addChildBucket(tileBucket.withRelation(treeRelation));
+		return rootBucket.addChildBucket(tileBucket.withRelations(treeRelation));
 	}
 
 	private TreeRelation createGeospatialRelationToParent(Bucket childBucket) {

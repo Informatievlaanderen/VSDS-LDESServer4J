@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.ChildBucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TimeBasedLinearCachingTriggered;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
@@ -15,6 +14,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
@@ -32,7 +33,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
 	public Bucket addInBetweenRelation(Bucket parentBucket, Bucket childBucket) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childBucket);
-		final ChildBucket child = parentBucket.addChildBucket(childBucket.withRelation(createInBetweenRelations(timestamp)));
+		final ChildBucket child = parentBucket.addChildBucket(childBucket.withRelations(createInBetweenRelations(timestamp)));
 		triggerTimeBasedLinearCachingIfNeeded(parentBucket.getBucketId(), timestamp.getNextUpdateTs());
 		return child;
 	}
@@ -45,10 +46,9 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 	}
 
 	private FragmentationTimestamp timestampFromFragmentPairs(Bucket bucket) {
-		Map<String, Integer> timeMap = bucket.getBucketDescriptorPairs().stream()
-				.filter(descriptorPair -> Arrays.stream(Granularity.values()).map(Granularity::getValue)
-						.anyMatch(t -> t.equals(descriptorPair.key())))
-				.collect(Collectors.toMap(BucketDescriptorPair::key, pair -> Integer.parseInt(pair.value())));
+		Map<String, Optional<Integer>> timeMap = Arrays.stream(Granularity.values())
+				.map(Granularity::getValue)
+				.collect(Collectors.toMap(Function.identity(), key -> bucket.getValueForKey(key).map(Integer::parseInt)));
 		return createTimestampFromMap(timeMap);
 	}
 
@@ -65,13 +65,13 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 		}
 	}
 
-	private static @NotNull FragmentationTimestamp createTimestampFromMap(Map<String, Integer> timeMap) {
-		LocalDateTime time = LocalDateTime.of(timeMap.getOrDefault(Granularity.YEAR.getValue(), 0),
-				timeMap.getOrDefault(Granularity.MONTH.getValue(), 1),
-				timeMap.getOrDefault(Granularity.DAY.getValue(), 1),
-				timeMap.getOrDefault(Granularity.HOUR.getValue(), 0),
-				timeMap.getOrDefault(Granularity.MINUTE.getValue(), 0),
-				timeMap.getOrDefault(Granularity.SECOND.getValue(), 0));
-		return new FragmentationTimestamp(time, Granularity.fromIndex(timeMap.size() - 1));
+	private static @NotNull FragmentationTimestamp createTimestampFromMap(Map<String, Optional<Integer>> timeMap) {
+		LocalDateTime time = LocalDateTime.of(timeMap.get(Granularity.YEAR.getValue()).orElse(0),
+				timeMap.get(Granularity.MONTH.getValue()).orElse(1),
+				timeMap.get(Granularity.DAY.getValue()).orElse(1),
+				timeMap.get(Granularity.HOUR.getValue()).orElse(0),
+				timeMap.get(Granularity.MINUTE.getValue()).orElse(0),
+				timeMap.get(Granularity.SECOND.getValue()).orElse(0));
+		return new FragmentationTimestamp(time, Granularity.fromIndex((int) (timeMap.values().stream().filter(Optional::isPresent).count() - 1)));
 	}
 }

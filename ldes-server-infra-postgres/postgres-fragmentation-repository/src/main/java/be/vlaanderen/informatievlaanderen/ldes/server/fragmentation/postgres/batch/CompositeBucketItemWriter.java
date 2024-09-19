@@ -27,19 +27,13 @@ public class CompositeBucketItemWriter implements ItemWriter<Bucket> {
 
 	@Override
 	public void write(Chunk<? extends Bucket> chunk) throws Exception {
-		final Chunk<Bucket> flatBucketChunk = flattenBucketChunk(chunk);
-		bucketItemWriter.write(flatBucketChunk);
-		pageItemWriter.write(flatBucketChunk);
-		bucketisedMemberItemWriter.write(extractAllMembers(flatBucketChunk));
-		bucketRelationWriter.write(extractAllBucketRelations(chunk));
-	}
-
-
-	private static Chunk<Bucket> flattenBucketChunk(final Chunk<? extends Bucket> chunk) {
-		return chunk.getItems().stream()
-				.flatMap(bucket -> bucket.getBucketTree().stream())
-				.distinct()
-				.collect(new ChunkCollector<>());
+		for(var rootbucket : chunk) {
+			final Chunk<Bucket> flatBucketChunk = new Chunk<>(rootbucket.getBucketTree());
+			bucketItemWriter.write(flatBucketChunk);
+			pageItemWriter.write(flatBucketChunk);
+			bucketRelationWriter.write(extractAllBucketRelations(rootbucket));
+			bucketisedMemberItemWriter.write(extractAllMembers(flatBucketChunk));
+		}
 	}
 
 	private static Chunk<BucketisedMember> extractAllMembers(Chunk<? extends Bucket> flatBucketChunk) {
@@ -48,9 +42,8 @@ public class CompositeBucketItemWriter implements ItemWriter<Bucket> {
 				.collect(new ChunkCollector<>());
 	}
 
-	private static Chunk<BucketRelation> extractAllBucketRelations(Chunk<? extends Bucket> chunk) {
-		return chunk.getItems().stream()
-				.flatMap(bucket -> bucket.getBucketTree().stream())
+	private static Chunk<BucketRelation> extractAllBucketRelations(Bucket rootbucket) {
+		return rootbucket.getBucketTree().stream()
 				.flatMap(bucket -> bucket.getChildRelations().stream())
 				.distinct()
 				.collect(new ChunkCollector<>());

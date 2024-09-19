@@ -27,7 +27,7 @@ public class ReferenceFragmentRelationsAttributer implements RelationsAttributer
 				XSDDatatype.XSDanyURI.getURI(),
 				fragmentationPath
 		);
-		return rootBucket.addChildBucket(referenceBucket.withRelation(treeRelation));
+		return rootBucket.addChildBucket(referenceBucket.withRelations(treeRelation));
 	}
 
 
