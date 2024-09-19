@@ -57,7 +57,7 @@ class GeospatialBucketCreatorTest {
 	void test_CreateRootBucket() {
 		Bucket bucket = new Bucket(BucketDescriptor.of(timebasedPair), VIEW_NAME);
 
-		Bucket returnedBucket = geospatialBucketCreator.getOrCreateRootBucket(bucket, FRAGMENT_KEY_TILE_ROOT);
+		Bucket returnedBucket = geospatialBucketCreator.createRootBucket(bucket, FRAGMENT_KEY_TILE_ROOT);
 
 		assertThat(returnedBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&tile=0/0/0");
 		verifyNoInteractions(tileBucketRelationsAttributer);

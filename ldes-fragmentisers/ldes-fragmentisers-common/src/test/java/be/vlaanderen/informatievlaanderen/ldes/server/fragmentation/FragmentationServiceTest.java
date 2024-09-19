@@ -33,8 +33,8 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBatchTest
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class })
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *"})
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class})
+@TestPropertySource(properties = {"ldes-server.fragmentation-cron=*/1 * * * * *"})
 class FragmentationServiceTest {
 	@MockBean(name = BUCKETISATION_STEP)
 	Step bucketStep;
@@ -87,8 +87,7 @@ class FragmentationServiceTest {
 		String collection = "collection";
 
 		when(memberMetricsRepository.getUnprocessedViews())
-				.thenReturn(List.of(new ViewName(collection, "v1"),
-						new ViewName(collection, "v2")));
+				.thenReturn(List.of(new ViewName(collection, "v1"), new ViewName(collection, "v2")));
 
 		JobExecution jobExecution = mock(JobExecution.class);
 		JobParameters jobParameters = new JobParametersBuilder()

@@ -40,7 +40,7 @@ class GeospatialFragmentationStrategyTest {
 		geospatialBucketiser = mock(GeospatialBucketiser.class);
 		bucketCreator = mock(GeospatialBucketCreator.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-		when(bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT)).thenReturn(rootTileBucket);
+		when(bucketCreator.createRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT)).thenReturn(rootTileBucket);
 		geospatialFragmentationStrategy = new GeospatialFragmentationStrategy(decoratedFragmentationStrategy,
 				geospatialBucketiser, bucketCreator, ObservationRegistry.create());
 	}

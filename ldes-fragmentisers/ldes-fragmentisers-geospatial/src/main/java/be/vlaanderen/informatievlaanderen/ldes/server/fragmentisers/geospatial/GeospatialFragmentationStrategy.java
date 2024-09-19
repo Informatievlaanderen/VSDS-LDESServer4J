@@ -18,8 +18,6 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	private final GeospatialBucketCreator bucketCreator;
 	private final ObservationRegistry observationRegistry;
 
-	private Bucket rootTileBucket = null;
-
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 	                                       GeospatialBucketiser geospatialBucketiser,
 	                                       GeospatialBucketCreator bucketCreator,
@@ -36,7 +34,6 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.createNotStarted("geospatial bucketisation", observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
-		setRootTileBucket(parentBucket);
 
 		geospatialBucketiser.createTiles(member.getSubject(), member.getVersionModel())
 				.stream()
@@ -44,18 +41,15 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 					if (tile.equals(DEFAULT_BUCKET_STRING)) {
 						return bucketCreator.createTileBucket(parentBucket, tile, parentBucket);
 					} else {
+						Bucket rootTileBucket = createRootTileBucket(parentBucket);
 						return bucketCreator.createTileBucket(parentBucket, tile, rootTileBucket);
 					}
 				})
-				.parallel()
 				.forEach(bucket -> super.addMemberToBucket(bucket, member, geospatialFragmentationObservation));
 		geospatialFragmentationObservation.stop();
 	}
 
-	private void setRootTileBucket(Bucket parentBucket) {
-		if (rootTileBucket == null) {
-			rootTileBucket = bucketCreator.getOrCreateRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT);
-			parentBucket.addChildBucket(rootTileBucket.withGenericRelation());
-		}
+	private Bucket createRootTileBucket(Bucket parentBucket) {
+		return parentBucket.addChildBucket(bucketCreator.createRootBucket(parentBucket, FRAGMENT_KEY_TILE_ROOT).withGenericRelation());
 	}
 }

@@ -119,6 +119,13 @@ public class Bucket {
 				.toList();
 	}
 
+	public void merge(Bucket bucket) {
+		if(this.equals(bucket)) {
+			this.children.addAll(bucket.children);
+			this.members.addAll(bucket.members);
+		}
+	}
+
 	public String createPartialUrl() {
 		return "/" + viewName.asString() + (bucketDescriptor.isEmpty() ? "" : "?" + bucketDescriptor.asDecodedString());
 	}

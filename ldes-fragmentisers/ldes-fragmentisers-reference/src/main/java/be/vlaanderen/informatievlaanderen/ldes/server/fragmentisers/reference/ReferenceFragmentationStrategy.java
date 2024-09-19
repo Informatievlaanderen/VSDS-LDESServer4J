@@ -38,7 +38,6 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
 				.createReferences(member.getSubject(), member.getVersionModel())
 				.stream()
 				.map(reference -> bucketCreator.getOrCreateBucket(parentBucket, reference, rootBucket))
-				.parallel()
 				.forEach(bucket -> super.addMemberToBucket(bucket, member, fragmentationObservation));
 
 		fragmentationObservation.stop();

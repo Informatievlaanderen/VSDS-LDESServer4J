@@ -23,4 +23,9 @@ public class ChildBucket extends Bucket {
 	public void addRelations(Set<TreeRelation> relations) {
 		this.relations.addAll(relations);
 	}
+
+	public void merge(ChildBucket childBucket) {
+		super.merge(childBucket);
+		this.addRelations(childBucket.relations);
+	}
 }
