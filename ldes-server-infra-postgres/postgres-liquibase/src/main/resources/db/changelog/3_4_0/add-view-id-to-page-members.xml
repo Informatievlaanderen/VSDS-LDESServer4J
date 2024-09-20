@@ -5,7 +5,9 @@
 
     <changeSet author="vsds" id="add-view-id-to-page-members">
         <addColumn tableName="page_members">
-            <column name="view_id" type="BIGINT"/>
+            <column name="view_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
         <createIndex indexName="page_members_view_id" tableName="page_members">
             <column name="view_id"/>

@@ -36,8 +36,6 @@ public class PaginationJobDefinitions {
 
 	@Bean("paginationTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
-		var taskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
-		taskExecutor.setConcurrencyLimit(50);
-		return taskExecutor;
+		return new SimpleAsyncTaskExecutor("spring_batch");
 	}
 }

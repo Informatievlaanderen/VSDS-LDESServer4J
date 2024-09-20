@@ -48,7 +48,7 @@ class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 		final ChildBucket monthBucket = new Bucket(3, BucketDescriptor.of(new BucketDescriptorPair("year", "2023"), new BucketDescriptorPair("month", "06")), byPageViewName, List.of(), List.of()).withGenericRelation();
 		rootBucket.addChildBucket(yearBucket);
 		yearBucket.addChildBucket(monthBucket);
-		IntStream.range(1, 4).forEach(monthBucket::addMember);
+		IntStream.range(1, 4).forEach(monthBucket::assignMember);
 		return rootBucket;
 	}
 }

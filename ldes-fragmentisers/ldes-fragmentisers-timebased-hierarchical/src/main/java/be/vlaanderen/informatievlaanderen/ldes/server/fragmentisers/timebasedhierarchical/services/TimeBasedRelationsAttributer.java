@@ -27,7 +27,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
 	public Bucket addInBetweenRelation(Bucket parentBucket, Bucket childBucket) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childBucket);
-		return parentBucket.addChildBucket(childBucket.withRelations(createInBetweenRelations(timestamp)));
+		return parentBucket.addChildBucket(childBucket.withRelations(createTimeBasedRelations(timestamp)));
 	}
 
 	public Bucket addDefaultRelation(Bucket parentBucket, Bucket childBucket) {
@@ -41,7 +41,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 		return createTimestampFromMap(timeMap);
 	}
 
-	private TreeRelation[] createInBetweenRelations(FragmentationTimestamp timestamp) {
+	private TreeRelation[] createTimeBasedRelations(FragmentationTimestamp timestamp) {
 		return new TreeRelation[]{
 				new TreeRelation(TREE_GTE_RELATION, timestamp.getTime().toString(), XSD_DATETIME, config.getFragmentationPath()),
 				new TreeRelation(TREE_LT_RELATION, timestamp.getLtBoundary().toString(), XSD_DATETIME, config.getFragmentationPath()),

@@ -1,6 +1,3 @@
---TODO remove after VSDSPUB-1433 is done
-ALTER TABLE buckets DISABLE TRIGGER ALL;
-
 WITH new_collection AS (
     INSERT INTO collections (name, timestamp_path, version_of_path, create_versions, is_closed, skolemization_domain)
         VALUES ('es', '', '', false, false, null)

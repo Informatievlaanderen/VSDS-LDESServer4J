@@ -8,6 +8,8 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class CompositeBucketItemWriter implements ItemWriter<Bucket> {
 	private final ItemWriter<Bucket> bucketItemWriter;
@@ -38,7 +40,9 @@ public class CompositeBucketItemWriter implements ItemWriter<Bucket> {
 
 	private static Chunk<BucketisedMember> extractAllMembers(Chunk<? extends Bucket> flatBucketChunk) {
 		return flatBucketChunk.getItems().stream()
-				.flatMap(bucket -> bucket.getBucketisedMembers().stream())
+				.map(Bucket::getMember)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
 				.collect(new ChunkCollector<>());
 	}
 

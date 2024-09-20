@@ -94,14 +94,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 					.map(PageRelationEntity::getToPage)
 					.map(PageEntity::getPartialUrl)
 					.map(url -> url.split("pageNumber=")[1])
-					.filter(pageNumber -> {
-						try {
-							UUID.fromString(pageNumber);
-							return true;
-						} catch (IllegalArgumentException e) {
-							return false;
-						}
-					})
+					.filter(this::isValidUuid)
 					.count();
 
 
@@ -141,5 +134,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	private String getCurrentTimestamp() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+	}
+
+	private boolean isValidUuid(String pageNumber) {
+		try {
+			UUID.fromString(pageNumber);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 }

@@ -7,6 +7,6 @@ import io.micrometer.observation.Observation;
 public class FragmentationStrategyImpl implements FragmentationStrategy {
 	@Override
 	public void addMemberToBucket(Bucket rootBucketOfView, FragmentationMember member, Observation parentObservation) {
-		rootBucketOfView.addMember(member.getMemberId());
+		rootBucketOfView.assignMember(member.getMemberId());
 	}
 }

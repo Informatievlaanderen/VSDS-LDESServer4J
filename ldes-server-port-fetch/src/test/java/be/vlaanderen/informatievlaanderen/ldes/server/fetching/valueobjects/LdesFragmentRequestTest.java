@@ -47,8 +47,7 @@ class LdesFragmentRequestTest {
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 	}
 
-	static class LdesFragmentRequestArgumentsProvider implements
-			ArgumentsProvider {
+	static class LdesFragmentRequestArgumentsProvider implements ArgumentsProvider {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {

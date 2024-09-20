@@ -17,6 +17,7 @@ public class Bucket {
 	private final ViewName viewName;
 	private final List<ChildBucket> children;
 	private final List<Long> members;
+	private long assignedMemberId;
 
 	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, List<Long> members) {
 		this.bucketId = bucketId;
@@ -87,8 +88,15 @@ public class Bucket {
 		return new BucketDescriptor(childFragmentPairs);
 	}
 
-	public void addMember(long memberId) {
+	public void assignMember(long memberId) {
+		assignedMemberId = memberId;
 		members.add(memberId);
+	}
+
+	public Optional<BucketisedMember> getMember() {
+		return Optional.of(assignedMemberId)
+				.filter(member -> member != 0)
+				.map(member -> new BucketisedMember(bucketId, member));
 	}
 
 	public List<BucketisedMember> getBucketisedMembers() {
@@ -99,7 +107,7 @@ public class Bucket {
 		return List.copyOf(children);
 	}
 
-	List<Bucket> getAllDescendants() {
+	public List<Bucket> getAllDescendants() {
 		return children.stream()
 				.flatMap(child -> Stream.concat(Stream.of(child), child.getAllDescendants().stream()))
 				.toList();
@@ -120,7 +128,7 @@ public class Bucket {
 	}
 
 	public void merge(Bucket bucket) {
-		if(this.equals(bucket)) {
+		if (this.equals(bucket)) {
 			this.children.addAll(bucket.children);
 			this.members.addAll(bucket.members);
 		}
