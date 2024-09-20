@@ -86,8 +86,8 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 				});
 	}
 
-	@And("verify {long} pages have a relation pointing to the new page {long}")
-	public void verifyUpdateOfPredecessorRelations(long pointingCount, long id) {
+	@And("verify {long} pages have a relation pointing to a compacted page")
+	public void verifyUpdateOfPredecessorRelations(long pointingCount) {
 		await().untilAsserted(() -> {
 			var countNewPage = pageRelationEntityRepository.findAll()
 					.stream()
