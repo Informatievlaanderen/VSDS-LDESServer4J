@@ -55,7 +55,7 @@ public class MemberItemReader {
              m.member_id > (
               COALESCE(
                (SELECT max(pm.member_id) FROM page_members pm
-                WHERE pm.view_id = (select v.view_id from views v where v.name = :viewName)),
+                WHERE pm.view_id IN (select v.view_id from views v where v.name = :viewName)),
                (0)::bigint)
              )
              """);

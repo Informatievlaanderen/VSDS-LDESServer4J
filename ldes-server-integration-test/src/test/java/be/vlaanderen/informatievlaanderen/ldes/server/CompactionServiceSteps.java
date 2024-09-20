@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -88,8 +91,19 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 		await().untilAsserted(() -> {
 			var countNewPage = pageRelationEntityRepository.findAll()
 					.stream()
-					.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
+					.map(PageRelationEntity::getToPage)
+					.map(PageEntity::getPartialUrl)
+					.map(url -> url.split("pageNumber=")[1])
+					.filter(pageNumber -> {
+						try {
+							UUID.fromString(pageNumber);
+							return true;
+						} catch (IllegalArgumentException e) {
+							return false;
+						}
+					})
 					.count();
+
 
 			assertThat(countNewPage).isEqualTo(pointingCount);
 		});

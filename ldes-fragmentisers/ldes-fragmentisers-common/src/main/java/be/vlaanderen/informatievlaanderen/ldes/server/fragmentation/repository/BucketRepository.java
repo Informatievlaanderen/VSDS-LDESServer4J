@@ -6,5 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import java.util.Optional;
 
 public interface BucketRepository {
+	Bucket insertBucket(Bucket bucket);
 	Optional<Bucket> retrieveRootBucket(ViewName viewName);
 }

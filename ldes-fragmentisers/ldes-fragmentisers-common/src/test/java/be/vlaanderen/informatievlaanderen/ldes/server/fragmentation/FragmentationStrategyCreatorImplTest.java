@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootBucketCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -26,13 +27,15 @@ class FragmentationStrategyCreatorImplTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private ApplicationContext applicationContext;
+	private RootBucketCreator rootBucketCreator;
 
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
-		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext);
+		rootBucketCreator = mock(RootBucketCreator.class);
+		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext, rootBucketCreator);
 	}
 
 	@Test
@@ -42,8 +45,9 @@ class FragmentationStrategyCreatorImplTest {
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
 
-		assertThat(fragmentationStrategy).isOfAnyClassIn(FragmentationStrategyImpl.class);
-		InOrder inOrder = inOrder(applicationContext);
+		assertThat(fragmentationStrategy).isInstanceOf(FragmentationStrategyImpl.class);
+		InOrder inOrder = inOrder(applicationContext, rootBucketCreator);
+		inOrder.verify(rootBucketCreator).createRootBucketForView(VIEW_NAME);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -71,7 +75,8 @@ class FragmentationStrategyCreatorImplTest {
 				.createFragmentationStrategyForView(viewSpecification);
 
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
-		InOrder inOrder = inOrder(applicationContext);
+		InOrder inOrder = inOrder(applicationContext, rootBucketCreator);
+		inOrder.verify(rootBucketCreator).createRootBucketForView(viewSpecification.getName());
 		inOrder.verify(applicationContext).getBean(TIMEBASED);
 		inOrder.verify(applicationContext).getBean(GEOSPATIAL);
 		inOrder.verifyNoMoreInteractions();
