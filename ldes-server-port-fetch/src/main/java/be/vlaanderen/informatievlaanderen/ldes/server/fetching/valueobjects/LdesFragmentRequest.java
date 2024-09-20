@@ -7,10 +7,6 @@ import java.util.Objects;
 
 public record LdesFragmentRequest(ViewName viewName, List<FragmentPair> fragmentPairs) {
 
-    public static LdesFragmentRequest createViewRequest(ViewName viewName) {
-        return new LdesFragmentRequest(viewName, List.of());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
