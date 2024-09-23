@@ -22,17 +22,13 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToBucket_FragmentationStrategyImplAddsMemberToBucket() {
-		Bucket bucket = new Bucket(BUCKET_ID, BucketDescriptor.empty(), VIEW_NAME, List.of(), List.of());
+		Bucket bucket = new Bucket(BUCKET_ID, BucketDescriptor.empty(), VIEW_NAME, List.of(), 0);
 		FragmentationMember member = mock(FragmentationMember.class);
 		BucketisedMember expected = new BucketisedMember(BUCKET_ID, MEMBER_ID);
 		when(member.getMemberId()).thenReturn(MEMBER_ID);
 
 		fragmentationStrategy.addMemberToBucket(bucket, member, mock(Observation.class));
 
-		assertThat(bucket.getBucketisedMembers())
-				.hasSize(1)
-				.first()
-				.usingRecursiveComparison()
-				.isEqualTo(expected);
+		assertThat(bucket.getMember()).contains(expected);
 	}
 }

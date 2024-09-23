@@ -50,7 +50,7 @@ public class BucketPostgresRepository implements BucketRepository {
 				bucket.getBucketDescriptor(),
 				bucket.getViewName(),
 				List.of(),
-				List.of()
+				0
 		);
 	}
 

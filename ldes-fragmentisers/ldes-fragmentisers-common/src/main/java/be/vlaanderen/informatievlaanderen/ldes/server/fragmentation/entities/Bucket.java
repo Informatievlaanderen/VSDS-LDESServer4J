@@ -16,19 +16,18 @@ public class Bucket {
 	private final BucketDescriptor bucketDescriptor;
 	private final ViewName viewName;
 	private final List<ChildBucket> children;
-	private final List<Long> members;
 	private long assignedMemberId;
 
-	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, List<Long> members) {
+	public Bucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, long assignedMemberId) {
 		this.bucketId = bucketId;
 		this.bucketDescriptor = bucketDescriptor;
 		this.viewName = viewName;
 		this.children = new ArrayList<>(children);
-		this.members = new ArrayList<>(members);
+		this.assignedMemberId = assignedMemberId;
 	}
 
 	public Bucket(BucketDescriptor bucketDescriptor, ViewName viewName) {
-		this(0, bucketDescriptor, viewName, new ArrayList<>(), new ArrayList<>());
+		this(0, bucketDescriptor, viewName, new ArrayList<>(), 0);
 	}
 
 	public static Bucket createRootBucketForView(ViewName viewName) {
@@ -68,7 +67,7 @@ public class Bucket {
 
 
 	public ChildBucket withRelations(TreeRelation... relationDefinition) {
-		return new ChildBucket(bucketId, bucketDescriptor, viewName, children, members, Set.of(relationDefinition));
+		return new ChildBucket(bucketId, bucketDescriptor, viewName, children, assignedMemberId, Set.of(relationDefinition));
 	}
 
 	public ChildBucket withGenericRelation() {
@@ -90,17 +89,12 @@ public class Bucket {
 
 	public void assignMember(long memberId) {
 		assignedMemberId = memberId;
-		members.add(memberId);
 	}
 
 	public Optional<BucketisedMember> getMember() {
 		return Optional.of(assignedMemberId)
 				.filter(member -> member != 0)
 				.map(member -> new BucketisedMember(bucketId, member));
-	}
-
-	public List<BucketisedMember> getBucketisedMembers() {
-		return members.stream().map(memberId -> new BucketisedMember(bucketId, memberId)).toList();
 	}
 
 	public List<ChildBucket> getChildren() {
@@ -125,13 +119,6 @@ public class Bucket {
 						.map(relation -> new BucketRelation(createPartialUrl(), child.createPartialUrl(), relation))
 				)
 				.toList();
-	}
-
-	public void merge(Bucket bucket) {
-		if (this.equals(bucket)) {
-			this.children.addAll(bucket.children);
-			this.members.addAll(bucket.members);
-		}
 	}
 
 	public String createPartialUrl() {

@@ -11,8 +11,8 @@ import java.util.Set;
 public class ChildBucket extends Bucket {
 	private final Set<TreeRelation> relations;
 
-	public ChildBucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, List<Long> members, Set<TreeRelation> relations) {
-		super(bucketId, bucketDescriptor, viewName, children, members);
+	public ChildBucket(long bucketId, BucketDescriptor bucketDescriptor, ViewName viewName, List<ChildBucket> children, long assignedMemberId, Set<TreeRelation> relations) {
+		super(bucketId, bucketDescriptor, viewName, children, assignedMemberId);
 		this.relations = new HashSet<>(relations);
 	}
 
@@ -22,10 +22,5 @@ public class ChildBucket extends Bucket {
 
 	public void addRelations(Set<TreeRelation> relations) {
 		this.relations.addAll(relations);
-	}
-
-	public void merge(ChildBucket childBucket) {
-		super.merge(childBucket);
-		this.addRelations(childBucket.relations);
 	}
 }

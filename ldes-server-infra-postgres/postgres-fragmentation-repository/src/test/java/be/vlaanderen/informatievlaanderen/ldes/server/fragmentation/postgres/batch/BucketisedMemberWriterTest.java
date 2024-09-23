@@ -31,7 +31,7 @@ class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 	@Sql("./init-writer-test.sql")
 	void testWriter() throws Exception {
 		final Chunk<BucketisedMember> members = initRootBucket().getBucketTree().stream()
-				.flatMap(bucket -> bucket.getBucketisedMembers().stream())
+				.flatMap(bucket -> bucket.getMember().stream())
 				.collect(new ChunkCollector<>());
 
 		writer.write(members);
@@ -43,9 +43,9 @@ class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 
 	private static Bucket initRootBucket() {
 		final ViewName byPageViewName = new ViewName("mobility-hindrances", "by-hour");
-		final Bucket rootBucket = new Bucket(1, BucketDescriptor.empty(), byPageViewName, List.of(), List.of());
-		final ChildBucket yearBucket = new Bucket(2, BucketDescriptor.of(new BucketDescriptorPair("year", "2023")), byPageViewName, List.of(), List.of()).withGenericRelation();
-		final ChildBucket monthBucket = new Bucket(3, BucketDescriptor.of(new BucketDescriptorPair("year", "2023"), new BucketDescriptorPair("month", "06")), byPageViewName, List.of(), List.of()).withGenericRelation();
+		final Bucket rootBucket = new Bucket(1, BucketDescriptor.empty(), byPageViewName, List.of(), 0);
+		final ChildBucket yearBucket = new Bucket(2, BucketDescriptor.of(new BucketDescriptorPair("year", "2023")), byPageViewName, List.of(), 0).withGenericRelation();
+		final ChildBucket monthBucket = new Bucket(3, BucketDescriptor.of(new BucketDescriptorPair("year", "2023"), new BucketDescriptorPair("month", "06")), byPageViewName, List.of(), 0).withGenericRelation();
 		rootBucket.addChildBucket(yearBucket);
 		yearBucket.addChildBucket(monthBucket);
 		IntStream.range(1, 4).forEach(monthBucket::assignMember);

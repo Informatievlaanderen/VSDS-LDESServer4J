@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class CompositeBucketItemWriter implements ItemWriter<Bucket> {
+public class BucketisationItemWriter implements ItemWriter<Bucket> {
 	private final ItemWriter<Bucket> bucketItemWriter;
 	private final ItemWriter<Bucket> pageItemWriter;
 	private final ItemWriter<BucketisedMember> bucketisedMemberItemWriter;
 	private final ItemWriter<BucketRelation> bucketRelationWriter;
 
-	public CompositeBucketItemWriter(ItemWriter<Bucket> bucketItemWriter,
-	                                 ItemWriter<Bucket> pageItemWriter,
-	                                 ItemWriter<BucketisedMember> bucketisedMemberItemWriter,
-	                                 ItemWriter<BucketRelation> bucketRelationWriter) {
+	public BucketisationItemWriter(ItemWriter<Bucket> bucketItemWriter,
+	                               ItemWriter<Bucket> pageItemWriter,
+	                               ItemWriter<BucketisedMember> bucketisedMemberItemWriter,
+	                               ItemWriter<BucketRelation> bucketRelationWriter) {
 		this.bucketItemWriter = bucketItemWriter;
 		this.pageItemWriter = pageItemWriter;
 		this.bucketisedMemberItemWriter = bucketisedMemberItemWriter;
