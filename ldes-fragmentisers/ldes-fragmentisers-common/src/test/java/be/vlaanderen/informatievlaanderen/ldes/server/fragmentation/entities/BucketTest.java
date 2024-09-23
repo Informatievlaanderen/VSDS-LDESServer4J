@@ -3,6 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -70,4 +73,51 @@ class BucketTest {
 				.isNotEqualTo(otherBucket.hashCode());
 	}
 
+	@Nested
+	class CompositionTest {
+		private static final int DAY_14_BUCKET_ID = 10;
+		private static final int DAY_28_BUCKET_ID = 11;
+		private Bucket rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket;
+
+		@BeforeEach
+		void setUp() {
+			rootBucket = new Bucket(BucketDescriptor.empty(), VIEW_NAME);
+			year2023Bucket = rootBucket.createChild(new BucketDescriptorPair("year", "2023"));
+			year2024Bucket = rootBucket.createChild(new BucketDescriptorPair("year", "2024"));
+			month01Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "01"));
+			month03Bucket = year2024Bucket.createChild(new BucketDescriptorPair("month", "03"));
+			day14Bucket = new Bucket(DAY_14_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "14")).getBucketDescriptor(), VIEW_NAME, List.of(), 0);
+			day28Bucket = new Bucket(DAY_28_BUCKET_ID, month03Bucket.createChild(new BucketDescriptorPair("day", "28")).getBucketDescriptor(), VIEW_NAME, List.of(), 0);
+			month03Bucket.addChildBucket(day14Bucket.withGenericRelation());
+			month03Bucket.addChildBucket(day28Bucket.withGenericRelation());
+			year2024Bucket.addChildBucket(month01Bucket.withGenericRelation());
+			year2024Bucket.addChildBucket(month03Bucket.withGenericRelation());
+			rootBucket.addChildBucket(year2023Bucket.withGenericRelation());
+			rootBucket.addChildBucket(year2024Bucket.withGenericRelation());
+		}
+
+		@Test
+		void test_GetBucketTree() {
+			final List<Bucket> descendants = rootBucket.getBucketTree();
+
+			assertThat(descendants).containsExactlyInAnyOrder(
+					rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket
+			);
+		}
+
+		@Test
+		void test_AddChild() {
+			rootBucket = Bucket.createRootBucketForView(VIEW_NAME);
+			rootBucket.addChildBucket(year2024Bucket.withGenericRelation());
+			final Bucket duplicateBucket = rootBucket.createChild(new BucketDescriptorPair("year", "2024"));
+			TreeRelation treeRelation = new TreeRelation("duplicate-type", "duplicate-value", "duplicate-value-type", "duplicate-path");
+
+			rootBucket.addChildBucket(duplicateBucket.withRelations(treeRelation));
+
+			assertThat(rootBucket.getChildren()).hasSize(1);
+			assertThat(rootBucket.getChildRelations())
+					.hasSize(2)
+					.satisfiesOnlyOnce(bucketRelation -> assertThat(bucketRelation.relation()).isEqualTo(treeRelation));
+		}
+	}
 }

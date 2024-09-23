@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <include file="/db/changelog/3_4_0/add-view-id-to-page-members.xml" />
+    <include file="/db/changelog/3_4_0/initialize-view-id.sql" />
+    <include file="/db/changelog/3_4_0/redefine-bucket-stats.sql" />
+    <include file="/db/changelog/3_4_0/redefine-needs-pagination.sql" />
+    <include file="/db/changelog/3_4_0/define-bucket-last-page-view.sql" />
+    <include file="/db/changelog/3_4_0/add_view_stats.sql" />
+    <include file="/db/changelog/3_4_0/redefine-needs-bucketization.sql" />
+    <include file="/db/changelog/3_4_0/drop-on-bucket-insert-trigger.sql" />
+</databaseChangeLog>

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeNodeRepository;

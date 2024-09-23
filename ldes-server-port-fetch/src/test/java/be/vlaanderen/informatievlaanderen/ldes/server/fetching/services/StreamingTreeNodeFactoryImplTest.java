@@ -1,14 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeNodeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,8 +42,7 @@ class StreamingTreeNodeFactoryImplTest {
     void when_NoFragmentExists_ThenMissingResourceExceptionIsThrown() {
         LdesFragmentIdentifier id = new LdesFragmentIdentifier(VIEW_NAME,
                 List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-        Fragment fragment = new Fragment(id);
-        Mockito.when(treeNodeRepository.findTreeNodeWithoutMembers(fragment.getFragmentId()))
+        Mockito.when(treeNodeRepository.findTreeNodeWithoutMembers(id))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> streamingTreeNodeFactory.getFragmentWithoutMemberData(id))

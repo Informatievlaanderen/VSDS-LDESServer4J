@@ -26,7 +26,7 @@ class TimeBasedBucketFinderTest {
 
 	@BeforeEach
 	void setUp() {
-		TimeBasedConfig config = new TimeBasedConfig(".*", "", Granularity.DAY, false);
+		TimeBasedConfig config = new TimeBasedConfig(".*", "", Granularity.DAY);
 		bucketCreator = mock(TimeBasedBucketCreator.class);
 		bucketFinder = new TimeBasedBucketFinder(bucketCreator, config);
 
@@ -43,9 +43,9 @@ class TimeBasedBucketFinderTest {
 		Bucket yearBucket = PARENT.createChild(new BucketDescriptorPair(Granularity.YEAR.getValue(), "2023"));
 		Bucket monthBucket = yearBucket.createChild(new BucketDescriptorPair(Granularity.MONTH.getValue(), "01"));
 		Bucket dayBucket = monthBucket.createChild(new BucketDescriptorPair(Granularity.DAY.getValue(), "01"));
-		when(bucketCreator.getOrCreateBucket(PARENT, TIME, Granularity.YEAR)).thenReturn(yearBucket);
-		when(bucketCreator.getOrCreateBucket(yearBucket, TIME, Granularity.MONTH)).thenReturn(monthBucket);
-		when(bucketCreator.getOrCreateBucket(monthBucket, TIME, Granularity.DAY)).thenReturn(dayBucket);
+		when(bucketCreator.createBucket(PARENT, TIME, Granularity.YEAR)).thenReturn(yearBucket);
+		when(bucketCreator.createBucket(yearBucket, TIME, Granularity.MONTH)).thenReturn(monthBucket);
+		when(bucketCreator.createBucket(monthBucket, TIME, Granularity.DAY)).thenReturn(dayBucket);
 
 		Bucket actual = bucketFinder.getLowestBucket(PARENT, TIME, Granularity.YEAR);
 
@@ -56,7 +56,7 @@ class TimeBasedBucketFinderTest {
 	void when_GetDefaultIsCalled_Then_ReturnExpectedFragment() {
 		bucketFinder.getDefaultFragment(PARENT);
 
-		verify(bucketCreator).getOrCreateBucket(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
+		verify(bucketCreator).createBucket(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 
 

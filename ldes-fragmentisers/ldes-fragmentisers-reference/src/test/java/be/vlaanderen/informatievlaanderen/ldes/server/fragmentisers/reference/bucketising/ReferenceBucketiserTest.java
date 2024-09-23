@@ -26,7 +26,7 @@ class ReferenceBucketiserTest {
     void shouldReturnSetOfFoundResources() {
         Model model = RDFParser.source("member-with-two-types.ttl").toModel();
 
-        assertThat(referenceBucketiser.bucketise(memberId, model))
+        assertThat(referenceBucketiser.createReferences(memberId, model))
                 .hasSize(2)
                 .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel")
                 .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Gebouw");
@@ -36,7 +36,7 @@ class ReferenceBucketiserTest {
     void shouldReturnDefaultBucketString() {
         Model model = RDFParser.source("member-with-two-types.ttl").toModel();
 
-        assertThat(referenceBucketiser.bucketise("faulty", model))
+        assertThat(referenceBucketiser.createReferences("faulty", model))
                 .hasSize(1)
                 .contains(DEFAULT_BUCKET_STRING);
     }
@@ -45,7 +45,7 @@ class ReferenceBucketiserTest {
     void when_MemberHasInvalidURI_Then_ReturnOnlyCorrectBucket() {
         Model model = RDFParser.source("member-with-two-types-faulty.ttl").toModel();
 
-        assertThat(referenceBucketiser.bucketise(memberId, model))
+        assertThat(referenceBucketiser.createReferences(memberId, model))
                 .hasSize(1)
                 .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
     }
@@ -54,7 +54,7 @@ class ReferenceBucketiserTest {
     void shouldSkipResultsThatAreNotUris() {
         Model model = RDFParser.source("member-with-string-type.ttl").toModel();
 
-        assertThat(referenceBucketiser.bucketise(memberId, model)).hasSize(1)
+        assertThat(referenceBucketiser.createReferences(memberId, model)).hasSize(1)
                 .contains(DEFAULT_BUCKET_STRING);
     }
 

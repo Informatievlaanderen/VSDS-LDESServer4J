@@ -4,9 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.Fragmentat
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.BucketisedMemberWriter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates.BucketisedMemberItemWriterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.mock;
 @CucumberContextConfiguration
 @EnableAutoConfiguration(exclude = FragmentationService.class)
 @DataJpaTest
-@AutoConfigureEmbeddedDatabase
+@AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD)
 @EnableBatchProcessing
 @ActiveProfiles("postgres-test")
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres"
 })
-@ContextConfiguration(classes = {BucketisedMemberWriter.class})
+@ContextConfiguration(classes = {BucketisedMemberItemWriterConfig.class})
 @Import(PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class PostgresBucketisationIntegrationTest {
@@ -53,11 +52,6 @@ public class PostgresBucketisationIntegrationTest {
 		@Bean
 		public ObservationRegistry observationRegistry() {
 			return ObservationRegistry.NOOP;
-		}
-
-		@Bean
-		public MemberPropertiesRepository memberPropertiesRepository() {
-			return mock(MemberPropertiesRepository.class);
 		}
 
 		@Bean

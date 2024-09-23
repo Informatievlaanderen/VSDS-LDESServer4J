@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -16,16 +15,13 @@ import java.util.function.Predicate;
 @Component
 public class FragmentationStrategyBatchCollection implements FragmentationStrategyCollection {
 
-	private final BucketRepository bucketRepository;
 	private final Set<FragmentationStrategyBatchExecutor> fragmentationStrategySet;
 	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyBatchCollection(
-			BucketRepository bucketRepository,
 			FragmentationStrategyCreator fragmentationStrategyCreator,
 			ObservationRegistry observationRegistry) {
-		this.bucketRepository = bucketRepository;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategySet = new HashSet<>();
@@ -78,7 +74,6 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	private FragmentationStrategyBatchExecutor createExecutor(ViewName viewName, ViewSpecification viewSpecification) {
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
-		final var rootBucketRetriever = new RootBucketRetriever(viewName, bucketRepository, observationRegistry);
-		return new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, rootBucketRetriever, observationRegistry);
+		return new FragmentationStrategyBatchExecutor(viewName, fragmentationStrategy, observationRegistry);
 	}
 }

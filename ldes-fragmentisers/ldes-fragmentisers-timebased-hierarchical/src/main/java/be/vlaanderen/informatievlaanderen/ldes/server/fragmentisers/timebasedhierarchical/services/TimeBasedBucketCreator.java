@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -16,38 +15,31 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metri
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.HierarchicalTimeBasedFragmentationStrategy.TIMEBASED_FRAGMENTATION_HIERARCHICAL;
 
 public class TimeBasedBucketCreator {
-	private final BucketRepository bucketRepository;
 	private final TimeBasedRelationsAttributer relationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedBucketCreator.class);
 
-	public TimeBasedBucketCreator(BucketRepository bucketRepository, TimeBasedRelationsAttributer relationsAttributer) {
-		this.bucketRepository = bucketRepository;
+	public TimeBasedBucketCreator(TimeBasedRelationsAttributer relationsAttributer) {
 		this.relationsAttributer = relationsAttributer;
 	}
 
-	public Bucket getOrCreateBucket(Bucket parentFragment,
-	                                FragmentationTimestamp fragmentationTimestamp,
-	                                Granularity granularity) {
-		return getOrCreateBucket(parentFragment, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
+	public Bucket createBucket(Bucket parentBucket,
+	                           FragmentationTimestamp fragmentationTimestamp,
+	                           Granularity granularity) {
+		return createBucket(parentBucket, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
 	}
 
-	public Bucket getOrCreateBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
+	public Bucket createBucket(Bucket parentBucket, String timeValue, Granularity granularity) {
 		final BucketDescriptorPair childDescriptorPair = new BucketDescriptorPair(granularity.getValue(), timeValue);
-		return bucketRepository
-				.retrieveBucket(parentBucket.getViewName(), parentBucket.createChildDescriptor(childDescriptorPair))
-				.orElseGet(() -> {
-					final Bucket childBucket = bucketRepository.insertBucket(parentBucket.createChild(childDescriptorPair));
-					addRelationToParent(parentBucket, childBucket);
-					logBucketisation(parentBucket, childBucket);
-					return childBucket;
-				});
+		final Bucket childBucket = parentBucket.createChild(childDescriptorPair);
+		logBucketisation(parentBucket, childBucket);
+		return addRelationToParent(parentBucket, childBucket);
 	}
 
-	private void addRelationToParent(Bucket parentBucket, Bucket childBucket) {
-		if(isDefaultBucket(childBucket)) {
-			relationsAttributer.addDefaultRelation(parentBucket, childBucket);
+	private Bucket addRelationToParent(Bucket parentBucket, Bucket childBucket) {
+		if (isDefaultBucket(childBucket)) {
+			return relationsAttributer.addDefaultRelation(parentBucket, childBucket);
 		} else {
-			relationsAttributer.addInBetweenRelation(parentBucket, childBucket);
+			return relationsAttributer.addInBetweenRelation(parentBucket, childBucket);
 		}
 	}
 

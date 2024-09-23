@@ -34,7 +34,7 @@ class FragmentationStrategyCreatorImplTest {
 	@BeforeEach
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
-		rootBucketCreator = mock();
+		rootBucketCreator = mock(RootBucketCreator.class);
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(applicationContext, rootBucketCreator);
 	}
 
@@ -45,9 +45,9 @@ class FragmentationStrategyCreatorImplTest {
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
 
-		assertThat(fragmentationStrategy).isOfAnyClassIn(FragmentationStrategyImpl.class);
+		assertThat(fragmentationStrategy).isInstanceOf(FragmentationStrategyImpl.class);
 		InOrder inOrder = inOrder(applicationContext, rootBucketCreator);
-		inOrder.verify(rootBucketCreator).createRootBucketForView(viewSpecification.getName());
+		inOrder.verify(rootBucketCreator).createRootBucketForView(VIEW_NAME);
 		inOrder.verifyNoMoreInteractions();
 	}
 

@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDate
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
@@ -15,10 +14,8 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -33,29 +30,27 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 	                                                  ObservationRegistry observationRegistry,
 	                                                  TimeBasedBucketFinder bucketFinder,
-													  ApplicationEventPublisher applicationEventPublisher,
 	                                                  TimeBasedConfig config) {
-		super(fragmentationStrategy, applicationEventPublisher);
+		super(fragmentationStrategy);
 		this.observationRegistry = observationRegistry;
 		this.bucketFinder = bucketFinder;
 		this.config = config;
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
+	public void addMemberToBucket(Bucket parentBucket, FragmentationMember member, Observation parentObservation) {
 		final Observation bucketisationObservation = startFragmentationObservation(parentObservation);
 
-		Bucket bucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
+		Bucket childBucket = getFragmentationTimestamp(member.getSubject(), member.getVersionModel())
 				.map(timestamp -> bucketFinder.getLowestBucket(parentBucket, timestamp, Granularity.YEAR))
 				.orElseGet(() -> bucketFinder.getDefaultFragment(parentBucket));
 
-		List<BucketisedMember> members = super.addMemberToBucket(bucket, member, parentObservation);
+		super.addMemberToBucket(childBucket, member, parentObservation);
 		bucketisationObservation.stop();
-		return members;
 	}
 
 	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String subject, Model memberModel) {
-		try{
+		try {
 			Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
 					config.getFragmenterSubjectFilter(),
 					config.getFragmentationPath());

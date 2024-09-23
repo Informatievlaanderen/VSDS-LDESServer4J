@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -34,7 +32,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,8 +44,6 @@ class MemberIngesterImplTest {
     @Mock
     private MemberRepository memberRepository;
     @Mock
-    private ApplicationEventPublisher eventPublisher;
-    @Mock
     private MemberIngestValidator validator;
     private MeterRegistry meterRegistry;
     private MemberIngester memberIngestService;
@@ -60,7 +55,7 @@ class MemberIngesterImplTest {
 
         MemberExtractorCollection memberExtractorCollection = new MemberExtractorCollectionImpl();
         ServerMetrics serverMetrics = new ServerMetrics(mock(FragmentationMetricsRepository.class), mock(MemberMetricsRepository.class));
-        memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, memberExtractorCollection, serverMetrics);
+        memberIngestService = new MemberIngesterImpl(validator, memberRepository, memberExtractorCollection, serverMetrics);
 
         final MemberExtractor memberExtractor = new VersionObjectMemberExtractor(COLLECTION_NAME, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
         memberExtractorCollection.addMemberExtractor(COLLECTION_NAME, memberExtractor);
@@ -82,7 +77,6 @@ class MemberIngesterImplTest {
         var counter = meterRegistry.find(ServerMetrics.INGEST).counter();
         assertThat(counter).isNull();
         verifyNoInteractions(memberRepository);
-        verifyNoInteractions(eventPublisher);
     }
 
     @Test
@@ -101,7 +95,6 @@ class MemberIngesterImplTest {
         var counter = meterRegistry.find(ServerMetrics.INGEST).counter();
         assertThat(counter).isNull();
         verify(memberRepository, times(1)).insertAll(List.of(member));
-        verifyNoInteractions(eventPublisher);
     }
 
     @Test
@@ -120,9 +113,8 @@ class MemberIngesterImplTest {
         Gauge counter = meterRegistry.find(ServerMetrics.INGEST).gauge();
         assertThat(counter).isNotNull();
         assertThat(counter.value()).isEqualTo(1);
-        InOrder inOrder = inOrder(memberRepository, eventPublisher);
+        InOrder inOrder = inOrder(memberRepository);
         inOrder.verify(memberRepository, times(1)).insertAll(List.of(member));
-        inOrder.verify(eventPublisher).publishEvent(any(MembersIngestedEvent.class));
         inOrder.verifyNoMoreInteractions();
     }
 

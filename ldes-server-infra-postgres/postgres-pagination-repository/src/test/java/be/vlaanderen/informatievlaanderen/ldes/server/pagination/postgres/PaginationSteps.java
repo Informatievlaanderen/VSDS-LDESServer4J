@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.BucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -17,12 +18,15 @@ public class PaginationSteps extends PostgresPaginationIntegrationTest {
 	private List<Long> memberIds;
 	private int pageCount;
 	private Long bucketId;
+	private Integer viewId;
 	private Page openPage;
 
 	@Before
 	public void setUp() {
 		pageCount = pageEntityRepository.findAll().size();
-		bucketId = bucketEntityRepository.findAll().getFirst().getBucketId();
+		final BucketEntity bucket = bucketEntityRepository.findAll().getFirst();
+		bucketId = bucket.getBucketId();
+		viewId = bucket.getView().getId();
 		openPage = pageRepository.getOpenPage(bucketId);
 	}
 
@@ -101,11 +105,11 @@ public class PaginationSteps extends PostgresPaginationIntegrationTest {
 
 	private void saveMemberBuckets(List<Long> memberIds) {
 
-		String sql = "insert into page_members (bucket_id, member_id) VALUES (?, ?)";
+		String sql = "insert into page_members (bucket_id, member_id, view_id) VALUES (?, ?, ?)";
 
 		final List<Object[]> batchArgs = memberIds.stream()
 				.map(member -> new Object[]{
-						bucketId, member
+						bucketId, member, viewId
 				})
 				.toList();
 

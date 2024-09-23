@@ -32,14 +32,15 @@ public class PagePostgresRepository implements PageRepository {
 	@Transactional(readOnly = true)
 	public Page getOpenPage(long bucketId) {
 		String sql = """
-				 select DISTINCT p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
-				 FROM pages p
-				          LEFT JOIN page_members m ON p.page_id = m.page_id
-				          JOIN buckets b ON p.bucket_id = b.bucket_id
-				          JOIN views v ON v.view_id = b.view_id
-				 where b.bucket_id = ? AND p.page_id NOT IN (SELECT from_page_id FROM page_relations)
-				 group by p.page_id, v.page_size
-				 order by page_id
+				select p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
+				from pages p
+				left join page_members pm on pm.page_id = p.page_id
+				JOIN buckets b ON p.bucket_id = b.bucket_id
+				JOIN views v ON v.view_id = b.view_id
+				join bucket_last_page blp on blp.bucket_id = b.bucket_id AND blp.last_page_id = p.page_id
+				where b.bucket_id = ?
+				group by p.page_id, v.page_size
+				order by page_id
 				""";
 		return jdbcTemplate.query(sql, new PaginationRowMapper(), bucketId)
 				.stream()
@@ -58,12 +59,6 @@ public class PagePostgresRepository implements PageRepository {
 		pageEntityRepository.setPageImmutable(parentPage.getId());
 
 		return new Page(newPage.getId(), parentPage.getBucketId(), partialUrl, parentPage.getPageSize());
-	}
-
-	@Override
-	@Transactional
-	public void setChildrenImmutableByBucketId(long bucketId) {
-		pageEntityRepository.setAllChildrenImmutableByBucketId(bucketId);
 	}
 
 	@Override

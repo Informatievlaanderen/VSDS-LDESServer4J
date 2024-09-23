@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.TreeRelation;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;

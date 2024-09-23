@@ -5,15 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 public class TimeBasedConfig {
 	private final String fragmenterSubjectFilter;
 	private final String fragmentationPath;
-	private final boolean linearTimeCachingEnabled;
 	private final Granularity maxGranularity;
 
-	public TimeBasedConfig(String fragmenterSubjectFilter, String fragmentationPath, Granularity maxGranularity,
-						   boolean linearTimeCachingEnabled) {
+	public TimeBasedConfig(String fragmenterSubjectFilter, String fragmentationPath, Granularity maxGranularity) {
 		this.fragmenterSubjectFilter = fragmenterSubjectFilter;
 		this.fragmentationPath = fragmentationPath;
 		this.maxGranularity = maxGranularity;
-		this.linearTimeCachingEnabled = linearTimeCachingEnabled;
 	}
 
 	public String getFragmentationPath() {
@@ -27,9 +24,4 @@ public class TimeBasedConfig {
 	public Granularity getMaxGranularity() {
 		return maxGranularity;
 	}
-
-	public boolean isLinearTimeCachingEnabled() {
-		return linearTimeCachingEnabled;
-	}
-
 }
