@@ -22,13 +22,13 @@ public class BucketJobDefinitions {
 	                                 PlatformTransactionManager transactionManager,
 	                                 ItemReader<FragmentationMember> memberReader,
 	                                 ItemProcessor<FragmentationMember, Bucket> bucketProcessor,
-	                                 ItemWriter<Bucket> compositeBucketItemWriter,
+	                                 ItemWriter<Bucket> bucketisationItemWriter,
 	                                 BucketMetricUpdater bucketMetricUpdater) {
 		return new StepBuilder(BUCKETISATION_STEP, jobRepository)
 				.<FragmentationMember, Bucket>chunk(CHUNK_SIZE, transactionManager)
 				.reader(memberReader)
 				.processor(bucketProcessor)
-				.writer(compositeBucketItemWriter)
+				.writer(bucketisationItemWriter)
 				.listener(bucketMetricUpdater)
 				.build();
 	}
