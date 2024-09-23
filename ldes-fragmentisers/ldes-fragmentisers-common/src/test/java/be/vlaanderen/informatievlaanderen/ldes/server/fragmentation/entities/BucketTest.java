@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -102,6 +103,21 @@ class BucketTest {
 			assertThat(descendants).containsExactlyInAnyOrder(
 					rootBucket, year2023Bucket, year2024Bucket, month01Bucket, month03Bucket, day14Bucket, day28Bucket
 			);
+		}
+
+		@Test
+		void test_AddChild() {
+			rootBucket = Bucket.createRootBucketForView(VIEW_NAME);
+			rootBucket.addChildBucket(year2024Bucket.withGenericRelation());
+			final Bucket duplicateBucket = rootBucket.createChild(new BucketDescriptorPair("year", "2024"));
+			TreeRelation treeRelation = new TreeRelation("duplicate-type", "duplicate-value", "duplicate-value-type", "duplicate-path");
+
+			rootBucket.addChildBucket(duplicateBucket.withRelations(treeRelation));
+
+			assertThat(rootBucket.getChildren()).hasSize(1);
+			assertThat(rootBucket.getChildRelations())
+					.hasSize(2)
+					.satisfiesOnlyOnce(bucketRelation -> assertThat(bucketRelation.relation()).isEqualTo(treeRelation));
 		}
 	}
 }

@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Objects;
 
-@Order(1)
 @Component
 public class BucketItemWriter implements ItemWriter<Bucket> {
 	private static final String SQL = """

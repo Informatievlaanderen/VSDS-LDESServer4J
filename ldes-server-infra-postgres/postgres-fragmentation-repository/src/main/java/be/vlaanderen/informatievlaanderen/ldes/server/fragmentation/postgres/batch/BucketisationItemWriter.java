@@ -28,8 +28,8 @@ public class BucketisationItemWriter implements ItemWriter<Bucket> {
 	}
 
 	@Override
-	public void write(Chunk<? extends Bucket> chunk) throws Exception {
-		for(var rootbucket : chunk) {
+	public void write(Chunk<? extends Bucket> rootBucketChunk) throws Exception {
+		for(var rootbucket : rootBucketChunk) {
 			final Chunk<Bucket> flatBucketChunk = new Chunk<>(rootbucket.getBucketTree());
 			bucketItemWriter.write(flatBucketChunk);
 			pageItemWriter.write(flatBucketChunk);
