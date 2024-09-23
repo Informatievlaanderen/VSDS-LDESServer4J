@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 @CucumberContextConfiguration
 @EnableAutoConfiguration(exclude = FragmentationService.class)
 @DataJpaTest
-@AutoConfigureEmbeddedDatabase
+@AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD)
 @EnableBatchProcessing
 @ActiveProfiles("postgres-test")
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
