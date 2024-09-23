@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.chunk.ChunkCollector;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates.TestBucketSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
@@ -53,12 +54,12 @@ class BucketisationItemWriterTest {
 	void test_ChunkOf4RootBuckets() throws Exception {
 		AtomicInteger memberId = new AtomicInteger();
 		final Chunk<Bucket> chunk = Stream.of(
-						new BucketDescriptorPair[]{month09Pair, day23Pair},
-						new BucketDescriptorPair[]{month09Pair, day26Pair},
-						new BucketDescriptorPair[]{month08Pair, day26Pair},
-						new BucketDescriptorPair[]{month08Pair, day23Pair}
+						new BucketDescriptorPair[]{year2024Pair, month09Pair, day23Pair},
+						new BucketDescriptorPair[]{year2024Pair, month09Pair, day26Pair},
+						new BucketDescriptorPair[]{year2024Pair, month08Pair, day26Pair},
+						new BucketDescriptorPair[]{year2024Pair, month08Pair, day23Pair}
 				)
-				.map(pair -> createBucketTree(pair[0], pair[1], memberId.incrementAndGet()))
+				.map(pair -> new TestBucketSupplier(BY_TIME_VIEW_NAME, pair, memberId.incrementAndGet()).get())
 				.collect(new ChunkCollector<>());
 
 		bucketisationItemWriter.write(chunk);
@@ -72,7 +73,7 @@ class BucketisationItemWriterTest {
 	@Test
 	void test_ChunkOf1RootBucket() throws Exception {
 		final int memberId = 11;
-		final Bucket rootBucket = createBucketTree(month09Pair, day23Pair, memberId);
+		final Bucket rootBucket = new TestBucketSupplier(BY_TIME_VIEW_NAME, new BucketDescriptorPair[]{year2024Pair, month09Pair, day23Pair}, memberId).get();
 		final List<Bucket> bucketTree = List.of(
 				rootBucket,
 				rootBucket.getChildren().getFirst(),
@@ -109,7 +110,7 @@ class BucketisationItemWriterTest {
 				.asInstanceOf(InstanceOfAssertFactories.list(Bucket.class))
 				.usingRecursiveFieldByFieldElementComparator()
 				.containsExactlyInAnyOrderElementsOf(bucketTree)
-				.noneMatch(bucket -> bucket.getBucketId() == 0)
+				.allSatisfy(bucket -> assertThat(bucket.getBucketId()).isNotZero())
 		));
 		verify(bucketRelationItemWriter).write(assertArg(actual -> assertThat(actual.getItems())
 				.asInstanceOf(InstanceOfAssertFactories.list(BucketRelation.class))
@@ -119,18 +120,5 @@ class BucketisationItemWriterTest {
 		verify(bucketMemberItemWriter).write(assertArg(actual -> assertThat(actual.getItems())
 				.first()
 				.isEqualTo(new BucketisedMember(bucketTree.size(), memberId))));
-	}
-
-	private static Bucket createBucketTree(BucketDescriptorPair monthPair, BucketDescriptorPair dayPair, long memberId) {
-		final Bucket rootBucket = Bucket.createRootBucketForView(BY_TIME_VIEW_NAME);
-		final Bucket yearBucket = addAndReturnChild(rootBucket, year2024Pair);
-		final Bucket monthBucket = addAndReturnChild(yearBucket, monthPair);
-		final Bucket dayBucket = addAndReturnChild(monthBucket, dayPair);
-		dayBucket.assignMember(memberId);
-		return rootBucket;
-	}
-
-	private static Bucket addAndReturnChild(Bucket bucket, BucketDescriptorPair bucketDescriptorPair) {
-		return bucket.addChildBucket(bucket.createChild(bucketDescriptorPair).withGenericRelation());
 	}
 }

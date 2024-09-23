@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.PostgresBucketisationIntegrationTest;
@@ -22,7 +22,7 @@ class BucketisedMemberWriterTest extends PostgresBucketisationIntegrationTest {
 	DataSource dataSource;
 
 	@Test
-	@Sql("./init-writer-test.sql")
+	@Sql({"./init-collection-and-view.sql", "./init-writer-test.sql"})
 	void testWriter() throws Exception {
 		final long bucketId = 3;
 		final Chunk<BucketisedMember> members = IntStream.range(1, 4)

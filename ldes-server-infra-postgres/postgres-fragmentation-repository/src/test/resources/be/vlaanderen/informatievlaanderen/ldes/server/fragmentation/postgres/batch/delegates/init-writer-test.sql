@@ -1,18 +1,3 @@
-INSERT INTO collections (collection_id, name, timestamp_path, version_of_path, create_versions, is_closed)
-VALUES (1, 'mobility-hindrances', 'http://www.w3.org/ns/prov#generatedAtTime', 'http://purl.org/dc/terms/isVersionOf',
-        false, false);
-
-INSERT INTO views (view_id, collection_id, name, fragmentations, retention_policies, page_size)
-VALUES (1, 1, 'by-hour', '[
-  {
-    "name": "HierarchicalTimeBasedFragmentation",
-    "config": {
-      "maxGranularity": "hour",
-      "fragmentationPath": "http://www.w3.org/ns/prov#generatedAtTime"
-    }
-  }
-]', '', 250);
-
 INSERT INTO members (member_id, subject, old_id, collection_id, is_in_event_source, member_model, timestamp,
                             transaction_id, version_of)
 VALUES (1, 'https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810400/600000',
