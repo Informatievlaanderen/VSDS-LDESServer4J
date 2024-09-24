@@ -3,6 +3,7 @@ ldes-server:
   compaction-duration: "*/10 * * * * *"
   retention-cron: "*/10 * * * * *"
   deletion-cron: "*/5 * * * * *"
+  fragmentation-cron: "*/10 * * * * *"
 
 springdoc.swaggerui.path: "/swagger"
 management:

@@ -1,25 +1,40 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Bucket;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketRelationCreatedEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.BoundingBoxConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.TileConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.Tile;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.*;
 
-public class TileBucketRelationsAttributer {
+public class TileBucketRelationsAttributer implements RelationsAttributer {
 
-	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
-	private final ApplicationEventPublisher applicationEventPublisher;
-
-	public TileBucketRelationsAttributer(ApplicationEventPublisher applicationEventPublisher) {
-		this.applicationEventPublisher = applicationEventPublisher;
+	public Bucket addRelationsFromRootToBottom(Bucket rootBucket, Bucket tileBucket) {
+		boolean isDefaultBucket = tileBucket.getValueForKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING);
+		TreeRelation treeRelation = isDefaultBucket ? TreeRelation.generic() : createGeospatialRelationToParent(tileBucket);
+		return rootBucket.addChildBucket(tileBucket.withRelations(treeRelation));
 	}
 
-	public void addRelationsFromRootToBottom(Bucket rootBucket, Bucket tileBucket) {
-		boolean isDefaultBucket = tileBucket.getValueForKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING);
-		BucketRelation bucketRelation = isDefaultBucket ? BucketRelation.createGenericRelation(rootBucket, tileBucket) : relationsAttributer.createRelationBetween(rootBucket, tileBucket);
-		applicationEventPublisher.publishEvent(new BucketRelationCreatedEvent(bucketRelation));
+	private TreeRelation createGeospatialRelationToParent(Bucket childBucket) {
+		final String treeValue = WGS_84 + " " + getWKT(childBucket);
+		return new TreeRelation(
+				TREE_GEOSPATIALLY_CONTAINS_RELATION,
+				treeValue,
+				WKT_DATA_TYPE,
+				GEOSPARQL_AS_WKT
+		);
+	}
+
+	private String getWKT(Bucket currentBucket) {
+		String fragmentWKT = currentBucket.getValueForKey(FRAGMENT_KEY_TILE).orElseThrow(
+				() -> new MissingFragmentValueException(currentBucket.getBucketDescriptorAsString(), FRAGMENT_KEY_TILE));
+		Tile currentTile = TileConverter.fromString(fragmentWKT);
+		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
+		return BoundingBoxConverter.toWkt(currentBoundingBox);
 	}
 }

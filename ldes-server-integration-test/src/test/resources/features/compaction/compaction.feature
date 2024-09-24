@@ -14,7 +14,7 @@ Feature: Execute CompactionService
     And verify the following pages have no relation pointing to them
       | 2 |
       | 3 |
-    And verify 3 pages have a relation pointing to the new page 5
+    And verify 3 pages have a relation pointing to a compacted page
     And verify the following pages have no members
       | 2 |
       | 3 |

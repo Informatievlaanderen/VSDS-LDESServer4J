@@ -8,10 +8,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ent
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.BucketMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.BucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptor;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,32 +21,36 @@ import java.util.Optional;
 public class BucketPostgresRepository implements BucketRepository {
 	private final ViewEntityRepository viewEntityRepository;
 	private final BucketEntityRepository bucketEntityRepository;
+	private final NamedParameterJdbcTemplate jdbcTemplate;
 
-	public BucketPostgresRepository(ViewEntityRepository viewEntityRepository, BucketEntityRepository bucketEntityRepository) {
+	public BucketPostgresRepository(ViewEntityRepository viewEntityRepository, BucketEntityRepository bucketEntityRepository, NamedParameterJdbcTemplate jdbcTemplate) {
 		this.viewEntityRepository = viewEntityRepository;
 		this.bucketEntityRepository = bucketEntityRepository;
-	}
-
-	@Override
-	public Optional<Bucket> retrieveBucket(ViewName viewName, BucketDescriptor bucketDescriptor) {
-		return bucketEntityRepository
-				.findBucketEntityByBucketDescriptor(viewName.asString(), bucketDescriptor.asDecodedString())
-				.map(BucketMapper::fromProjection);
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
 	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
+		final String sql = """
+				INSERT INTO pages (bucket_id, expiration, partial_url)
+				VALUES (:bucketId, NULL, :partialUrl)
+				ON CONFLICT DO NOTHING
+				""";
 		ViewEntity view = viewEntityRepository.findByViewName(bucket.getViewName().getCollectionName(), bucket.getViewName().getViewName())
 				.orElseThrow();
 
 		BucketEntity bucketEntity = new BucketEntity(view, bucket.getBucketDescriptorAsString());
 		bucketEntity = bucketEntityRepository.save(bucketEntity);
+		long bucketId = Objects.requireNonNull(bucketEntity.getBucketId());
+		jdbcTemplate.update(sql, Map.of("bucketId", bucketId, "partialUrl", bucket.createPartialUrl()));
 
 		return new Bucket(
-				Objects.requireNonNull(bucketEntity.getBucketId()),
+				bucketId,
 				bucket.getBucketDescriptor(),
-				bucket.getViewName()
+				bucket.getViewName(),
+				List.of(),
+				0
 		);
 	}
 

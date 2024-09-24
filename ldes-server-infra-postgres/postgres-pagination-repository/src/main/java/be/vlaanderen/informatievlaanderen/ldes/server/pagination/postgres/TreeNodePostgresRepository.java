@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeNodeRepository;
@@ -13,7 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.mapper
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.TreeRelationProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageMemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.RelationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageRelationEntityRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Repository;
 
@@ -25,13 +25,13 @@ import java.util.Optional;
 @Repository
 public class TreeNodePostgresRepository implements TreeNodeRepository {
 	private final PageEntityRepository pageEntityRepository;
-	private final RelationEntityRepository relationEntityRepository;
+	private final PageRelationEntityRepository pageRelationEntityRepository;
 	private final PageMemberEntityRepository pageMemberEntityRepository;
 	private final Map<String, VersionObjectCreator> versionObjectCreatorMap = new HashMap<>();
 
-	public TreeNodePostgresRepository(PageEntityRepository pageEntityRepository, RelationEntityRepository relationEntityRepository, PageMemberEntityRepository pageMemberEntityRepository) {
+	public TreeNodePostgresRepository(PageEntityRepository pageEntityRepository, PageRelationEntityRepository pageRelationEntityRepository, PageMemberEntityRepository pageMemberEntityRepository) {
 		this.pageEntityRepository = pageEntityRepository;
-		this.relationEntityRepository = relationEntityRepository;
+		this.pageRelationEntityRepository = pageRelationEntityRepository;
 		this.pageMemberEntityRepository = pageMemberEntityRepository;
 	}
 
@@ -40,7 +40,7 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 		return pageEntityRepository
 				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
 				.map(page -> {
-					final List<TreeRelationProjection> relations = relationEntityRepository.findDistinctByFromPageId(page.getId());
+					final List<TreeRelationProjection> relations = pageRelationEntityRepository.findDistinctByFromPageId(page.getId());
 
 					var versionObjectCreator = versionObjectCreatorMap.get(page.getCollectionName());
 
@@ -60,7 +60,7 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 		return pageEntityRepository
 				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
 				.map(page -> {
-					final List<TreeRelationProjection> relations = relationEntityRepository.findDistinctByFromPageId(page.getId());
+					final List<TreeRelationProjection> relations = pageRelationEntityRepository.findDistinctByFromPageId(page.getId());
 					return TreeNodeMapper.fromProjection(page, relations, List.of());
 				});
 	}

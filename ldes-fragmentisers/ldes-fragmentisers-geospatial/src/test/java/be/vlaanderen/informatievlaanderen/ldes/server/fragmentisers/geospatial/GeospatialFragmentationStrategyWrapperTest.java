@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class GeospatialFragmentationStrategyWrapperTest {
@@ -26,8 +26,10 @@ class GeospatialFragmentationStrategyWrapperTest {
 	void when_FragmentationStrategyIsUpdated_GeospatialFragmentationStrategyIsReturned() {
 		ConfigProperties properties = new ConfigProperties(
 				Map.of("maxZoom", "15", "fragmentationPath", "http://www.opengis.net/ont/geosparql#asWKT"));
+
 		FragmentationStrategy decoratedFragmentationStrategy = geospatialFragmentationUpdater
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
-		assertTrue(decoratedFragmentationStrategy instanceof GeospatialFragmentationStrategy);
+
+		assertThat(decoratedFragmentationStrategy).isInstanceOf(GeospatialFragmentationStrategy.class);
 	}
 }

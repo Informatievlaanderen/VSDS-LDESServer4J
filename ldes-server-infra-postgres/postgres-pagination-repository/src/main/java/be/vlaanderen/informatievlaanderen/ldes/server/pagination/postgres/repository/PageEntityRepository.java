@@ -23,18 +23,6 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 
 	@Modifying
 	@Query(value = """
-			update pages set immutable = true
-			where page_id in (
-			  select distinct r.to_page_id from pages p
-			  inner join buckets b on b.bucket_id = p.bucket_id
-			  inner join page_relations r on r.from_page_id = p.page_id
-			  where b.bucket_id = :bucketId
-			)
-			""", nativeQuery = true)
-	void setAllChildrenImmutableByBucketId(long bucketId);
-
-	@Modifying
-	@Query(value = """
 			UPDATE pages
 			SET immutable = true
 			WHERE bucket_id IN (SELECT b.bucket_id
@@ -47,7 +35,7 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	@Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.immutable AS immutable, " +
 	               "p.expiration AS expiration, " +
 	               "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
-	               "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN RelationEntity r ON p = r.fromPage " +
+	               "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN PageRelationEntity r ON p = r.fromPage " +
 	               "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
 	               "GROUP BY p.id, r.toPage.id " +
 	               "HAVING COUNT(*) < :capacityPerPage")

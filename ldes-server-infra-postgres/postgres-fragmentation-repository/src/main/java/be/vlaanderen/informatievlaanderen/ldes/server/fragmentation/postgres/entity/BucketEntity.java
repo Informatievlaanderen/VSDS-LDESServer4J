@@ -23,6 +23,9 @@ public class BucketEntity {
 
 	public BucketEntity() {}
 
+	public BucketEntity(Long bucketId) {
+		this.bucketId = bucketId;
+	}
 
 	public BucketEntity(ViewEntity view, String bucketDescriptor) {
 		this.view = view;

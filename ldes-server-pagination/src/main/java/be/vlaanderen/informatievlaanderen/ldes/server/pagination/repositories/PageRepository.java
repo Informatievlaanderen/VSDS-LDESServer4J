@@ -10,9 +10,7 @@ import java.util.stream.Stream;
 
 public interface PageRepository {
 	Page getOpenPage(long bucketId);
-	int createPage(Long bucketId, String partialUrl);
-	void setPageImmutable(long pageId);
-	void setChildrenImmutableByBucketId(long bucketId);
+	Page createNextPage(Page parentPage);
     void markAllPagesImmutableByCollectionName(String collectionName);
     Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);
     void deleteOutdatedFragments(LocalDateTime deleteTime);

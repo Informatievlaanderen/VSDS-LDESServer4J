@@ -51,6 +51,10 @@ public class MemberEntity {
 		this.model = model;
 	}
 
+	public MemberEntity(long id) {
+		this.id = id;
+	}
+
 	protected MemberEntity() {
 	}
 

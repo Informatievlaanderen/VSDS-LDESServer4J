@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -62,7 +65,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	@And("verify the following pages have no relation pointing to them")
 	public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
 		await().untilAsserted(() -> {
-			var count = relationEntityRepository.findAll()
+			var count = pageRelationEntityRepository.findAll()
 					.stream()
 					.filter(relationEntity -> ids.contains(relationEntity.getToPage().getId()))
 					.count();
@@ -83,13 +86,17 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 				});
 	}
 
-	@And("verify {long} pages have a relation pointing to the new page {long}")
-	public void verifyUpdateOfPredecessorRelations(long pointingCount, long id) {
+	@And("verify {long} pages have a relation pointing to a compacted page")
+	public void verifyUpdateOfPredecessorRelations(long pointingCount) {
 		await().untilAsserted(() -> {
-			var countNewPage = relationEntityRepository.findAll()
+			var countNewPage = pageRelationEntityRepository.findAll()
 					.stream()
-					.filter(relationEntity -> relationEntity.getToPage().getId().equals(id))
+					.map(PageRelationEntity::getToPage)
+					.map(PageEntity::getPartialUrl)
+					.map(url -> url.split("pageNumber=")[1])
+					.filter(this::isValidUuid)
 					.count();
+
 
 			assertThat(countNewPage).isEqualTo(pointingCount);
 		});
@@ -127,5 +134,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
 	private String getCurrentTimestamp() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+	}
+
+	private boolean isValidUuid(String pageNumber) {
+		try {
+			UUID.fromString(pageNumber);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 }

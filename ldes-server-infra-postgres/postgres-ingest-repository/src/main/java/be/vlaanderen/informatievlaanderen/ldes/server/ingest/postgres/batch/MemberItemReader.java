@@ -15,9 +15,11 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.CHUNK_SIZE;
+
 @Configuration
 public class MemberItemReader {
-	private static final int PAGE_SIZE = 500;
+	private static final int PAGE_SIZE = CHUNK_SIZE;
 
 	@Bean
 	@StepScope
@@ -30,7 +32,7 @@ public class MemberItemReader {
 				.queryProvider(memberQuery())
 				.parameterValues(jobParameters)
 				.pageSize(PAGE_SIZE)
-				.maxItemCount(20 * PAGE_SIZE)
+				.maxItemCount(40 * PAGE_SIZE)
 				.build();
 	}
 
@@ -38,19 +40,25 @@ public class MemberItemReader {
 		Map<String, Order> sortKeys = new HashMap<>();
 		sortKeys.put("member_id", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
-		queryProvider.setSelectClause("m.member_id, m.subject, m.version_of, m.timestamp, c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model");
+		queryProvider.setSelectClause("""
+			m.member_id, m.subject, m.version_of, m.timestamp,
+			c.name, c.version_of_path, c.timestamp_path, c.create_versions,
+			m.member_model
+			""");
 		queryProvider.setFromClause("""
-                     collections c
-                      join views v on v.collection_id = c.collection_id
-                      join bucket_stats bs on bs.collection_id = c.collection_id and bs.view_id = v.view_id
-                      join members m on m.collection_id = c.collection_id
+             collections c
+               join members m on m.collection_id = c.collection_id
              """);
 		queryProvider.setWhereClause("""
-                   m.member_id > bs.last
-                    AND v.name = :viewName AND c.name = :collectionName
+             c.name = :collectionName and
+             m.member_id > (
+              COALESCE(
+               (SELECT max(pm.member_id) FROM page_members pm
+                WHERE pm.view_id IN (select v.view_id from views v where v.name = :viewName)),
+               (0)::bigint)
+             )
              """);
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
-
 }

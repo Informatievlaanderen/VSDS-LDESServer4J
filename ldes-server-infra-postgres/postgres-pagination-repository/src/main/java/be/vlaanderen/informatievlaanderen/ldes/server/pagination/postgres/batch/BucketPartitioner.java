@@ -17,8 +17,7 @@ public class BucketPartitioner implements Partitioner{
 	static final String SQL = """
 			SELECT pm.bucket_id
 			FROM page_members pm
-			JOIN buckets b on b.bucket_id = pm.bucket_id
-			JOIN views v on v.view_id = b.view_id
+			JOIN views v on v.view_id = pm.view_id
 			JOIN collections c on c.collection_id = v.collection_id
 			WHERE c.name = ? AND v.name = ? AND page_id IS NULL
 			GROUP BY pm.bucket_id
