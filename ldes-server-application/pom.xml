@@ -190,8 +190,13 @@
             </dependencies>
         </profile>
         <profile>
-            <id>retention</id>
+            <id>maintenance</id>
             <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-server-maintenance-common</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-retention</artifactId>
@@ -202,11 +207,6 @@
                     <artifactId>postgres-retention-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>compaction</id>
-            <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-compaction</artifactId>

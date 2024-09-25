@@ -11,9 +11,10 @@
 
     <artifactId>ldes-server-maintenance</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>ldes-server-maintenance-common</module>
-        <module>../ldes-server-retention</module>
+        <module>ldes-server-retention</module>
         <module>ldes-server-compaction</module>
     </modules>
 

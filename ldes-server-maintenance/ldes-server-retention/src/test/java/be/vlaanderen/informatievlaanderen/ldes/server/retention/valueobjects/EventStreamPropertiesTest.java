@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EventStreamPropertiesTest {
 
-	private final static String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
-	private final static String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
+	private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 
 	@Test
 	void test_equality() {
