@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_CRON_KEY;
 
+//TODO: convert this to two different tasklets (View level and EventStream/EventSource level)
 @Service
 @EnableScheduling
 public class RetentionService {
@@ -52,6 +53,7 @@ public class RetentionService {
 			return;
 		}
 		log.atDebug().log("Start retention");
+		//TODO: split those two up to two different tasklets
 		retentionPolicyCollection
                 .getRetentionPolicyMap()
                 .forEach(this::removeMembersFromViewThatMatchRetentionPolicies);

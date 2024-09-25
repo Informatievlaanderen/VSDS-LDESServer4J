@@ -23,10 +23,10 @@
         <module>ldes-server-retention</module>
         <module>ldes-server-port-fetch</module>
         <module>ldes-server-port-fetch-rest</module>
-        <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
         <module>ldes-server-instrumentation</module>
         <module>ldes-server-pagination</module>
+        <module>ldes-server-maintenance</module>
     </modules>
 
     <developers>
