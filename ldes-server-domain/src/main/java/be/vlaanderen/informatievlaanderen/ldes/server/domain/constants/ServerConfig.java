@@ -19,6 +19,7 @@ public class ServerConfig {
 	public static final String USE_RELATIVE_URL_KEY = "${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}";
 	public static final String MAX_JSONLD_CACHE_CAPACITY = "${ldes-server.max-jsonld-cache-capacity:" + DEFAULT_MAX_JSONLD_CACHE_CAPACITY + "}";
 
+
 	private String hostName;
 	private String compactionDuration;
 	private String retentionCron;

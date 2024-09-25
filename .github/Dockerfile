@@ -21,8 +21,9 @@ COPY ./ldes-fragmentisers/ldes-fragmentisers-geospatial/target/ldes-fragmentiser
 COPY ./ldes-fragmentisers/ldes-fragmentisers-timebased-hierarchical/target/ldes-fragmentisers-timebased-hierarchical-jar-with-dependencies.jar ./lib/
 COPY ./ldes-fragmentisers/ldes-fragmentisers-reference/target/ldes-fragmentisers-reference-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-pagination/target/ldes-server-pagination-jar-with-dependencies.jar ./lib/
-COPY ./ldes-server-retention/target/ldes-server-retention-jar-with-dependencies.jar ./lib/
-COPY ./ldes-server-compaction/target/ldes-server-compaction-jar-with-dependencies.jar ./lib/
+COPY ./ldes-server-maintenance/ldes-server-maintenance-common/target/ldes-server-maintenance-common-jar-with-dependencies.jar ./lib/
+COPY ./ldes-server-maintenance/ldes-server-retention/target/ldes-server-retention-jar-with-dependencies.jar ./lib/
+COPY ./ldes-server-maintenance/ldes-server-compaction/target/ldes-server-compaction-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-instrumentation/target/ldes-server-instrumentation-jar-with-dependencies.jar ./lib/
 
 ## Dependency for pyroscope
