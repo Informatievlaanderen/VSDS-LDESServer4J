@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.COMPACTION_CRON_KEY;
 
-// TODO: convert this to a tasklet
 @Service
 public class CompactionScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompactionScheduler.class);
