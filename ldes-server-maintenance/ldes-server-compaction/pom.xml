@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>ldes-server-compaction</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
 

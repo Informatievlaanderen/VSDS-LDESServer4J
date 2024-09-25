@@ -20,7 +20,6 @@
         <module>ldes-server-admin</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>
-        <module>ldes-server-retention</module>
         <module>ldes-server-port-fetch</module>
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-integration-test</module>
