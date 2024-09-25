@@ -1,6 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber.PAGE_NUMBER;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.PageNumberFactory;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.NumericPageNumber;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.PageNumber;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.PageNumber.PAGE_NUMBER;
 
 public class PartialUrl {
 	private final String viewName;
@@ -27,7 +31,7 @@ public class PartialUrl {
 		return new PartialUrl(
 				viewName,
 				bucketDescriptor,
-				pageNumber == null ? PageNumber.startPageNumber() : pageNumber.increment()
+				pageNumber == null ? NumericPageNumber.startPageNumber() : pageNumber.getNextPageNumber()
 		);
 	}
 
@@ -42,7 +46,7 @@ public class PartialUrl {
 		}
 
 		if (isUrlOnlyPaged(parts[1])) {
-			return new PartialUrl(viewName, "", PageNumber.fromString(parts[1]));
+			return new PartialUrl(viewName, "", PageNumberFactory.createPageNumber(parts[1]));
 		}
 
 		return createCompletePartialUrl(viewName, parts[1]);
@@ -63,7 +67,7 @@ public class PartialUrl {
 	private static PartialUrl createCompletePartialUrl(String viewName, String extendedDescriptor) {
 		final int lastIndex = extendedDescriptor.lastIndexOf("&");
 		final String bucketDescriptor = extendedDescriptor.substring(0, lastIndex);
-		final PageNumber pageNumber = PageNumber.fromString(extendedDescriptor.substring(lastIndex + 1));
+		final PageNumber pageNumber = PageNumberFactory.createPageNumber(extendedDescriptor.substring(lastIndex + 1));
 		return new PartialUrl(viewName, bucketDescriptor, pageNumber);
 	}
 }

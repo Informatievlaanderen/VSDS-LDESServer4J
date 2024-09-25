@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PageNumber;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.NumericPageNumber;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,15 +53,15 @@ class PaginatorTest {
 	@Test
 	void when_Paginating_withNumberedOpenPage_expectCorrectPages() {
 		mockBucketId();
-		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(1)), PAGE_SIZE);
+		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(1)), PAGE_SIZE);
 
 		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
 		when(pageRepository.getOpenPage(BUCKET_ID))
 				.thenReturn(numberedPage);
 
 		when(pageRepository.createNextPage(any()))
-				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
@@ -88,8 +88,8 @@ class PaginatorTest {
 
 		when(pageRepository.createNextPage(any()))
 				.thenReturn(numberedPage)
-				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
@@ -107,14 +107,14 @@ class PaginatorTest {
 	@Test
 	void when_Paginating_withSemiFilledNumberedOpenPage_expectCorrectPages() {
 		mockBucketId();
-		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(1)), PAGE_SIZE,1);
+		Page numberedPage = new Page(1, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(1)), PAGE_SIZE,1);
 
 		when(pageMemberRepository.getUnpaginatedMembersForBucket(BUCKET_ID)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
 		when(pageRepository.getOpenPage(BUCKET_ID))
 				.thenReturn(numberedPage);
 		when(pageRepository.createNextPage(any()))
-				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(2)), PAGE_SIZE))
-				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new PageNumber(3)), PAGE_SIZE));
+				.thenReturn(new Page(2, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(2)), PAGE_SIZE))
+				.thenReturn(new Page(3, BUCKET_ID, new PartialUrl(VIEW_NAME, "", new NumericPageNumber(3)), PAGE_SIZE));
 
 		paginator.execute(null, chunkContext);
 
