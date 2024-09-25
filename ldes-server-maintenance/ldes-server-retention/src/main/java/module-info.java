@@ -7,4 +7,5 @@ open module ldes.server.retention {
     requires org.apache.jena.arq;
     requires spring.batch.infrastructure;
     requires ldes.server.maintenance.common;
+    requires spring.tx;
 }

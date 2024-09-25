@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.services.RetentionPolicyEmptinessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class CompactionScheduler {
 	public CompactionScheduler(ViewCollection viewCollection,
 	                           PaginationCompactionService paginationCompactionService,
 	                           CompactionCandidateService compactionCandidateService,
-	                           RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
+	                           @Qualifier("viewRetentionPolicyCollection") RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.viewCollection = viewCollection;
 		this.paginationCompactionService = paginationCompactionService;
 		this.compactionCandidateService = compactionCandidateService;

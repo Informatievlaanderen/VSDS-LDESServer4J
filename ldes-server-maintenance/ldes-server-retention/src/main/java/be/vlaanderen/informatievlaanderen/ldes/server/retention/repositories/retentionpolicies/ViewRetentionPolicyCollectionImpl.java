@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component(value = "viewRetentionPolicyCollection")
 public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCollection {
 
     private final Map<ViewName, RetentionPolicy> retentionPolicies;

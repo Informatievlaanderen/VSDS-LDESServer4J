@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retentiontasklet;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
@@ -18,7 +18,7 @@ public abstract class RetentionTask<K> implements Tasklet {
 	}
 
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+	public final RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 		if(retentionPolicyCollection.isEmpty()) {
 			log.atDebug().log("Retention skipped: no retention policies found");
 			return RepeatStatus.FINISHED;

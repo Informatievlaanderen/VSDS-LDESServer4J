@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retentiontasklet;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;

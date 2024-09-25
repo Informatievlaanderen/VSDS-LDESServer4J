@@ -10,6 +10,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 @Configuration
 public class BatchConfiguration {
 	public static final String ASYNC_JOB_LAUNCHER = "asyncJobLauncher";
+
 	@Bean(name = ASYNC_JOB_LAUNCHER)
 	public JobLauncher simpleJobLauncher(JobRepository jobRepository) throws Exception {
 		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
