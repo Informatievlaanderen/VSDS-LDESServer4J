@@ -143,6 +143,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                <artifactId>ldes-server-maintenance-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ldes-fragmentisers-impl</artifactId>
                 <version>${project.version}</version>
