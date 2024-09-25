@@ -17,9 +17,7 @@ class PageNumberFactoryTest {
 
 		final PageNumber pageNumber = PageNumberFactory.createPageNumber(pageNumberString);
 
-		assertThat(pageNumber)
-				.usingRecursiveComparison()
-				.isEqualTo(new NumericPageNumber(2));
+		assertThat(pageNumber).isEqualTo(new NumericPageNumber(2));
 	}
 
 	@Test
@@ -28,9 +26,7 @@ class PageNumberFactoryTest {
 
 		final PageNumber pageNumber = PageNumberFactory.createPageNumber(pageNumberString);
 
-		assertThat(pageNumber)
-				.usingRecursiveComparison()
-				.isEqualTo(UuidPageNumber.fromString("26929514-237c-11ed-861d-0242ac120002"));
+		assertThat(pageNumber).isEqualTo(UuidPageNumber.fromString("26929514-237c-11ed-861d-0242ac120002"));
 	}
 
 	@ParameterizedTest(name = "{0}")

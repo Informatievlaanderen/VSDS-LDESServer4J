@@ -22,15 +22,16 @@ public class NumericPageNumber implements PageNumber {
 	}
 
 	@Override
-	public final boolean equals(Object o) {
+	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof NumericPageNumber that)) return false;
-
 		return value == that.value;
 	}
 
 	@Override
 	public int hashCode() {
-		return value;
+		int result = 17;
+		result = 31 * result + value;
+		return result;
 	}
 }
