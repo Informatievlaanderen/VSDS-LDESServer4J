@@ -9,7 +9,7 @@ public class NumericPageNumber implements PageNumber {
 
 	@Override
 	public String asString() {
-		return PAGE_NUMBER + "=" + value;
+		return PAGE_NUMBER_KEY + "=" + value;
 	}
 
 	@Override

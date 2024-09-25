@@ -10,12 +10,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class PageNumberFactoryTest {
+class PageNumberParserTest {
 	@Test
 	void test_CreateNumericPageNumber() {
 		final String pageNumberString = "pageNumber=2";
 
-		final PageNumber pageNumber = PageNumberFactory.createPageNumber(pageNumberString);
+		final PageNumber pageNumber = PageNumberParser.parse(pageNumberString);
 
 		assertThat(pageNumber).isEqualTo(new NumericPageNumber(2));
 	}
@@ -24,7 +24,7 @@ class PageNumberFactoryTest {
 	void test_UuidNumericPageNumber() {
 		final String pageNumberString = "pageNumber=26929514-237c-11ed-861d-0242ac120002";
 
-		final PageNumber pageNumber = PageNumberFactory.createPageNumber(pageNumberString);
+		final PageNumber pageNumber = PageNumberParser.parse(pageNumberString);
 
 		assertThat(pageNumber).isEqualTo(UuidPageNumber.fromString("26929514-237c-11ed-861d-0242ac120002"));
 	}
@@ -37,7 +37,7 @@ class PageNumberFactoryTest {
 			pageNumber=26929514-237c-11ed-861d-237c-11ed-861d,UUID string too large
 			""")
 	void test_InvalidCreation(String pageNumberString, String expectedErrorMessage) {
-		assertThatThrownBy(() -> PageNumberFactory.createPageNumber(pageNumberString))
+		assertThatThrownBy(() -> PageNumberParser.parse(pageNumberString))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage(expectedErrorMessage);
 	}
