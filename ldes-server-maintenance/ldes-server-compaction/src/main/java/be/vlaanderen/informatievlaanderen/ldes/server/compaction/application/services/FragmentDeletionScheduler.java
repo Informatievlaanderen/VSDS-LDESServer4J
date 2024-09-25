@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.DELETION_CRON_KEY;
 
+//TODO: make this a tasklet
 @Service
 public class FragmentDeletionScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentDeletionScheduler.class);

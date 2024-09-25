@@ -27,6 +27,7 @@
         <module>ldes-server-integration-test</module>
         <module>ldes-server-instrumentation</module>
         <module>ldes-server-pagination</module>
+        <module>ldes-server-maintenance</module>
     </modules>
 
     <developers>
