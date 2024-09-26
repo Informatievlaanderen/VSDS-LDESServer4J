@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 
 import java.util.Objects;
 
-public record ViewLevelRetentionPolicy(ViewName viewName, RetentionPolicy retentionPolicy) implements LeveledRetentionPolicy {
+public record ViewRetentionPolicyProvider(ViewName viewName, RetentionPolicy retentionPolicy) implements RetentionPolicyProvider {
 
 	@Override
 	public String getName() {
@@ -15,7 +15,7 @@ public record ViewLevelRetentionPolicy(ViewName viewName, RetentionPolicy retent
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof ViewLevelRetentionPolicy that)) return false;
+		if (!(o instanceof ViewRetentionPolicyProvider that)) return false;
 		return Objects.equals(viewName, that.viewName);
 	}
 

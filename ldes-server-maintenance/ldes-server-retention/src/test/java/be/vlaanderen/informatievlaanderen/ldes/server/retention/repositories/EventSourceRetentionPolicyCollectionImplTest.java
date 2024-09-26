@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceLevelRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.EventSourceRetentionPolicyCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -42,7 +42,7 @@ class EventSourceRetentionPolicyCollectionImplTest {
 		deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
 
 		assertThat(deletionPolicyCollection.getRetentionPolicies())
-				.map(EventSourceLevelRetentionPolicy::collectionName)
+				.map(EventSourceRetentionPolicyProvider::collectionName)
 				.contains(COLLECTION_NAME);
 	}
 
@@ -57,7 +57,7 @@ class EventSourceRetentionPolicyCollectionImplTest {
 		deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
 
 		assertThat(deletionPolicyCollection.getRetentionPolicies())
-				.map(EventSourceLevelRetentionPolicy::collectionName)
+				.map(EventSourceRetentionPolicyProvider::collectionName)
 				.doesNotContain(COLLECTION_NAME);
 	}
 }

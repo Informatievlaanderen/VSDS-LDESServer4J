@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.re
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewLevelRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.Set;
 @Component
 public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCollection {
 
-    private final Set<ViewLevelRetentionPolicy> retentionPolicies;
+    private final Set<ViewRetentionPolicyProvider> retentionPolicies;
     private final RetentionPolicyFactory retentionPolicyFactory;
 
     public ViewRetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
@@ -37,7 +37,7 @@ public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCol
     }
 
     @Override
-    public Set<ViewLevelRetentionPolicy> getRetentionPolicies() {
+    public Set<ViewRetentionPolicyProvider> getRetentionPolicies() {
         return Set.copyOf(retentionPolicies);
     }
 
@@ -49,7 +49,7 @@ public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCol
     private void addToCollection(ViewSpecification viewSpecification) {
         retentionPolicyFactory
                 .extractRetentionPolicy(viewSpecification)
-                .map(retentionPolicy -> new ViewLevelRetentionPolicy(viewSpecification.getName(), retentionPolicy))
+                .map(retentionPolicy -> new ViewRetentionPolicyProvider(viewSpecification.getName(), retentionPolicy))
                 .ifPresent(retentionPolicies::add);
     }
 

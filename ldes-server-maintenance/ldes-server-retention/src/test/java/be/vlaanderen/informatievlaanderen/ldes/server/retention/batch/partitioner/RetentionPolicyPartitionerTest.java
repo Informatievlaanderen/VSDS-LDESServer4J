@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.partitioner;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceLevelRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.LeveledRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewLevelRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceRetentionPolicyProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.RetentionPolicyProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
@@ -29,7 +29,7 @@ class RetentionPolicyPartitionerTest {
 	private static final String COLLECTION = "collection";
 
 	@Mock
-	private RetentionPolicyCollection<LeveledRetentionPolicy> retentionPolicies;
+	private RetentionPolicyCollection<RetentionPolicyProvider> retentionPolicies;
 	@InjectMocks
 	private RetentionPolicyPartitioner retentionPartitioner;
 
@@ -46,9 +46,9 @@ class RetentionPolicyPartitionerTest {
 			RetentionPolicy timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
 
 			when(retentionPolicies.getRetentionPolicies()).thenReturn(Set.of(
-					new ViewLevelRetentionPolicy(VIEW_A, timeBasedRetentionPolicy),
-					new ViewLevelRetentionPolicy(VIEW_B, versionBasedRetentionPolicy),
-					new ViewLevelRetentionPolicy(VIEW_C, timeAndVersionBasedRetentionPolicy)
+					new ViewRetentionPolicyProvider(VIEW_A, timeBasedRetentionPolicy),
+					new ViewRetentionPolicyProvider(VIEW_B, versionBasedRetentionPolicy),
+					new ViewRetentionPolicyProvider(VIEW_C, timeAndVersionBasedRetentionPolicy)
 			));
 
 			final Map<String, ExecutionContext> result = retentionPartitioner.partition(0);
@@ -82,7 +82,7 @@ class RetentionPolicyPartitionerTest {
 			RetentionPolicy timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
 
 			when(retentionPolicies.getRetentionPolicies()).thenReturn(Set.of(
-					new EventSourceLevelRetentionPolicy(COLLECTION, timeAndVersionBasedRetentionPolicy)
+					new EventSourceRetentionPolicyProvider(COLLECTION, timeAndVersionBasedRetentionPolicy)
 			));
 
 			final Map<String, ExecutionContext> result = retentionPartitioner.partition(0);

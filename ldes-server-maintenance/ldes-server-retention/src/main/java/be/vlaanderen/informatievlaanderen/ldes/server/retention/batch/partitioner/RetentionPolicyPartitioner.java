@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.partitioner;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.LeveledRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.RetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.RetentionPolicyCollection;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RetentionPolicyPartitioner implements Partitioner {
-	private final RetentionPolicyCollection<? extends LeveledRetentionPolicy> retentionPolicyCollection;
+	private final RetentionPolicyCollection<? extends RetentionPolicyProvider> retentionPolicyCollection;
 
-	public RetentionPolicyPartitioner(RetentionPolicyCollection<? extends LeveledRetentionPolicy> retentionPolicyCollection) {
+	public RetentionPolicyPartitioner(RetentionPolicyCollection<? extends RetentionPolicyProvider> retentionPolicyCollection) {
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
@@ -25,7 +25,7 @@ public class RetentionPolicyPartitioner implements Partitioner {
 		);
 	}
 
-	private static Map<String, Object> convertToContextMap(LeveledRetentionPolicy retentionPolicy) {
+	private static Map<String, Object> convertToContextMap(RetentionPolicyProvider retentionPolicy) {
 		return Map.of("name", retentionPolicy.getName(), "retentionPolicy", retentionPolicy.retentionPolicy());
 	}
 }

@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.re
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceLevelRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.context.event.EventListener;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicyCollection<EventSourceLevelRetentionPolicy> {
+public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicyCollection<EventSourceRetentionPolicyProvider> {
 	private final RetentionPolicyFactory retentionPolicyFactory;
-	private final Set<EventSourceLevelRetentionPolicy> retentionPolicies;
+	private final Set<EventSourceRetentionPolicyProvider> retentionPolicies;
 
 	public EventSourceRetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
 		this.retentionPolicyFactory = retentionPolicyFactory;
@@ -21,7 +21,7 @@ public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicy
 	}
 
 	@Override
-	public Set<EventSourceLevelRetentionPolicy> getRetentionPolicies() {
+	public Set<EventSourceRetentionPolicyProvider> getRetentionPolicies() {
 		return Set.copyOf(retentionPolicies);
 	}
 
@@ -44,7 +44,7 @@ public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicy
 		if (!retentionPolicyModels.isEmpty()) {
 			retentionPolicyFactory
 					.extractRetentionPolicy(retentionPolicyModels)
-					.map(retentionPolicy -> new EventSourceLevelRetentionPolicy(collectionName, retentionPolicy))
+					.map(retentionPolicy -> new EventSourceRetentionPolicyProvider(collectionName, retentionPolicy))
 					.ifPresent(retentionPolicies::add);
 		}
 	}

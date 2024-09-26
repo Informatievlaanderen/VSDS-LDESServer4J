@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 
 import java.util.Objects;
 
-public record EventSourceLevelRetentionPolicy(String collectionName,
-                                              RetentionPolicy retentionPolicy) implements LeveledRetentionPolicy {
+public record EventSourceRetentionPolicyProvider(String collectionName,
+                                                 RetentionPolicy retentionPolicy) implements RetentionPolicyProvider {
 
 	@Override
 	public String getName() {
@@ -15,7 +15,7 @@ public record EventSourceLevelRetentionPolicy(String collectionName,
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof EventSourceLevelRetentionPolicy that)) return false;
+		if (!(o instanceof EventSourceRetentionPolicyProvider that)) return false;
 		return Objects.equals(collectionName, that.collectionName);
 	}
 

@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewLevelRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.ViewRetentionPolicyCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
@@ -36,16 +36,16 @@ class ViewRetentionPolicyCollectionTest {
 				.thenReturn(Optional.of(mock(RetentionPolicy.class)));
 
 		assertThat(retentionPolicyCollection.getRetentionPolicies())
-				.map(ViewLevelRetentionPolicy::viewName)
+				.map(ViewRetentionPolicyProvider::viewName)
 				.doesNotContain(viewSpecification.getName());
 		retentionPolicyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
 
 		assertThat(retentionPolicyCollection.getRetentionPolicies())
-				.map(ViewLevelRetentionPolicy::viewName)
+				.map(ViewRetentionPolicyProvider::viewName)
 				.contains(viewSpecification.getName());
 		retentionPolicyCollection.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
 		assertThat(retentionPolicyCollection.getRetentionPolicies())
-				.map(ViewLevelRetentionPolicy::viewName)
+				.map(ViewRetentionPolicyProvider::viewName)
 				.doesNotContain(viewSpecification.getName());
 	}
 
@@ -57,12 +57,12 @@ class ViewRetentionPolicyCollectionTest {
 		when(retentionPolicyFactory.extractRetentionPolicy(viewSpecification))
 				.thenReturn(Optional.of(mock(RetentionPolicy.class)));
 		assertThat(retentionPolicyCollection.getRetentionPolicies()).
-				map(ViewLevelRetentionPolicy::viewName)
+				map(ViewRetentionPolicyProvider::viewName)
 				.doesNotContain(viewSpecification.getName());
 
 		retentionPolicyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
 		assertThat(retentionPolicyCollection.getRetentionPolicies()).
-				map(ViewLevelRetentionPolicy::viewName)
+				map(ViewRetentionPolicyProvider::viewName)
 				.contains(viewSpecification.getName());
 	}
 
