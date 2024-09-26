@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retention
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -15,20 +14,20 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ViewRetentionTask extends RetentionTask<ViewName> {
+public class ViewRetentionTask extends RetentionTask {
 	private static final Logger log = LoggerFactory.getLogger(ViewRetentionTask.class);
 	private final MemberPropertiesRepository memberPropertiesRepository;
 	private final PageMemberRepository pageMemberRepository;
 
-	public ViewRetentionTask(RetentionPolicyCollection<ViewName> retentionPolicyCollection, MemberPropertiesRepository memberPropertiesRepository, PageMemberRepository pageMemberRepository) {
-		super(retentionPolicyCollection);
+	public ViewRetentionTask(MemberPropertiesRepository memberPropertiesRepository, PageMemberRepository pageMemberRepository) {
 		this.memberPropertiesRepository = memberPropertiesRepository;
 		this.pageMemberRepository = pageMemberRepository;
 	}
 
 	@Override
-	protected void removeMembersThatMatchRetentionPolicies(ViewName viewName, RetentionPolicy retentionPolicy) {
-		log.atDebug().log("Start retention for view: {}", viewName.asString());
+	protected void removeMembersThatMatchRetentionPolicies(String name, RetentionPolicy retentionPolicy) {
+		final ViewName viewName = ViewName.fromString(name);
+		log.atDebug().log("Start retention for view: {}", name);
 		List<Long> expiredMemberIds = switch (retentionPolicy.getType()) {
 			case TIME_BASED -> memberPropertiesRepository.findExpiredMembers(viewName,
 					(TimeBasedRetentionPolicy) retentionPolicy);

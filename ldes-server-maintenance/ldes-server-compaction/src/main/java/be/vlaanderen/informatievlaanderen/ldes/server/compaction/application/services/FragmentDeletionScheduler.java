@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.services.RetentionPolicyEmptinessChecker;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class FragmentDeletionScheduler {
 	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
 	public FragmentDeletionScheduler(PageRepository pageRepository,
-	                                 @Qualifier("viewRetentionPolicyCollection") RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
+	                                 RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.pageRepository = pageRepository;
 		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}

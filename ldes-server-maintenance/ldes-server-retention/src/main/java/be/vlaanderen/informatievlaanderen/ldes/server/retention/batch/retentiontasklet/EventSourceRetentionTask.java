@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retention
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -18,18 +17,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class EventSourceRetentionTask extends RetentionTask<String> {
+public class EventSourceRetentionTask extends RetentionTask {
 	private static final Logger log = LoggerFactory.getLogger(EventSourceRetentionTask.class);
 	private final MemberPropertiesRepository memberPropertiesRepository;
 	private final MemberRemover memberRemover;
 
-	public EventSourceRetentionTask(RetentionPolicyCollection<String> retentionPolicyCollection, MemberPropertiesRepository memberPropertiesRepository, MemberRemover memberRemover) {
-		super(retentionPolicyCollection);
+	public EventSourceRetentionTask(MemberPropertiesRepository memberPropertiesRepository, MemberRemover memberRemover) {
 		this.memberPropertiesRepository = memberPropertiesRepository;
 		this.memberRemover = memberRemover;
 	}
 
-	@Override
 	protected void removeMembersThatMatchRetentionPolicies(String collectionName, RetentionPolicy retentionPolicy) {
 		log.atDebug().log("Start retention for event source of collection {}", collectionName);
 		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {

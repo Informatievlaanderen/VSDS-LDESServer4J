@@ -1,48 +1,44 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewLevelRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-@Component(value = "viewRetentionPolicyCollection")
+@Component
 public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCollection {
 
-    private final Map<ViewName, RetentionPolicy> retentionPolicies;
+    private final Set<ViewLevelRetentionPolicy> retentionPolicies;
     private final RetentionPolicyFactory retentionPolicyFactory;
 
     public ViewRetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
         this.retentionPolicyFactory = retentionPolicyFactory;
-        this.retentionPolicies = new HashMap<>();
+        this.retentionPolicies = new HashSet<>();
     }
 
     @EventListener(classes = {ViewInitializationEvent.class, ViewAddedEvent.class})
     public void handleViewAddedEvent(ViewSupplier event) {
-        addToMap(event.viewSpecification());
+        addToCollection(event.viewSpecification());
     }
 
     @EventListener
     public void handleViewDeletedEvent(ViewDeletedEvent event) {
-        retentionPolicies.remove(event.getViewName());
+        retentionPolicies.removeIf(retentionPolicy -> retentionPolicy.viewName().equals(event.getViewName()));
     }
 
     @EventListener
     public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-        retentionPolicies.keySet().stream()
-                .filter(viewName -> viewName.getCollectionName().equals(event.collectionName()))
-                .toList()
-                .forEach(retentionPolicies::remove);
+        retentionPolicies.removeIf(retentionPolicy -> retentionPolicy.viewName().getCollectionName().equals(event.collectionName()));
     }
 
     @Override
-    public Map<ViewName, RetentionPolicy> getRetentionPolicies() {
-        return Map.copyOf(retentionPolicies);
+    public Set<ViewLevelRetentionPolicy> getRetentionPolicies() {
+        return Set.copyOf(retentionPolicies);
     }
 
     @Override
@@ -50,10 +46,11 @@ public class ViewRetentionPolicyCollectionImpl implements ViewRetentionPolicyCol
         return retentionPolicies.isEmpty();
     }
 
-    private void addToMap(ViewSpecification viewSpecification) {
+    private void addToCollection(ViewSpecification viewSpecification) {
         retentionPolicyFactory
                 .extractRetentionPolicy(viewSpecification)
-                .ifPresent(policy -> retentionPolicies.put(viewSpecification.getName(), policy));
+                .map(retentionPolicy -> new ViewLevelRetentionPolicy(viewSpecification.getName(), retentionPolicy))
+                .ifPresent(retentionPolicies::add);
     }
 
 }

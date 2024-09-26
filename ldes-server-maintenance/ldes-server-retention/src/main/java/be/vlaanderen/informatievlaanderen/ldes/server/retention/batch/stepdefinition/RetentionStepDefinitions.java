@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.jobdefinition;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.stepdefinition;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.partitioner.RetentionPolicyPartitioner;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retentiontasklet.EventSourceRetentionTask;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retentiontasklet.ViewRetentionTask;
 import org.springframework.batch.core.Step;
@@ -10,16 +11,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class RetentionJobDefinitions {
+public class RetentionStepDefinitions {
 	public static final String VIEW_RETENTION_STEP = "viewRetention";
 	public static final String EVENT_SOURCE_RETENTION_STEP = "eventSourceRetention";
 
 	@Bean
 	public Step viewRetentionStep(JobRepository jobRepository,
-								  PlatformTransactionManager transactionManager,
+	                              PlatformTransactionManager transactionManager,
+	                              RetentionPolicyPartitioner viewRetentionPolicyPartitioner,
 	                              ViewRetentionTask viewRetentionTask) {
 		return new StepBuilder(VIEW_RETENTION_STEP, jobRepository)
-				.tasklet(viewRetentionTask, transactionManager)
+				.partitioner("viewRetentionPartitionerStep", viewRetentionPolicyPartitioner)
+				.step(new StepBuilder("retentionStep", jobRepository)
+						.tasklet(viewRetentionTask, transactionManager)
+						.build()
+				)
 				.allowStartIfComplete(true)
 				.build();
 	}
@@ -27,9 +33,14 @@ public class RetentionJobDefinitions {
 	@Bean
 	public Step eventSourceRetentionStep(JobRepository jobRepository,
 	                                     PlatformTransactionManager transactionManager,
+	                                     RetentionPolicyPartitioner eventSourceRetentionPolicyPartitioner,
 	                                     EventSourceRetentionTask eventSourceRetentionTask) {
 		return new StepBuilder(EVENT_SOURCE_RETENTION_STEP, jobRepository)
-				.tasklet(eventSourceRetentionTask, transactionManager)
+				.partitioner("eventSourceRetentionPartitionerStep", eventSourceRetentionPolicyPartitioner)
+				.step(new StepBuilder("retentionStep", jobRepository)
+						.tasklet(eventSourceRetentionTask, transactionManager)
+						.build()
+				)
 				.allowStartIfComplete(true)
 				.build();
 	}

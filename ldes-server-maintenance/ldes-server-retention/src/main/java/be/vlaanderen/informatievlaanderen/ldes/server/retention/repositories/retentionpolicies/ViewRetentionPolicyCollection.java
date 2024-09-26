@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.services.RetentionPolicyEmptinessChecker;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.ViewLevelRetentionPolicy;
 
-public interface ViewRetentionPolicyCollection extends RetentionPolicyCollection<ViewName> {
+public interface ViewRetentionPolicyCollection extends RetentionPolicyCollection<ViewLevelRetentionPolicy>, RetentionPolicyEmptinessChecker {
 }

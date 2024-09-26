@@ -2,52 +2,50 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.re
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceLevelRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicyCollection<String> {
+public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicyCollection<EventSourceLevelRetentionPolicy> {
 	private final RetentionPolicyFactory retentionPolicyFactory;
-	private final Map<String, RetentionPolicy> retentionPolicies;
+	private final Set<EventSourceLevelRetentionPolicy> retentionPolicies;
 
 	public EventSourceRetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
 		this.retentionPolicyFactory = retentionPolicyFactory;
-		retentionPolicies = new HashMap<>();
+		retentionPolicies = new HashSet<>();
 	}
 
 	@Override
-	public Map<String, RetentionPolicy> getRetentionPolicies() {
-		return Map.copyOf(retentionPolicies);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return retentionPolicies.isEmpty();
+	public Set<EventSourceLevelRetentionPolicy> getRetentionPolicies() {
+		return Set.copyOf(retentionPolicies);
 	}
 
 	@EventListener
 	public void handleDeletionPolicyChangedEvent(DeletionPolicyChangedEvent event) {
-		retentionPolicies.remove(event.collectionName());
-		addToMap(event.collectionName(), event.retentionPolicies());
+		removeFromCollection(event.collectionName());
+		addToCollection(event.collectionName(), event.retentionPolicies());
 	}
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		retentionPolicies.remove(event.collectionName());
+		removeFromCollection(event.collectionName());
 	}
 
-	private void addToMap(String collectionName, List<Model> retentionPolicyModels) {
+	private void removeFromCollection(String collectionName) {
+		retentionPolicies.removeIf(policy -> policy.collectionName().equals(collectionName));
+	}
+
+	private void addToCollection(String collectionName, List<Model> retentionPolicyModels) {
 		if (!retentionPolicyModels.isEmpty()) {
 			retentionPolicyFactory
 					.extractRetentionPolicy(retentionPolicyModels)
-					.ifPresent(policy -> retentionPolicies.put(collectionName, policy));
+					.map(retentionPolicy -> new EventSourceLevelRetentionPolicy(collectionName, retentionPolicy))
+					.ifPresent(retentionPolicies::add);
 		}
 	}
 }

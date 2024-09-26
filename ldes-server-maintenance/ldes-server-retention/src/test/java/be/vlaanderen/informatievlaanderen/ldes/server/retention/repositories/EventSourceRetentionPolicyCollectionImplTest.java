@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceLevelRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.EventSourceRetentionPolicyCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
@@ -41,7 +42,8 @@ class EventSourceRetentionPolicyCollectionImplTest {
 		deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
 
 		assertThat(deletionPolicyCollection.getRetentionPolicies())
-				.containsKey(COLLECTION_NAME);
+				.map(EventSourceLevelRetentionPolicy::collectionName)
+				.contains(COLLECTION_NAME);
 	}
 
 	@Test
@@ -55,6 +57,7 @@ class EventSourceRetentionPolicyCollectionImplTest {
 		deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
 
 		assertThat(deletionPolicyCollection.getRetentionPolicies())
-				.doesNotContainKey(COLLECTION_NAME);
+				.map(EventSourceLevelRetentionPolicy::collectionName)
+				.doesNotContain(COLLECTION_NAME);
 	}
 }
