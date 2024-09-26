@@ -21,6 +21,8 @@ public record EventSourceRetentionPolicyProvider(String collectionName,
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(collectionName);
+		int result = 17;
+		result = 31 * result + Objects.hashCode(collectionName);
+		return result;
 	}
 }

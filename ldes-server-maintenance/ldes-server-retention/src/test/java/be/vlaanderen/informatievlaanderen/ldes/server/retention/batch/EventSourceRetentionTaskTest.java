@@ -4,6 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.batch.retentiont
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution.MemberRemover;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class EventSourceRetentionTaskTest {
 	private MemberRemover memberRemover;
 	@InjectMocks
 	private EventSourceRetentionTask eventSourceRetentionTask;
-	
+
 	@BeforeEach
 	void setUp() {
 		when(stepExecution.getExecutionContext()).thenReturn(executionContext);
@@ -70,6 +72,33 @@ class EventSourceRetentionTaskTest {
 
 		verifyNoInteractions(memberRemover);
 		assertThat(returnedRepeatStatus).isEqualTo(RepeatStatus.FINISHED);
+	}
+
+	@Test
+	void when_Execute_then_UseRightPolicy() {
+		final String collection1 = COLLECTION + "1";
+		final String collection2 = COLLECTION + "2";
+		final String collection3 = COLLECTION + "3";
+		var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
+		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(1);
+		var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
+
+		when(executionContext.get("retentionPolicy"))
+				.thenReturn(timeBasedRetentionPolicy)
+				.thenReturn(versionBasedRetentionPolicy)
+				.thenReturn(timeAndVersionBasedRetentionPolicy);
+		when(executionContext.getString("name"))
+				.thenReturn(collection1)
+				.thenReturn(collection2)
+				.thenReturn(collection3);
+
+		for (int i = 0; i < 3; i++) {
+			eventSourceRetentionTask.execute(mock(), new ChunkContext(new StepContext(stepExecution)));
+		}
+
+		verify(memberPropertiesRepository).retrieveExpiredMembers(collection1, timeBasedRetentionPolicy);
+		verify(memberPropertiesRepository).retrieveExpiredMembers(collection2, versionBasedRetentionPolicy);
+		verify(memberPropertiesRepository).retrieveExpiredMembers(collection3, timeAndVersionBasedRetentionPolicy);
 	}
 
 	private MemberProperties createMemberProperties(long memberId, int plusDays, boolean inView) {

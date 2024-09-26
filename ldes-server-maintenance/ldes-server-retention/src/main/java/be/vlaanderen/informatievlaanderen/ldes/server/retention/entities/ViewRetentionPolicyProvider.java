@@ -21,6 +21,8 @@ public record ViewRetentionPolicyProvider(ViewName viewName, RetentionPolicy ret
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(viewName);
+		int result = 17;
+		result = 31 * result + Objects.hashCode(viewName);
+		return result;
 	}
 }
