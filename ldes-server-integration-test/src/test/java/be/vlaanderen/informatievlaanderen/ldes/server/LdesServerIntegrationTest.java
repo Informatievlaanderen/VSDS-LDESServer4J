@@ -30,7 +30,6 @@ import javax.sql.DataSource;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES,
-		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD,
 		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = { MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class })

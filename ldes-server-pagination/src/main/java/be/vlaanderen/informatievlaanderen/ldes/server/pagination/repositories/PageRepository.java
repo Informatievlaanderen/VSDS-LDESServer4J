@@ -6,13 +6,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 public interface PageRepository {
 	Page getOpenPage(long bucketId);
 	Page createNextPage(Page parentPage);
     void markAllPagesImmutableByCollectionName(String collectionName);
-    Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);
+    List<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);
     void deleteOutdatedFragments(LocalDateTime deleteTime);
     void setDeleteTime(List<Long> ids, LocalDateTime deleteTime);
 }

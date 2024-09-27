@@ -8,40 +8,58 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class RetentionStepDefinitions {
-	public static final String VIEW_RETENTION_STEP = "viewRetention";
-	public static final String EVENT_SOURCE_RETENTION_STEP = "eventSourceRetention";
+	public static final String VIEW_RETENTION_STEP = "partitionedViewRetentionStep";
+	public static final String EVENT_SOURCE_RETENTION_STEP = "eventSourceRetentionStep";
+	private static final String SINGLE_VIEW_RETENTION_STEP = "viewRetentionStep";
+	private static final String SINGLE_VIEW_PARTITIONER = "viewRetentionPartitioner";
+	private static final String SINGLE_COLLECTION_RETENTION_STEP = "singleEventSourceRetentionStep";
+	private static final String SINGLE_COLLECTION_PARTITIONER = "singleEventSourceRetentionPartitioner";
 
 	@Bean
 	public Step viewRetentionStep(JobRepository jobRepository,
-	                              PlatformTransactionManager transactionManager,
 	                              RetentionPolicyPartitioner viewRetentionPolicyPartitioner,
-	                              ViewRetentionTask viewRetentionTask) {
+	                              ViewRetentionTask viewRetentionTask,
+								  TaskExecutor viewRetentionExecutor,
+	                              PlatformTransactionManager transactionManager) {
 		return new StepBuilder(VIEW_RETENTION_STEP, jobRepository)
-				.partitioner("viewRetentionPartitionerStep", viewRetentionPolicyPartitioner)
-				.step(new StepBuilder("retentionStep", jobRepository)
+				.partitioner(SINGLE_VIEW_PARTITIONER, viewRetentionPolicyPartitioner)
+				.step(new StepBuilder(SINGLE_VIEW_RETENTION_STEP, jobRepository)
 						.tasklet(viewRetentionTask, transactionManager)
 						.build()
 				)
-				.allowStartIfComplete(true)
+				.taskExecutor(viewRetentionExecutor)
 				.build();
 	}
 
 	@Bean
+	public TaskExecutor viewRetentionExecutor() {
+		return new SimpleAsyncTaskExecutor("view_retention_batch");
+	}
+
+	@Bean
 	public Step eventSourceRetentionStep(JobRepository jobRepository,
-	                                     PlatformTransactionManager transactionManager,
 	                                     RetentionPolicyPartitioner eventSourceRetentionPolicyPartitioner,
-	                                     EventSourceRetentionTask eventSourceRetentionTask) {
+	                                     EventSourceRetentionTask eventSourceRetentionTask,
+										 TaskExecutor eventSourceRetentionExecutor,
+	                                     PlatformTransactionManager transactionManager) {
 		return new StepBuilder(EVENT_SOURCE_RETENTION_STEP, jobRepository)
-				.partitioner("eventSourceRetentionPartitionerStep", eventSourceRetentionPolicyPartitioner)
-				.step(new StepBuilder("retentionStep", jobRepository)
+				.partitioner(SINGLE_COLLECTION_PARTITIONER, eventSourceRetentionPolicyPartitioner)
+				.step(new StepBuilder(SINGLE_COLLECTION_RETENTION_STEP, jobRepository)
 						.tasklet(eventSourceRetentionTask, transactionManager)
 						.build()
 				)
-				.allowStartIfComplete(true)
+				.taskExecutor(eventSourceRetentionExecutor)
 				.build();
+	}
+
+	@Bean
+	public TaskExecutor eventSourceRetentionExecutor() {
+		return new SimpleAsyncTaskExecutor("event_source_retention_batch");
 	}
 }

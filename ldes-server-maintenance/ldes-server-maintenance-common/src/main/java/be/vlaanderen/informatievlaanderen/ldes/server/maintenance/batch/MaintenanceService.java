@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.exceptions.MaintenanceJobException;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.services.RetentionPolicyEmptinessChecker;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -21,17 +22,24 @@ public class MaintenanceService {
 	private final JobLauncher jobLauncher;
 	private final JobExplorer jobExplorer;
 	private final Job maintenanceJob;
+	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
 	public MaintenanceService(JobLauncher jobLauncher,
 	                          JobExplorer jobExplorer,
-	                          Job maintenanceJob) {
+	                          Job maintenanceJob,
+	                          RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.maintenanceJob = maintenanceJob;
+		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
 
+	//TODO: change cron key
 	@Scheduled(cron = RETENTION_CRON_KEY)
 	public void scheduleMaintenanceJob() {
+		if(retentionPolicyEmptinessChecker.isEmpty()) {
+			return;
+		}
 		try {
 			if(hasNoJobsRunning()) {
 				jobLauncher.run(maintenanceJob, new JobParametersBuilder()

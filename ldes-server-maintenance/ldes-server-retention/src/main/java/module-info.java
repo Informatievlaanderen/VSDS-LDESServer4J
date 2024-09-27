@@ -8,4 +8,5 @@ open module ldes.server.retention {
     requires spring.batch.infrastructure;
     requires ldes.server.maintenance.common;
     requires spring.tx;
+	requires spring.core;
 }
