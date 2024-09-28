@@ -20,12 +20,11 @@ public class RetentionPolicyPartitioner implements Partitioner {
 		return retentionPolicyCollection.getRetentionPolicies().stream().collect(
 				Collectors.toMap(
 						retentionPolicy -> "retention:%s".formatted(retentionPolicy.getName()),
-						retentionPolicy -> new ExecutionContext(convertToContextMap(retentionPolicy))
+						retentionPolicy -> new ExecutionContext(Map.of(
+								"name", retentionPolicy.getName(),
+								"retentionPolicy", retentionPolicy.retentionPolicy()
+						))
 				)
 		);
-	}
-
-	private static Map<String, Object> convertToContextMap(RetentionPolicyProvider retentionPolicy) {
-		return Map.of("name", retentionPolicy.getName(), "retentionPolicy", retentionPolicy.retentionPolicy());
 	}
 }
