@@ -46,11 +46,11 @@ class ViewCapacityPartitionerTest {
 				.hasSize(3)
 				.containsAllEntriesOf(Map.of(
 						"view:%s".formatted(VIEW_A.asString()),
-						new ExecutionContext(Map.of("viewName", VIEW_A, "capacityPerPage", capacityA)),
+						new ExecutionContext(Map.of("viewName", VIEW_A.asString(), "capacityPerPage", capacityA)),
 						"view:%s".formatted(VIEW_B.asString()),
-						new ExecutionContext(Map.of("viewName", VIEW_B, "capacityPerPage", capacityB)),
+						new ExecutionContext(Map.of("viewName", VIEW_B.asString(), "capacityPerPage", capacityB)),
 						"view:%s".formatted(VIEW_C.asString()),
-						new ExecutionContext(Map.of("viewName", VIEW_C, "capacityPerPage", capacityC))
+						new ExecutionContext(Map.of("viewName", VIEW_C.asString(), "capacityPerPage", capacityC))
 				));
 	}
 }
