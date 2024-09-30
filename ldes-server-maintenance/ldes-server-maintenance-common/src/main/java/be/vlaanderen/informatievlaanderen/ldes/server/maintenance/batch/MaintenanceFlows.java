@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.valueobjects.DecidedFlowExecutionStatus;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.builder.FlowJobBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
@@ -13,18 +13,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MaintenanceJobDefinition {
+public class MaintenanceFlows {
 	public static final String MAINTENANCE_JOB = "maintenance";
 
 	@Bean
-	public Job maintenanceJob(JobRepository jobRepository,
-							  Flow viewRetentionFlow,
-	                          Flow eventSourceRetentionFlow) {
+	public FlowJobBuilder maintenanceJobBuilder(JobRepository jobRepository,
+	                                            Flow viewRetentionFlow,
+	                                            Flow eventSourceRetentionFlow) {
 		return new JobBuilder(MAINTENANCE_JOB, jobRepository)
 				.start(viewRetentionFlow)
 				.next(eventSourceRetentionFlow)
-				.end()
-				.build();
+				.end();
 	}
 
 	@Bean

@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.*;
+import org.springframework.batch.core.job.builder.FlowJobBuilder;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.batch.core.repository.JobRepository;
@@ -30,13 +32,15 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBatchTest
-@SpringBootTest(classes = {MaintenanceJobDefinition.class})
+@SpringBootTest(classes = {MaintenanceFlows.class})
 @EnableAutoConfiguration
 @Import(MaintenanceJobDefinitionTest.TestSteps.class)
 @TestPropertySource(properties = "spring.batch.job.enabled=false")
 class MaintenanceJobDefinitionTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
+	@Autowired
+	private FlowJobBuilder maintenanceJobBuilder;
 	@SpyBean(name = "viewRetentionStep")
 	Step viewRetentionStep;
 	@SpyBean(name = "compactionStep")
@@ -51,6 +55,10 @@ class MaintenanceJobDefinitionTest {
 	@MockBean(name = "eventSourceRetentionExecutionDecider")
 	private JobExecutionDecider eventSourceRetentionExecutionDecider;
 
+	@BeforeEach
+	void setUp() {
+		jobLauncherTestUtils.setJob(maintenanceJobBuilder.build());
+	}
 
 	@Test
 	void given_EventSourceRetentionShouldBeSkipped_when_Execute_then_VerifyNoEventSourceRetentionStepInteraction() throws Exception {
