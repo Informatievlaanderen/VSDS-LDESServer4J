@@ -24,11 +24,10 @@ public class CompactionTask implements Tasklet {
 		this.compactionDbWriter = compactionDbWriter;
 	}
 
-
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 		final ExecutionContext executionContext = chunkContext.getStepContext().getStepExecution().getExecutionContext();
-		final ViewName viewName = extractViewName(executionContext);
+		final ViewName viewName = ViewName.fromString(executionContext.getString("viewName"));
 		final int capacityPerPage = executionContext.getInt("capacityPerPage");
 
 		final List<CompactionCandidate> compactionCandidates = pageRepository.getPossibleCompactionCandidates(viewName, capacityPerPage);
@@ -38,13 +37,5 @@ public class CompactionTask implements Tasklet {
 				.forEach(compactionDbWriter::writeToDb);
 
 		return RepeatStatus.FINISHED;
-	}
-
-
-	private ViewName extractViewName(ExecutionContext executionContext) {
-		return switch (executionContext.get("viewName")) {
-			case ViewName viewName -> viewName;
-			case null, default -> throw new IllegalArgumentException("viewName must be an instance of 'ViewName'");
-		};
 	}
 }

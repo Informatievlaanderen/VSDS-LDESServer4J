@@ -56,7 +56,7 @@ class CompactionTaskTest {
 				.collect(Collectors.toMap(Function.identity(), i -> Set.copyOf(new HashSet<CompactionCandidate>())))
 				.values();
 
-		when(executionContext.get("viewName")).thenReturn(viewName);
+		when(executionContext.getString("viewName")).thenReturn(viewName.asString());
 		when(executionContext.getInt("capacityPerPage")).thenReturn(capacityPerPage);
 		when(pageRepository.getPossibleCompactionCandidates(viewName, capacityPerPage)).thenReturn(candidates);
 		when(compactionCandidateSorter.getCompactionCandidateList(candidates, capacityPerPage)).thenReturn(taskList);

@@ -25,7 +25,7 @@ public class RetentionStepDefinitions {
 	public Step viewRetentionStep(JobRepository jobRepository,
 	                              RetentionPolicyPartitioner viewRetentionPolicyPartitioner,
 	                              ViewRetentionTask viewRetentionTask,
-								  TaskExecutor viewRetentionExecutor,
+	                              TaskExecutor viewRetentionExecutor,
 	                              PlatformTransactionManager transactionManager) {
 		return new StepBuilder(VIEW_RETENTION_STEP, jobRepository)
 				.partitioner(SINGLE_VIEW_PARTITIONER, viewRetentionPolicyPartitioner)
@@ -46,7 +46,7 @@ public class RetentionStepDefinitions {
 	public Step eventSourceRetentionStep(JobRepository jobRepository,
 	                                     RetentionPolicyPartitioner eventSourceRetentionPolicyPartitioner,
 	                                     EventSourceRetentionTask eventSourceRetentionTask,
-										 TaskExecutor eventSourceRetentionExecutor,
+	                                     TaskExecutor eventSourceRetentionExecutor,
 	                                     PlatformTransactionManager transactionManager) {
 		return new StepBuilder(EVENT_SOURCE_RETENTION_STEP, jobRepository)
 				.partitioner(SINGLE_COLLECTION_PARTITIONER, eventSourceRetentionPolicyPartitioner)

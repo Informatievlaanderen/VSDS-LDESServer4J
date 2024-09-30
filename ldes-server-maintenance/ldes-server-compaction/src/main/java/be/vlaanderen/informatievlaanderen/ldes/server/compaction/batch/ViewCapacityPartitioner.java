@@ -22,7 +22,7 @@ public class ViewCapacityPartitioner implements Partitioner {
 				.collect(Collectors.toMap(
 						viewCapacity -> "view:%s".formatted(viewCapacity.getViewName().asString()),
 						viewCapacity -> new ExecutionContext(Map.of(
-								"viewName", viewCapacity.getViewName(),
+								"viewName", viewCapacity.getViewName().asString(),
 								"capacityPerPage", viewCapacity.getCapacityPerPage()
 						))
 				));

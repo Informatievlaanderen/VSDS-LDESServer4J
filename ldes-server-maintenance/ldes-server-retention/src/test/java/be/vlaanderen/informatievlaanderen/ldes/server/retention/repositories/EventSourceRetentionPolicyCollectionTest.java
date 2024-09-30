@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceRetentionPolicyProvider;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.EventSourceRetentionPolicyCollectionImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.EventSourceRetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
@@ -21,16 +21,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class EventSourceRetentionPolicyCollectionImplTest {
+class EventSourceRetentionPolicyCollectionTest {
 	private static final String COLLECTION_NAME = "collectionName";
 	private List<Model> retentionPolicies;
 	@Mock
 	private RetentionPolicyFactory retentionPolicyFactory;
-	private EventSourceRetentionPolicyCollectionImpl deletionPolicyCollection;
+	private EventSourceRetentionPolicyCollection deletionPolicyCollection;
 
 	@BeforeEach
 	void setUp() {
-		deletionPolicyCollection = new EventSourceRetentionPolicyCollectionImpl(retentionPolicyFactory);
+		deletionPolicyCollection = new EventSourceRetentionPolicyCollection(retentionPolicyFactory);
 	}
 
 	@Test

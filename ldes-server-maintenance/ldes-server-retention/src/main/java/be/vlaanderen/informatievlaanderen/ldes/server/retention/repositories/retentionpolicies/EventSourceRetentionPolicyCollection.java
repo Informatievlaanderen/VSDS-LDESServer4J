@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicyCollection<EventSourceRetentionPolicyProvider> {
+public class EventSourceRetentionPolicyCollection implements RetentionPolicyCollection<EventSourceRetentionPolicyProvider> {
 	private final RetentionPolicyFactory retentionPolicyFactory;
 	private final Set<EventSourceRetentionPolicyProvider> retentionPolicies;
 
-	public EventSourceRetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
+	public EventSourceRetentionPolicyCollection(RetentionPolicyFactory retentionPolicyFactory) {
 		this.retentionPolicyFactory = retentionPolicyFactory;
 		retentionPolicies = new HashSet<>();
 	}
@@ -23,6 +23,11 @@ public class EventSourceRetentionPolicyCollectionImpl implements RetentionPolicy
 	@Override
 	public Set<EventSourceRetentionPolicyProvider> getRetentionPolicies() {
 		return Set.copyOf(retentionPolicies);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return retentionPolicies.isEmpty();
 	}
 
 	@EventListener
