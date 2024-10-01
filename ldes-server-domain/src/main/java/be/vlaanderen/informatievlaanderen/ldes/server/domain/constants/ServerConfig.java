@@ -12,9 +12,7 @@ public class ServerConfig {
 	private static final String DEFAULT_USE_RELATIVE_URL = "false";
 	private static final String DEFAULT_MAX_JSONLD_CACHE_CAPACITY = "100";
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
-	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_BACKGROUND_CRON + "}";
-	public static final String DELETION_CRON_KEY = "${ldes-server.deletion-cron:" + DEFAULT_BACKGROUND_CRON + "}";
-	public static final String COMPACTION_CRON_KEY = "${ldes-server.compaction-cron:" + DEFAULT_BACKGROUND_CRON + "}";
+	public static final String MAINTENANCE_CRON_KEY = "${ldes-server.maintenance-cron: " + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String FRAGMENTATION_CRON = "${ldes-server.fragmentation-cron:" + DEFAULT_FRAGMENTATION_CRON + "}";
 	public static final String USE_RELATIVE_URL_KEY = "${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}";
 	public static final String MAX_JSONLD_CACHE_CAPACITY = "${ldes-server.max-jsonld-cache-capacity:" + DEFAULT_MAX_JSONLD_CACHE_CAPACITY + "}";
@@ -22,9 +20,8 @@ public class ServerConfig {
 
 	private String hostName;
 	private String compactionDuration;
-	private String retentionCron;
-	private String deletionCron;
-	private String compactionCron;
+	private String maintenanceCron;
+	private String fragmentationCron;
 	private Boolean useRelativeUrl;
 	private Integer maxJsonldCacheCapacity;
 
@@ -36,16 +33,12 @@ public class ServerConfig {
 		return compactionDuration != null ? compactionDuration : DEFAULT_COMPACTION_DURATION;
 	}
 
-	public String getRetentionCron() {
-		return retentionCron != null ? retentionCron : DEFAULT_BACKGROUND_CRON;
+	public String getMaintenanceCron() {
+		return maintenanceCron != null ? maintenanceCron : DEFAULT_BACKGROUND_CRON;
 	}
 
-	public String getDeletionCron() {
-		return deletionCron != null ? deletionCron : DEFAULT_BACKGROUND_CRON;
-	}
-
-	public String getCompactionCron() {
-		return compactionCron != null ? compactionCron : DEFAULT_BACKGROUND_CRON;
+	public String getFragmentationCron() {
+		return fragmentationCron != null ? fragmentationCron : DEFAULT_FRAGMENTATION_CRON;
 	}
 
 	public Boolean getUseRelativeUrl() {
@@ -64,16 +57,12 @@ public class ServerConfig {
 		this.compactionDuration = compactionDuration;
 	}
 
-	public void setRetentionCron(String retentionCron) {
-		this.retentionCron = retentionCron;
+	public void setMaintenanceCron(String maintenanceCron) {
+		this.maintenanceCron = maintenanceCron;
 	}
 
-	public void setDeletionCron(String deletionCron) {
-		this.deletionCron = deletionCron;
-	}
-
-	public void setCompactionCron(String compactionCron) {
-		this.compactionCron = compactionCron;
+	public void setFragmentationCron(String fragmentationCron) {
+		this.fragmentationCron = fragmentationCron;
 	}
 
 	public void setUseRelativeUrl(Boolean useRelativeUrl) {

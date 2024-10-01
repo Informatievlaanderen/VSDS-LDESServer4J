@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_CRON_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.MAINTENANCE_CRON_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch.MaintenanceFlows.MAINTENANCE_JOB;
 
 @Service
@@ -31,8 +31,7 @@ public class MaintenanceService {
 		this.maintenanceJob = maintenanceJobBuilder.build();
 	}
 
-	//TODO: change cron key
-	@Scheduled(cron = RETENTION_CRON_KEY)
+	@Scheduled(cron = MAINTENANCE_CRON_KEY)
 	public void scheduleMaintenanceJob() {
 		try {
 			if (hasNoJobsRunning()) {
