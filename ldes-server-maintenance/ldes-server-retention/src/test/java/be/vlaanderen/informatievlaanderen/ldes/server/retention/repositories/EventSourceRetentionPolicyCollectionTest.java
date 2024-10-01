@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.EventSourceRetentionPolicyProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.retentionpolicies.EventSourceRetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
@@ -59,5 +60,25 @@ class EventSourceRetentionPolicyCollectionTest {
 		assertThat(deletionPolicyCollection.getRetentionPolicies())
 				.map(EventSourceRetentionPolicyProvider::collectionName)
 				.doesNotContain(COLLECTION_NAME);
+	}
+
+	@Test
+	void when_SavePoliciesAreEmpty_Then_PoliciesAreRemovedByCollection() {
+		retentionPolicies = List.of(ModelFactory.createDefaultModel());
+
+		deletionPolicyCollection.handleDeletionPolicyChangedEvent(new DeletionPolicyChangedEvent(COLLECTION_NAME, retentionPolicies));
+
+		retentionPolicies = List.of();
+
+		deletionPolicyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+
+		assertThat(deletionPolicyCollection.getRetentionPolicies())
+				.map(EventSourceRetentionPolicyProvider::collectionName)
+				.doesNotContain(COLLECTION_NAME);
+	}
+
+	@Test
+	void test_IsEmpty() {
+		assertThat(deletionPolicyCollection.isEmpty()).isTrue();
 	}
 }

@@ -21,7 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -35,14 +34,13 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {MaintenanceFlows.class})
 @EnableAutoConfiguration
 @Import(MaintenanceJobDefinitionTest.TestSteps.class)
-@TestPropertySource(properties = "spring.batch.job.enabled=false")
 class MaintenanceJobDefinitionTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 	@Autowired
 	private FlowJobBuilder maintenanceJobBuilder;
 	@SpyBean(name = "viewRetentionStep")
-	Step viewRetentionStep;
+	private Step viewRetentionStep;
 	@SpyBean(name = "compactionStep")
 	private Step compactionStep;
 	@SpyBean(name = "deletionStep")
