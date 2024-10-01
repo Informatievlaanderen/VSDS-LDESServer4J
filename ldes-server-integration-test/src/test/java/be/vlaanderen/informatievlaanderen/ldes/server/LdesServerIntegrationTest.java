@@ -36,7 +36,7 @@ import javax.sql.DataSource;
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @TestPropertySource(properties = {
 		"ldes-server.fragmentation-cron=*/1 * * * * *",
-		"ldes-server.maintenance-cron=-cron=*/10 * * * * *",
+		"ldes-server.maintenance-cron=*/10 * * * * *",
 		"ldes-server.compaction-duration=PT1S"
 })
 @SuppressWarnings("java:S2187")
