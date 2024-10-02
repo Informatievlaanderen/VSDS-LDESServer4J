@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CompactionCandidateSorterTest {
-	private final CompactionCandidateSorter service = new CompactionCandidateSorter();
 
 	private static final List<CompactionCandidate> compactableCandidates = List.of(
 			new CompactionCandidate(1L, 2, 2L, 1L, "/ex/p"),
@@ -23,12 +22,13 @@ class CompactionCandidateSorterTest {
 
 	@Test
 	void testGetCompactionTaskList() {
-		final Collection<Set<CompactionCandidate>> taskList = service.getCompactionCandidateList(compactableCandidates, 10);
+		final Collection<Set<CompactionCandidate>> taskList = new CompactionCandidateSorter()
+				.getSortedCompactionCandidates(compactableCandidates, 10);
 
 		assertThat(taskList)
 				.hasSize(2)
 				.allSatisfy(set -> assertThat(set).hasSize(2))
-				.map(set -> set.stream().map(CompactionCandidate::getId).toList())
+				.map(set -> set.stream().map(CompactionCandidate::getId).sorted().toList())
 				.containsExactlyInAnyOrder(List.of(1L, 2L), List.of(4L, 5L));
 	}
 }

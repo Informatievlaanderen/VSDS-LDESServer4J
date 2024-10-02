@@ -135,7 +135,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   <tr><td colspan="4"><b>Maintenance</b></td></tr>
   <tr>
     <td>ldes-server.maintenance-cron</td>
-    <td>Defines how often the maintenance job will run, which includes <a href="./configuration/retention-policies">retention</a>, compaction and deletion<sup>3</sup></td>
+    <td>Defines how often the maintenance job will run, which includes <a href="./features/retention-policies">retention</a>, <a href="./features/compaction">compaction and deletion</a><sup>3</sup></td>
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>

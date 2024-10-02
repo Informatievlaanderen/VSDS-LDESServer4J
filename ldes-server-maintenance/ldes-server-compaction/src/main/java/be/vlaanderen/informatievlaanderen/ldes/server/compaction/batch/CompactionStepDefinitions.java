@@ -12,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class CompactionStepDefinitions {
-	public static final String COMPACTION_STEP = "partitionedCompactionStep";
+	public static final String COMPACTION_STEP = "compactionStep";
 	public static final String SINGLE_VIEW_COMPACTION_STEP = "singleViewCompactionStep";
 	public static final String SINGLE_VIEW_COMPACTION_PARTITIONER = "singleViewCompactionPartitioner";
 	public static final String DELETION_STEP = "deletionStep";

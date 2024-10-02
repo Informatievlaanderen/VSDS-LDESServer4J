@@ -16,12 +16,12 @@ import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
-class CompactionDbWriterTest {
+class CompactionWriterTest {
 	private PageRelationRepository pageRelationRepository;
 	private PageMemberRepository pageMemberRepository;
 	private CompactedFragmentCreator compactedFragmentCreator;
 	private PageDeletionTimeSetter pageDeletionTimeSetter;
-	private CompactionDbWriter compactionDbWriter;
+	private CompactionWriter compactionWriter;
 
 	@BeforeEach
 	void setUp() {
@@ -29,7 +29,7 @@ class CompactionDbWriterTest {
 		pageMemberRepository = mock();
 		compactedFragmentCreator = mock();
 		pageDeletionTimeSetter = mock();
-		compactionDbWriter = new CompactionDbWriter(pageRelationRepository, pageMemberRepository, compactedFragmentCreator, pageDeletionTimeSetter, ObservationRegistry.NOOP);
+		compactionWriter = new CompactionWriter(pageRelationRepository, pageMemberRepository, compactedFragmentCreator, pageDeletionTimeSetter, ObservationRegistry.NOOP);
 	}
 
 	@Test
@@ -39,7 +39,7 @@ class CompactionDbWriterTest {
 		final Set<CompactionCandidate> candidates = createCompactionCandidates();
 		when(compactedFragmentCreator.createCompactedPage(candidates)).thenReturn(newId);
 
-		compactionDbWriter.writeToDb(candidates);
+		compactionWriter.write(candidates);
 
 		InOrder inOrder = inOrder(compactedFragmentCreator, pageMemberRepository, pageRelationRepository, pageDeletionTimeSetter);
 		inOrder.verify(compactedFragmentCreator).createCompactedPage(candidates);

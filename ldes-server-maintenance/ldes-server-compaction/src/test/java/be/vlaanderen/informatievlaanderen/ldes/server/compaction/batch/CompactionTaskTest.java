@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateSorter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
@@ -14,12 +15,8 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.item.ExecutionContext;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.*;
@@ -31,7 +28,7 @@ class CompactionTaskTest {
 	@Mock
 	private CompactionCandidateSorter compactionCandidateSorter;
 	@Mock
-	private CompactionDbWriter compactionDbWriter;
+	private CompactionWriter compactionWriter;
 	@Mock
 	private StepExecution stepExecution;
 	@Mock
@@ -51,20 +48,20 @@ class CompactionTaskTest {
 		final List<CompactionCandidate> candidates = IntStream.range(0, 5)
 				.mapToObj(i -> mock(CompactionCandidate.class))
 				.toList();
-		final Collection<Set<CompactionCandidate>> taskList = IntStream.range(0, 5)
+		final List<Set<CompactionCandidate>> taskList = IntStream.range(0, 5)
 				.boxed()
-				.collect(Collectors.toMap(Function.identity(), i -> Set.copyOf(new HashSet<CompactionCandidate>())))
-				.values();
+				.map(i -> Set.<CompactionCandidate>of())
+				.toList();
 
 		when(executionContext.getString("viewName")).thenReturn(viewName.asString());
 		when(executionContext.getInt("capacityPerPage")).thenReturn(capacityPerPage);
 		when(pageRepository.getPossibleCompactionCandidates(viewName, capacityPerPage)).thenReturn(candidates);
-		when(compactionCandidateSorter.getCompactionCandidateList(candidates, capacityPerPage)).thenReturn(taskList);
+		when(compactionCandidateSorter.getSortedCompactionCandidates(candidates, capacityPerPage)).thenReturn(taskList);
 
 		compactionTask.execute(mock(), new ChunkContext(new StepContext(stepExecution)));
 
 		verify(pageRepository).getPossibleCompactionCandidates(viewName, capacityPerPage);
-		verify(compactionCandidateSorter).getCompactionCandidateList(candidates, capacityPerPage);
-		verify(compactionDbWriter, times(taskList.size())).writeToDb(anySet());
+		verify(compactionCandidateSorter).getSortedCompactionCandidates(candidates, capacityPerPage);
+		verify(compactionWriter, times(taskList.size())).write(anySet());
 	}
 }

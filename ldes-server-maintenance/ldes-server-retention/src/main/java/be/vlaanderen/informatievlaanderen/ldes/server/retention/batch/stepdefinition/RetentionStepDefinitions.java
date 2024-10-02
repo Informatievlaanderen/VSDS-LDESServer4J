@@ -14,12 +14,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class RetentionStepDefinitions {
-	public static final String VIEW_RETENTION_STEP = "partitionedViewRetentionStep";
+	public static final String VIEW_RETENTION_STEP = "viewRetentionStep";
 	public static final String EVENT_SOURCE_RETENTION_STEP = "eventSourceRetentionStep";
-	private static final String SINGLE_VIEW_RETENTION_STEP = "viewRetentionStep";
-	private static final String SINGLE_VIEW_PARTITIONER = "viewRetentionPartitioner";
+	private static final String SINGLE_VIEW_RETENTION_STEP = "singleViewRetentionStep";
 	private static final String SINGLE_COLLECTION_RETENTION_STEP = "singleEventSourceRetentionStep";
-	private static final String SINGLE_COLLECTION_PARTITIONER = "singleEventSourceRetentionPartitioner";
+	private static final String VIEW_PARTITIONER = "viewRetentionPartitioner";
+	private static final String COLLECTION_PARTITIONER = "eventSourceRetentionPartitioner";
 
 	@Bean
 	public Step viewRetentionStep(JobRepository jobRepository,
@@ -28,7 +28,7 @@ public class RetentionStepDefinitions {
 	                              TaskExecutor viewRetentionExecutor,
 	                              PlatformTransactionManager transactionManager) {
 		return new StepBuilder(VIEW_RETENTION_STEP, jobRepository)
-				.partitioner(SINGLE_VIEW_PARTITIONER, viewRetentionPolicyPartitioner)
+				.partitioner(VIEW_PARTITIONER, viewRetentionPolicyPartitioner)
 				.step(new StepBuilder(SINGLE_VIEW_RETENTION_STEP, jobRepository)
 						.tasklet(viewRetentionTask, transactionManager)
 						.build()
@@ -49,7 +49,7 @@ public class RetentionStepDefinitions {
 	                                     TaskExecutor eventSourceRetentionExecutor,
 	                                     PlatformTransactionManager transactionManager) {
 		return new StepBuilder(EVENT_SOURCE_RETENTION_STEP, jobRepository)
-				.partitioner(SINGLE_COLLECTION_PARTITIONER, eventSourceRetentionPolicyPartitioner)
+				.partitioner(COLLECTION_PARTITIONER, eventSourceRetentionPolicyPartitioner)
 				.step(new StepBuilder(SINGLE_COLLECTION_RETENTION_STEP, jobRepository)
 						.tasklet(eventSourceRetentionTask, transactionManager)
 						.build()

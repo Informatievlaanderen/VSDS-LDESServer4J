@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateSorter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
@@ -15,13 +16,13 @@ import java.util.List;
 @Component
 public class CompactionTask implements Tasklet {
 	private final PageRepository pageRepository;
-	private final CompactionCandidateSorter compactionCandidateSorter;
-	private final CompactionDbWriter compactionDbWriter;
+	private final be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateSorter compactionCandidateSorter;
+	private final CompactionWriter compactionWriter;
 
-	public CompactionTask(PageRepository pageRepository, CompactionCandidateSorter compactionCandidateSorter, CompactionDbWriter compactionDbWriter) {
+	public CompactionTask(PageRepository pageRepository, CompactionCandidateSorter compactionCandidateSorter, CompactionWriter compactionWriter) {
 		this.pageRepository = pageRepository;
 		this.compactionCandidateSorter = compactionCandidateSorter;
-		this.compactionDbWriter = compactionDbWriter;
+		this.compactionWriter = compactionWriter;
 	}
 
 	@Override
@@ -32,9 +33,10 @@ public class CompactionTask implements Tasklet {
 
 		final List<CompactionCandidate> compactionCandidates = pageRepository.getPossibleCompactionCandidates(viewName, capacityPerPage);
 
+
 		compactionCandidateSorter
-				.getCompactionCandidateList(compactionCandidates, capacityPerPage)
-				.forEach(compactionDbWriter::writeToDb);
+				.getSortedCompactionCandidates(compactionCandidates, capacityPerPage)
+				.forEach(compactionWriter::write);
 
 		return RepeatStatus.FINISHED;
 	}

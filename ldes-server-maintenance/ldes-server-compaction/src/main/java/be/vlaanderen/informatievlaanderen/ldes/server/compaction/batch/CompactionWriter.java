@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class CompactionDbWriter {
+public class CompactionWriter {
 	private final PageRelationRepository pageRelationRepository;
 	private final PageMemberRepository pageMemberRepository;
 	private final CompactedFragmentCreator compactedFragmentCreator;
 	private final PageDeletionTimeSetter pageDeletionTimeSetter;
 	private final ObservationRegistry observationRegistry;
 
-	public CompactionDbWriter(PageRelationRepository pageRelationRepository,
-	                          PageMemberRepository pageMemberRepository,
-	                          CompactedFragmentCreator compactedFragmentCreator,
-	                          PageDeletionTimeSetter pageDeletionTimeSetter,
-	                          ObservationRegistry observationRegistry) {
+	public CompactionWriter(PageRelationRepository pageRelationRepository,
+	                        PageMemberRepository pageMemberRepository,
+	                        CompactedFragmentCreator compactedFragmentCreator,
+	                        PageDeletionTimeSetter pageDeletionTimeSetter,
+	                        ObservationRegistry observationRegistry) {
 		this.pageRelationRepository = pageRelationRepository;
 		this.pageMemberRepository = pageMemberRepository;
 		this.compactedFragmentCreator = compactedFragmentCreator;
@@ -32,7 +32,7 @@ public class CompactionDbWriter {
 		this.observationRegistry = observationRegistry;
 	}
 
-	public void writeToDb(Set<CompactionCandidate> toBeCompactedPages) {
+	public void write(Set<CompactionCandidate> toBeCompactedPages) {
 		Observation compactionObservation = Observation.createNotStarted("compaction", observationRegistry).start();
 
 		long compactedFragmentId = compactedFragmentCreator.createCompactedPage(toBeCompactedPages);
