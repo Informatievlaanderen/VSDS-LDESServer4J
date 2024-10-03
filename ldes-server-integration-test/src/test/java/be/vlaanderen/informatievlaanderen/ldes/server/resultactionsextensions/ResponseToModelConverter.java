@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions;
 
+import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.riot.RDFParser;
@@ -18,7 +19,7 @@ public class ResponseToModelConverter {
     public Model convert() throws UnsupportedEncodingException {
         return RDFParser
                 .fromString(response.getContentAsString())
-                .lang(RDFLanguages.contentTypeToLang(response.getContentType()))
+                .lang(RDFLanguages.contentTypeToLang(ContentType.create(response.getContentType())))
                 .toModel();
     }
 }
