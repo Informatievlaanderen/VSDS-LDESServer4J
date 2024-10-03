@@ -78,7 +78,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 						.accept(contentTypeNQuads))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(contentTypeNQuads))
+				.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
 				.andExpect(IsIsomorphic.with(expectedViewModel1.add(expectedViewModel2)));
 	}
 
@@ -91,7 +91,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept(contentTypeTurtle))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(contentTypeTurtle))
+				.andExpect(content().contentType(contentTypeTurtle + ";charset=UTF-8"))
 				.andExpect(IsIsomorphic.with(expectedViewModel));
 	}
 

@@ -113,7 +113,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeNQuads))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeNQuads))
+					.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
@@ -137,7 +137,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeNQuads))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeNQuads))
+					.andExpect(content().contentType(contentTypeNQuads + ";charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
@@ -176,7 +176,7 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/ldes.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
-					.andExpect(content().contentType(contentTypeNQuads))
+					.andExpect(content().contentType(contentTypeNQuads + ";charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
 			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
@@ -202,7 +202,7 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/ldes-create-versions.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
-					.andExpect(content().contentType(contentTypeNQuads))
+					.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
 			verify(eventStreamService).createEventStream(any(EventStreamTO.class));

@@ -76,7 +76,7 @@ class AdminShapeRestControllerTest {
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 							.accept(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeTurtle))
+					.andExpect(content().contentType(contentTypeTurtle + "; charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
 
@@ -106,7 +106,7 @@ class AdminShapeRestControllerTest {
 							.content(readDataFromFile(fileName))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeTurtle))
+					.andExpect(content().contentType(contentTypeTurtle + ";charset=UTF-8"))
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
