@@ -19,8 +19,4 @@ public class CompactionPageCapacity {
 	public void increase(int delta) {
 		currentCapacity += delta;
 	}
-
-	public boolean isZero() {
-		return currentCapacity == 0;
-	}
 }
