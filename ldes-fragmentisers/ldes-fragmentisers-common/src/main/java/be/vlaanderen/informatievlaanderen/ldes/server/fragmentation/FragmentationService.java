@@ -43,7 +43,7 @@ public class FragmentationService {
 		this.jobExplorer = jobExplorer;
 		this.jobRepository = jobRepository;
 		this.memberRepository = memberRepository;
-		this.bucketiseJob = createJob(jobRepository, bucketiseMembersStep, paginationStep);
+		this.bucketiseJob = createJob(bucketiseMembersStep, paginationStep);
 		this.cleanupOldJobs();
 	}
 
@@ -77,7 +77,7 @@ public class FragmentationService {
 				});
 	}
 
-	private Job createJob(JobRepository jobRepository, Step step, Step paginationStep) {
+	private Job createJob(Step step, Step paginationStep) {
 		return new JobBuilder(FRAGMENTATION_JOB, jobRepository)
 				.start(step)
 				.next(paginationStep)

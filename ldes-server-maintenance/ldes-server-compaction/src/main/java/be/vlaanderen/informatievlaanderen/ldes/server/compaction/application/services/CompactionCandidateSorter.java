@@ -1,56 +1,52 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactedPages;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactionCandidates;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactionPageCapacity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class CompactionCandidateSorter {
-    private CompactionCandidateSorter() {
-    }
 
-    public static Collection<Set<CompactionCandidate>> getCompactionCandidateList(List<CompactionCandidate> candidatesList, int capacity) {
+	public List<Set<CompactionCandidate>> getSortedCompactionCandidates(List<CompactionCandidate> candidates,
+	                                                                    int capacityPerPage) {
+		final CompactionCandidates compactionCandidates = new CompactionCandidates(candidates);
+		final CompactionPageCapacity compactionPageCapacity = new CompactionPageCapacity(capacityPerPage);
+		return compactionCandidates
+				.getLeadingPages().stream()
+				.flatMap(leadingPage -> getCompactedCandidatesForLeadingPage(leadingPage, compactionCandidates, compactionPageCapacity).stream())
+				.toList();
+	}
 
-        List<CompactionCandidate> firstElements = candidatesList.stream()
-                .filter(candidate -> hasNoConnections(candidate, candidatesList.stream()
-                        .toList())).toList();
+	private List<Set<CompactionCandidate>> getCompactedCandidatesForLeadingPage(CompactionCandidate leadingPage,
+	                                                                            CompactionCandidates candidates,
+	                                                                            CompactionPageCapacity capacity) {
+		CompactedPages compactedPages = new CompactedPages();
+		Optional<CompactionCandidate> currentCandidate = Optional.of(leadingPage);
 
-        AtomicInteger index = new AtomicInteger();
-        Map<Integer, Set<CompactionCandidate>> compactionDesign = new HashMap<>();
+		while (currentCandidate.isPresent()) {
+			addCandidatesToCapacity(capacity, currentCandidate.get(), compactedPages);
+			currentCandidate = candidates.getNextCandidate(currentCandidate.get().getNextPageId());
+		}
 
-        firstElements.forEach(candidate -> {
-            int currentCapacity = 0;
-            Set<CompactionCandidate> splitList = new HashSet<>();
-            Optional<CompactionCandidate> currentCandidate = Optional.of(candidate);
-            while (currentCandidate.isPresent()) {
-                currentCapacity += currentCandidate.get().getSize();
-                if (currentCapacity > capacity) {
-                    currentCapacity = 0;
-                    if(splitList.size() > 1) {
-                        compactionDesign.put(index.incrementAndGet(), splitList);
-                        splitList = new HashSet<>();
-                    }
-                }
-                else {
-                    splitList.add(currentCandidate.get());
-                }
-                long nextId = currentCandidate.get().getNextPageId();
-                currentCandidate = candidatesList.stream().filter(c->c.getId() == nextId).findFirst();
-            }
+		compactedPages.addCandidatesToCompactedPages();
 
-            if(splitList.size() > 1) {
-                compactionDesign.put(index.incrementAndGet(), splitList);
-            }
-        });
+		return compactedPages.getPages();
+	}
 
-        return compactionDesign.values();
-    }
+	private void addCandidatesToCapacity(CompactionPageCapacity compactionPageCapacity,
+	                                     CompactionCandidate candidate,
+	                                     CompactedPages compactedPages) {
+		compactionPageCapacity.increase(candidate.getSize());
+		if (compactionPageCapacity.exceedsMaxCapacity()) {
+			compactionPageCapacity.reset();
+			compactedPages.addCandidatesToCompactedPages();
+		} else {
+			compactedPages.addCompactionCandidate(candidate);
+		}
+	}
 
-    public static boolean hasNoConnections(CompactionCandidate fragment, List<CompactionCandidate> fragments) {
-        return fragments.stream().noneMatch(fragment1 -> isConnectedTo(fragment1, fragment));
-    }
-
-    public static boolean isConnectedTo(CompactionCandidate treeNode, CompactionCandidate otherTreeNode) {
-        return treeNode.getNextPageId() == otherTreeNode.getId();
-    }
 }

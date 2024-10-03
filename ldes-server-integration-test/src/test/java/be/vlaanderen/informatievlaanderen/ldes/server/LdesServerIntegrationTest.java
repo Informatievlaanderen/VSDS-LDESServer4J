@@ -30,13 +30,15 @@ import javax.sql.DataSource;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES,
-		refresh = AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_EACH_TEST_METHOD,
 		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
-@TestPropertySource(properties = { "ldes-server.fragmentation-cron=*/1 * * * * *", "ldes-server.compaction-cron=*/10 * * * * *",
-		"ldes-server.deletion-cron=*/20 * * * * *", "ldes-server.compaction-duration=PT1S" })
+@ContextConfiguration(classes = {MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class})
+@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server"})
+@TestPropertySource(properties = {
+		"ldes-server.fragmentation-cron=*/1 * * * * *",
+		"ldes-server.maintenance-cron=*/10 * * * * *",
+		"ldes-server.compaction-duration=PT1S"
+})
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
 	@Autowired

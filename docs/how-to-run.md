@@ -127,27 +127,15 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   </tr>
   <tr><td colspan="4"><b><a href="./features/compaction">Fragment Compaction</a></b></td></tr>
   <tr>
-    <td>ldes-server.compaction-cron</td>
-    <td>Defines how often the Compaction Service will check the fragments<sup>3</sup></td>
-    <td>No</td>
-    <td>0 0 0 * * *</td>
-  </tr>
-  <tr>
     <td>ldes-server.compaction-duration</td>
     <td>Defines how long the redundant compacted fragments will remain on the server</td>
     <td>No</td>
     <td>PD7</td>
   </tr>
+  <tr><td colspan="4"><b>Maintenance</b></td></tr>
   <tr>
-    <td>ldes-server.deletion-cron</td>
-    <td>Defines how often the redundant compacted fragments will be checked for deletion<sup>3</sup></td>
-    <td>No</td>
-    <td>0 0 0 * * *</td>
-  </tr>
-  <tr><td colspan="4"><b>Retention (<a href="./configuration/retention-policies">Retention Policies</a>)</b></td></tr>
-  <tr>
-    <td>ldes-server.retention-cron</td>
-    <td>Defines how often the Retention Service will check the members<sup>3</sup></td>
+    <td>ldes-server.maintenance-cron</td>
+    <td>Defines how often the maintenance job will run, which includes <a href="./features/retention-policies">retention</a>, <a href="./features/compaction">compaction and deletion</a><sup>3</sup></td>
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>

@@ -39,9 +39,9 @@ Feature: LDES Server Retention
     Then the LDES <collection> contains <expectedMemberCount> members
 
     Examples:
-      | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
-      | "data/input/eventstreams/deletion/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 10                  |
-      | "data/input/eventstreams/deletion/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 30                  |
+      | eventStreamDescriptionFile                                                               | template                                   | collection            | expectedMemberCount |
+      | "data/input/eventstreams/deletion/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 10                  |
+      | "data/input/eventstreams/deletion/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 30                  |
 
   @deletion @time-based
   Scenario Outline: Server retention time-based to event source
@@ -50,8 +50,8 @@ Feature: LDES Server Retention
     Then the LDES <collection> contains <expectedMemberCount> members
 
     Examples:
-      | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
-      | "data/input/eventstreams/deletion/mobility-hindrances_timebased_with_eventsource.ttl"    | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 0                   |
+      | eventStreamDescriptionFile                                                            | template                                   | collection            | expectedMemberCount |
+      | "data/input/eventstreams/deletion/mobility-hindrances_timebased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 0                   |
 
   @deletion @version-based-and-time-based
   Scenario Outline: Server retention combined-based to event source
@@ -60,5 +60,5 @@ Feature: LDES Server Retention
     Then the LDES <collection> contains <expectedMemberCount> members
 
     Examples:
-      | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
-      | "data/input/eventstreams/deletion/mobility-hindrances_combined_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 5                   |
+      | eventStreamDescriptionFile                                                           | template                                   | collection            | expectedMemberCount |
+      | "data/input/eventstreams/deletion/mobility-hindrances_combined_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 5                   |

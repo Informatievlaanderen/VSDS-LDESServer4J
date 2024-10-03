@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Compacti
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.batch.PaginationRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.mapper.CompactionCandidateMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Repository
 public class PagePostgresRepository implements PageRepository {
@@ -68,10 +68,12 @@ public class PagePostgresRepository implements PageRepository {
 	}
 
 	@Override
-	public Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
-		return pageEntityRepository.findCompactionCandidates(viewName.getCollectionName(), viewName.getViewName(), capacityPerPage)
-				.stream().map(projection -> new CompactionCandidate(projection.getFragmentId(), projection.getSize(), projection.getToPage(),
-						projection.getImmutable(), projection.getExpiration(), projection.getBucketId(), projection.getPartialUrl()));
+	public List<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
+		return pageEntityRepository
+				.findCompactionCandidates(viewName.getCollectionName(), viewName.getViewName(), capacityPerPage)
+				.stream()
+				.map(CompactionCandidateMapper::fromProjection)
+				.toList();
 	}
 
 	@Override

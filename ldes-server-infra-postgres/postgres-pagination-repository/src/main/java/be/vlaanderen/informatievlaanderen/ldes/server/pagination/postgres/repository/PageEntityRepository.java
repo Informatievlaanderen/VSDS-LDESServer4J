@@ -32,13 +32,13 @@ public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 			""", nativeQuery = true)
 	void markAllPagesImmutableByCollectionName(String collectionName);
 
-	@Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.immutable AS immutable, " +
-	               "p.expiration AS expiration, " +
-	               "p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
-	               "FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN PageRelationEntity r ON p = r.fromPage " +
-	               "WHERE v.eventStream.name = :collectionName AND v.name = :viewName " +
-	               "GROUP BY p.id, r.toPage.id " +
-	               "HAVING COUNT(*) < :capacityPerPage")
+	@Query(value = "SELECT p.id as fragmentId, COUNT(*) AS size, r.toPage.id AS toPage, p.bucket.bucketId AS bucketId, p.partialUrl AS partialUrl " +
+			"FROM PageEntity p JOIN BucketEntity b ON p.bucket = b JOIN ViewEntity v ON b.view = v JOIN PageRelationEntity r ON p = r.fromPage " +
+			"WHERE v.eventStream.name = :collectionName " +
+			"AND v.name = :viewName " +
+			"AND p.expiration IS NULL AND p.immutable " +
+			"GROUP BY p.id, r.toPage.id " +
+			"HAVING COUNT(*) < :capacityPerPage")
 	@Transactional(readOnly = true)
 	List<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
 	                                                             @Param("viewName") String viewName,

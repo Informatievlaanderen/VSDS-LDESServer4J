@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class CompactionCandidate {
@@ -9,16 +8,11 @@ public class CompactionCandidate {
 	private final String partialUrl;
 	private final long bucketId;
 	private final long nextPageId;
-	private final boolean isImmutable;
-	private final LocalDateTime expiration;
 
-	public CompactionCandidate(Long id, Integer size, Long nextPageId, Boolean isImmutable,
-							   LocalDateTime expiration, Long bucketId, String partialUrl) {
+	public CompactionCandidate(Long id, Integer size, Long nextPageId, Long bucketId, String partialUrl) {
 		this.id = id;
 		this.size = size;
 		this.nextPageId = nextPageId;
-		this.isImmutable = isImmutable;
-		this.expiration = expiration;
 		this.bucketId = bucketId;
 		this.partialUrl = partialUrl;
 	}
@@ -41,10 +35,6 @@ public class CompactionCandidate {
 
 	public long getNextPageId() {
 		return nextPageId;
-	}
-
-	public boolean isCompactable() {
-		return isImmutable && expiration == null;
 	}
 
 	@Override
