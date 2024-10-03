@@ -26,47 +26,55 @@ import static org.apache.jena.riot.lang.LangJSONLD11.JSONLD_OPTIONS;
 
 @Component
 public class RdfModelConverter {
+	public static final String CHARSET = "charset=UTF-8";
 
-    @Value(USE_RELATIVE_URL_KEY)
-    private boolean useRelativeUrl;
 
-    @Value(MAX_JSONLD_CACHE_CAPACITY)
-    private int maxJsonLdCacheCapacity;
+	@Value(USE_RELATIVE_URL_KEY)
+	private boolean useRelativeUrl;
 
-    private Context context;
+	@Value(MAX_JSONLD_CACHE_CAPACITY)
+	private int maxJsonLdCacheCapacity;
 
-    public Lang getLangOrDefault(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
-        if (MediaType.ALL.equals(contentType) || MediaType.TEXT_HTML.equals(contentType)) {
-            return TURTLE;
-        }
-        return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
-                .orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
-                        .orElseThrow(() -> new RdfFormatException(contentType.toString(), rdfFormatContext)));
-    }
+	private Context context;
 
-    public void checkLangForRelativeUrl(Lang lang) {
-        if (useRelativeUrl && RELATIVE_URL_INCOMPATIBLE_LANGS.contains(lang)) {
-            throw new RelativeUrlException(lang);
-        }
-    }
+	public Lang getLangOrDefault(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
+		if (MediaType.ALL.equals(contentType) || MediaType.TEXT_HTML.equals(contentType)) {
+			return TURTLE;
+		}
+		return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
+				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
+						.orElseThrow(() -> new RdfFormatException(contentType.toString(), rdfFormatContext)));
+	}
 
-    public static String toString(final Model model, final Lang lang) {
-        StringWriter stringWriter = new StringWriter();
-        RDFDataMgr.write(stringWriter, model, lang);
-        return stringWriter.toString();
-    }
 
-    public synchronized Context getContext() {
-        if (context == null) {
-            context = createContext();
-        }
-        return context;
-    }
+	public  MediaType getMediaTypeWithCharset(Lang lang) {
+		String headerString = String.join(";", lang.getHeaderString(), CHARSET);
+		return MediaType.parseMediaType(headerString);
+	}
 
-    private Context createContext() {
-        final var options = new JsonLdOptions();
-        options.setDocumentCache(new LruCache<>(maxJsonLdCacheCapacity));
-        return ContextAccumulator.newBuilder(RIOT::getContext).context().set(JSONLD_OPTIONS, options);
-    }
+	public void checkLangForRelativeUrl(Lang lang) {
+		if (useRelativeUrl && RELATIVE_URL_INCOMPATIBLE_LANGS.contains(lang)) {
+			throw new RelativeUrlException(lang);
+		}
+	}
+
+	public static String toString(final Model model, final Lang lang) {
+		StringWriter stringWriter = new StringWriter();
+		RDFDataMgr.write(stringWriter, model, lang);
+		return stringWriter.toString();
+	}
+
+	public synchronized Context getContext() {
+		if (context == null) {
+			context = createContext();
+		}
+		return context;
+	}
+
+	private Context createContext() {
+		final var options = new JsonLdOptions();
+		options.setDocumentCache(new LruCache<>(maxJsonLdCacheCapacity));
+		return ContextAccumulator.newBuilder(RIOT::getContext).context().set(JSONLD_OPTIONS, options);
+	}
 
 }

@@ -61,7 +61,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 		Model eventStreamModel = eventStreamConverter.toModel(eventStreamTO);
 		Lang lang = rdfModelConverter.getLangOrDefault(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
-		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
+		outputMessage.getHeaders().setContentType(rdfModelConverter.getMediaTypeWithCharset(lang));
 		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, lang);
 	}
 }

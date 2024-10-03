@@ -55,7 +55,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 			throws IOException, HttpMessageNotWritableException {
 		Lang lang = rdfModelConverter.getLangOrDefault(contentType, FETCH);
 		Model fragmentModel = treeNodeConverter.toModel(treeNode);
-		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
+		outputMessage.getHeaders().setContentType(rdfModelConverter.getMediaTypeWithCharset(lang));
 		RDFWriter.source(fragmentModel).lang(lang).output(outputMessage.getBody());
 	}
 }

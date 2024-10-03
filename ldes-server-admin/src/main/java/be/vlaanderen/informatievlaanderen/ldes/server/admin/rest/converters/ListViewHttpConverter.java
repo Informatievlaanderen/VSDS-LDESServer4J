@@ -89,7 +89,7 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 		rdfModelConverter.checkLangForRelativeUrl(lang);
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
-		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
+		outputMessage.getHeaders().setContentType(rdfModelConverter.getMediaTypeWithCharset(lang));
 		RDFDataMgr.write(outputMessage.getBody(), model, lang);
 	}
 }

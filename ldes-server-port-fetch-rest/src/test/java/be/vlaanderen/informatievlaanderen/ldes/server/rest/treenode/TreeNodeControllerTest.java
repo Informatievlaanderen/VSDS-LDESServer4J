@@ -5,7 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
@@ -59,6 +60,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -93,7 +95,6 @@ class TreeNodeControllerTest {
 	private RestConfig restConfig;
 	@Autowired
 	private CachingStrategy cachingStrategy;
-	private WebTestClient client;
 
 	@BeforeEach
 	void setUp() {
@@ -103,7 +104,7 @@ class TreeNodeControllerTest {
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
-																   String expectedHeaderValue, String expectedEtag) throws Exception {
+	                                                               String expectedHeaderValue, String expectedEtag) throws Exception {
 		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -129,7 +130,7 @@ class TreeNodeControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(header().string("Cache-Control", expectedHeaderValue))
 				.andExpect(header().string("Etag", "\"" + expectedEtag + "\""))
-				.andExpect(content().contentType(expectedContentType))
+				.andExpect(content().contentType(expectedContentType + "; charset=UTF-8"))
 				.andReturn();
 
 		Optional<Integer> maxAge = extractMaxAge(result.getResponse().getHeader("Cache-Control"));
@@ -138,6 +139,37 @@ class TreeNodeControllerTest {
 
 		assertThat(maxAge).contains(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
 		assertThat(getObjectURIs(resultModel, RDF_SYNTAX_TYPE)).contains(TREE_NODE_RESOURCE);
+		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
+	}
+
+
+	@Test
+	void given_MemberWithSpecialChars_when_GetRequestIsPerformed_then_CharsAreRightfullyEncoded() throws Exception {
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs())
+				.asDecodedFragmentId();
+		final Member member = createMember();
+		TreeNode treeNode = new TreeNode(fragmentId, true, false, List.of(),
+				List.of(member), COLLECTION_NAME, null);
+
+		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
+
+
+		String mediaType = "text/turtle";
+		mockMvc
+				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
+						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
+						.accept(mediaType))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(mediaType + "; charset=UTF-8"))
+				.andExpect(content().string(containsString("ë")))
+				.andReturn();
+
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
 	}
 
@@ -202,6 +234,7 @@ class TreeNodeControllerTest {
 	static class MediaTypeRdfFormatsArgumentsProvider implements ArgumentsProvider {
 
 		@Override
+		@SuppressWarnings("java:S1874") // deprecated Lang used for testing backwards compatibility
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS, true,
@@ -241,7 +274,7 @@ class TreeNodeControllerTest {
 		when(streamingTreeNodeFactory.getMembersOfFragment(identifier))
 				.thenReturn(Stream.of(new Member("member1", ModelFactory.createDefaultModel()), new Member("member2", ModelFactory.createDefaultModel())));
 
-		client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,
+		WebTestClient client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,
 				streamingTreeNodeFactory, treeNodeStreamConverter, cachingStrategy)).build();
 
 		client.get()
@@ -271,5 +304,11 @@ class TreeNodeControllerTest {
 		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 			return new EtagCachingStrategy(hostName);
 		}
+	}
+
+	private static Member createMember() {
+		final String subject = "http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9";
+		final Model model = RDFParser.source("member-utf8-charset.nq").toModel();
+		return new Member(subject, model);
 	}
 }
