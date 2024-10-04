@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -361,5 +362,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
 				.andReturn().getResponse();
 		assertTrue(response.getContentAsString().contains("%s{collection=\"%s\"} %s".formatted(message, collection, value)));
+	}
+
+	@And("the background processes did not fail")
+	public void theBackgroundProcessesDidNotFail() {
+		final List<String> failedStepExecutions = jdbcTemplate.queryForList("SELECT step_name FROM batch_step_execution WHERE status = 'FAILED'", String.class);
+		assertThat(failedStepExecutions).isEmpty();
 	}
 }

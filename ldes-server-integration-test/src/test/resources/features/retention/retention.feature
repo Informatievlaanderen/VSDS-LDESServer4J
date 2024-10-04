@@ -7,6 +7,7 @@ Feature: LDES Server Retention
     Then the first fragment of the "paged" view in collection <collection> contains <ingestedMemberCount> members
     # Since all added members' timestamp values equal to their ingestion date, they should be removed after 15 seconds
     Then the first fragment of the "paged" view in collection <collection> contains 0 members
+    And the background processes did not fail
     Examples:
       | eventStreamDescriptionFile                                            | template                                           | collection            | ingestedMemberCount |
       | "data/input/eventstreams/retention/mobility-hindrances_timebased.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 30                  |
@@ -17,6 +18,7 @@ Feature: LDES Server Retention
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 30 members of template <template> to the collection <collection>
     Then the first fragment of the "paged" view in collection <collection> contains <expectedMemberCount> members
+    And the background processes did not fail
     Examples:
       | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
       | "data/input/eventstreams/retention/mobility-hindrances_versionbased.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 10                  |
@@ -27,6 +29,7 @@ Feature: LDES Server Retention
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 30 members of template <template> to the collection <collection>
     Then the first fragment of the "paged" view in collection <collection> contains <expectedMemberCount> members
+    And the background processes did not fail
     Examples:
       | eventStreamDescriptionFile                                           | template                                           | collection            | expectedMemberCount |
       | "data/input/eventstreams/retention/mobility-hindrances_combined.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 5                   |
@@ -37,6 +40,7 @@ Feature: LDES Server Retention
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 30 members of template <template> to the collection <collection>
     Then the LDES <collection> contains <expectedMemberCount> members
+    And the background processes did not fail
 
     Examples:
       | eventStreamDescriptionFile                                                               | template                                   | collection            | expectedMemberCount |
@@ -48,6 +52,7 @@ Feature: LDES Server Retention
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 30 members of template <template> to the collection <collection>
     Then the LDES <collection> contains <expectedMemberCount> members
+    And the background processes did not fail
 
     Examples:
       | eventStreamDescriptionFile                                                            | template                                   | collection            | expectedMemberCount |
@@ -58,6 +63,7 @@ Feature: LDES Server Retention
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 30 members of template <template> to the collection <collection>
     Then the LDES <collection> contains <expectedMemberCount> members
+    And the background processes did not fail
 
     Examples:
       | eventStreamDescriptionFile                                                           | template                                   | collection            | expectedMemberCount |
