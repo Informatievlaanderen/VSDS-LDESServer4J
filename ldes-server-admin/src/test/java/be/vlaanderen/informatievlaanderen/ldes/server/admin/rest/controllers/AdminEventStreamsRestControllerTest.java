@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig.CharsetEncodingConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
-		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
+		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
 		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
@@ -113,7 +115,8 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeNQuads))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
@@ -137,7 +140,8 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeNQuads))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeNQuads + ";charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
@@ -149,7 +153,8 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
 					.andExpect(status().isNotFound())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
 		}
@@ -176,7 +181,8 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/ldes.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
-					.andExpect(content().contentType(contentTypeNQuads + ";charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
 			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
@@ -202,7 +208,8 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/ldes-create-versions.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
-					.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
 			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
@@ -214,7 +221,8 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/ldes-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
-					.andExpect(content().contentType(contentTypeTurtle));
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle));
 
 			verifyNoInteractions(eventStreamService);
 		}
@@ -225,8 +233,8 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("eventstream/streams/malformed-ldes.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
-
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 			verifyNoInteractions(eventStreamService);
 		}
 	}
@@ -247,8 +255,8 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
 					.andExpect(status().isNotFound())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
-
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 			verify(eventStreamService).deleteEventStream(COLLECTION);
 		}
 	}
@@ -269,7 +277,8 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams/name1/close"))
 					.andExpect(status().isNotFound())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 
 			verify(eventStreamService).closeEventStream(COLLECTION);
 		}

@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig.CharsetEncodingConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -46,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminShapeRestController.class, HttpModelConverter.class,
 		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class, ValidatorsConfig.class,
-		RdfModelConverter.class})
+		RdfModelConverter.class, CharsetEncodingConfig.class})
 class AdminShapeRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;
@@ -76,7 +78,8 @@ class AdminShapeRestControllerTest {
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 							.accept(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeTurtle + "; charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle))
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
 
@@ -88,7 +91,8 @@ class AdminShapeRestControllerTest {
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 							.accept(contentTypeTurtle))
 					.andExpect(status().isNotFound())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
 					.andExpect(content().string("Resource of type: shacl-shape with id: %s could not be found.".formatted(collectionName)));
 		}
 	}
@@ -106,7 +110,8 @@ class AdminShapeRestControllerTest {
 							.content(readDataFromFile(fileName))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(content().contentType(contentTypeTurtle + ";charset=UTF-8"))
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle))
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
@@ -124,8 +129,8 @@ class AdminShapeRestControllerTest {
 							.content(readDataFromFile("shacl/shape-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
-					.andExpect(content().contentType(contentTypeTurtle));
-
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle));
 			verify(shaclShapeValidator).validate(any());
 		}
 

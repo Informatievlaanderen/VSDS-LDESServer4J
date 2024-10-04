@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig.CharsetEncodingConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -49,6 +50,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
 		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
-		TreeNodeStatementCreatorImpl.class})
+		TreeNodeStatementCreatorImpl.class, CharsetEncodingConfig.class})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
@@ -130,7 +132,8 @@ class TreeNodeControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(header().string("Cache-Control", expectedHeaderValue))
 				.andExpect(header().string("Etag", "\"" + expectedEtag + "\""))
-				.andExpect(content().contentType(expectedContentType + "; charset=UTF-8"))
+				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(content().contentTypeCompatibleWith(expectedContentType))
 				.andReturn();
 
 		Optional<Integer> maxAge = extractMaxAge(result.getResponse().getHeader("Cache-Control"));
@@ -166,7 +169,8 @@ class TreeNodeControllerTest {
 						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
 						.accept(mediaType))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(mediaType + "; charset=UTF-8"))
+				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(content().contentTypeCompatibleWith(mediaType))
 				.andExpect(content().string(containsString("ë")))
 				.andReturn();
 

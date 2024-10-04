@@ -14,6 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig.CharsetEncodingConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -50,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({"test", "rest"})
-@ContextConfiguration(classes = {AdminViewsRestController.class, PrefixAdderImpl.class,
+@ContextConfiguration(classes = {AdminViewsRestController.class, CharsetEncodingConfig.class, PrefixAdderImpl.class,
 		HttpModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class,
 		ViewSpecificationConverter.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
@@ -78,7 +80,8 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 						.accept(contentTypeNQuads))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(contentTypeNQuads + "; charset=UTF-8"))
+				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 				.andExpect(IsIsomorphic.with(expectedViewModel1.add(expectedViewModel2)));
 	}
 
@@ -91,7 +94,8 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept(contentTypeTurtle))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(contentTypeTurtle + ";charset=UTF-8"))
+				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle))
 				.andExpect(IsIsomorphic.with(expectedViewModel));
 	}
 
@@ -103,7 +107,8 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept(contentTypeTurtle))
 				.andExpect(status().isNotFound())
-				.andExpect(content().contentType(MediaType.TEXT_PLAIN))
+				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
 				.andExpect(content().string("Resource of type: view with id: %s/%s could not be found.".formatted(COLLECTION_NAME, VIEW_NAME)));
 
 	}
