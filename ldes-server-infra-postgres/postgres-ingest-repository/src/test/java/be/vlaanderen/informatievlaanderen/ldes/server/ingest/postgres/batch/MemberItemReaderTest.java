@@ -149,7 +149,8 @@ class MemberItemReaderTest {
 				.mapToObj(this::mapToInsertAgs)
 				.toList();
 
-		jdbcTemplate.batchUpdate("INSERT INTO members VALUES (?, ?, ?, 1, true, '', ?, ?, 'http://test-data/mobility-hindrance/1')", batchArgs);
+		jdbcTemplate.batchUpdate("INSERT INTO members (member_id, subject, timestamp, collection_id, member_model, transaction_id, version_of) " +
+				"VALUES (?, ?, ?, 1, '', ?, 'http://test-data/mobility-hindrance/1')", batchArgs);
 	}
 
 	private Object[] mapToInsertAgs(int i) {
