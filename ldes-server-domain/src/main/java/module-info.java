@@ -5,6 +5,7 @@ open module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig;
 
     // Events
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention;
