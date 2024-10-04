@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "members", indexes = {
 		@Index(columnList = "member_id, timestamp"),
-		@Index(columnList = "old_id"),
 		@Index(columnList = "subject, collection_id", unique = true)
 })
 public class MemberEntity {
@@ -20,8 +19,6 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", columnDefinition = "BIGINT", nullable = false)
     private long id;
-    @Column(name = "old_id", nullable = false)
-    private String oldId;
     @Column(name = "subject", nullable = false)
     private String subject;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -61,9 +58,7 @@ public class MemberEntity {
 	public long getId() {
 		return id;
 	}
-	public String getOldId() {
-		return oldId;
-	}
+
 
 	public String getSubject() {
 		return subject;

@@ -34,14 +34,6 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 		this.propertiesMapper = propertiesMapper;
         this.memberEntityRepository = memberEntityRepository;
     }
-	@Override
-	public void removePageMemberEntity(Long id, String collectionName, String viewName) {
-		Query query = entityManager.createQuery("DELETE FROM PageMemberEntity p WHERE p.member.id = :memberId AND p.bucket.view.name = :viewName AND p.bucket.view.eventStream.name = :collectionName");
-		query.setParameter("viewName", viewName);
-		query.setParameter("collectionName", collectionName);
-		query.setParameter("memberId", id);
-		query.executeUpdate();
-	}
 
 	@Override
 	@Transactional

@@ -155,10 +155,9 @@ class MemberItemReaderTest {
 	private Object[] mapToInsertAgs(int i) {
 		final LocalDateTime timestamp = START_TIME.plusHours(i);
 		final String subject = SUBJECT_TEMPLATE + (i + 1);
-		final String oldId = COLLECTION_NAME + "/" + subject;
 
 		return new Object[]{
-				i + 1, subject, oldId, timestamp, UUID.randomUUID()
+				i + 1, subject, timestamp, UUID.randomUUID()
 		};
 	}
 

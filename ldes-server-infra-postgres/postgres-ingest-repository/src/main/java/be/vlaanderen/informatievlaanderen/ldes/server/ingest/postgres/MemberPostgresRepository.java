@@ -38,7 +38,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
 		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
 		if (!membersContainDuplicateIds(members) && !membersExistInCollection(collectionId, subjects)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model, old_id) VALUES (?,?,?,?,?,?,?)";
+			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
 
 			final List<Object[]> batchArgs = members.stream()
 					.map(member -> new Object[]{
@@ -48,7 +48,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 							member.getTimestamp(),
 							member.getTransactionId(),
 							modelConverter.convertToDatabaseColumn(member.getModel()),
-							member.getCollectionName() + "/" + member.getSubject()
 					})
 					.toList();
 
@@ -71,12 +70,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 				.size() != members.size();
 	}
 
-	@Override
-	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
-		return repository.findAllByOldIdIn(memberIds)
-				.stream()
-				.map(mapper::toMember);
-	}
 
 	@Override
 	public Stream<IngestedMember> findAllByCollectionAndSubject(String collectionName, List<String> subjects) {
@@ -90,12 +83,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
 	}
-
-	@Override
-	@Transactional
-	public void removeFromEventSource(List<Long> ids) {
-        jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE member_id IN ?", ids);
-    }
 
 	@Override
 	public Stream<Member> findAllByTreeNodeUrl(String url) {

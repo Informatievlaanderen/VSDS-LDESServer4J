@@ -89,7 +89,7 @@ public class PaginationSteps extends PostgresPaginationIntegrationTest {
 	private void saveMembers(List<Long> memberIds) {
 		var collectionId = eventStreamEntityRepository.findAll().getFirst().getId();
 		String eventStream = "http://example.com/es";
-		String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model, old_id) VALUES (?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
 
 
 		final List<Object[]> batchArgs = memberIds.stream()
