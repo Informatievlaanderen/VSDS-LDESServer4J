@@ -18,7 +18,7 @@ public class CompactedPages {
 	}
 
 	public void addCandidatesToCompactedPages() {
-		if (!compactedCandidatesToAdd.isEmpty()) {
+		if (compactedCandidatesToAdd.size() > 1) {
 			pages.add(Set.copyOf(compactedCandidatesToAdd));
 			compactedCandidatesToAdd.clear();
 		}
