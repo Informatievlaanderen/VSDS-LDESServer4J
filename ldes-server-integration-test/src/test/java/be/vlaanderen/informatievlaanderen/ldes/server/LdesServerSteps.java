@@ -16,6 +16,11 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
 import org.awaitility.Awaitility;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -45,6 +50,7 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch.MaintenanceFlows.MAINTENANCE_JOB;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -366,7 +372,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the background processes did not fail")
 	public void theBackgroundProcessesDidNotFail() {
-		final List<String> failedStepExecutions = jdbcTemplate.queryForList("SELECT step_name FROM batch_step_execution WHERE status = 'FAILED'", String.class);
-		assertThat(failedStepExecutions).isEmpty();
+		JobInstance lastJobInstance = Objects.requireNonNull(jobExplorer.getLastJobInstance(MAINTENANCE_JOB));
+		JobExecution lastJobExecution = Objects.requireNonNull(jobExplorer.getLastJobExecution(lastJobInstance));
+		boolean hasFailedExecutions = lastJobExecution.getStepExecutions().stream()
+				.anyMatch(stepExecution -> stepExecution.getStatus().equals(BatchStatus.FAILED));
+		assertThat(hasFailedExecutions).isFalse();
 	}
 }

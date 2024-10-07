@@ -28,22 +28,22 @@ public class CompactionCandidateSorter {
 		Optional<CompactionCandidate> currentCandidate = Optional.of(leadingPage);
 
 		while (currentCandidate.isPresent()) {
-			addCandidatesToCapacity(capacity, currentCandidate.get(), compactedPages);
+			addCandidateToCompactedPage(capacity, currentCandidate.get(), compactedPages);
 			currentCandidate = candidates.getNextCandidate(currentCandidate.get().getNextPageId());
 		}
 
-		compactedPages.addCandidatesToCompactedPages();
+		compactedPages.closeCompactedPage();
 
 		return compactedPages.getPages();
 	}
 
-	private void addCandidatesToCapacity(CompactionPageCapacity compactionPageCapacity,
-	                                     CompactionCandidate candidate,
-	                                     CompactedPages compactedPages) {
+	private void addCandidateToCompactedPage(CompactionPageCapacity compactionPageCapacity,
+	                                         CompactionCandidate candidate,
+	                                         CompactedPages compactedPages) {
 		compactionPageCapacity.increase(candidate.getSize());
 		if (compactionPageCapacity.exceedsMaxCapacity()) {
 			compactionPageCapacity.reset();
-			compactedPages.addCandidatesToCompactedPages();
+			compactedPages.closeCompactedPage();
 		} else {
 			compactedPages.addCompactionCandidate(candidate);
 		}
