@@ -1,5 +1,19 @@
 Feature: Server basic fetching functionality
 
+  Scenario Outline: The LDES server offers the correct pages
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 3 members of template <template> to the collection "<collectionName>"
+    Then I can fetch the TreeNode "/<collectionName>/paged" and it contains 1 relations
+    And The expected response is equal to "data/output/treenode_<collectionName>_view.ttl"
+    Then I can fetch the TreeNode "/<collectionName>/paged?pageNumber=1" and it contains <totalMembers> members
+    And The expected response is equal to "data/output/treenode_<collectionName>_pageNumber_1.ttl"
+    And I delete the eventstream <collectionName>
+    Examples:
+      | eventStreamDescriptionFile                                       | template                                           | collectionName      | totalMembers |
+      | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | mobility-hindrances | 3            |
+      | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | observations        | 6            |
+
+
   Scenario Outline: The LDES server has access control headers and etag
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 1 members of template <template> to the collection "<collectionName>"

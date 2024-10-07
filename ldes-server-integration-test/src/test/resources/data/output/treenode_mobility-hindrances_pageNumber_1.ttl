@@ -1,0 +1,35 @@
+@prefix dc:         <http://purl.org/dc/terms/> .
+@prefix geosparql:  <http://www.opengis.net/ont/geosparql#> .
+@prefix ldes:       <https://w3id.org/ldes#> .
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix prov:       <http://www.w3.org/ns/prov#> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix terms:      <http://purl.org/dc/terms/> .
+@prefix tree:       <https://w3id.org/tree#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+
+<http://test-data/mobility-hindrance/1/0>
+        rdf:type         mobiliteit:Mobiliteitshinder;
+        dc:created       "2024-03-28T16:21:34.195Z"^^xsd:dateTime;
+        dc:isVersionOf   <http://test-data/mobility-hindrance/1>;
+        geosparql:asWKT  "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^geosparql:wktLiteral .
+
+<http://test-data/mobility-hindrance/1/2>
+        rdf:type         mobiliteit:Mobiliteitshinder;
+        dc:created       "2024-03-28T16:21:34.195Z"^^xsd:dateTime;
+        dc:isVersionOf   <http://test-data/mobility-hindrance/1>;
+        geosparql:asWKT  "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^geosparql:wktLiteral .
+
+<http://test-data/mobility-hindrance/1/1>
+        rdf:type         mobiliteit:Mobiliteitshinder;
+        dc:created       "2024-03-28T16:21:34.195Z"^^xsd:dateTime;
+        dc:isVersionOf   <http://test-data/mobility-hindrance/1>;
+        geosparql:asWKT  "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^geosparql:wktLiteral .
+
+<http://localhost:8080/mobility-hindrances>
+        rdf:type     ldes:EventStream;
+        tree:member  <http://test-data/mobility-hindrance/1/2> , <http://test-data/mobility-hindrance/1/1> , <http://test-data/mobility-hindrance/1/0> .
+
+<http://localhost:8080/mobility-hindrances/paged?pageNumber=1>
+        rdf:type     tree:Node;
+        dc:isPartOf  <http://localhost:8080/mobility-hindrances> .
