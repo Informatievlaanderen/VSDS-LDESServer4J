@@ -7,4 +7,5 @@
 <http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <https://productencatalogus.data.vlaanderen.be/ns/ipdc-lpdc#executingAuthorityLevel> <https://productencatalogus.data.vlaanderen.be/id/concept/UitvoerendBestuursniveau/> .
 _:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/title> "Hoeveel bedraagt de subsidie?"@nl-be-x-informal .
 _:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/description> "<p>Mede dankzij de extra financiële ondersteuning van VLAIO (het Vlaams Agentschap voor Innoveren en Ondernemen)"@nl-be-x-informal .
+_:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/notes> "你好"@nl-be-x-informal .
 _:Bac223c44717bb273efd762e7f709484c <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://productencatalogus.data.vlaanderen.be/ns/ipdc-lpdc#FinancialAdvantage> .

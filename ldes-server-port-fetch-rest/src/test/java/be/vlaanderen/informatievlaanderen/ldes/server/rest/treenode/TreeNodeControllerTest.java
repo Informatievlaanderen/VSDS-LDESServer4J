@@ -172,6 +172,7 @@ class TreeNodeControllerTest {
 				.andExpect(content().encoding(StandardCharsets.UTF_8))
 				.andExpect(content().contentTypeCompatibleWith(mediaType))
 				.andExpect(content().string(containsString("ë")))
+				.andExpect(content().string(containsString("你好")))
 				.andReturn();
 
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
