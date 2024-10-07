@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public interface RetentionMemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
-    void deleteAllByIdIn(List<Long> oldIds);
+    void deleteAllByIdIn(List<Long> ids);
     @Query("SELECT m FROM MemberEntity m JOIN ViewEntity v ON m.collection = v.eventStream JOIN PageMemberEntity pm ON pm.member = m WHERE v.name = :viewName AND v.eventStream.name = :collectionName AND CAST(m.timestamp as timestamp) < CAST(:timestamp as timestamp)")
     Stream<MemberEntity> findAllByViewNameAndTimestampBefore(String viewName, String collectionName, LocalDateTime timestamp);
 

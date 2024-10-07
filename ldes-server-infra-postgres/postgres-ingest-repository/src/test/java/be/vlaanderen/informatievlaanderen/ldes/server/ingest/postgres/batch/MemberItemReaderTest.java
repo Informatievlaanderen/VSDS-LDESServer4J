@@ -149,16 +149,16 @@ class MemberItemReaderTest {
 				.mapToObj(this::mapToInsertAgs)
 				.toList();
 
-		jdbcTemplate.batchUpdate("INSERT INTO members VALUES (?, ?, ?, 1, true, '', ?, ?, 'http://test-data/mobility-hindrance/1')", batchArgs);
+		jdbcTemplate.batchUpdate("INSERT INTO members (member_id, subject, timestamp, collection_id, member_model, transaction_id, version_of) " +
+				"VALUES (?, ?, ?, 1, '', ?, 'http://test-data/mobility-hindrance/1')", batchArgs);
 	}
 
 	private Object[] mapToInsertAgs(int i) {
 		final LocalDateTime timestamp = START_TIME.plusHours(i);
 		final String subject = SUBJECT_TEMPLATE + (i + 1);
-		final String oldId = COLLECTION_NAME + "/" + subject;
 
 		return new Object[]{
-				i + 1, subject, oldId, timestamp, UUID.randomUUID()
+				i + 1, subject, timestamp, UUID.randomUUID()
 		};
 	}
 

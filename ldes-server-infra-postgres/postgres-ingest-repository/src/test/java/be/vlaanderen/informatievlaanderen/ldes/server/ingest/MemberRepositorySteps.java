@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
-import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -75,11 +73,6 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public List<String> memberIdTransformer(Map<String, String> row) {
 		return row.values().stream().toList();
-	}
-
-	@When("I try to retrieve the following members by Id")
-	public void iTryToRetrieveTheFollowingMembersByIdMemberIds(@Transpose DataTable table) {
-		members = memberRepository.findAllByIds(table.column(0).stream().toList()).toList();
 	}
 
 	@Then("I expect a list of {int} members")

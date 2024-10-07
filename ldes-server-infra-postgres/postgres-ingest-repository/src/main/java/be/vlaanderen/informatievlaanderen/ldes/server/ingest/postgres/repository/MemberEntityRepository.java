@@ -28,8 +28,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 			nativeQuery = true)
 	boolean existsByCollectionAndSubjectIn(int collectionId, List<String> subjects);
 
-	List<MemberEntity> findAllByOldIdIn(List<String> oldIds);
-
 	List<MemberEntity> findAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);

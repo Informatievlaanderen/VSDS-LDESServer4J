@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	void removePageMemberEntity(Long id, String collectionName, String viewName);
-
 	void deleteAllByIds(List<Long> id);
 
 	void removeFromEventSource(List<Long> id);
