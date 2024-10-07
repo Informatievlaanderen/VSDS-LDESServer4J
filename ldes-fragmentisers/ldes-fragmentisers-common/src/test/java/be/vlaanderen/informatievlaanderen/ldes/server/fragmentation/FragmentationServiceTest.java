@@ -2,75 +2,65 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.test.context.SpringBatchTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.batch.core.repository.JobRepository;
 
 import java.util.List;
 import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BatchConfiguration.ASYNC_JOB_LAUNCHER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.BUCKETISATION_STEP;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBatchTest
-@EnableAutoConfiguration
-@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class})
-@TestPropertySource(properties = {"ldes-server.fragmentation-cron=*/1 * * * * *"})
+@ExtendWith(MockitoExtension.class)
 class FragmentationServiceTest {
-	@MockBean(name = BUCKETISATION_STEP)
+	@Mock
 	Step bucketStep;
-	@MockBean(name = "paginationStep")
+	@Mock
 	Step paginationStep;
-	@MockBean
-	ServerMetrics serverMetrics;
-	@MockBean
-	FragmentationStrategyCollection strategyCollection;
-	@MockBean
+	@Mock
 	MemberMetricsRepository memberMetricsRepository;
-	@MockBean(name = ASYNC_JOB_LAUNCHER)
+	@Mock
 	JobLauncher jobLauncher;
-	@MockBean
+	@Mock
 	JobExplorer jobExplorer;
-	@Autowired
+	@Mock
+	JobRepository jobRepository;
 	private FragmentationService fragmentationService;
+	@Captor
+	private ArgumentCaptor<JobParameters> captor;
+
+
+	@BeforeEach
+	void setUp() {
+		fragmentationService = new FragmentationService(jobLauncher, jobRepository, jobExplorer, bucketStep, paginationStep, memberMetricsRepository);
+	}
 
 	@Test
 	void when_unprocessedViews_then_triggerJobsForEachView() throws Exception {
 		String collection = "collection";
+		List<ViewName> viewNames = List.of(new ViewName(collection, "v1"), new ViewName(collection, "v2"));
 
-		when(memberMetricsRepository.getUnprocessedViews())
-				.thenReturn(List.of(new ViewName(collection, "v1"),
-						new ViewName(collection, "v2")));
+		when(memberMetricsRepository.getUnprocessedViews()).thenReturn(viewNames);
 
 		fragmentationService.scheduledJobLauncher();
 
-		ArgumentCaptor<JobParameters> captor = ArgumentCaptor.forClass(JobParameters.class);
 		verify(jobLauncher, times(2)).run(any(), captor.capture());
 		assertThat(captor.getAllValues())
-				.extracting(obj -> obj.getString(COLLECTION_NAME), obj -> obj.getString(VIEW_NAME))
-				.containsExactlyInAnyOrder(
-						tuple(collection, "v1"),
-						tuple(collection, "v2")
-				);
+				.map(params -> new ViewName(params.getString(COLLECTION_NAME), params.getString(VIEW_NAME)))
+				.containsExactlyInAnyOrderElementsOf(viewNames);
 	}
 
 	@Test
@@ -99,13 +89,10 @@ class FragmentationServiceTest {
 
 		fragmentationService.scheduledJobLauncher();
 
-		ArgumentCaptor<JobParameters> captor = ArgumentCaptor.forClass(JobParameters.class);
-		verify(jobLauncher, times(1)).run(any(), captor.capture());
-		assertThat(captor.getAllValues())
-				.extracting(obj -> obj.getString(COLLECTION_NAME), obj -> obj.getString(VIEW_NAME))
-				.containsExactlyInAnyOrder(
-						tuple(collection, "v2")
-				);
+		verify(jobLauncher).run(any(), captor.capture());
+		assertThat(captor.getValue())
+				.extracting(params -> new ViewName(params.getString(COLLECTION_NAME), params.getString(VIEW_NAME)))
+				.isEqualTo(new ViewName(collection, "v2"));
 	}
 
 
