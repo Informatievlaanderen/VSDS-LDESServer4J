@@ -21,3 +21,4 @@ Feature: Execute CompactionService
     And verify the following pages no longer exist
       | 2 |
       | 3 |
+    And the background processes did not fail

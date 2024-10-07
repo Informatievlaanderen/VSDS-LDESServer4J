@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.reposi
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import jakarta.persistence.EntityManager;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -63,4 +64,6 @@ public class LdesServerIntegrationTest {
 	@Autowired
 	DataSource dataSource;
 
+	@Autowired
+	JobExplorer jobExplorer;
 }
