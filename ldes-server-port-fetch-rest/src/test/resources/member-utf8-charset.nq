@@ -1,0 +1,11 @@
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://www.w3.org/ns/prov#generatedAtTime> "2024-04-29T14:57:19Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://purl.org/dc/terms/isVersionOf> <http://data.lblod.info/id/public-service/46969c9a-a803-ef11-9f8a-000d3aad8fb9> .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://productencatalogus.data.vlaanderen.be/ns/ipdc-lpdc#InstancePublicServiceSnapshot> .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://purl.org/vocab/cpsv#produces> _:Bac223c44717bb273efd762e7f709484c .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://purl.org/dc/terms/title> "Subsidie verfraaiing handelspanden aanvragen"@nl-be-x-informal .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <http://purl.org/dc/terms/type> <https://productencatalogus.data.vlaanderen.be/id/concept/Type/> .
+<http://data.lblod.info/id/public-service-snapshot/46969c9a-a803-ef11-9f8a-000d3aad8fb9> <https://productencatalogus.data.vlaanderen.be/ns/ipdc-lpdc#executingAuthorityLevel> <https://productencatalogus.data.vlaanderen.be/id/concept/UitvoerendBestuursniveau/> .
+_:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/title> "Hoeveel bedraagt de subsidie?"@nl-be-x-informal .
+_:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/description> "<p>Mede dankzij de extra financiële ondersteuning van VLAIO (het Vlaams Agentschap voor Innoveren en Ondernemen)"@nl-be-x-informal .
+_:Bac223c44717bb273efd762e7f709484c <http://purl.org/dc/terms/notes> "你好"@nl-be-x-informal .
+_:Bac223c44717bb273efd762e7f709484c <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://productencatalogus.data.vlaanderen.be/ns/ipdc-lpdc#FinancialAdvantage> .
