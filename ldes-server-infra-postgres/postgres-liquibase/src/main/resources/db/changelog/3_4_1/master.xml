@@ -5,4 +5,6 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="alter-unprocessed-views-view.xml" relativeToChangelogFile="true"/>
+    <include file="fix_view_stats.sql" relativeToChangelogFile="true" />
+
 </databaseChangeLog>
