@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.UnprocessedView;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.UnprocessedViewRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,8 +33,6 @@ class FragmentationServiceTest {
 	@Mock
 	private Step paginationStep;
 	@Mock
-	private MemberMetricsRepository memberMetricsRepository;
-	@Mock
 	private JobLauncher jobLauncher;
 	@Mock
 	private JobExplorer jobExplorer;
@@ -52,7 +49,7 @@ class FragmentationServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentationService = new FragmentationService(jobLauncher, jobRepository, jobExplorer, bucketStep, paginationStep, memberMetricsRepository, unprocessedViewRepository);
+		fragmentationService = new FragmentationService(jobLauncher, jobRepository, jobExplorer, bucketStep, paginationStep, unprocessedViewRepository);
 		unprocessedViews =  List.of(
 				new UnprocessedView(1, COLLECTION, 1, "v1"),
 				new UnprocessedView(1, COLLECTION, 2, "v2")
