@@ -8,5 +8,6 @@
     <include file="/db/changelog/3_2_0/master.xml" />
     <include file="/db/changelog/3_3_0/master.xml" />
     <include file="/db/changelog/3_4_0/master.xml" />
+    <include file="/db/changelog/3_4_1/master.xml" />
 
 </databaseChangeLog>
