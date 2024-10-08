@@ -6,7 +6,7 @@ name: Build Docs
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   workflow_dispatch:
