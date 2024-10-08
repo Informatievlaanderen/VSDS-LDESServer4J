@@ -59,6 +59,6 @@ jobs:
         env:
           PAT: ${{secrets.DEPLOY_DOCS_PAT}}
       - run: |
-          gh-pages-multi deploy --title ${{env.title}} -t ${{steps.version.outputs.version}} -s docs/_site
+          gh-pages-multi deploy --title "${{env.title}}" -t ${{steps.version.outputs.version}} -s docs/_site
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
