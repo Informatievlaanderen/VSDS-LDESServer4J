@@ -50,12 +50,9 @@ public class MemberItemReader {
                join members m on m.collection_id = c.collection_id
              """);
 		queryProvider.setWhereClause("""
-             c.name = :collectionName and
+             c.collection_id = :collectionId and
              m.member_id > (
-              COALESCE(
-               (SELECT max(pm.member_id) FROM page_members pm
-                WHERE pm.view_id IN (select v.view_id from views v where v.name = :viewName)),
-               (0)::bigint)
+              COALESCE((SELECT max(pm.member_id) FROM page_members pm WHERE pm.view_id = :viewId), (0)::bigint)
              )
              """);
 		queryProvider.setSortKeys(sortKeys);

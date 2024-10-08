@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="alter-unprocessed-views-view" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="unprocessed_views" columnName="collection_id"/>
+                <columnExists tableName="unprocessed_views" columnName="view_id"/>
+            </not>
+        </preConditions>
+        <dropView viewName="unprocessed_views"/>
+        <createView viewName="unprocessed_views" relativeToChangelogFile="true" path="alter-unprocessed-views-view.sql" />
+    </changeSet>
+</databaseChangeLog>
