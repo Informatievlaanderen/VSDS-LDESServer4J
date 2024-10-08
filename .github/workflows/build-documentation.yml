@@ -51,7 +51,7 @@ jobs:
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
-      - run: npm i -g @koumoul/gh-pages-multi
+      - run: npm i -g @yalz/gh-pages-multi
       - run: |
           git config --global user.email "vsds@noreply.com"
           git config --global user.name "VSDS CI"
