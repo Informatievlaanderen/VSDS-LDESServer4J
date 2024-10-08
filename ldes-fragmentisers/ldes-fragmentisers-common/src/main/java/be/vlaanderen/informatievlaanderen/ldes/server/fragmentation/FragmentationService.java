@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.UnprocessedView;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.UnprocessedViewRepository;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -29,34 +29,38 @@ public class FragmentationService {
 	public static final String FRAGMENTATION_JOB = "fragmentation";
 	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW_NAME = "viewName";
+	public static final String COLLECTION_ID = "collectionId";
+	public static final String VIEW_ID = "viewId";
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final JobLauncher jobLauncher;
 	private final JobExplorer jobExplorer;
 	private final JobRepository jobRepository;
 	private final Job bucketiseJob;
-	private final MemberMetricsRepository memberRepository;
+	private final UnprocessedViewRepository unprocessedViewRepository;
 
 	public FragmentationService(@Qualifier(ASYNC_JOB_LAUNCHER) JobLauncher jobLauncher, JobRepository jobRepository, JobExplorer jobExplorer,
 	                            @Qualifier(BUCKETISATION_STEP) Step bucketiseMembersStep, Step paginationStep,
-	                            MemberMetricsRepository memberRepository) {
+	                            UnprocessedViewRepository unprocessedViewRepository) {
 		this.jobLauncher = jobLauncher;
 		this.jobExplorer = jobExplorer;
 		this.jobRepository = jobRepository;
-		this.memberRepository = memberRepository;
+		this.unprocessedViewRepository = unprocessedViewRepository;
 		this.bucketiseJob = createJob(bucketiseMembersStep, paginationStep);
 		this.cleanupOldJobs();
 	}
 
 	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduledJobLauncher() {
-		memberRepository.getUnprocessedViews()
+		unprocessedViewRepository.findAll()
 				.parallelStream()
 				.filter(this::noJobsRunning)
-				.forEach(viewName -> {
+				.forEach(unprocessedView -> {
 					try {
 						jobLauncher.run(bucketiseJob, new JobParametersBuilder()
-								.addString(VIEW_NAME, viewName.getViewName())
-								.addString(COLLECTION_NAME, viewName.getCollectionName())
+								.addLong(VIEW_ID, (long) unprocessedView.viewId())
+								.addLong(COLLECTION_ID, (long) unprocessedView.collectionId())
+								.addString(VIEW_NAME, unprocessedView.viewName())
+								.addString(COLLECTION_NAME, unprocessedView.collectionName())
 								.addLocalDateTime("triggered", LocalDateTime.now())
 								.toJobParameters());
 					} catch (JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
@@ -66,14 +70,18 @@ public class FragmentationService {
 				});
 	}
 
-	private boolean noJobsRunning(ViewName viewName) {
+	private boolean noJobsRunning(UnprocessedView unprocessedView) {
 		return jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB)
 				.stream()
 				.noneMatch(jobExecution -> {
 					var params = jobExecution.getJobParameters();
-					String view = Objects.requireNonNull(params.getString(VIEW_NAME));
-					String collection = Objects.requireNonNull(params.getString(COLLECTION_NAME));
-					return view.equals(viewName.getViewName()) && collection.equals(viewName.getCollectionName());
+					final UnprocessedView fromParams = new UnprocessedView(
+							Objects.requireNonNull(params.getLong(COLLECTION_ID)).intValue(),
+							params.getString(COLLECTION_NAME),
+							Objects.requireNonNull(params.getLong(VIEW_ID)).intValue(),
+							params.getString(VIEW_NAME)
+					);
+					return Objects.equals(fromParams, unprocessedView);
 				});
 	}
 
