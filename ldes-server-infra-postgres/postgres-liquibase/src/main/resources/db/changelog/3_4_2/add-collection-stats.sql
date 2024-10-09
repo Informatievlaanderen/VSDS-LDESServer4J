@@ -6,6 +6,7 @@ CREATE TABLE collection_stats
     ingested_last_id bigint NOT NULL default 0
 );
 ALTER TABLE "collection_stats" ADD FOREIGN KEY ("collection_id") REFERENCES "collections" ("collection_id") ON DELETE CASCADE;
+ALTER TABLE "collection_stats" ADD PRIMARY KEY ("collection_id");
 
 -- create function to insert a stats row for the new collection
 create function on_collection_inserted() returns trigger language plpgsql as $$

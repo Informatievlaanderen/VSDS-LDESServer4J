@@ -51,9 +51,7 @@ public class MemberItemReader {
              """);
 		queryProvider.setWhereClause("""
              c.collection_id = :collectionId and
-             m.member_id > (
-              COALESCE((SELECT max(pm.member_id) FROM page_members pm WHERE pm.view_id = :viewId), (0)::bigint)
-             )
+             m.member_id > (SELECT vs.bucketized_last_id FROM view_stats vs WHERE vs.view_id = :viewId)
              """);
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
