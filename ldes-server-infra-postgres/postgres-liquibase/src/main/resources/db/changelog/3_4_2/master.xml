@@ -7,5 +7,7 @@
     <include file="add-collection-stats.sql" relativeToChangelogFile="true" />
     <include file="redefine-needs-bucketization-and-related-views.sql" relativeToChangelogFile="true" />
     <include file="extend-view-stats.sql" relativeToChangelogFile="true" />
+    <include file="remove-delete-view-trigger.sql" relativeToChangelogFile="true" />
+    <include file="fix-pagination-counting.sql" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
