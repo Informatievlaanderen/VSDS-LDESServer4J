@@ -31,15 +31,18 @@ group by c.collection_id;
 create function on_members_inserted() returns trigger language plpgsql as $$
 declare
   _stats collection_stats%ROWTYPE;
+  -- _count bigint;
 begin
+  -- select count(*) into _count from ingested;
+  -- raise WARNING 'on_members_inserted: % records in "ingested" table', _count;
   for _stats in
     select collection_id, count(member_id)::bigint, max(member_id)
     from ingested
     group by collection_id
   loop
-    update collection_stats set
-      ingested_count = ingested_count + _stats.ingested_count,
-      ingested_last_id = _stats.ingested_last_id
+    update collection_stats cs set
+      ingested_count = cs.ingested_count + _stats.ingested_count,
+      ingested_last_id = greatest(cs.ingested_last_id,_stats.ingested_last_id)
     where collection_id = _stats.collection_id;
   end loop;
   return null;
