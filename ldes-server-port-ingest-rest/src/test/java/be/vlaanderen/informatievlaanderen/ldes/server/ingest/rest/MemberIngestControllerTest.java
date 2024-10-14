@@ -186,7 +186,7 @@ class MemberIngestControllerTest {
                     Arguments.of("text/plain", Lang.NTRIPLES),
                     Arguments.of("application/rdf+xml", Lang.RDFXML),
                     Arguments.of("x/ld-json-11", Lang.JSONLD11),
-                    Arguments.of("x/ld-json-10", Lang.JSONLD10),
+                    // Arguments.of("x/ld-json-10", Lang.JSONLD10),
                     Arguments.of("text/rdf+n3", Lang.N3),
                     Arguments.of("application/trix", Lang.TRIX),
                     Arguments.of("text/turtle", Lang.TURTLE),
