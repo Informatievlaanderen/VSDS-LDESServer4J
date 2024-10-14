@@ -183,7 +183,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@Then("I wait until all members are fragmented")
 	public void waitUntilAllMembersAreFragmented() {
-		await().until(() -> memberMetricsRepository.getUnprocessedViews().isEmpty());
+		await().until(() -> unprocessedViewRepository.findAll().isEmpty());
 	}
 
 	private static Integer countSkolemizedIds(StmtIterator stmtIterator) {

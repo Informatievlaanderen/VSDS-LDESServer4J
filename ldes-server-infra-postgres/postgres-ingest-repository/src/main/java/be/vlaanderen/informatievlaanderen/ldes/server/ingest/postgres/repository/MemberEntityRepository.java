@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
-import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,9 +15,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 		WHERE c.name = :collectionName
 		""", nativeQuery = true)
 	int countMemberEntitiesByColl(String collectionName);
-
-	@Query(value = "select * from unprocessed_views", nativeQuery = true)
-	List<Tuple> getUnprocessedViews();
 
 	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
 			"FROM members " +
