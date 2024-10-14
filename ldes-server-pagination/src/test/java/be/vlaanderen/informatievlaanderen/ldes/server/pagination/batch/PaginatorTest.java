@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.NumericPageNumber;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.pagenumber.NumericPageNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -13,6 +13,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ class PaginatorTest {
 	private PageMemberRepository pageMemberRepository;
 	@Mock
 	private PageRepository pageRepository;
+	@Mock
+	private JdbcTemplate jdbcTemplate;
 	@InjectMocks
 	Paginator paginator;
 	@Captor

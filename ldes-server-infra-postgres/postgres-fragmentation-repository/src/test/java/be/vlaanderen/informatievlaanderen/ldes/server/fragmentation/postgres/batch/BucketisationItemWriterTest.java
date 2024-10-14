@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +45,12 @@ class BucketisationItemWriterTest {
 	@Mock
 	private ItemWriter<BucketRelation> bucketRelationItemWriter;
 	private BucketisationItemWriter bucketisationItemWriter;
+	@Mock
+	private JdbcTemplate jdbcTemplate;
 
 	@BeforeEach
 	void setUp() {
-		bucketisationItemWriter = new BucketisationItemWriter(bucketItemWriter, pageItemWriter, bucketMemberItemWriter, bucketRelationItemWriter);
+		bucketisationItemWriter = new BucketisationItemWriter(bucketItemWriter, pageItemWriter, bucketMemberItemWriter, bucketRelationItemWriter, jdbcTemplate, 1);
 	}
 
 	@Test
