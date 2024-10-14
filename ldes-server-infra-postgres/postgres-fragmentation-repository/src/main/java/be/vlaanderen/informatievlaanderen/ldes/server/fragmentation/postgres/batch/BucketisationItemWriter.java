@@ -8,6 +8,7 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 @Component
@@ -43,6 +44,7 @@ public class BucketisationItemWriter implements ItemWriter<Bucket> {
 				.map(Bucket::getMember)
 				.filter(Optional::isPresent)
 				.map(Optional::get)
+				.sorted(Comparator.comparing(BucketisedMember::memberId))
 				.collect(new ChunkCollector<>());
 	}
 
