@@ -4,12 +4,19 @@ ALTER TABLE "view_stats" ADD COLUMN "paginated_last_id" bigint NOT NULL default 
 ALTER TABLE "view_stats" ADD PRIMARY KEY ("view_id");
 
 -- initialize last ID values
-UPDATE view_stats vs SET bucketized_last_id =coalesce((
-  select max(distinct(member_id)) from page_members pm WHERE pm.view_id = vs.view_id
-), (0)::bigint);
-UPDATE view_stats vs SET paginated_last_id = coalesce((
-  select max(distinct(member_id)) from page_members pm WHERE pm.view_id = vs.view_id and pm.page_id is not null
-), (0)::bigint);
+UPDATE view_stats vs SET bucketized_last_id = coalesce(
+  (select max(distinct(member_id))
+   from page_members pm
+   WHERE pm.view_id = vs.view_id),
+  (0)::bigint
+);
+
+UPDATE view_stats vs SET paginated_last_id = coalesce(
+  (select max(distinct(member_id))
+   from page_members pm
+   WHERE pm.view_id = vs.view_id and pm.page_id is not null),
+  (0)::bigint
+);
 
 -- remove pagination counting triggers and functions
 drop trigger page_member_ai on page_members;
@@ -63,10 +70,9 @@ begin
   for _stats in
     select p.view_id, 0::bigint, count(distinct(p.member_id))::bigint, 0::bigint, max(p.member_id)
     from paginated p
-    where p.page_id is not null and (
-      select count(pm.member_id)
-      from page_members pm
-      where pm.page_id is not null and pm.view_id = p.view_id and pm.member_id = p.member_id
+    join former f on f.bucket_id = p.bucket_id and f.member_id = p.member_id
+    where f.page_id is null and p.page_id is not null and (
+      select count(pm.member_id) from page_members pm where pm.view_id = p.view_id and pm.member_id = p.member_id
     ) = 1
     group by p.view_id
   loop
@@ -81,5 +87,5 @@ $$;
 
 -- update stats row after page members updated
 create trigger page_members_au after update on page_members
-referencing new table as paginated
+referencing old table as former new table as paginated
 for statement execute procedure on_page_members_updated();
