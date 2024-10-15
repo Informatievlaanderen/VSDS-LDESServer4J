@@ -84,7 +84,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 			return ps;
 		}, keyHolder);
 
-		return Objects.requireNonNull(keyHolder.getKey()).intValue();
+		return Integer.parseInt(Objects.requireNonNull(keyHolder.getKeys().get("member_id").toString()));
 	}
 
 	private void updateCollectionStats(int memberCount, int lastMemberId, int collectionId) {

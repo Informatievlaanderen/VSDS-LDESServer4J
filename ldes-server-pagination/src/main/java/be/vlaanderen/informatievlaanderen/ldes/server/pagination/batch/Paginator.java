@@ -51,7 +51,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		updateViewStats(members.getLast(), members.size(), context.getLong("viewId"));
+		updateViewStats(members.getLast(), members.size(), Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString()));
 
 		return RepeatStatus.FINISHED;
 	}
