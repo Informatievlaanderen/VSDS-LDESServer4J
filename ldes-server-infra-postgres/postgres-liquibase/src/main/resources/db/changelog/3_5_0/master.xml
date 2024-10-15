@@ -11,8 +11,5 @@
     <include file="drop-obsolete-stats.sql" relativeToChangelogFile="true" />
     <include file="extend-view-stats.sql" relativeToChangelogFile="true" />
     <include file="remove-page-member-triggers.sql" relativeToChangelogFile="true" />
-    <include file="handle-collection-inserted.sql" relativeToChangelogFile="true" />    <!-- OBSOLETE? -->
-    <include file="handle-member-inserted.sql" relativeToChangelogFile="true" />        <!-- OBSOLETE -->
-    <include file="handle-page-member-inserted.sql" relativeToChangelogFile="true" />   <!-- OBSOLETE -->
-    <include file="handle-page-member-updated.sql" relativeToChangelogFile="true" />    <!-- OBSOLETE -->
+    <include file="handle-collection-inserted.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>
