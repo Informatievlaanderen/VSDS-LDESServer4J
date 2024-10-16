@@ -1,8 +1,10 @@
--- create view to retrieve members needing bucketization
 create view unprocessed_members as
-select v.collection_id, v.view_id, m.member_id
-from members m
-join views v on v.collection_id = m.collection_id
-join view_stats vs on vs.view_id = v.view_id
-where m.member_id > vs.bucketized_last_id
-and m.xmin::text::bigint < pg_snapshot_xmin(pg_current_snapshot())::text::bigint;
+SELECT m.member_id, m.subject, m.version_of, m.timestamp,
+c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model,
+c.collection_id, v.view_id
+FROM collections c
+join members m on m.collection_id = c.collection_id
+JOIN views v ON v.collection_id = c.collection_id
+JOIN view_stats vs ON vs.view_id = v.view_id
+WHERE m.member_id > vs.bucketized_last_id
+AND m.xmin::text::bigint < pg_snapshot_xmin(pg_current_snapshot())::text::bigint;
