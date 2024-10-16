@@ -48,10 +48,10 @@ public class MemberItemReader {
 		queryProvider.setFromClause("""
              collections c
                join members m on m.collection_id = c.collection_id
+               join unprocessed_members um on um.member_id = m.member_id and um.view_id = :viewId
              """);
 		queryProvider.setWhereClause("""
-             c.name = :collectionName and
-             m.member_id > (SELECT vs.bucketized_last_id FROM view_stats vs WHERE vs.view_id = :viewId)
+             c.name = :collectionName
              """);
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;

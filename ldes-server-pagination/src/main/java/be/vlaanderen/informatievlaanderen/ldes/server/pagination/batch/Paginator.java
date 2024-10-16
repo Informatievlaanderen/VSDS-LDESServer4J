@@ -51,7 +51,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		updateViewStats(members.getLast(), members.size(), Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString()));
+		updateViewStats(members.size(), Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString()));
 
 		return RepeatStatus.FINISHED;
 	}
@@ -68,14 +68,13 @@ public class Paginator implements Tasklet {
 		}
 	}
 
-	private void updateViewStats(long lastMemberId, long uniqueMemberCount, long viewId) {
+	private void updateViewStats(long uniqueMemberCount, long viewId) {
 		final String SQL = """
 				update view_stats vs set
-					paginated_count = vs.paginated_count + ?,
-					paginated_last_id = ?
+					paginated_count = vs.paginated_count + ?
 				where view_id = ?;
 				""";
 
-		jdbcTemplate.update(SQL, uniqueMemberCount, lastMemberId, viewId);
+		jdbcTemplate.update(SQL, uniqueMemberCount, viewId);
 	}
 }
