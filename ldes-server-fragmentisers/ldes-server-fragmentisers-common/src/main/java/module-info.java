@@ -1,5 +1,4 @@
 open module ldes.fragmentation.domain {
-    requires ldes.ingest.domain;
     requires ldes.domain;
     requires spring.batch.core;
     requires spring.batch.infrastructure;

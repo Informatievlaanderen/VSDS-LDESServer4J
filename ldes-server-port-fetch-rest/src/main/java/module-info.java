@@ -19,6 +19,5 @@ open module ldes.fetch.rest {
     requires micrometer.observation;
     requires org.slf4j;
     requires org.jetbrains.annotations;
-    requires ldes.fragmentation.domain;
 
 }
