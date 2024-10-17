@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-common</artifactId>
+            <artifactId>ldes-server-fragmentisers-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -80,7 +80,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-geospatial</artifactId>
+            <artifactId>ldes-server-fragmentisers-geospatial</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -92,13 +92,13 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-timebased-hierarchical</artifactId>
+            <artifactId>ldes-server-fragmentisers-timebased-hierarchical</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-reference</artifactId>
+            <artifactId>ldes-server-fragmentisers-reference</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
