@@ -37,8 +37,8 @@ public class MemberItemReader {
 	}
 
 	private PostgresPagingQueryProvider memberQuery() {
-		// Note: that we do not need to provide a sort order as tests show that we always get the members in order
-		//       adding a sort key slows down the query considerably (10K - 25K times!)
+		Map<String, Order> sortKeys = new HashMap<>();
+		sortKeys.put("member_id", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("""
 			member_id, subject, version_of, timestamp,
@@ -47,6 +47,7 @@ public class MemberItemReader {
 			""");
 		queryProvider.setFromClause("unprocessed_members");
 		queryProvider.setWhereClause("collection_id = :collectionId and view_id = :viewId");
+		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
 }
