@@ -13,5 +13,5 @@
     <include file="handle-collection-inserted.sql" relativeToChangelogFile="true" />
     <include file="add-unprocessed-members.sql" relativeToChangelogFile="true" />
     <include file="redefine-needs-bucketization.sql" relativeToChangelogFile="true" />
-    <include file="drop-obsolete-stats.sql" relativeToChangelogFile="true" />
+    <include file="drop-obsolete-views.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

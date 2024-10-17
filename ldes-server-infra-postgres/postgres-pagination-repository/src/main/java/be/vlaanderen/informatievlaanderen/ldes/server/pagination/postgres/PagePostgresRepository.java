@@ -35,10 +35,8 @@ public class PagePostgresRepository implements PageRepository {
 				select p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
 				from pages p
 				left join page_members pm on pm.page_id = p.page_id
-				JOIN buckets b ON p.bucket_id = b.bucket_id
-				JOIN views v ON v.view_id = b.view_id
-				join bucket_last_page blp on blp.bucket_id = b.bucket_id AND blp.last_page_id = p.page_id
-				where b.bucket_id = ?
+				join views v ON v.view_id = pm.view_id
+				where p.bucket_id = ? and not p.immutable
 				group by p.page_id, v.page_size
 				order by page_id
 				""";
