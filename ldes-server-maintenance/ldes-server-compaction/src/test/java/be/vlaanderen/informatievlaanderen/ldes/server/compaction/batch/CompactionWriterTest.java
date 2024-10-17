@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.PageDeletionTimeSetter;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRelationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.mockito.Mockito.*;
 
 class CompactionWriterTest {
-	private PageRelationRepository pageRelationRepository;
+	private CompactionPageRelationRepository pageRelationRepository;
 	private PageMemberRepository pageMemberRepository;
 	private CompactedFragmentCreator compactedFragmentCreator;
 	private PageDeletionTimeSetter pageDeletionTimeSetter;

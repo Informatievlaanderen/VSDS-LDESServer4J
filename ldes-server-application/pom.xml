@@ -214,17 +214,12 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-retention</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>postgres-retention-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-compaction</artifactId>
+                    <artifactId>postgres-compaction-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

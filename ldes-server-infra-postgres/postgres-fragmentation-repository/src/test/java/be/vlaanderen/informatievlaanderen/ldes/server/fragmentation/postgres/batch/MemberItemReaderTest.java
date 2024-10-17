@@ -1,10 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.batch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.EventStreamProperties;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,7 +118,7 @@ class MemberItemReaderTest {
 
 		} while (member != null);
 
-		assertThat(readMembers)
+		Assertions.assertThat(readMembers)
 				.hasSize(count)
 				.doesNotHaveDuplicates()
 				.first()

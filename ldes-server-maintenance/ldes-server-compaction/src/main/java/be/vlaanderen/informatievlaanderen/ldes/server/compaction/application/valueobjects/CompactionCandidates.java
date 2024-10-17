@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
 
 import java.util.List;
 import java.util.Optional;

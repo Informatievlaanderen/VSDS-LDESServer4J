@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.projection;
 
 public interface CompactionCandidateProjection {
 	Long getFragmentId();

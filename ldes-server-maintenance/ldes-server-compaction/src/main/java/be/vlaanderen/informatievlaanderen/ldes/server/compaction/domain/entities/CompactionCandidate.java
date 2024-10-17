@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities;
 
 import java.util.Objects;
 

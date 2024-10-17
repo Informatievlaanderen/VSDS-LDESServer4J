@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.projection.CompactionCandidateProjection;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.projection.CompactionCandidateProjection;
 
 public class CompactionCandidateMapper {
 	private CompactionCandidateMapper() {}

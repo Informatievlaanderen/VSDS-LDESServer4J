@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.PageDeletionTimeSetter;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRelationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRelationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -14,13 +14,13 @@ import java.util.Set;
 
 @Component
 public class CompactionWriter {
-	private final PageRelationRepository pageRelationRepository;
+	private final CompactionPageRelationRepository pageRelationRepository;
 	private final PageMemberRepository pageMemberRepository;
 	private final CompactedFragmentCreator compactedFragmentCreator;
 	private final PageDeletionTimeSetter pageDeletionTimeSetter;
 	private final ObservationRegistry observationRegistry;
 
-	public CompactionWriter(PageRelationRepository pageRelationRepository,
+	public CompactionWriter(CompactionPageRelationRepository pageRelationRepository,
 	                        PageMemberRepository pageMemberRepository,
 	                        CompactedFragmentCreator compactedFragmentCreator,
 	                        PageDeletionTimeSetter pageDeletionTimeSetter,

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRepository;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 
 @Component
 public class PageDeletionTask implements Tasklet {
-	private final PageRepository pageRepository;
+	private final CompactionPageRepository pageRepository;
 
-	public PageDeletionTask(PageRepository pageRepository) {
+	public PageDeletionTask(CompactionPageRepository pageRepository) {
 		this.pageRepository = pageRepository;
 	}
 
