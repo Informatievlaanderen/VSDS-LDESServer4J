@@ -17,4 +17,6 @@ public class ServerConstants {
             Lang.RDFPROTO,
             Lang.RDFTHRIFT
     );
+
+    public static final Lang SERIALISATION_LANG = Lang.RDFPROTO;
 }

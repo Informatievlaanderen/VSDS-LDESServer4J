@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.CompactionCandidateSorter;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CompactionTaskTest {
 	@Mock
-	private PageRepository pageRepository;
+	private CompactionPageRepository pageRepository;
 	@Mock
 	private CompactionCandidateSorter compactionCandidateSorter;
 	@Mock

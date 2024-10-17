@@ -14,10 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-domain</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-server-pagination</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -29,13 +25,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>postgres-ingest-repository</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-compaction</artifactId>
+            <artifactId>postgres-member-repository</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

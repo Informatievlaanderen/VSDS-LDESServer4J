@@ -3,10 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactedPages;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactionCandidates;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.valueobjects.CompactionPageCapacity;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class CompactionCandidateSorter {

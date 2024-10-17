@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.batch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class PageDeletionTaskTest {
 	@Mock
-	private PageRepository pageRepository;
+	private CompactionPageRepository pageRepository;
 	@InjectMocks
 	private PageDeletionTask pageDeletionTask;
 

@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetricsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.FragmentationMetricsService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates.BucketisedMemberItemWriterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -55,8 +54,8 @@ public class PostgresBucketisationIntegrationTest {
 		}
 
 		@Bean
-		ServerMetrics serverMetrics() {
-			return new ServerMetrics(mock(FragmentationMetricsRepository.class), mock(MemberMetricsRepository.class));
+		FragmentationMetricsService serverMetrics() {
+			return new FragmentationMetricsService(mock(FragmentationMetricsRepository.class));
 		}
 	}
 }
