@@ -32,13 +32,9 @@ public class PagePostgresRepository implements PageRepository {
 	@Transactional(readOnly = true)
 	public Page getOpenPage(long bucketId) {
 		String sql = """
-				select p.page_id, p.bucket_id, p.partial_url, v.page_size, COUNT(member_id) AS assigned_members
-				from pages p
-				left join page_members pm on pm.page_id = p.page_id
-				join views v ON v.view_id = pm.view_id
-				where p.bucket_id = ? and not p.immutable
-				group by p.page_id, v.page_size
-				order by page_id
+				select page_id, bucket_id, partial_url, page_size, assigned_members
+				from open_pages
+				where bucket_id = ?
 				""";
 		return jdbcTemplate.query(sql, new PaginationRowMapper(), bucketId)
 				.stream()

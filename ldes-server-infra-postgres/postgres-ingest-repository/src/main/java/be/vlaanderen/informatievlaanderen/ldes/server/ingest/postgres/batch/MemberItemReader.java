@@ -45,8 +45,14 @@ public class MemberItemReader {
 			name, version_of_path, timestamp_path, create_versions,
 			member_model
 			""");
-		queryProvider.setFromClause("unprocessed_members");
-		queryProvider.setWhereClause("collection_id = :collectionId and view_id = :viewId");
+		queryProvider.setFromClause("""
+			collections c
+			join processable_members m on m.collection_id = c.collection_id
+			""");
+		queryProvider.setWhereClause("""
+			m.member_id > (
+				select vs.bucketized_last_id from view_stats vs where vs.view_id = :viewId
+			)""");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}

@@ -1,10 +1,8 @@
 create view unprocessed_members as
-SELECT m.member_id, m.subject, m.version_of, m.timestamp,
-c.name, c.version_of_path, c.timestamp_path, c.create_versions, m.member_model,
-c.collection_id, v.view_id
+SELECT m.member_id, c.collection_id, v.view_id
 FROM collections c
-join members m on m.collection_id = c.collection_id
 JOIN views v ON v.collection_id = c.collection_id
 JOIN view_stats vs ON vs.view_id = v.view_id
+join processable_members m on m.collection_id = c.collection_id
 WHERE m.member_id > vs.bucketized_last_id
-AND m.xmin::text::bigint < pg_snapshot_xmin(pg_current_snapshot())::text::bigint;
+;
