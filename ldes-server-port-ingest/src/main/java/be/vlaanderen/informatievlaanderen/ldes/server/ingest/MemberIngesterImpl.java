@@ -42,7 +42,7 @@ public class MemberIngesterImpl implements MemberIngester {
         members.forEach(validator::validate);
         members.forEach(IngestedMember::removeTreeMember);
 
-        int ingestedMembersCount = memberRepository.insertAll(members).size();
+        int ingestedMembersCount = memberRepository.insertAll(members);
 
         if (ingestedMembersCount != members.size()) {
             log.warn(DUPLICATE_MEMBERS_DETECTED);
