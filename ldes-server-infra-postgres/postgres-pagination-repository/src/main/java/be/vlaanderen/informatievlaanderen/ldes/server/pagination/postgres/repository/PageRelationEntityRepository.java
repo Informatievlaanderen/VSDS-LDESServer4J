@@ -14,6 +14,7 @@ public interface PageRelationEntityRepository extends JpaRepository<PageRelation
 	@Modifying
 	@Query(value = """
 			INSERT INTO page_relations (from_page_id, to_page_id, relation_type) VALUES (?, ?, ?)
+			on conflict do nothing
 			""", nativeQuery = true)
 	void insertRelation(Long fromPageId, Long toPageId, String treeRelationType);
 
@@ -23,6 +24,7 @@ public interface PageRelationEntityRepository extends JpaRepository<PageRelation
 			SELECT (SELECT page_id FROM pages WHERE partial_url = :fromPagePartialUrl),
 			       (SELECT page_id FROM pages WHERE partial_url = :toPagePartialUrl),
 			       :treeRelationType, :treeValue, :treeValueType, :treePath
+			       on conflict do nothing
 			""", nativeQuery = true)
 	void insertRelation(String fromPagePartialUrl, String toPagePartialUrl, String treeRelationType, String treeValue, String treeValueType, String treePath);
 
