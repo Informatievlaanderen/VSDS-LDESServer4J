@@ -61,9 +61,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 			jdbcTemplate.batchUpdate(INSERT_SQL, batchArgs);
 
-			int lastId = insertLastMember(members.getLast(), collectionId);
+			int lastId = insertLastMember(members.getLast(), collectionId); // TODO: remove unused variable
 
-			updateCollectionStats(members.size(), lastId, collectionId);
+			updateCollectionStats(members.size(), collectionId);
 
 			return members;
 		} else {
@@ -87,18 +87,16 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 		return Integer.parseInt(Objects.requireNonNull(keyHolder.getKeys().get("member_id").toString()));
 	}
 
-	private void updateCollectionStats(int memberCount, int lastMemberId, int collectionId) {
+	private void updateCollectionStats(int memberCount, int collectionId) {
 		String SQL = """
 				update collection_stats cs set
-				      ingested_count = cs.ingested_count + ?,
-				      ingested_last_id = ?
-				    where collection_id = ?;
+				ingested_count = cs.ingested_count + ?
+				where collection_id = ?;
 				""";
 
 		jdbcTemplate.update(SQL, ps -> {
 			ps.setInt(1, memberCount);
-			ps.setInt(2, lastMemberId);
-			ps.setInt(3, collectionId);
+			ps.setInt(2, collectionId);
 		});
 	}
 
