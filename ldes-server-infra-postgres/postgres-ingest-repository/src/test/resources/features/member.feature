@@ -55,4 +55,6 @@ Feature: MemberRepository
     And I save the members using the MemberRepository
       | subject                                 | collectionName      | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | http://test-data/mobility-hindrance/2 | 2022-08-12T18:35:00 |
+      | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | http://test-data/mobility-hindrance/3 | 2022-08-12T18:35:00 |
     Then The member with collection "mobility-hindrances" and subject "http://test-data/mobility-hindrance/1/1" will exist
+    Then The member with collection "mobility-hindrances" and subject "http://test-data/mobility-hindrance/1/2" will not exist

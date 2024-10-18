@@ -8,13 +8,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
@@ -25,7 +26,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	private final JdbcTemplate jdbcTemplate;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, DataSource dataSource) {
+	                                MemberEntityMapper mapper,
+	                                DatabaseColumnModelConverter modelConverter,
+	                                DataSource dataSource) {
 		this.repository = repository;
 		this.mapper = mapper;
 		this.modelConverter = modelConverter;
@@ -34,12 +37,16 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public List<IngestedMember> insertAll(List<IngestedMember> members) {
+	public int insertAll(List<IngestedMember> members) {
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
-		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
-		if (!membersContainDuplicateIds(members) && !membersExistInCollection(collectionId, subjects)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
-
+		if (membersContainDuplicateIds(members)) {
+			return 0;
+		}
+		String sql = """
+				INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model)
+				VALUES (?,?,?,?,?,?)
+				""";
+		try {
 			final List<Object[]> batchArgs = members.stream()
 					.map(member -> new Object[]{
 							member.getSubject(),
@@ -50,24 +57,14 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 							modelConverter.convertToDatabaseColumn(member.getModel()),
 					})
 					.toList();
-
-			jdbcTemplate.batchUpdate(sql, batchArgs);
-
-			return members;
-		} else {
-			return List.of();
+			return Arrays.stream(jdbcTemplate.batchUpdate(sql, batchArgs)).sum();
+		} catch (DuplicateKeyException e) {
+			return 0;
 		}
 	}
 
-	protected boolean membersExistInCollection(int collectionId, List<String> subjects) {
-		return repository.existsByCollectionAndSubjectIn(collectionId, subjects);
-	}
-
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
-		return members.stream()
-				.map(IngestedMember::getSubject)
-				.collect(Collectors.toSet())
-				.size() != members.size();
+		return members.size() != members.stream().map(IngestedMember::getSubject).distinct().count();
 	}
 
 
