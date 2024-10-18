@@ -102,24 +102,13 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-port-ingest-rest</artifactId>
+                    <artifactId>ldes-server-ingest-rest</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-pagination-repository</artifactId>
+                    <artifactId>postgres-member-repository</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-maintenance-repository</artifactId>
-                    <version>${project.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                            <artifactId>ldes-server-retention</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
             </dependencies>
         </profile>
@@ -128,7 +117,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-port-fetch-rest</artifactId>
+                    <artifactId>ldes-server-fetch-rest</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>
@@ -164,7 +153,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-fragmentisers-geospatial</artifactId>
+                    <artifactId>ldes-server-fragmentation-geospatial</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -174,7 +163,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-fragmentisers-timebased-hierarchical</artifactId>
+                    <artifactId>ldes-server-fragmentation-timebased-hierarchical</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -184,7 +173,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-fragmentisers-reference</artifactId>
+                    <artifactId>ldes-server-fragmentation-reference</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -194,7 +183,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-admin</artifactId>
+                    <artifactId>ldes-server-admin-rest</artifactId>
                     <version>${project.version}</version>
                 </dependency>
                 <dependency>

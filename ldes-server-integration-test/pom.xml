@@ -32,25 +32,25 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>postgres-ingest-repository</artifactId>
+            <artifactId>postgres-member-repository</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-port-ingest</artifactId>
+            <artifactId>ldes-server-ingest-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-port-ingest-rest</artifactId>
+            <artifactId>ldes-server-ingest-rest</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-admin</artifactId>
+            <artifactId>ldes-server-admin-rest</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-fragmentisers-common</artifactId>
+            <artifactId>ldes-server-fragmentation-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -80,7 +80,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-fragmentisers-geospatial</artifactId>
+            <artifactId>ldes-server-fragmentation-geospatial</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -92,13 +92,13 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-fragmentisers-timebased-hierarchical</artifactId>
+            <artifactId>ldes-server-fragmentation-timebased-hierarchical</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-fragmentisers-reference</artifactId>
+            <artifactId>ldes-server-fragmentation-reference</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -110,13 +110,13 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-port-fetch</artifactId>
+            <artifactId>ldes-server-fetch-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-port-fetch-rest</artifactId>
+            <artifactId>ldes-server-fetch-rest</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

@@ -1,0 +1,7 @@
+@prefix tree: 	<https://w3id.org/tree#>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ldes:   <https://w3id.org/ldes#> .
+
+ldes:retentionPolicy
+  a ldes:DurationAgoPolicy ;
+  tree:value "P1Y"^^<http://www.w3.org/2001/XMLSchema#duration> .

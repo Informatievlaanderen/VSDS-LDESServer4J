@@ -1,0 +1,45 @@
+@base <http://localhost:8080>
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix legal: <http://www.w3.org/ns/legal#> .
+@prefix m8g:   <http://data.europa.eu/m8g/> .
+@prefix locn:  <http://www.w3.org/ns/locn#> .
+
+</> a dcat:Catalog ;
+  dct:title "My LDES'es"@en ;
+  dct:description "All LDES'es from publiser X"@en ;
+  dct:publisher <http://sample.org/company/PublisherX> ;
+  dcat:dataset </parcels> ;
+  dcat:service </parcels/by-page/description>.
+
+<http://sample.org/company/PublisherX> a legal:LegalEntity ;
+  foaf:name "Data Publishing Company" ;
+  legal:legalName "Data Publishing Company BV" ;
+  m8g:registeredAddress [
+    a locn:Address ;
+    locn:fullAddress "Some full address here"
+  ] ;
+  m8g:contactPoint [
+    a m8g:ContactPoint ;
+    m8g:hasEmail "info@data-publishing-company.com"
+  ] .
+
+</parcels> a dcat:Dataset ;
+ dct:title "My LDES"@en ;
+ dct:description "LDES for my data collection"@en .
+
+</parcels/by-page/description> a dcat:DataService ;
+  dcat:endpointURL </parcels/by-page> ;
+  dcat:servesDataset </parcels> ;
+  dct:title "My geo-spatial view"@en ;
+  dct:description "Geospatial fragmentation for my LDES"@en ;
+  dct:license [
+    a dct:LicenseDocument ;
+    dct:type [
+      rdf:type skos:Concept;
+      skos:prefLabel "some public license"@en
+    ]
+  ] .
