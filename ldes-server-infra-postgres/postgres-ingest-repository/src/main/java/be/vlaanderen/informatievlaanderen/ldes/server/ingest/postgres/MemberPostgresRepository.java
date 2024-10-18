@@ -90,7 +90,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	private void updateCollectionStats(int memberCount, int collectionId) {
 		String SQL = """
 				update collection_stats cs set
-				ingested_count = cs.ingested_count + ?,
+				ingested_count = cs.ingested_count + ?
 				where collection_id = ?;
 				""";
 
