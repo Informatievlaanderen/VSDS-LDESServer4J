@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>postgres-retention-repository</artifactId>
+            <artifactId>postgres-maintenance-repository</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

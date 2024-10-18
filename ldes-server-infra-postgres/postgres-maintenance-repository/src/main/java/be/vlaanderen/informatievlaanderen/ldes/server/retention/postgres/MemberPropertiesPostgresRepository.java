@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.RetentionMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.RetentionMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
@@ -44,7 +44,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Override
 	@Transactional
 	public void removeFromEventSource(List<Long> ids) {
-		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = :isInEventSource " +
+		Query query = entityManager.createQuery("UPDATE RetentionMemberEntity m SET m.isInEventSource = :isInEventSource " +
 		                                        "WHERE m.id IN :memberIds");
 		query.setParameter("isInEventSource", false);
 		query.setParameter("memberIds", ids);
@@ -56,8 +56,8 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	public List<Long> findExpiredMembers(ViewName viewName,
 	                                     TimeBasedRetentionPolicy policy) {
 		return memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.sorted(Comparator.comparing(MemberEntity::getId).reversed())
-				.map(MemberEntity::getId)
+				.sorted(Comparator.comparing(RetentionMemberEntity::getId).reversed())
+				.map(RetentionMemberEntity::getId)
 				.toList();
 	}
 
@@ -67,13 +67,13 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	                                     VersionBasedRetentionPolicy policy) {
 
 		return memberEntityRepository.findAllByViewName(viewName.getViewName(), viewName.getCollectionName())
-				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
+				.collect(Collectors.groupingBy(RetentionMemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.sorted(Comparator.comparing(MemberEntity::getId).reversed())
+						.sorted(Comparator.comparing(RetentionMemberEntity::getId).reversed())
 						.skip(policy.numberOfMembersToKeep()))
-				.map(MemberEntity::getId)
+				.map(RetentionMemberEntity::getId)
 				.toList();
 
 	}
@@ -83,13 +83,13 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	public List<Long> findExpiredMembers(ViewName viewName,
 	                                     TimeAndVersionBasedRetentionPolicy policy) {
 		return memberEntityRepository.findAllByViewNameAndTimestampBefore(viewName.getViewName(), viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
-				.collect(Collectors.groupingBy(MemberEntity::getVersionOf))
+				.collect(Collectors.groupingBy(RetentionMemberEntity::getVersionOf))
 				.values()
 				.stream()
 				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
-						.sorted(Comparator.comparing(MemberEntity::getId).reversed())
+						.sorted(Comparator.comparing(RetentionMemberEntity::getId).reversed())
 						.skip(policy.numberOfMembersToKeep()))
-				.map(MemberEntity::getId)
+				.map(RetentionMemberEntity::getId)
 				.toList();
 	}
 
