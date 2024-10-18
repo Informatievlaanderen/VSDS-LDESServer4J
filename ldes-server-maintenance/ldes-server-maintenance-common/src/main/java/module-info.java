@@ -5,4 +5,5 @@ open module ldes.server.maintenance.common {
 	requires spring.beans;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.maintenance.services;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.maintenance.valueobjects;
+	exports be.vlaanderen.informatievlaanderen.ldes.server.maintenance.repository;
 }

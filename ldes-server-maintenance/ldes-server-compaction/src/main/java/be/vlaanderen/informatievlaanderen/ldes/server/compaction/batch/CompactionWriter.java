@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.ser
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRelationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.repository.PageMemberRepository;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Component;

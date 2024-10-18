@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.mapper;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.projection.RetentionMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
 import org.springframework.stereotype.Component;
 
 @Component

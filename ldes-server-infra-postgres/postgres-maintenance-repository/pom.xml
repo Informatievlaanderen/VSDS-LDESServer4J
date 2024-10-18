@@ -19,6 +19,11 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-server-compaction</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-admin-repository</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

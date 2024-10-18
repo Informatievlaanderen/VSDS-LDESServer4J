@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.mapper;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

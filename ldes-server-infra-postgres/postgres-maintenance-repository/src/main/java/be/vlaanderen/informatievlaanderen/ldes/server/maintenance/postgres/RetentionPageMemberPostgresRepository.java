@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.RetentionPageMemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.PageMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.repository.RetentionPageMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.repository.PageMemberRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

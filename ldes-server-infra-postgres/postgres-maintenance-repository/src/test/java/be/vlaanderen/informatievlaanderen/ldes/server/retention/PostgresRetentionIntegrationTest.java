@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.MemberPropertiesPostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.MemberPropertiesPostgresRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;

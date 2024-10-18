@@ -16,7 +16,6 @@
         <module>postgres-ingest-repository</module>
         <module>postgres-maintenance-repository</module>
         <module>postgres-pagination-repository</module>
-        <module>postgres-compaction-repository</module>
     </modules>
 
     <artifactId>ldes-server-infra-postgres</artifactId>

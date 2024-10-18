@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.entity.RetentionMemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.mapper.MemberPropertiesEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.projection.RetentionMemberProjection;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.repository.RetentionMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.RetentionMemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.RetentionMemberProjection;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.RetentionMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;

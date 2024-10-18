@@ -3,7 +3,6 @@ open module ldes.fetch.rest {
     requires ldes.admin;
     requires ldes.domain;
     requires ldes.fetch.domain;
-    requires ldes.ingest.domain;
 
     requires spring.web;
     requires spring.beans;

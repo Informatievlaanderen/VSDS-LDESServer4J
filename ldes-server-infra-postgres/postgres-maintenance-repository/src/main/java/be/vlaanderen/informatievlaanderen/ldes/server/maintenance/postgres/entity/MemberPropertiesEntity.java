@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.entity;
 
 import jakarta.persistence.*;
 

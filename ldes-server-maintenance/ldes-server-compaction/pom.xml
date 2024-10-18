@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-retention</artifactId>
+            <artifactId>ldes-server-maintenance-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

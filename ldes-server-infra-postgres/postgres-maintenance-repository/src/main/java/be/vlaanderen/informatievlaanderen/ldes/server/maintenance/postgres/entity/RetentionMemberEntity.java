@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.RetentionDatabaseColumnModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.postgres.mapper.RetentionDatabaseColumnModelConverter;
 import jakarta.persistence.*;
 import org.apache.jena.rdf.model.Model;
 import org.hibernate.annotations.OnDelete;

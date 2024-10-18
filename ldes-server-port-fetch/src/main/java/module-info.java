@@ -6,7 +6,6 @@ module ldes.fetch.domain {
 	exports be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects;
 
 	requires ldes.domain;
-    requires ldes.ingest.domain;
 
     requires spring.context;
     requires spring.beans;

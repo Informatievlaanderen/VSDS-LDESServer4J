@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
+package be.vlaanderen.informatievlaanderen.ldes.server.maintenance.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
