@@ -20,10 +20,12 @@ public class PageRelationItemWriterConfig {
 					SELECT (SELECT page_id FROM pages WHERE partial_url = :fromPartialUrl),
 					       (SELECT page_id FROM pages WHERE partial_url = :toPartialUrl),
 					       :treeRelationType, :treeValue, :treeValueType, :treePath
+					       on conflict do nothing
 					""";
 		return new JdbcBatchItemWriterBuilder<BucketRelation>()
 				.dataSource(dataSource)
 				.sql(sql)
+				.assertUpdates(false)
 				.itemSqlParameterSourceProvider(item -> new MapSqlParameterSource(Map.of(
 						"fromPartialUrl", item.fromPartialUrl(),
 						"toPartialUrl", item.toPartialUrl(),

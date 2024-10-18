@@ -16,4 +16,5 @@
     <include file="redefine-needs-bucketization.sql" relativeToChangelogFile="true" />
     <include file="drop-obsolete-views.sql" relativeToChangelogFile="true" />
     <include file="add-open-pages-view.sql" relativeToChangelogFile="true" />
+    <include file="add-page-relations-guard.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>
