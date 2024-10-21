@@ -20,6 +20,7 @@ public class PageRelationItemWriterConfig {
 					SELECT (SELECT page_id FROM pages WHERE partial_url = :fromPartialUrl),
 					       (SELECT page_id FROM pages WHERE partial_url = :toPartialUrl),
 					       :treeRelationType, :treeValue, :treeValueType, :treePath
+					       ON CONFLICT (from_page_id, to_page_id, relation_type) DO NOTHING
 					""";
 		return new JdbcBatchItemWriterBuilder<BucketRelation>()
 				.dataSource(dataSource)
@@ -32,6 +33,7 @@ public class PageRelationItemWriterConfig {
 						"treeValueType", item.relation().treeValueType(),
 						"treePath", item.relation().treePath()
 				)))
+				.assertUpdates(false)
 				.build();
 	}
 }
