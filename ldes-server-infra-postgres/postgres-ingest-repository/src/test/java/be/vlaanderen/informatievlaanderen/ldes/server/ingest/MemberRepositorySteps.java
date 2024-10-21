@@ -25,12 +25,11 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@When("I save the members using the MemberRepository")
 	public void iSaveTheMembers(List<IngestedMember> members) {
-		List<IngestedMember> actualIngestedMembers = members.stream()
+		members.stream()
 				.collect(Collectors.groupingBy(IngestedMember::getCollectionName))
 				.values().stream()
-				.flatMap(groupedMembers -> memberRepository.insertAll(groupedMembers).stream())
-				.toList();
-		this.members.addAll(actualIngestedMembers);
+				.filter(groupedMembers -> memberRepository.insertAll(groupedMembers) != 0)
+				.forEach(this.members::addAll);
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public interface MemberRepository {
-	List<IngestedMember> insertAll(List<IngestedMember> members);
+	int insertAll(List<IngestedMember> members);
 
 	Stream<IngestedMember> findAllByCollectionAndSubject(String collectionName, List<String> subjects);
 
