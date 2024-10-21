@@ -21,13 +21,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 	@Query(value = "select * from unprocessed_views", nativeQuery = true)
 	List<Tuple> getUnprocessedViews();
 
-	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
-			"FROM members " +
-			"WHERE collection_id = :collectionId " +
-			"AND subject IN :subjects",
-			nativeQuery = true)
-	boolean existsByCollectionAndSubjectIn(int collectionId, List<String> subjects);
-
 	List<MemberEntity> findAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 
 	void deleteAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);

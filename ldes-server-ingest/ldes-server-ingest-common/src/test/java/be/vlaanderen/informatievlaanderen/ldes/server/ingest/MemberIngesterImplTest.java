@@ -86,7 +86,7 @@ class MemberIngesterImplTest {
                 MEMBER_SUBJECT, COLLECTION_NAME,
                 VERSION_OF, TIMESTAMP,
                 true, "txId", model);
-        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
+        when(memberRepository.insertAll(List.of(member))).thenReturn(0);
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
@@ -104,7 +104,7 @@ class MemberIngesterImplTest {
                 MEMBER_SUBJECT, COLLECTION_NAME,
                 VERSION_OF, TIMESTAMP,
                 true, "txId", model);
-        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
+        when(memberRepository.insertAll(List.of(member))).thenReturn(1);
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
