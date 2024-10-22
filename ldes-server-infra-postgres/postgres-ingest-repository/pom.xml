@@ -9,7 +9,7 @@
         <version>3.5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>postgres-member-repository</artifactId>
+    <artifactId>postgres-ingest-repository</artifactId>
 
     <dependencies>
         <dependency>

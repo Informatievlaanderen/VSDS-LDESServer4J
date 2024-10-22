@@ -93,6 +93,19 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>com.github.ferstl</groupId>
+                <artifactId>depgraph-maven-plugin</artifactId>
+                <version>4.0.3</version>
+                <configuration>
+                    <reduceEdges>true</reduceEdges>
+                    <scope>compile</scope>
+                    <includes>be.vlaanderen.informatievlaanderen.vsds*</includes>
+                    <excludes>be.vlaanderen.informatievlaanderen.vsds:*domain*</excludes>
+                    <graphFormat>puml</graphFormat>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -107,7 +120,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-member-repository</artifactId>
+                    <artifactId>postgres-ingest-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -122,19 +135,8 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-pagination-repository</artifactId>
+                    <artifactId>postgres-fetch-repository</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>postgres-maintenance-repository</artifactId>
-                    <version>${project.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                            <artifactId>ldes-server-retention</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
             </dependencies>
         </profile>
