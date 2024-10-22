@@ -35,16 +35,6 @@ public class FetchPageEntity {
 	public FetchPageEntity() {
 	}
 
-	public FetchPageEntity(Long pageId) {
-		this.id = pageId;
-	}
-
-	public FetchPageEntity(Long bucketId, String partialUrl) {
-		this.bucket = new FetchBucketEntity(bucketId);
-		this.immutable = false;
-		this.partialUrl = partialUrl;
-	}
-
 	public Long getId() {
 		return id;
 	}

@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { HttpModelConverter.class, PrefixAdderImpl.class, DcatDatasetRestController.class,
 		AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class, RdfModelConverter.class, RdfModelConverter.class })
 class DcatDatasetRestControllerTest {
-	private final static String COLLECTION_NAME = "collection";
+	private static final String COLLECTION_NAME = "collection";
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean

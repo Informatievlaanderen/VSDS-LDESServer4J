@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 
 class DcatCatalogValidatorTest {
-	private final static String validServerDcat = """
+	private static final String validServerDcat = """
 							@prefix dct:   <http://purl.org/dc/terms/> .
 							@prefix dcat:  <http://www.w3.org/ns/dcat#> .
 

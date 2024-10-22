@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
-    private final static String COLLECTION_NAME = "collectionName";
+    private static final String COLLECTION_NAME = "collectionName";
     private ResultActions resultActions;
     private String datasetString;
 

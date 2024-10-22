@@ -114,10 +114,10 @@ class DcatServerServiceImplTest {
 	@Nested
 	class GetComposedDcat {
 
-		private final static String COLLECTION_PARCELS = "parcels";
-		private final static String COLLECTION_BUILDINGS = "buildings";
-		private final static String VIEW_BY_PAGE = "by-page";
-		private final static String VIEW_BY_TIME = "by-time";
+		private static final String COLLECTION_PARCELS = "parcels";
+		private static final String COLLECTION_BUILDINGS = "buildings";
+		private static final String VIEW_BY_PAGE = "by-page";
+		private static final String VIEW_BY_TIME = "by-time";
 
 		@Test
 		void should_ReturnEmptyModel_when_NoServerDcatPresent() {

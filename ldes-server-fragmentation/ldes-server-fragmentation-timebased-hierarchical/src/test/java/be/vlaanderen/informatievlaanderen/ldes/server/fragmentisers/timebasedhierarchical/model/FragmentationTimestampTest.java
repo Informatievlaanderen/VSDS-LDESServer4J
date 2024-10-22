@@ -81,7 +81,7 @@ class FragmentationTimestampTest {
 					Arguments.of(TIME6am, Granularity.SECOND, "2023-01-02T06:30:40"),
 					Arguments.of(TIME6pm, Granularity.SECOND, "2023-01-02T18:30:40"));
 		}
-	};
+	}
 
 	static class EqualityTestProvider implements ArgumentsProvider {
 		private static final FragmentationTimestamp time = new FragmentationTimestamp(

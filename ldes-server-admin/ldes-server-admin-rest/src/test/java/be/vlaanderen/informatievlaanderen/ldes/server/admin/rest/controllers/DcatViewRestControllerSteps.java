@@ -28,9 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
-	private final static String COLLECTION_NAME = "collectionName";
-	private final static String VIEW = "viewName";
-	private final static ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW = "viewName";
+	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
 
 	private ResultActions resultActions;
 	private String turtleDataservice;

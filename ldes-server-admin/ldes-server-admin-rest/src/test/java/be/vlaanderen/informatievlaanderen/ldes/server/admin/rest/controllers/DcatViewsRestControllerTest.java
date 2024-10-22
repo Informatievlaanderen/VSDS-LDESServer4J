@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RdfModelConverter.class})
 class DcatViewsRestControllerTest {
 
-	private final static String COLLECTION_NAME = "collectionName";
-	private final static String VIEW_NAME = "viewName";
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW_NAME = "viewName";
 
 	@MockBean
 	private DcatViewService dcatViewService;
