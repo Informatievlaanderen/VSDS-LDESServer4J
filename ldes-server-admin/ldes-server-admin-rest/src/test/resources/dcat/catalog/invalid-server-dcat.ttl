@@ -1,0 +1,9 @@
+@base <http://localhost:8080>
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+
+[/not-empty] a dcat:Catalog ;
+    dcat:DataService </my-dataservice>
+    dcat:DataSet </my-dataset>
+    dct:title "My LDES'es"@en ;
+    dct:description "All LDES'es from publiser X"@en .

@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.BucketEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

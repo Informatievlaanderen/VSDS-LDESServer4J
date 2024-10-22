@@ -1,11 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.dao.DuplicateKeyException;
@@ -19,7 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Repository
-public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
+public class MemberPostgresRepository implements MemberRepository {
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 	private final DatabaseColumnModelConverter modelConverter;
@@ -79,17 +76,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	@Transactional
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
-	}
-
-	@Override
-	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		final String sql = """
-				SELECT m.subject, m.member_model
-				FROM members m
-				    JOIN page_members USING (member_id)
-				    JOIN pages p USING (page_id)
-				WHERE p.partial_url = ?""";
-		return jdbcTemplate.query(sql, new MemberRowMapper(), url).stream();
 	}
 
 	private int getCollectionId(String collectionName) {
