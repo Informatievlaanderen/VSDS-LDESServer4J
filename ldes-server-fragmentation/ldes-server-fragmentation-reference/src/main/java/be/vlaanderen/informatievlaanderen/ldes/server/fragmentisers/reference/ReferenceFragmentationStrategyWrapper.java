@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
-	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.type.getURI();
+	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.uri + "type";
 
 	public static final String FRAGMENTATION_KEY = "fragmentationKey";
 	public static final String DEFAULT_FRAGMENTATION_KEY = "reference";
