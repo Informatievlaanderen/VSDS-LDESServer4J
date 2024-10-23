@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator.FRAGMENT_KEY_REFERENCE_ROOT;
@@ -23,7 +24,7 @@ class ReferenceBucketCreatorTest {
 	private static final ViewName viewName = new ViewName("collectionName", "view");
 	private static final BucketDescriptorPair timebasedPair = new BucketDescriptorPair("year", "2023");
 	private static final BucketDescriptorPair referenceRootPair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT);
-	private static final BucketDescriptorPair referencePair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, RDF.type.getURI());
+	private static final BucketDescriptorPair referencePair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, RDF_SYNTAX_TYPE.getURI());
 	private static final BucketDescriptorPair defaultPair = new BucketDescriptorPair(DEFAULT_FRAGMENTATION_KEY, DEFAULT_BUCKET_STRING);
 	private ReferenceBucketCreator referenceBucketCreator;
 	@Mock
@@ -41,9 +42,9 @@ class ReferenceBucketCreatorTest {
 		Bucket referenceBucket = bucket.createChild(referencePair);
 		when(relationsAttributer.addRelationFromRootToBottom(rootBucket, bucket.createChild(referencePair))).thenReturn(referenceBucket);
 
-		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF.type.getURI(), rootBucket);
+		Bucket childBucket = referenceBucketCreator.getOrCreateBucket(bucket, RDF_SYNTAX_TYPE.getURI(), rootBucket);
 
-		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF.type.getURI());
+		assertThat(childBucket.getBucketDescriptorAsString()).isEqualTo("year=2023&reference=%s", RDF_SYNTAX_TYPE.getURI());
 		verify(relationsAttributer).addRelationFromRootToBottom(rootBucket, referenceBucket);
 	}
 

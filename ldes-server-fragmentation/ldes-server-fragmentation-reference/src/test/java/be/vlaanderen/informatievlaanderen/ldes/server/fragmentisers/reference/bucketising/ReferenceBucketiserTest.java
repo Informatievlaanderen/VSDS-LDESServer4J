@@ -3,10 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
-import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +18,7 @@ class ReferenceBucketiserTest {
 
 	@BeforeEach
 	void setUp() {
-		final ReferenceConfig referenceConfig = new ReferenceConfig(RDF.uri + "type");
+		final ReferenceConfig referenceConfig = new ReferenceConfig(RDF_SYNTAX_TYPE.getURI());
 		referenceBucketiser = new ReferenceBucketiser(referenceConfig);
 	}
 

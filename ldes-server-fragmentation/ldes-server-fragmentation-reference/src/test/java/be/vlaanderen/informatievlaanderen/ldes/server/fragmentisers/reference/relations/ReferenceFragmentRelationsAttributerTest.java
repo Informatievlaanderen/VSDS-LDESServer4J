@@ -7,12 +7,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.BucketDescriptorPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.TreeRelation;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.vocabulary.RDF;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer.TREE_REFERENCE_EQUALS_RELATION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ class ReferenceFragmentRelationsAttributerTest {
     private static final ViewName viewName = new ViewName("collectionName", "view");
     private static final Bucket parentBucket = new Bucket(BucketDescriptor.empty(), viewName);
 
-    private final String fragmentationPath = RDF.type.getURI();
+    private final String fragmentationPath = RDF_SYNTAX_TYPE.getURI();
 
     private ReferenceFragmentRelationsAttributer relationsAttributer;
 
