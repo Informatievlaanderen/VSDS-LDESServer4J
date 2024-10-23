@@ -28,7 +28,7 @@ public class ShaclReportManager {
 
     public void addEntry(Resource focusNode, List<Statement> offendingStatements, String message) {
         ReportEntry entry = createEntry(focusNode, message);
-        entry.value(NodeFactory.createLiteralString(offendingStatements.toString()));
+        entry.value(NodeFactory.createLiteral(offendingStatements.toString()));
         reportEntries.add(entry);
     }
 
