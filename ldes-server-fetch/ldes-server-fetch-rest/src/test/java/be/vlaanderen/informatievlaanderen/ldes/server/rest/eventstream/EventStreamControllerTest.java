@@ -177,7 +177,7 @@ class EventStreamControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
-						Model actualModel = RDFParser.fromString(contentAsString, Lang.TURTLE).toModel();
+						Model actualModel = RDFParser.create().fromString(contentAsString).lang(Lang.TURTLE).toModel();
 						actualModel.isIsomorphicWith(model);
 					});
 

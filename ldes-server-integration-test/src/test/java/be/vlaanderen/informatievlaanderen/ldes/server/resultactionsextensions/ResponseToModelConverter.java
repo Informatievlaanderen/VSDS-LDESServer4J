@@ -10,16 +10,16 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
 public class ResponseToModelConverter {
-    private final MockHttpServletResponse response;
+	private final MockHttpServletResponse response;
 
 
-    public ResponseToModelConverter(MockHttpServletResponse response) {
-        this.response = response;
-    }
+	public ResponseToModelConverter(MockHttpServletResponse response) {
+		this.response = response;
+	}
 
-    public Model convert() throws UnsupportedEncodingException {
-        Lang lang = RDFLanguages.contentTypeToLang(ContentType.create(response.getContentType()));
-        return RDFParser.fromString(response.getContentAsString(), lang).toModel();
-    }
+	public Model convert() throws UnsupportedEncodingException {
+		Lang lang = RDFLanguages.contentTypeToLang(ContentType.create(response.getContentType()));
+		return RDFParser.create().fromString(response.getContentAsString()).lang(lang).toModel();
+	}
 }
 

@@ -76,14 +76,14 @@ public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	@And("The dataservice metadata will be stored")
 	public void theMetadataWillBeStored() {
-		Model model = RDFParser.fromString(turtleDataservice, Lang.TURTLE).build().toModel();
+		Model model = RDFParser.create().fromString(turtleDataservice).lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(VIEW_NAME, model);
 		verify(dcatViewRepository, times(1)).save(dcatView);
 	}
 
 	@And("The dataservice metadata will not be stored")
 	public void theMetadataWillNotBeStored() {
-		Model model = RDFParser.fromString(turtleDataservice, Lang.TURTLE).build().toModel();
+		Model model = RDFParser.create().fromString(turtleDataservice).lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(VIEW_NAME, model);
 		verify(dcatViewRepository, times(0)).save(dcatView);
 	}

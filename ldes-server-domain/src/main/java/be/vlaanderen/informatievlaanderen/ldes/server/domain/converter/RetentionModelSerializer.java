@@ -19,7 +19,7 @@ public class RetentionModelSerializer {
 	public List<Model> deserialize(List<String> retentionPolicies) {
 		return retentionPolicies
 				.stream()
-				.map(retentionModel -> RDFParser.fromString(retentionModel, dbSavedLang).toModel())
+				.map(retentionModel -> RDFParser.create().fromString(retentionModel).lang(dbSavedLang).toModel())
 				.toList();
 	}
 }

@@ -250,7 +250,7 @@ class EventStreamConverterImplTest {
 		void given_ModelWithSkolemizationDomainLiteral_when_FromModel_then_ReturnEventStreamToWithSkolemizationDomain() {
 			final String modelString = readModelString()
 					.replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "ldes:skolemizationDomain \"" + SKOLEMIZATION_DOMAIN + "\" ;");
-			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+			final Model model = RDFParser.create().fromString(modelString).lang(Lang.TTL).toModel();
 
 			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
 
@@ -261,7 +261,7 @@ class EventStreamConverterImplTest {
 		void given_ModelWithSkolemizationDomainResource_when_FromModel_then_ReturnEventStreamToWithSkolemizationDomain() {
 			final String modelString = readModelString()
 					.replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "ldes:skolemizationDomain <" + SKOLEMIZATION_DOMAIN + "> ;");
-			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+			final Model model = RDFParser.create().fromString(modelString).lang(Lang.TTL).toModel();
 
 			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
 
@@ -271,7 +271,7 @@ class EventStreamConverterImplTest {
 		@Test
 		void given_ModelWithoutSkolemization_when_FromModel_then_ReturnEventStreamToWitouthSkolemizationDomain() {
 			final String modelString = readModelString().replace(LDES_SKOLEMIZATION_DOMAIN_KEY, "");
-			final Model model = RDFParser.fromString(modelString).lang(Lang.TTL).toModel();
+			final Model model = RDFParser.create().fromString(modelString).lang(Lang.TTL).toModel();
 
 			final EventStreamTO eventStreamTO = eventStreamConverter.fromModel(model);
 

@@ -64,7 +64,7 @@ class ShaclShapeValidatorTest {
         void given_InvalidViewWithHierarchicalFragmentation_when_validateView_then_ThrowNoException() throws IOException {
             final File file = ResourceUtils.getFile("classpath:view/view-with-hierarchical-timebased-frag.ttl");
             final String modelString = FileUtils.readFileToString(file, StandardCharsets.UTF_8).replace("day", "invalid-value");
-            final Model model = RDFParser.fromString(modelString).lang(Lang.TURTLE).toModel();
+            final Model model = RDFParser.create().fromString(modelString).lang(Lang.TURTLE).toModel();
 
             assertThatThrownBy(() -> validator.validate(model))
                     .isInstanceOf(ShaclValidationException.class)

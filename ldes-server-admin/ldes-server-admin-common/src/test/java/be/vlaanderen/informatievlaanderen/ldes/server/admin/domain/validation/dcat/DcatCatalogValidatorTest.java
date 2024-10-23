@@ -45,14 +45,14 @@ class DcatCatalogValidatorTest {
 
 	@Test
 	void when_Valid_then_ThrowNothing() {
-		final Model model = RDFParser.fromString(validServerDcat).lang(Lang.TURTLE).build().toModel();
+		final Model model = RDFParser.create().fromString(validServerDcat).lang(Lang.TURTLE).build().toModel();
 		assertThatNoException().isThrownBy(() -> validator.validate(model));
 	}
 
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidModelProvider.class)
 	void when_Invalid_then_ThrowIllegalArgumentException(String expectedMessage, String turtleDcatString) {
-		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
+		Model dcat = RDFParser.create().fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
 
 		assertThatThrownBy(() -> validator.validate(dcat))
 				.isInstanceOf(IllegalArgumentException.class)

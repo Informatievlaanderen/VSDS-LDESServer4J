@@ -91,7 +91,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		final String content = mockMvc.perform(get(url).accept(contentType))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-		return RDFParser.fromString(content, RDFLanguages.contentTypeToLang(contentType)).toModel();
+		return RDFParser.create().fromString(content).lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
 	@When("I ingest {int} members to the collection {string}")
@@ -194,7 +194,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse()
 				.getContentAsString();
-		String eventStreamName = RDFParser.fromString(content, Lang.TURTLE)
+		String eventStreamName = RDFParser.create().fromString(content).lang(Lang.TURTLE)
 				.toModel()
 				.listStatements(null, RDF.type, createResource("https://w3id.org/ldes#EventStream"))
 				.next()
@@ -262,7 +262,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
-							       .toList().size() == expectedMemberCount;
+							.toList().size() == expectedMemberCount;
 				});
 	}
 
@@ -353,7 +353,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		if (response.getStatus() == 404) {
-			return null;
+			return ModelFactory.createDefaultModel();
 		}
 		return new ResponseToModelConverter(response).convert();
 	}
