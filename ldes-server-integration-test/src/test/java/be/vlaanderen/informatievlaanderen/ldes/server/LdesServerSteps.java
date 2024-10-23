@@ -88,23 +88,21 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
-		return RDFParser.fromString(mockMvc.perform(get(url)
-								.accept(contentType))
-						.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
-				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
+		final String content = mockMvc.perform(get(url).accept(contentType))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		return RDFParser.fromString(content, RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
 	@When("I ingest {int} members to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
-							.replace("ID", String.valueOf(i))
-							.replace("DATETIME", "2023-04-06T09:58:15.867Z"))
-					.lang(Lang.TURTLE)
-					.toModel();
+			String member = readMemberTemplate("data/input/members/mob-hind.template.ttl")
+					.replace("ID", String.valueOf(i))
+					.replace("DATETIME", "2023-04-06T09:58:15.867Z");
 			mockMvc.perform(post("/" + collectionName)
 							.contentType("text/turtle")
-							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+							.content(member))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
@@ -189,14 +187,14 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
 				.replace("CURRENTTIME", getCurrentTimestamp());
 
-		String eventStreamName = RDFParser.fromString(mockMvc.perform(post("/admin/api/v1/eventstreams")
-								.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
-								.content(eventstream))
-						.andExpect(status().isCreated())
-						.andReturn()
-						.getResponse()
-						.getContentAsString())
-				.lang(Lang.TURTLE)
+		final String content = mockMvc.perform(post("/admin/api/v1/eventstreams")
+						.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+						.content(eventstream))
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		String eventStreamName = RDFParser.fromString(content, Lang.TURTLE)
 				.toModel()
 				.listStatements(null, RDF.type, createResource("https://w3id.org/ldes#EventStream"))
 				.next()

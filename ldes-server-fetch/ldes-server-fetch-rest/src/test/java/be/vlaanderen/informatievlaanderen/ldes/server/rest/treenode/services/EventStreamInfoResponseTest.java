@@ -30,7 +30,7 @@ class EventStreamInfoResponseTest {
 
     @Test
     void convertToStatements_AddsShapeIfPresent() {
-        Model shape = RDFParser.fromString("[ a <http://www.w3.org/ns/shacl#NodeShape> ]").lang(Lang.TURTLE).toModel();
+        Model shape = RDFParser.fromString("[ a <http://www.w3.org/ns/shacl#NodeShape> ]", Lang.TURTLE).toModel();
 
         EventStreamInfoResponse response =
                 new EventStreamInfoResponse("http://example.com/eventStream", "", "", shape, List.of());

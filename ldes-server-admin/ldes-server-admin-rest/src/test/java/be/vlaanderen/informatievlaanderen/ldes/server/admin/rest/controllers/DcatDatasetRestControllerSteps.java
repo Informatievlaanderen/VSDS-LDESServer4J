@@ -71,14 +71,14 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 
     @And("The dataset will be stored")
     public void theMetadataWillBeStored() {
-        Model model = RDFParser.fromString(datasetString).lang(Lang.TURTLE).build().toModel();
+        Model model = RDFParser.fromString(datasetString, Lang.TURTLE).build().toModel();
         DcatDataset dataset = new DcatDataset(COLLECTION_NAME, model);
         verify(dcatDatasetRepository).saveDataset(dataset);
     }
 
     @And("The dataset will not be stored")
     public void theMetadataWillNotBeStored() {
-        Model model = RDFParser.fromString(datasetString).lang(Lang.TURTLE).build().toModel();
+        Model model = RDFParser.fromString(datasetString, Lang.TURTLE).build().toModel();
         DcatDataset dataset = new DcatDataset(COLLECTION_NAME, model);
         verify(dcatDatasetRepository, never()).saveDataset(dataset);
     }
