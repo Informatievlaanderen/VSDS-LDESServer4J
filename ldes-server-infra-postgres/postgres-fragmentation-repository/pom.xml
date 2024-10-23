@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-common</artifactId>
+            <artifactId>ldes-server-fragmentation-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -34,11 +34,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-ingest-repository</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

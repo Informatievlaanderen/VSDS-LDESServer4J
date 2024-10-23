@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.ServerMetrics;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.metrics.IngestionMetricsService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.MemberPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -39,5 +39,5 @@ public class PostgresIngestIntegrationTest {
 	@Autowired
 	EventStreamRepository eventStreamRepository;
 	@MockBean
-	ServerMetrics serverMetrics;
+	IngestionMetricsService metricsService;
 }

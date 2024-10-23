@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
+public class MemberPostgresRepository implements MemberRepository {
 	private static final String INSERT_SQL = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
@@ -31,7 +31,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	private final JdbcTemplate jdbcTemplate;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, DataSource dataSource) {
+	                                MemberEntityMapper mapper,
+	                                DatabaseColumnModelConverter modelConverter,
+	                                DataSource dataSource) {
 		this.repository = repository;
 		this.mapper = mapper;
 		this.modelConverter = modelConverter;
@@ -40,10 +42,15 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public List<IngestedMember> insertAll(List<IngestedMember> members) {
+	public int insertAll(List<IngestedMember> members) {
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
 		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
-		if (!membersContainDuplicateIds(members) && !membersExistInCollection(collectionId, subjects)) {
+
+		if (membersContainDuplicateIds(members)) {
+			return 0;
+		}
+
+		try {
 			var toBatchMembers = members.stream()
 					.filter(ingestedMember -> !ingestedMember.equals(members.getLast()))
 					.toList();
@@ -65,9 +72,9 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 			updateCollectionStats(members.size(), collectionId);
 
-			return members;
-		} else {
-			return List.of();
+			return members.size();
+		} catch (DuplicateKeyException e) {
+			return 0;
 		}
 	}
 
@@ -105,10 +112,7 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
-		return members.stream()
-				.map(IngestedMember::getSubject)
-				.collect(Collectors.toSet())
-				.size() != members.size();
+		return members.size() != members.stream().map(IngestedMember::getSubject).distinct().count();
 	}
 
 
@@ -123,17 +127,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	@Transactional
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
-	}
-
-	@Override
-	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		final String sql = """
-				SELECT m.subject, m.member_model
-				FROM members m
-				    JOIN page_members USING (member_id)
-				    JOIN pages p USING (page_id)
-				WHERE p.partial_url = ?""";
-		return jdbcTemplate.query(sql, new MemberRowMapper(), url).stream();
 	}
 
 	private int getCollectionId(String collectionName) {

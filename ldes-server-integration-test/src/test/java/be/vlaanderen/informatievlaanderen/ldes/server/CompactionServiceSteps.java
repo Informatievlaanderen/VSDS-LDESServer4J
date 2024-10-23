@@ -105,7 +105,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	@And("verify the following pages have no members")
 	public void verifyFragmentationOfMembers(List<Long> ids) {
 		await().untilAsserted(() -> {
-			var count = entityManager.createQuery("SELECT COUNT(*) FROM PageMemberEntity p where p.page.id IN :ids")
+			var count = entityManager.createQuery("SELECT COUNT(*) FROM RetentionPageMemberEntity p where p.pageId IN :ids")
 					.setParameter("ids", ids).getSingleResult();
 
 

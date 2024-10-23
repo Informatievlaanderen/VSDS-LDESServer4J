@@ -83,4 +83,5 @@ public class ViewEntity {
     public String getName() {
         return name;
     }
+
 }

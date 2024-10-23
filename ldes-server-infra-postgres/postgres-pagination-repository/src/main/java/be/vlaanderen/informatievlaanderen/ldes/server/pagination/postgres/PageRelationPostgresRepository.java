@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.Pa
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Repository
 public class PageRelationPostgresRepository implements PageRelationRepository {
 	private final PageRelationEntityRepository pageRelationEntityRepository;
@@ -20,11 +18,5 @@ public class PageRelationPostgresRepository implements PageRelationRepository {
 	@Transactional
 	public void insertGenericBucketRelation(long fromPageId, long toPageId) {
 		pageRelationEntityRepository.insertRelation(fromPageId, toPageId, RdfConstants.GENERIC_TREE_RELATION);
-	}
-
-	@Override
-	@Transactional
-	public void updateCompactionBucketRelations(List<Long> compactedPageIds, long targetId) {
-		pageRelationEntityRepository.updateToPageRelations(compactedPageIds, targetId);
 	}
 }

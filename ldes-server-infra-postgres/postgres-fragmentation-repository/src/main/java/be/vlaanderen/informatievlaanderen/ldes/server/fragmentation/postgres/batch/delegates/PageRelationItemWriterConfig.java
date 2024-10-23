@@ -25,7 +25,6 @@ public class PageRelationItemWriterConfig {
 		return new JdbcBatchItemWriterBuilder<BucketRelation>()
 				.dataSource(dataSource)
 				.sql(sql)
-				.assertUpdates(false)
 				.itemSqlParameterSourceProvider(item -> new MapSqlParameterSource(Map.of(
 						"fromPartialUrl", item.fromPartialUrl(),
 						"toPartialUrl", item.toPartialUrl(),
@@ -34,6 +33,7 @@ public class PageRelationItemWriterConfig {
 						"treeValueType", item.relation().treeValueType(),
 						"treePath", item.relation().treePath()
 				)))
+				.assertUpdates(false)
 				.build();
 	}
 }

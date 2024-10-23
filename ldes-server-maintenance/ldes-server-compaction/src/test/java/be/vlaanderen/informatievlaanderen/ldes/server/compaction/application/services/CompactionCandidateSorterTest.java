@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactionCandidate;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;

@@ -14,8 +14,9 @@
         <module>postgres-admin-repository</module>
         <module>postgres-fragmentation-repository</module>
         <module>postgres-ingest-repository</module>
-        <module>postgres-retention-repository</module>
+        <module>postgres-maintenance-repository</module>
         <module>postgres-pagination-repository</module>
+        <module>postgres-fetch-repository</module>
     </modules>
 
     <artifactId>ldes-server-infra-postgres</artifactId>

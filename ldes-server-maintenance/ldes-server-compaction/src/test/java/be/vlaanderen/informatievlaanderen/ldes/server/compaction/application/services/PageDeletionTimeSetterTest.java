@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.CompactionPageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ class PageDeletionTimeSetterTest {
 
     @Captor
     ArgumentCaptor<LocalDateTime> timeCaptor;
-    private final PageRepository pageRepository = mock(PageRepository.class);
+    private final CompactionPageRepository pageRepository = mock(CompactionPageRepository.class);
     private ServerConfig config;
     private PageDeletionTimeSetter pageDeletionTimeSetter;
 
