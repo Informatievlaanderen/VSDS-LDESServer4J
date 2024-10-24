@@ -7,16 +7,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @Repository
@@ -41,18 +36,13 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Transactional
 	public int insertAll(List<IngestedMember> members) {
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
-		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
 
 		if (membersContainDuplicateIds(members)) {
 			return 0;
 		}
 
 		try {
-			var toBatchMembers = members.stream()
-					.filter(ingestedMember -> !ingestedMember.equals(members.getLast()))
-					.toList();
-
-			final List<Object[]> batchArgs = toBatchMembers.stream()
+			var batchArgs = members.stream()
 					.map(member -> new Object[]{
 							member.getSubject(),
 							collectionId,
@@ -65,8 +55,6 @@ public class MemberPostgresRepository implements MemberRepository {
 
 			jdbcTemplate.batchUpdate(INSERT_SQL, batchArgs);
 
-			int lastId = insertLastMember(members.getLast(), collectionId); // TODO: remove unused variable
-
 			updateCollectionStats(members.size(), collectionId);
 
 			return members.size();
@@ -75,30 +63,14 @@ public class MemberPostgresRepository implements MemberRepository {
 		}
 	}
 
-	private int insertLastMember(IngestedMember lastMember, int collectionId) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcTemplate.update(connection -> {
-			PreparedStatement ps = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
-			ps.setString(1, lastMember.getSubject());
-			ps.setInt(2, collectionId);
-			ps.setString(3, lastMember.getVersionOf());
-			ps.setObject(4, lastMember.getTimestamp());
-			ps.setString(5, lastMember.getTransactionId());
-			ps.setBytes(6, modelConverter.convertToDatabaseColumn(lastMember.getModel()));
-			return ps;
-		}, keyHolder);
-
-		return Integer.parseInt(Objects.requireNonNull(keyHolder.getKeys().get("member_id").toString()));
-	}
-
 	private void updateCollectionStats(int memberCount, int collectionId) {
-		String SQL = """
+		String sql = """
 				update collection_stats cs set
 				ingested_count = cs.ingested_count + ?
 				where collection_id = ?;
 				""";
 
-		jdbcTemplate.update(SQL, ps -> {
+		jdbcTemplate.update(sql, ps -> {
 			ps.setInt(1, memberCount);
 			ps.setInt(2, collectionId);
 		});

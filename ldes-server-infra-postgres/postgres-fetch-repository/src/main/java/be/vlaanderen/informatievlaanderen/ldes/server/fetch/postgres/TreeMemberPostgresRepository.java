@@ -19,7 +19,7 @@ public class TreeMemberPostgresRepository implements TreeMemberRepository {
 
 	@Override
 	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		final String sql = """
+		String sql = """
 				SELECT m.subject, m.member_model
 				FROM members m
 				    JOIN page_members USING (member_id)

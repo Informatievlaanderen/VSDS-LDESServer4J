@@ -41,20 +41,20 @@ public class MemberItemReader {
 		sortKeys.put("member_id", Order.ASCENDING);
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("""
-			member_id, subject, version_of, timestamp,
-			name, version_of_path, timestamp_path, create_versions,
-			member_model
-			""");
+				member_id, subject, version_of, timestamp,
+				name, version_of_path, timestamp_path, create_versions,
+				member_model
+				""");
 		queryProvider.setFromClause("""
-			collections c
-			join processable_members m on m.collection_id = c.collection_id
-			""");
+				collections c
+				join processable_members m on m.collection_id = c.collection_id
+				""");
 		queryProvider.setWhereClause("""
-			m.member_id > (
-				select vs.bucketized_last_id from view_stats vs where vs.view_id = :viewId
-			)
-			AND c.collection_id = :collectionId
-			""");
+				 m.member_id > (
+				    select vs.bucketized_last_id from view_stats vs where vs.view_id = :viewId
+				   )
+				   AND c.collection_id = :collectionId
+				""");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}

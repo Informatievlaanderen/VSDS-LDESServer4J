@@ -57,14 +57,14 @@ public class BucketisationItemWriter implements ItemWriter<Bucket> {
 	}
 
 	private void updateViewStats(long lastMemberId, long uniqueMemberCount) {
-		final String SQL = """
+		String sql = """
 				update view_stats vs set
 				      bucketized_count = vs.bucketized_count + ?,
 				      bucketized_last_id = ?
 				    where view_id = ?;
 				    """;
 
-		jdbcTemplate.update(SQL, uniqueMemberCount, lastMemberId, viewId);
+		jdbcTemplate.update(sql, uniqueMemberCount, lastMemberId, viewId);
 	}
 
 

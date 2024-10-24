@@ -69,12 +69,12 @@ public class Paginator implements Tasklet {
 	}
 
 	private void updateViewStats(long uniqueMemberCount, long viewId) {
-		final String SQL = """
-				update view_stats vs set
+		String sql = """
+				 update view_stats vs set
 					paginated_count = vs.paginated_count + ?
-				where view_id = ?;
+					where view_id = ?;
 				""";
 
-		jdbcTemplate.update(SQL, uniqueMemberCount, viewId);
+		jdbcTemplate.update(sql, uniqueMemberCount, viewId);
 	}
 }
