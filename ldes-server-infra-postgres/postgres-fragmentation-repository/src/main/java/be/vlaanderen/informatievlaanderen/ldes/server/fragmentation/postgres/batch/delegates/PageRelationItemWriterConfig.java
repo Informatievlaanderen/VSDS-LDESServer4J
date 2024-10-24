@@ -15,12 +15,12 @@ public class PageRelationItemWriterConfig {
 
 	@Bean
 	public ItemWriter<BucketRelation> bucketRelationItemWriter(DataSource dataSource) {
-		final String sql = """
+		String sql = """
 					INSERT INTO page_relations (from_page_id, to_page_id, relation_type, value, value_type, path)
 					SELECT (SELECT page_id FROM pages WHERE partial_url = :fromPartialUrl),
 					       (SELECT page_id FROM pages WHERE partial_url = :toPartialUrl),
 					       :treeRelationType, :treeValue, :treeValueType, :treePath
-					       ON CONFLICT (from_page_id, to_page_id, relation_type) DO NOTHING
+					       on conflict do nothing
 					""";
 		return new JdbcBatchItemWriterBuilder<BucketRelation>()
 				.dataSource(dataSource)

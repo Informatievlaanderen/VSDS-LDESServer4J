@@ -32,7 +32,7 @@ public class BucketPostgresRepository implements BucketRepository {
 	@Override
 	@Transactional
 	public Bucket insertBucket(Bucket bucket) {
-		final String sql = """
+		String sql = """
 				INSERT INTO pages (bucket_id, expiration, partial_url)
 				VALUES (:bucketId, NULL, :partialUrl)
 				ON CONFLICT DO NOTHING

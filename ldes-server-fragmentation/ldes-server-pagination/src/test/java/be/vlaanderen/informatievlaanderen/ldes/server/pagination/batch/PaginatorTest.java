@@ -9,17 +9,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class PaginatorTest {
 	private static final long BUCKET_ID = 1;
 	private static final String VIEW_NAME = "event-stream/paged";
@@ -30,6 +35,8 @@ class PaginatorTest {
 	private PageMemberRepository pageMemberRepository;
 	@Mock
 	private PageRepository pageRepository;
+	@Mock
+	private JdbcTemplate jdbcTemplate;
 	@InjectMocks
 	Paginator paginator;
 	@Captor
@@ -138,10 +145,12 @@ class PaginatorTest {
 		StepContext stepContext = mock(StepContext.class);
 		StepExecution stepExecution = mock(StepExecution.class);
 		ExecutionContext executionContext = mock(ExecutionContext.class);
+		Map<String, Object> jobParameters = Map.of("viewId", 1);
 
 		// Set up the mock behavior
 		when(chunkContext.getStepContext()).thenReturn(stepContext);
 		when(stepContext.getStepExecution()).thenReturn(stepExecution);
+		when(stepContext.getJobParameters()).thenReturn(jobParameters);
 		when(stepExecution.getExecutionContext()).thenReturn(executionContext);
 		when(executionContext.getLong("bucketId")).thenReturn(BUCKET_ID);
 	}

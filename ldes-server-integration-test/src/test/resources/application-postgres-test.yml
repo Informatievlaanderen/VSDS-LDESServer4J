@@ -18,6 +18,13 @@ spring:
       initialize-schema: always
       isolation-level-for-create: READ_COMMITTED
 
+zonky:
+  test:
+    database:
+      postgres:
+        docker:
+          image: postgres:14-alpine
+
 logging:
   level:
     org.springframework.batch.core: WARN

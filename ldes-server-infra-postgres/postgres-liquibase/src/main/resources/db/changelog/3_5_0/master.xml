@@ -6,5 +6,15 @@
 
     <include file="drop-old-tables-with-cascade.xml" relativeToChangelogFile="true"/>
     <include file="drop-old-member-id.xml" relativeToChangelogFile="true"/>
+    <include file="remove-delete-view-trigger.sql" relativeToChangelogFile="true" />
+    <include file="add-collection-stats.sql" relativeToChangelogFile="true" />
+    <include file="extend-view-stats.sql" relativeToChangelogFile="true" />
+    <include file="remove-page-member-triggers.sql" relativeToChangelogFile="true" />
+    <include file="handle-collection-inserted.sql" relativeToChangelogFile="true" />
+    <include file="add-processable-members.sql" relativeToChangelogFile="true" />
+    <include file="add-unprocessed-members.sql" relativeToChangelogFile="true" />
+    <include file="redefine-needs-bucketization.sql" relativeToChangelogFile="true" />
+    <include file="drop-obsolete-views.sql" relativeToChangelogFile="true" />
+    <include file="add-open-pages-view.sql" relativeToChangelogFile="true" />
     <include file="make-page-relations-unique.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

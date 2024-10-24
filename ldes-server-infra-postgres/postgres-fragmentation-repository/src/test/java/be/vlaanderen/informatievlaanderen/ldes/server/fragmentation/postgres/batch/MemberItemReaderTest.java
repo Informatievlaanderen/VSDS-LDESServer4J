@@ -134,6 +134,8 @@ class MemberItemReaderTest {
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("collectionName", collectionName)
 				.addString("viewName", viewName)
+				.addLong("collectionId", 1L)
+				.addLong("viewId", 1L)
 				.toJobParameters();
 		setupStepScope(jobParameters);
 	}

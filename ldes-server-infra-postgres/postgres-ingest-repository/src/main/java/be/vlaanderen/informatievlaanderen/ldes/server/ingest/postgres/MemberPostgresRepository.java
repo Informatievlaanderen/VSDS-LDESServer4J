@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Repository
 public class MemberPostgresRepository implements MemberRepository {
+	private static final String INSERT_SQL = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 	private final DatabaseColumnModelConverter modelConverter;
@@ -36,15 +36,13 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Transactional
 	public int insertAll(List<IngestedMember> members) {
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
+
 		if (membersContainDuplicateIds(members)) {
 			return 0;
 		}
-		String sql = """
-				INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model)
-				VALUES (?,?,?,?,?,?)
-				""";
+
 		try {
-			final List<Object[]> batchArgs = members.stream()
+			var batchArgs = members.stream()
 					.map(member -> new Object[]{
 							member.getSubject(),
 							collectionId,
@@ -54,10 +52,28 @@ public class MemberPostgresRepository implements MemberRepository {
 							modelConverter.convertToDatabaseColumn(member.getModel()),
 					})
 					.toList();
-			return Arrays.stream(jdbcTemplate.batchUpdate(sql, batchArgs)).sum();
+
+			jdbcTemplate.batchUpdate(INSERT_SQL, batchArgs);
+
+			updateCollectionStats(members.size(), collectionId);
+
+			return members.size();
 		} catch (DuplicateKeyException e) {
 			return 0;
 		}
+	}
+
+	private void updateCollectionStats(int memberCount, int collectionId) {
+		String sql = """
+				update collection_stats cs set
+				ingested_count = cs.ingested_count + ?
+				where collection_id = ?;
+				""";
+
+		jdbcTemplate.update(sql, ps -> {
+			ps.setInt(1, memberCount);
+			ps.setInt(2, collectionId);
+		});
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
