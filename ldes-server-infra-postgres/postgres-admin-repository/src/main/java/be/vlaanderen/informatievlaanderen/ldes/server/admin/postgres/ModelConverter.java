@@ -15,6 +15,6 @@ public class ModelConverter implements AttributeConverter<Model, String> {
 
     @Override
     public Model convertToEntityAttribute(String dbData) {
-        return RDFParser.fromString(dbData).lang(PostgresAdminConstants.SERIALISATION_LANG).toModel();
+        return RDFParser.create().fromString(dbData).lang(PostgresAdminConstants.SERIALISATION_LANG).toModel();
     }
 }

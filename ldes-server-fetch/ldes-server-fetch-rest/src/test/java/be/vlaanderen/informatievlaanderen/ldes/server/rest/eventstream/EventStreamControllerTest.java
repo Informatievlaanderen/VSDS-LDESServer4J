@@ -12,7 +12,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingSt
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
-import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -32,6 +31,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -98,7 +98,7 @@ class EventStreamControllerTest {
 
 		MvcResult result = resultActions.andReturn();
 
-		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG).replace("\"", "");
+		String etagHeaderValue = Objects.requireNonNull(result.getResponse().getHeader(HttpHeaders.ETAG)).replace("\"", "");
 
 		assertNotNull(etagHeaderValue);
 		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
@@ -124,7 +124,7 @@ class EventStreamControllerTest {
 	}
 
 	private Integer extractMaxAge(MvcResult result) {
-		String header = result.getResponse().getHeader(HttpHeaders.CACHE_CONTROL);
+		String header = Objects.requireNonNull(result.getResponse().getHeader(HttpHeaders.CACHE_CONTROL));
 		Matcher matcher = Pattern.compile("(.*,)?(max-age=([0-9]+))(,.*)?").matcher(header);
 
 		if (matcher.matches()) {
@@ -177,7 +177,7 @@ class EventStreamControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
-						Model actualModel = RDFParser.fromString(contentAsString).lang(Lang.TURTLE).toModel();
+						Model actualModel = RDFParser.create().fromString(contentAsString).lang(Lang.TURTLE).toModel();
 						actualModel.isIsomorphicWith(model);
 					});
 
