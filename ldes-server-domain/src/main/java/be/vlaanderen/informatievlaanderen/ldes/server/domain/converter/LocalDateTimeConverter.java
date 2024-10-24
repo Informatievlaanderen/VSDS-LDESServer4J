@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Literal;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -22,7 +23,10 @@ public class LocalDateTimeConverter {
 			XSDDateTime dateTime = (XSDDateTime) literal.getValue();
 			return fromXsdDateTime(dateTime);
 		}
-		return fromString(literal.getString());
+		if (XSDDatatype.XSDstring.equals(datatype)) {
+			return fromString(literal.getString());
+		}
+		throw new IllegalArgumentException("Provided datatype cannot be used for conversion: " + datatype);
 	}
 
 	private LocalDateTime fromXsdDateTime(XSDDateTime dateTime) {
@@ -39,7 +43,7 @@ public class LocalDateTimeConverter {
 				.toFormatter();
 		TemporalAccessor temporalAccessor = formatter.parseBest(dateTime, ZonedDateTime::from, LocalDateTime::from);
 		return switch (temporalAccessor) {
-			case ZonedDateTime zonedDateTime -> zonedDateTime.toLocalDateTime();
+			case ZonedDateTime zonedDateTime -> zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
 			case LocalDateTime localDateTime -> localDateTime;
 			default -> throw new IllegalArgumentException("Could not parse date time: " + dateTime);
 		};

@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ing
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
+import org.assertj.core.api.Condition;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class MemberIngestValidatorTest {
     void when_IncorrectMemberReceived_Then_ValidationThrowsException(String modelName, String collectionName, List<String> expectedMessages) {
         Model model = RDFDataMgr.loadModel(modelName);
         String actualMessage = assertThrows(ShaclValidationException.class, () -> validator.validate(model, collectionName)).getMessage();
-        expectedMessages.forEach(expectedMessage -> assertTrue(actualMessage.contains(expectedMessage)));
+        assertThat(actualMessage).has(errorMessages(expectedMessages));
     }
 
     @ParameterizedTest
@@ -110,7 +111,7 @@ class MemberIngestValidatorTest {
                     Arguments.of("example-ldes-member-wrong-type-version-of.nq", VERSION,
                             List.of("Object of statement with predicate: " + VERSIONOF_PATH + " should be a resource")),
                     Arguments.of("example-ldes-member-wrong-type-timestamp.nq", VERSION,
-                            List.of("Object of statement with predicate: " + TIMESTAMP_PATH + " should be a literal of type " + XSDDatatype.XSDdateTime.getURI())),
+                            List.of("Object of statement with predicate: " + TIMESTAMP_PATH + " should be a literal either of type " + XSDDatatype.XSDdateTime.getURI() + " or " + XSDDatatype.XSDstring.getURI())),
                     Arguments.of("example-ldes-member-dangling-nodes.nq", VERSION, List.of("Object graphs don't allow blank nodes to occur outside of a named object.")),
                     Arguments.of("example-ldes-member-blank-node.nq", VERSION, List.of("Object graphs don't allow blank nodes to occur outside of a named object.")),
                     Arguments.of("example-ldes-member-shared-blank-node.nq", VERSION, List.of("Blank nodes must be scoped to one object.")));
@@ -125,4 +126,9 @@ class MemberIngestValidatorTest {
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION));
         }
     }
+
+    private Condition<String> errorMessages(List<String> expectedMessages) {
+        return new Condition<>(actual -> expectedMessages.stream().allMatch(actual::contains), "contained by %s".formatted(expectedMessages));
+    }
+
 }
