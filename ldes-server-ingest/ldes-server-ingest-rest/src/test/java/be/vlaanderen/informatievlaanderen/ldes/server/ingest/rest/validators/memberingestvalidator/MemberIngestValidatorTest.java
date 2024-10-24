@@ -123,7 +123,10 @@ class MemberIngestValidatorTest {
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-state.nq"), STATE),
-                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION));
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member-typeless-time.nq"), VERSION),
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member-string-time.nq"), VERSION),
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION)
+            );
         }
     }
 

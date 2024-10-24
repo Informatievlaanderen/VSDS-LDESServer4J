@@ -54,7 +54,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"member_with_created_property.nq", "member_with_string_created_property.nq"})
+	@ValueSource(strings = {"member_with_created_property.nq", "member_with_string_created_property.nq", "member_without_created_property.nq"})
 	void when_BucketisationCalled_Then_FunctionsAreCalled(String filename) {
 		Model model = loadModel(filename);
 		FragmentationMember member = new FragmentationMember(1, "subject", "versionOf", TIME, EVENT_STREAM_PROPERTIES, model);
