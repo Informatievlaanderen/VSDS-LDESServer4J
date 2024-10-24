@@ -21,7 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @DataJpaTest
-@AutoConfigureEmbeddedDatabase
+@AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES)
 @ActiveProfiles("postgres-test")
 @EntityScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @ComponentScan(basePackages = {"be.vlaanderen.informatievlaanderen.ldes.server.ingest",

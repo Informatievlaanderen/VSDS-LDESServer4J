@@ -3,3 +3,10 @@ spring:
     change-log: classpath:/db/changelog/master.xml
   main:
     allow-bean-definition-overriding: true
+
+zonky:
+  test:
+    database:
+      postgres:
+        docker:
+          image: postgres:14-alpine

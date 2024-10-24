@@ -1,13 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,7 +17,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
@@ -105,10 +102,6 @@ public class MemberPostgresRepository implements MemberRepository {
 			ps.setInt(1, memberCount);
 			ps.setInt(2, collectionId);
 		});
-	}
-
-	protected boolean membersExistInCollection(int collectionId, List<String> subjects) {
-		return repository.existsByCollectionAndSubjectIn(collectionId, subjects);
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {

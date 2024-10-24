@@ -435,7 +435,7 @@
                     <scope>compile</scope>
                     <includes>be.vlaanderen.informatievlaanderen.vsds*</includes>
                     <excludes>be.vlaanderen.informatievlaanderen.vsds:*domain*</excludes>
-                    <graphFormat>puml</graphFormat>
+                    <graphFormat>dot</graphFormat>
                 </configuration>
             </plugin>
 

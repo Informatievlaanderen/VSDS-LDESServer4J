@@ -52,7 +52,9 @@ public class MemberItemReader {
 		queryProvider.setWhereClause("""
 			m.member_id > (
 				select vs.bucketized_last_id from view_stats vs where vs.view_id = :viewId
-			)""");
+			)
+			AND c.collection_id = :collectionId
+			""");
 		queryProvider.setSortKeys(sortKeys);
 		return queryProvider;
 	}
