@@ -42,8 +42,8 @@ open data.
 
 LDES Server Dependency Graph With All Profiles Activated:
 ![LDES Server Dependency Graph With All Profiles Activated](./content/ldes-server-graph.png)
-Color codes:
-
+Above is a dependency graph* of the LDES server with all the profiles activated. 
+The graph is color-coded as follows:
 - **Orange**: Main functionalities
 - **Blue**: Interfaces
 - **Lavender**: Plugin fragmentations
@@ -58,7 +58,7 @@ dependencies.
 | `fragmentation`            | `postgres-pagination-repository`                       | Allows basic fragmentation (pagination)                                                                                     |
 | `maintenance`              | `postgres-maintenance-repository`                      | Allows the LDES server to perform maintenance operations on its Event Streams and Members: compaction, retention, deletion. |
 | **Interfaces**             |                                                        |                                                                                                                             |
-| `http-admin`               | `ldes-server-admin-rest`,`postgres-admin-repository`*  | Gives access to REST API to create and manage Event Streams and Views.                                                      |
+| `http-admin`               | `ldes-server-admin-rest`,`postgres-admin-repository`** | Gives access to REST API to create and manage Event Streams and Views.                                                      |
 | `http-ingest`              | `ldes-server-ingest-rest`,`postgres-ingest-repository` | Gives access to REST API to ingest members into the LDES.                                                                   |
 | `http-fetch`               | `ldes-server-fetch-rest`,`postgres-fetch-repository`   | Gives access to REST API to fetch Event Streams, its Views and pages.                                                       |
 | **Plugin Fragmentations**  |                                                        |                                                                                                                             |
@@ -66,7 +66,11 @@ dependencies.
 | `fragmentation-geospatial` | `ldes-server-fragmentation-geospatial`                 | Allows fragmentation in based on a geospatial property.                                                                     |
 | `fragmentation-reference`  | `ldes-server-fragmentation-reference`                  | Allows fragmentation in based on a textual property.                                                                        |
 
-*: The `postgres-admin-repository`, as shown by the dependency graph, will be loaded in by the other above-mentioned functionality profiles. 
+*: The `ldes-server-domain` is the core domain module of the LDES server and is always loaded in.
+To keep the graph clean, it is not shown in the graph.
+Next to that, the `postgres-liquibase` module will always be loaded in to assure correct database creation.
+
+**: The `postgres-admin-repository`, as shown by the dependency graph, will be loaded in by the other above-mentioned functionality profiles. 
 But when used separately, it needs to be loaded in manually.
 
 ## How To Run
