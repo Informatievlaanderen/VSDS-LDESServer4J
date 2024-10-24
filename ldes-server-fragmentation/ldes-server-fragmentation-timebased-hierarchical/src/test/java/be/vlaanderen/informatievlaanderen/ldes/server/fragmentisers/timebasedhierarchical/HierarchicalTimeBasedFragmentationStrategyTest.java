@@ -16,6 +16,8 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -51,9 +53,10 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		childBucket = new Bucket(new BucketDescriptor(List.of(new BucketDescriptorPair("is", "child"))), VIEW_NAME);
 	}
 
-	@Test
-	void when_BucketisationCalled_Then_FunctionsAreCalled() {
-		Model model = loadModel("member_with_created_property.nq");
+	@ParameterizedTest
+	@ValueSource(strings = {"member_with_created_property.nq", "member_with_string_created_property.nq", "member_without_created_property.nq"})
+	void when_BucketisationCalled_Then_FunctionsAreCalled(String filename) {
+		Model model = loadModel(filename);
 		FragmentationMember member = new FragmentationMember(1, "subject", "versionOf", TIME, EVENT_STREAM_PROPERTIES, model);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
 		when(bucketFinder.getLowestBucket(parentBucket, fragmentationTimestamp, Granularity.YEAR))
