@@ -1,0 +1,52 @@
+C4Context
+    title LDES Server Context Diagram
+
+
+    Person(user, "User", "A user of the LDES Server")
+
+    SystemDb(db, "Postgres Database", "A PostgreSQL database used by the LDES Server")
+
+    Boundary(ldesApp, "LDES Server Application", "Java Spring Boot Application") {
+
+        Boundary(interfaces, "LDES Server Interfaces", "") {
+            Container(ldesIngestRest, "Ingest REST API", "Java", "Handles data ingestion")
+            Container(ldesFetchRest, "Fetch REST API", "Java", "Handles data fetching")
+            Container(ldesAdminRest, "Admin REST API", "Java", "Provides administrative functionalities")
+        }
+
+        Boundary(implementations, "Postgres Implementations", "") {
+            Container(postgresIngestRepo, "Postgres Ingest Implementation", "Ingest data implementation")
+            Container(postgresFetchRepo, "Postgres Fetch Implementation", "Fetch data implementation")
+            Container(postgresAdminRepo, "Postgres Admin Implementation", "Admin data implementation")
+            Container(postgresPaginationRepo, "Postgres Pagination Implementation", "Pagination data implementation")
+            Container(postgresMaintenanceRepo, "Postgres Maintenance Implementation", "Maintenance data implementation")
+            Container(postgresFragmentationRepo, "Postgres Fragmentation Implementation", "Fragmentation data implementation")
+        }
+
+        Boundary(plugins, "Fragmentation Plugins") {
+            Container(ldesFragmentationGeospatial, "Geospatial Fragmentation", "Java", "Geospatial fragmentation logic")
+            Container(ldesFragmentationTimebased, "Time-based Fragmentation", "Java", "Time-based fragmentation logic")
+            Container(ldesFragmentationReference, "Reference Fragmentation", "Java", "Reference fragmentation logic")
+        }
+
+    }
+
+    Rel(user, ldesAdminRest, "Uses")
+    Rel(user, ldesIngestRest, "Uses")
+    Rel(user, ldesFetchRest, "Uses")
+    Rel(ldesAdminRest, postgresAdminRepo, "Reads/Writes")
+    Rel(ldesIngestRest, postgresIngestRepo, "Reads/Writes")
+    Rel(ldesFetchRest, postgresFetchRepo, "Reads/Writes")
+    Rel(ldesFragmentationGeospatial, postgresFragmentationRepo, "Reads/Writes")
+    Rel(ldesFragmentationTimebased, postgresFragmentationRepo, "Reads/Writes")
+    Rel(ldesFragmentationReference, postgresFragmentationRepo, "Reads/Writes")
+
+    Rel(postgresIngestRepo, db, "Reads/Writes")
+    Rel(postgresFetchRepo, db, "Reads/Writes")
+    Rel(postgresAdminRepo, db, "Reads/Writes")
+    Rel(postgresPaginationRepo, db, "Reads/Writes")
+    Rel(postgresMaintenanceRepo, db, "Reads/Writes")
+    Rel(postgresFragmentationRepo, db, "Reads/Writes")
+
+
+    UpdateLayoutConfig($c4ShapeInRow="6", $c4BoundaryInRow="3")

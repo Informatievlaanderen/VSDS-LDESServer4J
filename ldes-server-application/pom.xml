@@ -200,11 +200,6 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-maintenance-common</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>postgres-maintenance-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
