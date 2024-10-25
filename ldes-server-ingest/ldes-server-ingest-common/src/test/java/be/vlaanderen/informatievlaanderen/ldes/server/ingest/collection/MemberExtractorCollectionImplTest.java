@@ -56,7 +56,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", null);
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -66,7 +66,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", "/");
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -76,7 +76,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectSkolemizationDomeinEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true, "http://example.org");
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", "/", "http://example.org");
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -97,7 +97,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectsSkolemizationDomeinEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, "http://example.org");
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", null, "http://example.org");
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
