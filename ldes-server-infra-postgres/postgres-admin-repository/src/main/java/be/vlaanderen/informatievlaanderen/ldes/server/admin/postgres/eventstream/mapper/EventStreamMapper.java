@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.mapper.ViewSpecificationMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class EventStreamMapper {
                 projection.getName(),
                 projection.getTimestampPath(),
                 projection.getVersionOfPath(),
-                projection.getVersionDelimiter(),
+                VersionCreationProperties.of(projection.getVersionDelimiter()),
                 projection.isClosed(),
                 projection.getSkolemizationDomain()
         );

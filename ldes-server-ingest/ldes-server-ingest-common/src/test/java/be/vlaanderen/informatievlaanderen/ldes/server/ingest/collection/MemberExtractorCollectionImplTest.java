@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
@@ -17,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberExtractorCollectionImplTest {
     private static final String COLLECTION_NAME = "collection";
+    public static final String TIMESTAMP_PATH = "timestampPath";
+    public static final String VERSION_OF_PATH = "versionOfPath";
     private MemberExtractorCollectionImpl memberExtractorCollection;
     private MemberExtractor memberExtractor;
 
@@ -56,7 +59,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", null);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, VersionCreationProperties.disabled());
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -66,7 +69,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", "/");
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, VersionCreationProperties.enabledWithDefault());
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -76,7 +79,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectSkolemizationDomeinEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", "/", "http://example.org");
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, VersionCreationProperties.enabledWithDefault(), "http://example.org");
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -97,7 +100,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectsSkolemizationDomeinEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", null, "http://example.org");
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", VersionCreationProperties.disabled(), "http://example.org");
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 

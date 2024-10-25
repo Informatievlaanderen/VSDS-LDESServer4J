@@ -48,7 +48,7 @@ class TreeNodeConverterImplTest {
 
 		EventStream eventStream = new EventStream(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", false);
+				"http://purl.org/dc/terms/isVersionOf", null);
 
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		treeNodeStatementCreator.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));

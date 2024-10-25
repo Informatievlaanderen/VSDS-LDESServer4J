@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -33,7 +34,7 @@ class EventStreamPostgresRepositoryTest {
     private static final String TIMESTAMP_PATH = "timestampPath";
     private static final String VERSION_OF_PATH = "versionOfPath";
     private static final String SKOLEMIZATION_DOMAIN = "http://example.org";
-    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, null, SKOLEMIZATION_DOMAIN);
+    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, VersionCreationProperties.disabled(), SKOLEMIZATION_DOMAIN);
     private static final EventStreamTO EVENT_STREAM_TO = new EventStreamTO.Builder().withEventStream(EVENT_STREAM).withShacl(ModelFactory.createDefaultModel()).build();
     private static final EventStreamEntity EVENT_STREAM_ENTITY = createEventStreamEntity(COLLECTION_NAME);
     private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, null, false, SKOLEMIZATION_DOMAIN);

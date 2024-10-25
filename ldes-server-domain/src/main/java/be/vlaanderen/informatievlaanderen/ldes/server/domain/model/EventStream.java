@@ -8,36 +8,36 @@ public class EventStream {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final String versionDelimiter;
+	private final VersionCreationProperties versionCreationProperties;
 	private final boolean isClosed;
 	private final String skolemizationDomain;
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   String versionDelimiter) {
-		this(collection, timestampPath, versionOfPath, versionDelimiter, false, null);
+	                   VersionCreationProperties versionCreationProperties) {
+		this(collection, timestampPath, versionOfPath, versionCreationProperties, false, null);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   String versionDelimiter,
+	                   VersionCreationProperties versionCreationProperties,
 	                   String skolemizationDomain) {
-		this(collection, timestampPath, versionOfPath, versionDelimiter, false, skolemizationDomain);
+		this(collection, timestampPath, versionOfPath, versionCreationProperties, false, skolemizationDomain);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   String versionDelimiter,
+	                   VersionCreationProperties versionCreationProperties,
 	                   boolean isClosed,
 	                   String skolemizationDomain) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-        this.versionDelimiter = versionDelimiter;
-        this.isClosed = isClosed;
+		this.versionCreationProperties = versionCreationProperties;
+		this.isClosed = isClosed;
 		this.skolemizationDomain = skolemizationDomain;
 	}
 
@@ -53,12 +53,16 @@ public class EventStream {
 		return versionOfPath;
 	}
 
+	public VersionCreationProperties getVersionCreationProperties() {
+		return versionCreationProperties;
+	}
+
 	public String getVersionDelimiter() {
-		return versionDelimiter;
+		return versionCreationProperties.getVersionDelimiter();
 	}
 
 	public boolean isVersionCreationEnabled() {
-		return versionDelimiter != null;
+		return versionCreationProperties.isVersionCreationEnabled();
 	}
 
 	public boolean isClosed() {

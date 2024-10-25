@@ -107,7 +107,7 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 	                                                               String expectedHeaderValue, String expectedEtag) throws Exception {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
@@ -148,7 +148,7 @@ class TreeNodeControllerTest {
 
 	@Test
 	void given_MemberWithSpecialChars_when_GetRequestIsPerformed_then_CharsAreRightfullyEncoded() throws Exception {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
@@ -263,7 +263,7 @@ class TreeNodeControllerTest {
 	@Test
 	@DisplayName("Requesting LDES fragment stream")
 	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
 		LdesFragmentIdentifier identifier = new LdesFragmentIdentifier(ViewName.fromString(fullViewName),
