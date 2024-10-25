@@ -182,8 +182,4 @@ class EventStreamWriterTest {
 						List.of(),
 						List.of(fragmentationConfig), 100));
 	}
-
-	private Condition<Model> containing(Model expectedModel) {
-		return new Condition<>(actualModel -> actualModel.containsAll(expectedModel), "Model should contains all %d statements", expectedModel.size());
-	}
 }

@@ -17,7 +17,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ class EventStreamReaderTest {
 	}
 
 	@Test
-	void given_ModelWithViews_when_Read_then_ReturnEventStreamTo() throws URISyntaxException {
+	void given_ModelWithViews_when_Read_then_ReturnEventStreamTo() {
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/ldes-with-named-views.ttl");
 		final EventStreamTO expected = eventStreamToWithViews();
 
@@ -52,7 +51,7 @@ class EventStreamReaderTest {
 	}
 
 	@Test
-	void given_modelWithoutViews_when_Read_then_convertToEventStreamResponse() throws URISyntaxException {
+	void given_modelWithoutViews_when_Read_then_convertToEventStreamResponse() {
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/ldes-empty.ttl");
 		EventStreamTO expectedEventStreamTO = new EventStreamTO.Builder()
 				.withCollection("collectionName1")
@@ -69,7 +68,7 @@ class EventStreamReaderTest {
 	@Nested
 	class EventStreamWithVersionCreation {
 		@Test
-		void given_VersionCreationEnabled_when_FromModel_then_ResultContainsDefaultDelimiter() throws URISyntaxException {
+		void given_VersionCreationEnabled_when_FromModel_then_ResultContainsDefaultDelimiter() {
 			final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/ldes-create-versions.ttl");
 
 			final EventStreamTO result = eventStreamReader.read(eventStreamModel);
@@ -78,7 +77,7 @@ class EventStreamReaderTest {
 		}
 
 		@Test
-		void given_VersionCreationEnabledAndVersionDelimiter_when_FromModel_then_ResultContainsDefaultDelimiter() throws URISyntaxException {
+		void given_VersionCreationEnabledAndVersionDelimiter_when_FromModel_then_ResultContainsDefaultDelimiter() {
 			final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/ldes-create-versions-with-custom-delimiter.nq");
 
 			final EventStreamTO result = eventStreamReader.read(eventStreamModel);
