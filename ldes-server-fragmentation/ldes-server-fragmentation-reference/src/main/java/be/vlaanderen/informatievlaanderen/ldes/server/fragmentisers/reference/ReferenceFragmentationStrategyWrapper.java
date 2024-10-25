@@ -8,13 +8,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.co
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceBucketCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.vocabulary.RDF;
 import org.springframework.context.ApplicationContext;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
-	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.type.getURI();
+	public static final String DEFAULT_FRAGMENTATION_PATH = RDF_SYNTAX_TYPE.getURI();
 
 	public static final String FRAGMENTATION_KEY = "fragmentationKey";
 	public static final String DEFAULT_FRAGMENTATION_KEY = "reference";

@@ -1,15 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.assertj.core.api.Assertions.allOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TreeRelationResponseTest {
 
@@ -26,8 +31,9 @@ class TreeRelationResponseTest {
 		List<Statement> statements = treeRelation
 				.convertToStatements(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
 
-		assertEquals(5, statements.size());
-		verifyRelationStatements(statements);
+		assertThat(statements)
+				.hasSize(5)
+				.has(relationStatements());
 	}
 
 	@Test
@@ -39,35 +45,38 @@ class TreeRelationResponseTest {
 		List<Statement> statements = treeRelation
 				.convertToStatements(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
 
-		assertEquals(5, statements.size());
 		assertThat(statements)
+				.hasSize(5)
 				.filteredOn(statement -> statement.getPredicate().equals(TREE_VALUE))
 				.first()
 				.matches(statement -> statement.getObject().isResource());
 	}
 
-	private void verifyRelationStatements(List<Statement> statements) {
-		List<String> statementsAsStrings = statements.stream().map(Statement::toString).toList();
-		String anonymousObjectId = statements.getFirst().getObject().toString();
 
-		assertTrue(statementsAsStrings.contains(
-				String.format(
-						"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
-								+ ", https://w3id.org/tree#relation, %s]",
-						anonymousObjectId)));
-		assertTrue(statementsAsStrings.contains(
-				String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", anonymousObjectId)));
+	private Condition<List<? extends Statement>> relationStatements() {
+		return allOf(
+				containingSubject(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME), createProperty("https://w3id.org/tree#relation")),
+				containingObject(RDF.type, createResource("relation")),
+				containingObject(createProperty("https://w3id.org/tree#path"), createProperty("path")),
+				containingObject(createProperty("https://w3id.org/tree#node"), createResource("http://localhost:8080/mobility-hindrances/node")),
+				containingObject(createProperty("https://w3id.org/tree#value"), createTypedLiteral("value", XSDDatatype.XSDdateTime))
+		);
+	}
 
-		assertTrue(statementsAsStrings.contains(String.format("[%s, https://w3id.org/tree#path, path]",
-				anonymousObjectId)));
+	private Condition<List<? extends Statement>> containingSubject(Resource subject, Property predicate) {
+		return new Condition<>(
+				statements -> statements.stream()
+						.anyMatch(statement -> statement.getSubject().equals(subject) && statement.getPredicate().equals(predicate)),
+				"TreeNode must contain statement with subject %s and predicate %s", subject, predicate
+		);
+	}
 
-		assertTrue(statementsAsStrings.contains(
-				String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/mobility-hindrances/node]",
-						anonymousObjectId)));
-
-		assertTrue(statementsAsStrings.contains(
-				String.format("[%s, https://w3id.org/tree#value, \"value\"^^http://www.w3.org/2001/XMLSchema#dateTime]",
-						anonymousObjectId)));
+	private Condition<List<? extends Statement>> containingObject(Property predicate, RDFNode object) {
+		return new Condition<>(
+				statements -> statements.stream()
+						.anyMatch(statement -> statement.getPredicate().equals(predicate) && statement.getObject().equals(object)),
+				"TreeNode must contain statement with predicate %s and object %s", predicate, object
+		);
 	}
 
 }

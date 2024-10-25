@@ -45,7 +45,7 @@ class DcatViewValidatorTest {
 	@ArgumentsSource(InvalidModelProvider.class)
 	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
 		assertThat(name).isNotNull();
-		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
+		Model dcat = RDFParser.create().fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
 		assertThatThrownBy(() -> validator.validate(dcat)).isInstanceOf(IllegalArgumentException.class);
 	}
 

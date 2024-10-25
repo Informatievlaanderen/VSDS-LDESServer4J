@@ -33,7 +33,7 @@ class FragmentationMemberTest {
 	@Test
 	void given_stateObject_test_GetVersionModel() {
 		final EventStreamProperties eventStreamProperties = new EventStreamProperties(COLLECTION_NAME, VERSION_OF_PATH, TIMESTAMP_PATH, false);
-		final Model model = RDFParser.fromString("<http://temporary.org#bart> <http://example.com/vocab#name> \"Bart\" .").lang(Lang.TTL).toModel();
+		final Model model = RDFParser.create().fromString("<http://temporary.org#bart> <http://example.com/vocab#name> \"Bart\" .").lang(Lang.TTL).toModel();
 		final FragmentationMember fragmentationMember = new FragmentationMember(1, SUBJECT, IS_VERSION_OF, TIMESTAMP, eventStreamProperties, model  );
 
 		final Model actual = fragmentationMember.getVersionModel();

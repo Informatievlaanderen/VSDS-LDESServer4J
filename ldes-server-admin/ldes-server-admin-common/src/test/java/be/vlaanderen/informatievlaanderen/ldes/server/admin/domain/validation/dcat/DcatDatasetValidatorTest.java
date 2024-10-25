@@ -43,7 +43,7 @@ class DcatDatasetValidatorTest {
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidArgumentsProvider.class)
 	void when_InvalidModel_Then_throwException(String expectedMessage, String dcatString) {
-		Model dcat = RDFParser.fromString(dcatString).lang(Lang.TURTLE).toModel();
+		Model dcat = RDFParser.create().fromString(dcatString).lang(Lang.TURTLE).toModel();
 
 		assertThatThrownBy(() -> validator.validate(dcat))
 				.isInstanceOf(IllegalArgumentException.class)

@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 @Order(2)
 @Component
@@ -18,7 +18,6 @@ public class PathsValidator implements IngestReportValidator {
         List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
 
         if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
-            // To be removed when bulk ingest is allowed when version creation is disabled
             memberSubjects.forEach(subject -> reportManager.addEntry(subject,
                             "Only 1 member is allowed per request on collection with version creation disabled"
                     )
@@ -31,6 +30,7 @@ public class PathsValidator implements IngestReportValidator {
 
     private void validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream, ShaclReportManager reportManager) {
         int expectedNumber = eventStream.isVersionCreationEnabled() ? 0 : 1;
+        List<RDFDatatype> validTypes = List.of(XSDDatatype.XSDdateTime, XSDDatatype.XSDstring);
         memberSubjects.forEach(subject -> {
             List<Statement> timestampStatements = getStatementsOfPath(subject, model, eventStream.getTimestampPath());
             if (timestampStatements.size() != expectedNumber) {
@@ -40,9 +40,9 @@ public class PathsValidator implements IngestReportValidator {
             }
 
             timestampStatements.forEach(statement -> {
-                if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
+                if (!statement.getObject().isLiteral() || !validTypes.contains(statement.getLiteral().getDatatype())) {
                     reportManager.addEntry(subject,
-                            String.format(String.format("Object of statement with predicate: %s should be a literal of type %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI()))
+                            String.format(String.format("Object of statement with predicate: %s should be a literal either of type %s or %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI(), XSDDatatype.XSDstring.getURI()))
                     );
                 }
             });

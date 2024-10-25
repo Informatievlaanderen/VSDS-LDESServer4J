@@ -88,19 +88,19 @@ class VersionObjectMemberExtractorTest {
         final List<String> lines = readContentFromFile();
         lines.add("<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/484> <http://purl.org/dc/terms/isVersionOf> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622> .\n");
         final String modelString = String.join("\n", lines);
-        return RDFParser.fromString(modelString).lang(Lang.NQ).toModel();
+        return RDFParser.create().fromString(modelString).lang(Lang.NQ).toModel();
     }
 
     private Model readModelWithoutSpecifiedPath(String path) throws IOException {
         final String modelString = readContentFromFile().stream()
                 .filter(line -> !line.contains(path))
                 .collect(Collectors.joining("\n"));
-        return RDFParser.fromString(modelString).lang(Lang.NQ).toModel();
+        return RDFParser.create().fromString(modelString).lang(Lang.NQ).toModel();
     }
 
     private Model readValidModel() throws IOException {
         final String modelString = String.join("\n", readContentFromFile());
-        return RDFParser.fromString(modelString).lang(Lang.NQ).toModel();
+        return RDFParser.create().fromString(modelString).lang(Lang.NQ).toModel();
     }
 
     private List<String> readContentFromFile() throws IOException {
