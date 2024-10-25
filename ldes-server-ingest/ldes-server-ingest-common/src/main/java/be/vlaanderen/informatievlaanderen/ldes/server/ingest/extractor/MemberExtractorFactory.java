@@ -17,7 +17,7 @@ public class MemberExtractorFactory {
 
     private static MemberExtractor getBaseMemberExtractor(EventStream eventStream) {
         if (eventStream.isVersionCreationEnabled()) {
-            return new StateObjectMemberExtractor(eventStream.getCollection());
+            return new StateObjectMemberExtractor(eventStream.getCollection(), eventStream.getVersionDelimiter());
         }
         return new VersionObjectMemberExtractor(eventStream.getCollection(), eventStream.getVersionOfPath(), eventStream.getTimestampPath());
     }
