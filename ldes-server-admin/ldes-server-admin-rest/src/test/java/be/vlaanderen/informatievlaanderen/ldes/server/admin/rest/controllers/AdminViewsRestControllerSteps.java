@@ -58,7 +58,7 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 
 	@Given("an LDES server with an event stream")
 	public void anLDESServerWithAnEventStream() {
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION_NAME, "timestamp-path", "isVersionOf-path", false, "skol-dom")));
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION_NAME, "timestamp-path", "isVersionOf-path", null, "skol-dom")));
 	}
 
 	@When("I DELETE a view with {string}")

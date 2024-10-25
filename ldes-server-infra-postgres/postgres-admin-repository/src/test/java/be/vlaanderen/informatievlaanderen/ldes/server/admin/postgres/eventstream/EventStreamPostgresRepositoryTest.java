@@ -33,10 +33,10 @@ class EventStreamPostgresRepositoryTest {
     private static final String TIMESTAMP_PATH = "timestampPath";
     private static final String VERSION_OF_PATH = "versionOfPath";
     private static final String SKOLEMIZATION_DOMAIN = "http://example.org";
-    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, SKOLEMIZATION_DOMAIN);
+    private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, null, SKOLEMIZATION_DOMAIN);
     private static final EventStreamTO EVENT_STREAM_TO = new EventStreamTO.Builder().withEventStream(EVENT_STREAM).withShacl(ModelFactory.createDefaultModel()).build();
     private static final EventStreamEntity EVENT_STREAM_ENTITY = createEventStreamEntity(COLLECTION_NAME);
-    private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, false, false, SKOLEMIZATION_DOMAIN);
+    private static final EventStreamProperties EVENT_STREAM_PROPERTIES = new EventStreamPropertiesTestImpl(COLLECTION_NAME, TIMESTAMP_PATH, VERSION_OF_PATH, null, false, SKOLEMIZATION_DOMAIN);
     private EventStreamPostgresRepository repository;
 
     @Mock
@@ -54,7 +54,7 @@ class EventStreamPostgresRepositoryTest {
                 OTHER_COLLECTION_NAME,
                 "created",
                 "version",
-                false,
+                null,
                 false,
                 null
         );
@@ -64,7 +64,7 @@ class EventStreamPostgresRepositoryTest {
         ));
         final List<EventStream> expectedEventStreams = List.of(
                 EVENT_STREAM,
-                new EventStream(OTHER_COLLECTION_NAME, "created", "version", false, null));
+                new EventStream(OTHER_COLLECTION_NAME, "created", "version", null, null));
 
         final List<EventStream> eventStreams = repository.retrieveAllEventStreams();
 
@@ -111,11 +111,11 @@ class EventStreamPostgresRepositoryTest {
         final String otherVersionOfPath = "other-versionOf-path";
         List<EventStream> expectedEventStreams = List.of(
                 EVENT_STREAM,
-                new EventStream(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false, SKOLEMIZATION_DOMAIN)
+                new EventStream(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, null, false, SKOLEMIZATION_DOMAIN)
         );
         when(eventStreamEntityRepository.findAllPropertiesBy()).thenReturn(List.of(
                 EVENT_STREAM_PROPERTIES,
-                new EventStreamPropertiesTestImpl(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, false, false, SKOLEMIZATION_DOMAIN)
+                new EventStreamPropertiesTestImpl(OTHER_COLLECTION_NAME, otherTimestampPath, otherVersionOfPath, null, false, SKOLEMIZATION_DOMAIN)
         ));
 
         List<EventStream> eventStreams = repository.retrieveAllEventStreams();
@@ -199,7 +199,7 @@ class EventStreamPostgresRepositoryTest {
                 collection,
                 TIMESTAMP_PATH,
                 VERSION_OF_PATH,
-                false,
+                null,
                 false,
                 SKOLEMIZATION_DOMAIN
         );

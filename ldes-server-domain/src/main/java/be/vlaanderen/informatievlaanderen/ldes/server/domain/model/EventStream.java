@@ -8,33 +8,35 @@ public class EventStream {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final boolean versionCreationEnabled;
+	private final String versionDelimiter;
 	private final boolean isClosed;
 	private final String skolemizationDomain;
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, null);
+	                   String versionDelimiter) {
+		this(collection, timestampPath, versionOfPath, versionDelimiter, false, null);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled, String skolemizationDomain) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, skolemizationDomain);
+	                   String versionDelimiter,
+	                   String skolemizationDomain) {
+		this(collection, timestampPath, versionOfPath, versionDelimiter, false, skolemizationDomain);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled,
-	                   boolean isClosed, String skolemizationDomain) {
+	                   String versionDelimiter,
+	                   boolean isClosed,
+	                   String skolemizationDomain) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-        this.versionCreationEnabled = versionCreationEnabled;
+        this.versionDelimiter = versionDelimiter;
         this.isClosed = isClosed;
 		this.skolemizationDomain = skolemizationDomain;
 	}
@@ -51,8 +53,12 @@ public class EventStream {
 		return versionOfPath;
 	}
 
+	public String getVersionDelimiter() {
+		return versionDelimiter;
+	}
+
 	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
+		return versionDelimiter != null;
 	}
 
 	public boolean isClosed() {

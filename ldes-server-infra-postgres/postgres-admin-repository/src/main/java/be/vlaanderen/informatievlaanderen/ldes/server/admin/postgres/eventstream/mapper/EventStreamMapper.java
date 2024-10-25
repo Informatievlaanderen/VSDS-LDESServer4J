@@ -21,7 +21,7 @@ public class EventStreamMapper {
                 .withCollection(entity.getName())
                 .withTimestampPath(entity.getTimestampPath())
                 .withVersionOfPath(entity.getVersionOfPath())
-                .withVersionCreationEnabled(entity.isVersionCreationEnabled())
+                .withVersionDelimiter(entity.getVersionDelimiter())
                 .withClosed(entity.isClosed())
                 .withSkolemizationDomain(entity.getSkolemizationDomain())
                 .withViews(entity.getViews().stream().map(ViewSpecificationMapper::fromEntity).toList())
@@ -36,7 +36,7 @@ public class EventStreamMapper {
                 projection.getName(),
                 projection.getTimestampPath(),
                 projection.getVersionOfPath(),
-                projection.isVersionCreationEnabled(),
+                projection.getVersionDelimiter(),
                 projection.isClosed(),
                 projection.getSkolemizationDomain()
         );
@@ -46,7 +46,7 @@ public class EventStreamMapper {
         final EventStreamEntity entity = new EventStreamEntity(eventStream.getCollection(),
                 eventStream.getTimestampPath(),
                 eventStream.getVersionOfPath(),
-                eventStream.isVersionCreationEnabled(),
+                eventStream.getVersionDelimiter(),
                 eventStream.isClosed(),
                 eventStream.getSkolemizationDomain());
         final List<ViewEntity> views = eventStream.getViews().stream()

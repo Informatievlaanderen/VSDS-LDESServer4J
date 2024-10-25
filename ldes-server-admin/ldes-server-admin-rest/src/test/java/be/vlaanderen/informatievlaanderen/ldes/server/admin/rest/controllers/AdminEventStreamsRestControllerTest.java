@@ -51,7 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
-		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamConverterImpl.class,
+		EventStreamListHttpConverter.class, EventStreamHttpConverter.class,
+		EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
 		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
@@ -197,7 +198,7 @@ class AdminEventStreamsRestControllerTest {
 					.withCollection("name1")
 					.withTimestampPath(TIMESTAMP_PATH)
 					.withVersionOfPath(VERSION_OF_PATH)
-					.withVersionCreationEnabled(true)
+					.withVersionDelimiter("/")
 					.withShacl(shape)
 					.build();
 

@@ -16,7 +16,7 @@ public class EventStreamTO {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final boolean versionCreationEnabled;
+	private final String versionDelimiter;
 	private final boolean closed;
 	private final String skolemizationDomain;
 	private final List<ViewSpecification> views;
@@ -28,7 +28,7 @@ public class EventStreamTO {
 		collection = builder.collection;
 		timestampPath = builder.timestampPath;
 		versionOfPath = builder.versionOfPath;
-		versionCreationEnabled = builder.versionCreationEnabled;
+		versionDelimiter = builder.versionDelimiter;
 		closed = builder.closed;
 		skolemizationDomain = builder.skolemizationDomain;
 		views = builder.views;
@@ -49,8 +49,12 @@ public class EventStreamTO {
 		return versionOfPath;
 	}
 
+	public String getVersionDelimiter() {
+		return versionDelimiter;
+	}
+
 	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
+		return versionDelimiter != null;
 	}
 
 	public boolean isClosed() {
@@ -87,7 +91,7 @@ public class EventStreamTO {
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& shacl.isIsomorphicWith(that.shacl)
-				&& versionCreationEnabled == that.versionCreationEnabled
+				&& Objects.equals(versionDelimiter, that.versionDelimiter)
 				&& new HashSet<>(views).containsAll(that.views)
 				&& new HashSet<>(that.views).containsAll(views)
 				&& Objects.equals(dcatDataset, that.dcatDataset);
@@ -95,11 +99,11 @@ public class EventStreamTO {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, dcatDataset);
+		return Objects.hash(collection, timestampPath, versionOfPath, versionDelimiter, views, shacl, dcatDataset);
 	}
 
 	public EventStream extractEventStreamProperties() {
-		return new EventStream(collection, timestampPath, versionOfPath, versionCreationEnabled, skolemizationDomain);
+		return new EventStream(collection, timestampPath, versionOfPath, versionDelimiter, skolemizationDomain);
 	}
 
 
@@ -108,7 +112,7 @@ public class EventStreamTO {
 		private String collection;
 		private String timestampPath;
 		private String versionOfPath;
-		private boolean versionCreationEnabled = false;
+		private String versionDelimiter;
 		private boolean closed = false;
 		private String skolemizationDomain;
 		private List<ViewSpecification> views = List.of();
@@ -120,7 +124,7 @@ public class EventStreamTO {
 			collection = eventStream.getCollection();
 			timestampPath = eventStream.getTimestampPath();
 			versionOfPath = eventStream.getVersionOfPath();
-			versionCreationEnabled = eventStream.isVersionCreationEnabled();
+			versionDelimiter = eventStream.getVersionDelimiter();
 			closed = eventStream.isClosed();
 			skolemizationDomain = eventStream.getSkolemizationDomain().orElse(null);
 			return this;
@@ -141,8 +145,8 @@ public class EventStreamTO {
 			return this;
 		}
 
-		public Builder withVersionCreationEnabled(boolean val) {
-			versionCreationEnabled = val;
+		public Builder withVersionDelimiter(String val) {
+			versionDelimiter = val;
 			return this;
 		}
 

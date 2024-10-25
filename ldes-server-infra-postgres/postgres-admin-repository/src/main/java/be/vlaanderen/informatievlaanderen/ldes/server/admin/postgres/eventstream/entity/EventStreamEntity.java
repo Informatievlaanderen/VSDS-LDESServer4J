@@ -27,8 +27,8 @@ public class EventStreamEntity {
     @Column(name = "version_of_path", nullable = false)
     private String versionOfPath;
 
-    @Column(name = "create_versions", nullable = false)
-    private Boolean versionCreationEnabled;
+    @Column(name = "version_delimiter")
+    private String versionDelimiter;
 
     @Column(name = "is_closed", nullable = false)
     private Boolean closed;
@@ -51,11 +51,11 @@ public class EventStreamEntity {
     public EventStreamEntity() {
     }
 
-    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean closed, String skolemizationDomain) {
+    public EventStreamEntity(String name, String timestampPath, String versionOfPath, String versionDelimiter, Boolean closed, String skolemizationDomain) {
         this.name = name;
         this.timestampPath = timestampPath;
         this.versionOfPath = versionOfPath;
-        this.versionCreationEnabled = versionCreationEnabled;
+        this.versionDelimiter = versionDelimiter;
         this.closed = closed;
         this.skolemizationDomain = skolemizationDomain;
     }
@@ -77,7 +77,11 @@ public class EventStreamEntity {
     }
 
     public boolean isVersionCreationEnabled() {
-        return versionCreationEnabled;
+        return versionDelimiter != null;
+    }
+
+    public String getVersionDelimiter() {
+        return versionDelimiter;
     }
 
     public boolean isClosed() {

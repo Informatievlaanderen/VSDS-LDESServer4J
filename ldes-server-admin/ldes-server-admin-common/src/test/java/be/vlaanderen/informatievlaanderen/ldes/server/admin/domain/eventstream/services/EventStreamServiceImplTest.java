@@ -40,9 +40,9 @@ class EventStreamServiceImplTest {
 	private static final String COLLECTION = "collection";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
-	private static final boolean VERSION_CREATION_ENABLED = false;
+	private static final String VERSION_DELIMITER = null;
 	private static final boolean CLOSED = false;
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, null);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_DELIMITER, null);
 	private static final EventStreamTO.Builder BASE_BUILDER = new EventStreamTO.Builder()
 			.withEventStream(EVENT_STREAM)
 			.withViews(List.of())
@@ -87,7 +87,7 @@ class EventStreamServiceImplTest {
 				.withCollection(otherCollection)
 				.withTimestampPath("created")
 				.withVersionOfPath("versionOf")
-				.withVersionCreationEnabled(false)
+				.withVersionDelimiter(null)
 				.withClosed(CLOSED)
 				.withViews(views)
 				.withShacl(ModelFactory.createDefaultModel())
@@ -149,7 +149,7 @@ class EventStreamServiceImplTest {
 	class CreateEventStream {
 		private static final String TIMESTAMP_PATH = "generatedAt";
 		private static final String VERSION_OF_PATH = "versionOf";
-		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, null);
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_DELIMITER, null);
 
 		@Test
 		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
