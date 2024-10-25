@@ -76,10 +76,6 @@ public class EventStreamEntity {
         return versionOfPath;
     }
 
-    public boolean isVersionCreationEnabled() {
-        return versionDelimiter != null;
-    }
-
     public String getVersionDelimiter() {
         return versionDelimiter;
     }
