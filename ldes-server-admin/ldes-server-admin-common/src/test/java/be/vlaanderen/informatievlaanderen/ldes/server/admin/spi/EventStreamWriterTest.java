@@ -9,10 +9,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstruc
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Map;
@@ -87,21 +92,28 @@ class EventStreamWriterTest {
 			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 
-		@Test
-		void when_eventStreamCreateVersions_then_convertToModel() {
-			final EventStreamTO eventStream = baseBuilder()
-					.withShacl(shacl)
-					.withVersionDelimiter("/")
-					.withEventSourceRetentionPolicies(eventSourceRetentionModels)
+		@ParameterizedTest
+		@ValueSource(strings = {"/", "&version="})
+		void when_eventStreamCreateVersions_then_convertToModel(String delimiter) {
+			final Model expectedModel = RDFDataMgr.loadModel("eventstream/streams-with-dcat/ldes-create-versions.ttl");
+			final Model emptyShacl = RDFParser.create()
+					.fromString("""
+							<http://localhost:8080/animals> <https://w3id.org/tree#shape> _:genid1 .
+							_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+							""")
+					.lang(Lang.NQUADS)
+					.toModel();
+			final EventStreamTO eventStream = new EventStreamTO.Builder()
+					.withCollection("animals")
+					.withTimestampPath(TIMESTAMP_PATH)
+					.withVersionOfPath(VERSION_OF_PATH)
+					.withShacl(emptyShacl)
+					.withVersionDelimiter(delimiter)
 					.build();
+
 			final Model convertedModel = eventStreamWriter.write(eventStream);
 
-			eventStreamModel.remove(eventStreamModel.listStatements(null,
-					ResourceFactory.createProperty("https://w3id.org/ldes#createVersions"), (RDFNode) null));
-			eventStreamModel.add(ResourceFactory.createResource("http://localhost:8080/collectionName1"),
-					ResourceFactory.createProperty("https://w3id.org/ldes#createVersions"), ResourceFactory.createTypedLiteral(true));
-
-			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
+			assertThat(convertedModel).matches(expectedModel::isIsomorphicWith);
 		}
 
 		@Test
@@ -169,5 +181,9 @@ class EventStreamWriterTest {
 						new ViewName(COLLECTION_NAME, "view1"),
 						List.of(),
 						List.of(fragmentationConfig), 100));
+	}
+
+	private Condition<Model> containing(Model expectedModel) {
+		return new Condition<>(actualModel -> actualModel.containsAll(expectedModel), "Model should contains all %d statements", expectedModel.size());
 	}
 }

@@ -22,10 +22,10 @@ public final class VersionCreationProperties {
 	}
 
 	public static VersionCreationProperties enabledWithDefault() {
-		return of("/");
+		return new VersionCreationProperties("/");
 	}
 
-	public static VersionCreationProperties of(String versionDelimiter) {
+	public static VersionCreationProperties ofNullableDelimeter(String versionDelimiter) {
 		return new VersionCreationProperties(versionDelimiter);
 	}
 
