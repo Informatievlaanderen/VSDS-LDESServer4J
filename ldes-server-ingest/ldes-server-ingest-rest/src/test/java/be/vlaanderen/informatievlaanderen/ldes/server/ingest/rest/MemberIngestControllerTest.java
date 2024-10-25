@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
@@ -68,8 +69,8 @@ class MemberIngestControllerTest {
     @BeforeEach
     void setUp() {
         Stream.of(
-                        new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf", null),
-                        new EventStream("restaurant", "http://www.w3.org/ns/prov#generatedAtTime", "https://vocabulary.uncefact.org/elementVersionId", null))
+                        new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf", VersionCreationProperties.disabled()),
+                        new EventStream("restaurant", "http://www.w3.org/ns/prov#generatedAtTime", "https://vocabulary.uncefact.org/elementVersionId", VersionCreationProperties.disabled()))
                 .map(EventStreamCreatedEvent::new)
                 .forEach(eventPublisher::publishEvent);
     }
