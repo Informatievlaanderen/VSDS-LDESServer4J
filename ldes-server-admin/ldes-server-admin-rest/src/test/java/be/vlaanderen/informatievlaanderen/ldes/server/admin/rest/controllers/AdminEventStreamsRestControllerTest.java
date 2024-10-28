@@ -17,7 +17,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -213,7 +216,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
-			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
+			verify(eventStreamService).createEventStream(assertArg(actual -> assertThat(actual.getVersionDelimiter()).isEqualTo("/")));
 		}
 
 		@Test
@@ -236,6 +239,37 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(status().isBadRequest())
 					.andExpect(content().encoding(StandardCharsets.UTF_8))
 					.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+			verifyNoInteractions(eventStreamService);
+		}
+
+		@Test
+		void given_EventStreamWithVersionDelimiter_when_POST_then_ReturnCreated() throws Exception {
+			final String content = readDataFromFile("eventstream/streams/ldes-with-version-delimiter.ttl").replace("#VERSION_DELIMITER#", "&version=");
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
+							.content(content)
+							.contentType(contentTypeTurtle))
+					.andExpect(status().isCreated())
+					.andExpect(content().encoding(StandardCharsets.UTF_8))
+					.andExpect(content().contentTypeCompatibleWith(contentTypeTurtle));
+			verify(eventStreamService).createEventStream(assertArg(actual -> assertThat(actual.getVersionDelimiter()).isEqualTo("&version=")));
+		}
+
+		@Test
+		void given_EventStreamWithVersionDelimiter_when_POST_then_ReturnBadRequest() throws Exception {
+			final String content = readDataFromFile("eventstream/streams/ldes-with-version-delimiter.ttl").replace("#VERSION_DELIMITER#", "");
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams").content(content).contentType(contentTypeTurtle))
+					.andExpect(status().isBadRequest());
+			verifyNoInteractions(eventStreamService);
+		}
+
+		@Test
+		void given_EventStreamWithVersionDelimiterAndCreateVersionsFalse_when_POST_then_ReturnBadRequest() throws Exception {
+			final String content = readDataFromFile("eventstream/streams/ldes-with-version-delimiter.ttl").replace("#VERSION_DELIMITER#", "/").replace("true", "false");
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams").content(content).contentType(contentTypeTurtle))
+					.andExpect(status().isBadRequest());
 			verifyNoInteractions(eventStreamService);
 		}
 	}
