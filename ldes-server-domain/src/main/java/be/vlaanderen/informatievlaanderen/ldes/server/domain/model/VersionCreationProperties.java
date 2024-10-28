@@ -25,7 +25,7 @@ public final class VersionCreationProperties {
 		return new VersionCreationProperties("/");
 	}
 
-	public static VersionCreationProperties ofNullableDelimeter(String versionDelimiter) {
+	public static VersionCreationProperties ofNullableDelimiter(String versionDelimiter) {
 		return new VersionCreationProperties(versionDelimiter);
 	}
 
@@ -38,6 +38,6 @@ public final class VersionCreationProperties {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(versionDelimiter);
+		return 17 * 31 + Objects.hashCode(versionDelimiter);
 	}
 }

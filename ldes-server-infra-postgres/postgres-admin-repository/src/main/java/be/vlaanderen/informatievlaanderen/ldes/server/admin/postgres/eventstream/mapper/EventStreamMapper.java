@@ -37,7 +37,7 @@ public class EventStreamMapper {
                 projection.getName(),
                 projection.getTimestampPath(),
                 projection.getVersionOfPath(),
-                VersionCreationProperties.ofNullableDelimeter(projection.getVersionDelimiter()),
+                VersionCreationProperties.ofNullableDelimiter(projection.getVersionDelimiter()),
                 projection.isClosed(),
                 projection.getSkolemizationDomain()
         );

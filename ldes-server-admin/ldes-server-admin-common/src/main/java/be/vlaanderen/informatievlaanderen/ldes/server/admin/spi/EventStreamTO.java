@@ -147,7 +147,7 @@ public class EventStreamTO {
 		}
 
 		public Builder withVersionDelimiter(String val) {
-			versionCreationProperties = VersionCreationProperties.ofNullableDelimeter(val);
+			versionCreationProperties = VersionCreationProperties.ofNullableDelimiter(val);
 			return this;
 		}
 
