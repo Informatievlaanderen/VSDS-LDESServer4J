@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -47,7 +48,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, null)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, VersionCreationProperties.disabled())));
 	}
 
 	@Nested

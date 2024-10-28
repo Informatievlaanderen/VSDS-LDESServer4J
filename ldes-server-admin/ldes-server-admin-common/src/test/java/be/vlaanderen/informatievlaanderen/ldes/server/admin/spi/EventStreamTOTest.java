@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EventStreamTOTest {
 	private static final String COLLECTION = "collection";
@@ -60,7 +60,9 @@ class EventStreamTOTest {
 	@Test
 	void test_invalid_skolem_domain() {
 		var builder = getBaseBuilder().withSkolemizationDomain("example.com");
-		assertThrows(InvalidSkolemisationDomainException.class, builder::build);
+		assertThatThrownBy(builder::build)
+				.isInstanceOf(InvalidSkolemisationDomainException.class)
+				.hasMessage("Invalid Skolemisation Domain. Should be URI. Provided skolemizationDomain : example.com");
 	}
 
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {
@@ -72,15 +74,15 @@ class EventStreamTOTest {
 							getBaseBuilder()
 									.withShacl(ModelFactory.createDefaultModel().add(createResource(), RdfConstants.IS_PART_OF_PROPERTY, "object"))
 									.build(),
-					Arguments.of("VersionPath",
-							getBaseBuilder().withVersionOfPath("other").build()),
-					Arguments.of("timestampPath",
-							getBaseBuilder().withTimestampPath("other").build()),
-					Arguments.of("collection",
-							getBaseBuilder().withCollection("other").build()),
-					Arguments.of("null", null),
-					Arguments.of("dataset", EVENT_STREAM_RESPONSE_WITH_DATASET),
-					Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, null))));
+							Arguments.of("VersionPath",
+									getBaseBuilder().withVersionOfPath("other").build()),
+							Arguments.of("timestampPath",
+									getBaseBuilder().withTimestampPath("other").build()),
+							Arguments.of("collection",
+									getBaseBuilder().withCollection("other").build()),
+							Arguments.of("null", null),
+							Arguments.of("dataset", EVENT_STREAM_RESPONSE_WITH_DATASET),
+							Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, null))));
 		}
 	}
 
