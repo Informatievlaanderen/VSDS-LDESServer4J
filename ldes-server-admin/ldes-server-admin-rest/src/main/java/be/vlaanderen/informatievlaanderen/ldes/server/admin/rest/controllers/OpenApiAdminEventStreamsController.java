@@ -185,50 +185,50 @@ public interface OpenApiAdminEventStreamsController {
 							"""),
 					@ExampleObject(name = "State Objects ingestion", description = "An event stream that ingests state objects", value = """
 							{
-							        	"@context": {
-							        		"dcterms": "http://purl.org/dc/terms/",
-							        		"event-stream": "http://localhost:8080/event-stream/",
-							        		"ldes": "https://w3id.org/ldes#",
-							        		"tree": "https://w3id.org/tree#"
-							        	},
-							        	"@id": "http://localhost:8080/event-stream",
-							        	"@type": "ldes:EventStream",
-							        	"ldes:timestampPath": {
-							        		"@id": "dcterms:created"
-							        	},
-							        	"ldes:versionOfPath": {
-							        		"@id": "dcterms:isVersionOf"
-							        	},
-							        	"ldes:createVersions": true,
-							        	"tree:shape": {
-							        		"@id": "event-stream:shape",
-							        		"@type": "http://www.w3.org/ns/shacl#NodeShape"
-							        	}
-							        }
+								"@context": {
+									"dcterms": "http://purl.org/dc/terms/",
+									"event-stream": "http://localhost:8080/event-stream/",
+									"ldes": "https://w3id.org/ldes#",
+									"tree": "https://w3id.org/tree#"
+								},
+								"@id": "http://localhost:8080/event-stream",
+								"@type": "ldes:EventStream",
+								"ldes:timestampPath": {
+									"@id": "dcterms:created"
+								},
+								"ldes:versionOfPath": {
+									"@id": "dcterms:isVersionOf"
+								},
+								"ldes:createVersions": true,
+								"tree:shape": {
+									"@id": "event-stream:shape",
+									"@type": "http://www.w3.org/ns/shacl#NodeShape"
+								}
+							}
 							"""),
 					@ExampleObject(name = "State Objects ingestion with custom delimiter", description = "An event stream that ingests state objects with a custom version delimiter", value = """
 							{
-							        	"@context": {
-							        		"dcterms": "http://purl.org/dc/terms/",
-							        		"event-stream": "http://localhost:8080/event-stream/",
-							        		"ldes": "https://w3id.org/ldes#",
-							        		"tree": "https://w3id.org/tree#"
-							        	},
-							        	"@id": "http://localhost:8080/event-stream",
-							        	"@type": "ldes:EventStream",
-							        	"ldes:timestampPath": {
-							        		"@id": "dcterms:created"
-							        	},
-							        	"ldes:versionOfPath": {
-							        		"@id": "dcterms:isVersionOf"
-							        	},
-							        	"ldes:createVersions": true,
-							        	"ldes:versionDelimiter": "&version=",
-							        	"tree:shape": {
-							        		"@id": "event-stream:shape",
-							        		"@type": "http://www.w3.org/ns/shacl#NodeShape"
-							        	}
-							        }
+								"@context": {
+									"dcterms": "http://purl.org/dc/terms/",
+									"event-stream": "http://localhost:8080/event-stream/",
+									"ldes": "https://w3id.org/ldes#",
+									"tree": "https://w3id.org/tree#"
+								},
+								"@id": "http://localhost:8080/event-stream",
+								"@type": "ldes:EventStream",
+								"ldes:timestampPath": {
+									"@id": "dcterms:created"
+								},
+								"ldes:versionOfPath": {
+									"@id": "dcterms:isVersionOf"
+								},
+								"ldes:createVersions": true,
+								"ldes:versionDelimiter": "&version=",
+								"tree:shape": {
+									"@id": "event-stream:shape",
+									"@type": "http://www.w3.org/ns/shacl#NodeShape"
+								}
+							}
 							""")
 			})
 	})
@@ -319,70 +319,71 @@ public interface OpenApiAdminEventStreamsController {
 			@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
 					@ExampleObject(name = "Version Objects ingestion", description = "An event stream that ingests version objects", value = """
 							{
-							  "@context": {
-							    "dcterms": "http://purl.org/dc/terms/",
-							    "event-stream": "http://localhost:8080/event-stream/",
-							    "ldes": "https://w3id.org/ldes#",
-							    "tree": "https://w3id.org/tree#"
-							  },
-							  "@id": "http://localhost:8080/event-stream",
-							  "@type": "ldes:EventStream",
-							  "ldes:timestampPath": {
-							    "@id": "dcterms:created"
-							  },
-							  "ldes:versionOfPath": {
-							    "@id": "dcterms:isVersionOf"
-							  },
-							  "tree:shape": {
-							    "@id": "event-stream:shape",
-							    "@type": "http://www.w3.org/ns/shacl#NodeShape"
-							  }
+								"@context": {
+									"dcterms": "http://purl.org/dc/terms/",
+									"event-stream": "http://localhost:8080/event-stream/",
+									"ldes": "https://w3id.org/ldes#",
+									"tree": "https://w3id.org/tree#"
+								},
+								"@id": "http://localhost:8080/event-stream",
+								"@type": "ldes:EventStream",
+								"ldes:timestampPath": {
+									"@id": "dcterms:created"
+								},
+								"ldes:versionOfPath": {
+									"@id": "dcterms:isVersionOf"
+								},
+								"tree:shape": {
+									"@id": "event-stream:shape",
+									"@type": "http://www.w3.org/ns/shacl#NodeShape"
+								}
 							}
 							"""),
 					@ExampleObject(name = "State Objects ingestion", description = "An event stream that ingests state objects", value = """
 							{
-							  "@context": {
-							    "dcterms": "http://purl.org/dc/terms/",
-							    "event-stream": "http://localhost:8080/event-stream/",
-							    "ldes": "https://w3id.org/ldes#",
-							    "tree": "https://w3id.org/tree#"
-							  },
-							  "@id": "http://localhost:8080/event-stream",
-							  "@type": "ldes:EventStream",
-							  "ldes:timestampPath": {
-							    "@id": "dcterms:created"
-							  },
-							  "ldes:versionOfPath": {
-							    "@id": "dcterms:isVersionOf"
-							  },
-							  "ldes:createVersions": true,
-							  "tree:shape": {
-							    "@id": "event-stream:shape"
-							  }
+								"@context": {
+									"dcterms": "http://purl.org/dc/terms/",
+									"event-stream": "http://localhost:8080/event-stream/",
+									"ldes": "https://w3id.org/ldes#",
+									"tree": "https://w3id.org/tree#"
+								},
+								"@id": "http://localhost:8080/event-stream",
+								"@type": "ldes:EventStream",
+								"ldes:timestampPath": {
+									"@id": "dcterms:created"
+								},
+								"ldes:versionOfPath": {
+									"@id": "dcterms:isVersionOf"
+								},
+								"ldes:createVersions": true,
+								"tree:shape": {
+									"@id": "event-stream:shape",
+									"@type": "http://www.w3.org/ns/shacl#NodeShape"
+								}
 							}
 							"""),
 					@ExampleObject(name = "State Objects ingestion with custom delimiter", description = "An event stream that ingests state objects with a custom version delimiter", value = """
 							{
-							  "@context": {
-							    "dcterms": "http://purl.org/dc/terms/",
-							    "event-stream": "http://localhost:8080/event-stream/",
-							    "ldes": "https://w3id.org/ldes#",
-							    "tree": "https://w3id.org/tree#"
-							  },
-							  "@id": "http://localhost:8080/event-stream",
-							  "@type": "ldes:EventStream",
-							  "ldes:timestampPath": {
-							    "@id": "dcterms:created"
-							  },
-							  "ldes:versionOfPath": {
-							    "@id": "dcterms:isVersionOf"
-							  },
-							  "ldes:createVersions": true,
-							  "ldes:versionDelimiter": "&version=",
-							  "tree:shape": {
-							    "@id": "event-stream:shape",
-							    "@type": "http://www.w3.org/ns/shacl#NodeShape"
-							  }
+								"@context": {
+									"dcterms": "http://purl.org/dc/terms/",
+									"event-stream": "http://localhost:8080/event-stream/",
+									"ldes": "https://w3id.org/ldes#",
+									"tree": "https://w3id.org/tree#"
+								},
+								"@id": "http://localhost:8080/event-stream",
+								"@type": "ldes:EventStream",
+								"ldes:timestampPath": {
+									"@id": "dcterms:created"
+								},
+								"ldes:versionOfPath": {
+									"@id": "dcterms:isVersionOf"
+								},
+								"ldes:createVersions": true,
+								"ldes:versionDelimiter": "&version=",
+								"tree:shape": {
+									"@id": "event-stream:shape",
+									"@type": "http://www.w3.org/ns/shacl#NodeShape"
+								}
 							}
 							""")
 			})
