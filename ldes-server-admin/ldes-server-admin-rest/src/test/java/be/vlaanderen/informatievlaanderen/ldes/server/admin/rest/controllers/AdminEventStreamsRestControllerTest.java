@@ -23,6 +23,8 @@ import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -264,9 +266,13 @@ class AdminEventStreamsRestControllerTest {
 			verifyNoInteractions(eventStreamService);
 		}
 
-		@Test
-		void given_EventStreamWithVersionDelimiterAndCreateVersionsFalse_when_POST_then_ReturnBadRequest() throws Exception {
-			final String content = readDataFromFile("eventstream/streams/ldes-with-version-delimiter.ttl").replace("#VERSION_DELIMITER#", "/").replace("true", "false");
+		@ParameterizedTest
+		@CsvSource({
+				"'true', 'false'",
+				"'ldes:createVersions true ;', ''"
+		})
+		void given_EventStreamWithVersionDelimiterAndCreateVersionsFalse_when_POST_then_ReturnBadRequest(String target, String replacement) throws Exception {
+			final String content = readDataFromFile("eventstream/streams/ldes-with-version-delimiter.ttl").replace("#VERSION_DELIMITER#", "/").replace(target, replacement);
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams").content(content).contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest());

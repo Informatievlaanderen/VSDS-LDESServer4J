@@ -53,6 +53,7 @@
      sh:datatype xsd:string ;
      sh:description "The object property that indicates the delimiter for version objects."@en;
      sh:minLength 1 ;
+     sh:maxCount 1;
      sh:name "versionDelimiter"@en;
      sh:path <https://w3id.org/ldes#versionDelimiter>
   ] ;
@@ -63,10 +64,8 @@
         SELECT $this
         WHERE {
             $this ldes:versionDelimiter ?versionDelimiter .
-            $this ldes:createVersions ?createVersions .
 
-            # Check if ldes:versionDelimiter is present when ldes:createVersions is not true
-            FILTER (?createVersions != true)
+            FILTER NOT EXISTS { $this ldes:createVersions true }
         }
     """ ;
   ] .
