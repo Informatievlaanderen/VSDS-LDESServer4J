@@ -9,7 +9,6 @@ COPY ./ldes-server-infra-postgres/postgres-pagination-repository/target/postgres
 COPY ./ldes-server-infra-postgres/postgres-maintenance-repository/target/postgres-maintenance-repository-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-infra-postgres/postgres-fetch-repository/target/postgres-fetch-repository-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-infra-postgres/postgres-ingest-repository/target/postgres-ingest-repository-jar-with-dependencies.jar ./lib/
-COPY ./ldes-server-infra-postgres/postgres-liquibase/target/postgres-liquibase-jar-with-dependencies.jar ./lib/
 
 # Interfaces
 COPY ./ldes-server-ingest/ldes-server-ingest-rest/target/ldes-server-ingest-rest-jar-with-dependencies.jar ./lib/
