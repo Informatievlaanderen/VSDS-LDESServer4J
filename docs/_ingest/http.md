@@ -94,7 +94,7 @@ If version creation is enabled, these properties should NOT be present on the me
 
 The timestamp defined on the timestamp path should be of the type `<http://www.w3.org/2001/XMLSchema#dateTime>`.
 The timestamp must have this datatype explicitly declared.
-ex.
+example:
 `<https://example.be/member/1> <http://www.w3.org/ns/prov#generatedAtTime> "1996-03-28T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
 
 The object defined on the versionOf path must be a uri. This uri should represent the state object of which the member
