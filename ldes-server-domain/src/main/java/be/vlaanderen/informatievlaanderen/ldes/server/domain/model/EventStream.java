@@ -8,34 +8,36 @@ public class EventStream {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final boolean versionCreationEnabled;
+	private final VersionCreationProperties versionCreationProperties;
 	private final boolean isClosed;
 	private final String skolemizationDomain;
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, null);
+	                   VersionCreationProperties versionCreationProperties) {
+		this(collection, timestampPath, versionOfPath, versionCreationProperties, false, null);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled, String skolemizationDomain) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, false, skolemizationDomain);
+	                   VersionCreationProperties versionCreationProperties,
+	                   String skolemizationDomain) {
+		this(collection, timestampPath, versionOfPath, versionCreationProperties, false, skolemizationDomain);
 	}
 
 	public EventStream(String collection,
 	                   String timestampPath,
 	                   String versionOfPath,
-	                   boolean versionCreationEnabled,
-	                   boolean isClosed, String skolemizationDomain) {
+	                   VersionCreationProperties versionCreationProperties,
+	                   boolean isClosed,
+	                   String skolemizationDomain) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-        this.versionCreationEnabled = versionCreationEnabled;
-        this.isClosed = isClosed;
+		this.versionCreationProperties = versionCreationProperties;
+		this.isClosed = isClosed;
 		this.skolemizationDomain = skolemizationDomain;
 	}
 
@@ -51,8 +53,16 @@ public class EventStream {
 		return versionOfPath;
 	}
 
+	public VersionCreationProperties getVersionCreationProperties() {
+		return versionCreationProperties;
+	}
+
+	public String getVersionDelimiter() {
+		return versionCreationProperties.getVersionDelimiter();
+	}
+
 	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
+		return versionCreationProperties.isVersionCreationEnabled();
 	}
 
 	public boolean isClosed() {

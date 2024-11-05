@@ -17,4 +17,5 @@
     <include file="drop-obsolete-views.sql" relativeToChangelogFile="true" />
     <include file="add-open-pages-view.sql" relativeToChangelogFile="true" />
     <include file="make-page-relations-unique.xml" relativeToChangelogFile="true"/>
+    <include file="add-version-delimiter.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -18,14 +19,14 @@ class EventStreamTest {
 	private static final String COLLECTION = "collection_name";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
-	private static final boolean VERSION_CREATION_ENABLED = false;
+	private static final VersionCreationProperties VERSION_CREATION_PROPERTIES = VersionCreationProperties.disabled();
 	private static final String SKOLEMIZATION_DOMAIN = "http://example.org";
 
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN);
 
 	@Test
 	void test_inequality() {
-		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN);
+		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN);
 
 		assertNotEquals(EVENT_STREAM, other);
 		assertNotEquals(null, EVENT_STREAM);
@@ -45,11 +46,11 @@ class EventStreamTest {
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
 					EVENT_STREAM,
-					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN),
-					new EventStream(COLLECTION, "other", VERSION_OF_PATH, VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN),
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true, SKOLEMIZATION_DOMAIN),
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN),
-					new EventStream(COLLECTION, "other", "other", VERSION_CREATION_ENABLED, SKOLEMIZATION_DOMAIN))
+					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN),
+					new EventStream(COLLECTION, "other", VERSION_OF_PATH, VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VersionCreationProperties.enabledWithDefault(), SKOLEMIZATION_DOMAIN),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN),
+					new EventStream(COLLECTION, "other", "other", VERSION_CREATION_PROPERTIES, SKOLEMIZATION_DOMAIN))
 					.map(Arguments::of);
 		}
 	}

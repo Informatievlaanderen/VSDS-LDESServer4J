@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamReader;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
 import io.micrometer.observation.annotation.Observed;
@@ -26,7 +26,7 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 
     private final EventStreamService eventStreamService;
-    private final EventStreamConverter eventStreamConverter;
+    private final EventStreamReader eventStreamReader;
     private final RetentionModelExtractor retentionModelExtractor;
     private final ModelValidator eventStreamValidator;
     private final ModelValidator eventSourceValidator;
@@ -34,11 +34,11 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     public AdminEventStreamsRestController(EventStreamService eventStreamService,
                                            @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
                                            @Qualifier("eventSourceShaclValidator") ModelValidator eventSourceValidator,
-                                           EventStreamConverter eventStreamConverter, RetentionModelExtractor retentionModelExtractor) {
+                                           EventStreamReader eventStreamReader, RetentionModelExtractor retentionModelExtractor) {
         this.eventStreamService = eventStreamService;
         this.eventStreamValidator = eventStreamValidator;
         this.eventSourceValidator = eventSourceValidator;
-        this.eventStreamConverter = eventStreamConverter;
+        this.eventStreamReader = eventStreamReader;
         this.retentionModelExtractor = retentionModelExtractor;
     }
 
@@ -58,7 +58,7 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     @PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
     public EventStreamTO createEventStream(@RequestBody Model eventStreamModel) {
         eventStreamValidator.validate(eventStreamModel);
-        EventStreamTO eventStreamTO = eventStreamConverter.fromModel(eventStreamModel);
+        EventStreamTO eventStreamTO = eventStreamReader.read(eventStreamModel);
         log.atInfo().log("START creating collection {}", eventStreamTO.getCollection());
         eventStreamService.createEventStream(eventStreamTO);
         log.atInfo().log("FINISHED creating collection {}", eventStreamTO.getCollection());

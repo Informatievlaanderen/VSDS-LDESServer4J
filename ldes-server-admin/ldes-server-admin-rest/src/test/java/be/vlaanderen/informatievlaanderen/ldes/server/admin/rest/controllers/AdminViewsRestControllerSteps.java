@@ -3,10 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -58,7 +55,7 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 
 	@Given("an LDES server with an event stream")
 	public void anLDESServerWithAnEventStream() {
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION_NAME, "timestamp-path", "isVersionOf-path", false, "skol-dom")));
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(new EventStream(COLLECTION_NAME, "timestamp-path", "isVersionOf-path", VersionCreationProperties.disabled(), "skol-dom")));
 	}
 
 	@When("I DELETE a view with {string}")

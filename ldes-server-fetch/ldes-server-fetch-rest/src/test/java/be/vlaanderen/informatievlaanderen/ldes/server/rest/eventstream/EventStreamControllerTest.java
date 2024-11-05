@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"test", "rest"})
 @Import({EventStreamControllerTest.EventStreamControllerTestConfiguration.class})
 @ContextConfiguration(classes = {EventStreamController.class, RestConfig.class,
-		RestResponseEntityExceptionHandler.class, EventStreamConverterImpl.class,
+		RestResponseEntityExceptionHandler.class, EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
 		PrefixConstructor.class, RdfModelConverter.class

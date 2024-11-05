@@ -4,7 +4,7 @@ public interface EventStreamProperties {
     String getName();
     String getTimestampPath();
     String getVersionOfPath();
-    boolean isVersionCreationEnabled();
+    String getVersionDelimiter();
     boolean isClosed();
     String getSkolemizationDomain();
 }

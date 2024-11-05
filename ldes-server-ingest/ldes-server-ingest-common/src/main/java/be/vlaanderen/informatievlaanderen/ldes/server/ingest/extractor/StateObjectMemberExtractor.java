@@ -9,9 +9,11 @@ import java.util.UUID;
 
 public class StateObjectMemberExtractor implements MemberExtractor {
     private final String collectionName;
+    private final String delimiter;
 
-    public StateObjectMemberExtractor(String collectionName) {
+    public StateObjectMemberExtractor(String collectionName, String delimiter) {
         this.collectionName = collectionName;
+	    this.delimiter = delimiter;
     }
 
     @Override
@@ -20,7 +22,7 @@ public class StateObjectMemberExtractor implements MemberExtractor {
         final LocalDateTime ingestedTimestamp = LocalDateTime.now();
 
         return MemberModelExtractor.initialize(ingestedModel).extractAllMemberModels().stream()
-                .map(memberModel -> memberModel.mapToMember(collectionName, ingestedTimestamp, txId))
+                .map(memberModel -> memberModel.mapToMember(collectionName, delimiter, ingestedTimestamp, txId))
                 .toList();
     }
 }

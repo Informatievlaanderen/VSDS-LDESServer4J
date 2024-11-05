@@ -6,7 +6,6 @@ import org.apache.jena.rdf.model.Model;
 import java.time.LocalDateTime;
 
 public class MemberModel {
-    private static final String DELIMITER = "/";
     private final String subjectUri;
     private final Model model;
 
@@ -23,8 +22,8 @@ public class MemberModel {
         return model;
     }
 
-    public IngestedMember mapToMember(String collectionName, LocalDateTime ingestedTimestamp, String txId) {
-        final String memberSubject = "%s%s%s".formatted(subjectUri, DELIMITER, ingestedTimestamp);
+    public IngestedMember mapToMember(String collectionName, String delimiter, LocalDateTime ingestedTimestamp, String txId) {
+        final String memberSubject = "%s%s%s".formatted(subjectUri, delimiter, ingestedTimestamp);
         return new IngestedMember(
                 memberSubject,
                 collectionName,

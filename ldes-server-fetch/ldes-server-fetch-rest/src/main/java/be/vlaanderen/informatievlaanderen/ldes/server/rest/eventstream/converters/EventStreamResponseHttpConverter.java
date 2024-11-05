@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamWriter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -20,11 +20,10 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 import static be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamTO> {
-	private final EventStreamConverter eventStreamConverter;
+	private final EventStreamWriter eventStreamWriter;
 	private final RdfModelConverter rdfModelConverter;
-
-	public EventStreamResponseHttpConverter(EventStreamConverter eventStreamConverter, RdfModelConverter rdfModelConverter) {
-		this.eventStreamConverter = eventStreamConverter;
+	public EventStreamResponseHttpConverter(EventStreamWriter eventStreamWriter, RdfModelConverter rdfModelConverter) {
+		this.eventStreamWriter = eventStreamWriter;
 		this.rdfModelConverter = rdfModelConverter;
 	}
 
@@ -54,7 +53,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = rdfModelConverter.getLangOrDefault(contentType, FETCH);
 		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
-		Model eventStreamModel = eventStreamConverter.toModel(eventStreamTO);
+		Model eventStreamModel = eventStreamWriter.write(eventStreamTO);
 		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfFormat);
 	}
 }

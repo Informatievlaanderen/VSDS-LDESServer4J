@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.InvalidSkolemisationDomainException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
@@ -16,7 +17,7 @@ public class EventStreamTO {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final boolean versionCreationEnabled;
+	private final VersionCreationProperties versionCreationProperties;
 	private final boolean closed;
 	private final String skolemizationDomain;
 	private final List<ViewSpecification> views;
@@ -28,7 +29,7 @@ public class EventStreamTO {
 		collection = builder.collection;
 		timestampPath = builder.timestampPath;
 		versionOfPath = builder.versionOfPath;
-		versionCreationEnabled = builder.versionCreationEnabled;
+		versionCreationProperties = builder.versionCreationProperties;
 		closed = builder.closed;
 		skolemizationDomain = builder.skolemizationDomain;
 		views = builder.views;
@@ -49,8 +50,12 @@ public class EventStreamTO {
 		return versionOfPath;
 	}
 
+	public String getVersionDelimiter() {
+		return versionCreationProperties.getVersionDelimiter();
+	}
+
 	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
+		return versionCreationProperties.isVersionCreationEnabled();
 	}
 
 	public boolean isClosed() {
@@ -87,7 +92,7 @@ public class EventStreamTO {
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& shacl.isIsomorphicWith(that.shacl)
-				&& versionCreationEnabled == that.versionCreationEnabled
+				&& Objects.equals(versionCreationProperties, that.versionCreationProperties)
 				&& new HashSet<>(views).containsAll(that.views)
 				&& new HashSet<>(that.views).containsAll(views)
 				&& Objects.equals(dcatDataset, that.dcatDataset);
@@ -95,11 +100,11 @@ public class EventStreamTO {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, dcatDataset);
+		return Objects.hash(collection, timestampPath, versionOfPath, versionCreationProperties, views, shacl, dcatDataset);
 	}
 
 	public EventStream extractEventStreamProperties() {
-		return new EventStream(collection, timestampPath, versionOfPath, versionCreationEnabled, skolemizationDomain);
+		return new EventStream(collection, timestampPath, versionOfPath, versionCreationProperties, skolemizationDomain);
 	}
 
 
@@ -108,7 +113,7 @@ public class EventStreamTO {
 		private String collection;
 		private String timestampPath;
 		private String versionOfPath;
-		private boolean versionCreationEnabled = false;
+		private VersionCreationProperties versionCreationProperties = VersionCreationProperties.disabled();
 		private boolean closed = false;
 		private String skolemizationDomain;
 		private List<ViewSpecification> views = List.of();
@@ -120,7 +125,7 @@ public class EventStreamTO {
 			collection = eventStream.getCollection();
 			timestampPath = eventStream.getTimestampPath();
 			versionOfPath = eventStream.getVersionOfPath();
-			versionCreationEnabled = eventStream.isVersionCreationEnabled();
+			versionCreationProperties = eventStream.getVersionCreationProperties();
 			closed = eventStream.isClosed();
 			skolemizationDomain = eventStream.getSkolemizationDomain().orElse(null);
 			return this;
@@ -141,8 +146,8 @@ public class EventStreamTO {
 			return this;
 		}
 
-		public Builder withVersionCreationEnabled(boolean val) {
-			versionCreationEnabled = val;
+		public Builder withVersionDelimiter(String val) {
+			versionCreationProperties = VersionCreationProperties.ofNullableDelimiter(val);
 			return this;
 		}
 

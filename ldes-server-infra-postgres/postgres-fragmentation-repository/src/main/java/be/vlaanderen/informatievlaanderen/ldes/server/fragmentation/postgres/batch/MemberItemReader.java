@@ -42,7 +42,7 @@ public class MemberItemReader {
 		PostgresPagingQueryProvider queryProvider = new PostgresPagingQueryProvider();
 		queryProvider.setSelectClause("""
 				member_id, subject, version_of, timestamp,
-				name, version_of_path, timestamp_path, create_versions,
+				name, version_of_path, timestamp_path, version_delimiter IS NOT NULL as create_versions,
 				member_model
 				""");
 		queryProvider.setFromClause("""

@@ -18,20 +18,26 @@ An Event Stream config needs to contain a couple of items:
       policies.
       This property also indicates which state object your version object is a snapshot of.
     * `ldes:createVersions` object that defines whether the LDES should create version objects, indicating the LDES can
-      ingest state objects.
+      ingest state objects. \
       The default value of this object is `false` and the property can be omitted.
+    * `ldes:versionDelimiter` object that defines how the version object id will be constructed. (versionOf +
+      delimiter + dateObserved) \
+      The default value of this object is `/` and the property can be omitted.
     * `ldes:eventSource` object that defines which members are to be retained in the event stream.
-      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-member-deletion-on-an-event-stream)
-    * `ldes:skolemizationDomain` object that defines the [skolemization](../features/skolemization) domain. 
-      Using `"http://example.com"` as domain will result in all blank nodes being transformed to `http://example.org/.well-known/genid/{unique_id}`.
+      When omitted, all members are retained. More info on this can be
+      found [here](./event-stream#configuring-member-deletion-on-an-event-stream)
+    * `ldes:skolemizationDomain` object that defines the [skolemization](../features/skolemization) domain.
+      Using `"http://example.com"` as domain will result in all blank nodes being transformed to
+      `http://example.org/.well-known/genid/{unique_id}`.
 
     * For more info, visit the [Swagger API documentation.](./admin-api)
 
 ### Create version objects vs ingest version objects
 
 Until version `2.11.0`, only version objects could be ingested. But from version `2.12.0`, either version objects or
-state objects could be ingested in an event stream. This results in a slightly other meaning for both the `ldes:timestampPath`
-and `ldes:versionOfPath` properties. 
+state objects could be ingested in an event stream. This results in a slightly other meaning for both the
+`ldes:timestampPath`
+and `ldes:versionOfPath` properties.
 
 In case of **version ingestion**, those properties are used to extract the information of the member. \
 In case of **version creation**, those properties are used to append information to the member on fetching.
@@ -110,25 +116,36 @@ For more info, visit the [Swagger API documentation.](./admin-api)
 
 ## Configuring member deletion on an Event Stream
 
-To determine which members should be permanently deleted from the Event Stream, it is necessary to set one or more retention policies on the event source of the Event Stream.
+To determine which members should be permanently deleted from the Event Stream, it is necessary to set one or more
+retention policies on the event source of the Event Stream.
 Definition of event source:
 
-> In Linked Data Event Streams, the ldes:EventSource class is designed to be the source for all derived views. The Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a retention policy on top of it.
+> In Linked Data Event Streams, the ldes:EventSource class is designed to be the source for all derived views. The
+> Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a
+> retention policy on top of it.
 
-By default, no retention policy is set on the event source meaning that no data is removed from the Event Stream. Even when all views are deleted, the members will not be deleted from the Event Stream.
+By default, no retention policy is set on the event source meaning that no data is removed from the Event Stream. Even
+when all views are deleted, the members will not be deleted from the Event Stream.
 
-When a retention policy is set on the event source of an Event Stream, every member that is not part of any view and which falls outside of the retention policy will be removed from the Event Stream.
+When a retention policy is set on the event source of an Event Stream, every member that is not part of any view and
+which falls outside of the retention policy will be removed from the Event Stream.
 More information on which retention policies can be used can be found [here](./retention-policies/index).
 
-The event source is automatically created when creating an Event Stream but does not contain a retention policy by default.
-To add retention policies to the event source, the admin API can be used. More info on this can be found [here](./admin-api).
+The event source is automatically created when creating an Event Stream but does not contain a retention policy by
+default.
+To add retention policies to the event source, the admin API can be used. More info on this can be
+found [here](./admin-api).
 It is only possible to add or edit retention policies of an event source, other properties cannot be changed.
 
-Before introduction of the event source in the LDES Server, members were directly deleted when they weren't part of any view anymore.
-With the event source, it is possible to delete all views of an Event Stream without losing members so that you can create new views without having to ingest data again.
-If members need to be deleted directly from the Event Stream when they aren't part of any view, a timebased retention policy of a few seconds can be set on the event source of the Event Stream. 
+Before introduction of the event source in the LDES Server, members were directly deleted when they weren't part of any
+view anymore.
+With the event source, it is possible to delete all views of an Event Stream without losing members so that you can
+create new views without having to ingest data again.
+If members need to be deleted directly from the Event Stream when they aren't part of any view, a timebased retention
+policy of a few seconds can be set on the event source of the Event Stream.
 
 ### Example:
+
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
 

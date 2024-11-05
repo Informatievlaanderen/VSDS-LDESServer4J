@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.BlankNodesValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.PathsValidator;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
@@ -37,9 +38,9 @@ class MemberIngestValidatorTest {
     void setup() {
         validator = new MemberIngestValidator(List.of(new BlankNodesValidator(), new PathsValidator()));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
-                new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, true)));
+                new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, VersionCreationProperties.enabledWithDefault())));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
-                new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, false)));
+                new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, VersionCreationProperties.disabled())));
     }
 
     @ParameterizedTest(name = "Receiving incorrect member {0}")
@@ -69,7 +70,7 @@ class MemberIngestValidatorTest {
 
     @Test
     void when_EventStreamInit_Then_EventstreamAddedToMap() {
-        EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, false);
+        EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, null);
 
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 
@@ -80,7 +81,7 @@ class MemberIngestValidatorTest {
 
     @Test
     void when_ClosedEventStreamInit_Then_EventstreamAddedToMap() {
-        EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, false, true, null);
+        EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, VersionCreationProperties.disabled(), true, null);
 
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
 

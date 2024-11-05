@@ -1,6 +1,6 @@
 WITH new_collection AS (
-    INSERT INTO collections (name, timestamp_path, version_of_path, create_versions, is_closed, skolemization_domain)
-        VALUES ('es', '', '', false, false, null)
+    INSERT INTO collections (name, timestamp_path, version_of_path, version_delimiter, is_closed, skolemization_domain)
+        VALUES ('es', '', '', NULL, false, null)
         RETURNING collection_id
 ),
      new_view AS (
