@@ -37,7 +37,8 @@ public class Paginator implements Tasklet {
 		}
 
 		long viewId = Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString());
-		long alreadyPaginatedCount = pageMemberRepository.getPaginatedMemberCountForView(viewId, members);
+		long alreadyPaginatedMemberCount = pageMemberRepository.getPaginatedMemberCountForView(viewId, members);
+		long newlyPaginatedMemberCount = members.size() - alreadyPaginatedMemberCount;
 
 		Page openPage = pageRepository.getOpenPage(bucketId);
 
@@ -54,7 +55,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		updateViewStats(members.size() - alreadyPaginatedCount, viewId);
+		updateViewStats(newlyPaginatedMemberCount, viewId);
 
 		return RepeatStatus.FINISHED;
 	}

@@ -46,6 +46,7 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 	       "pm.page IS NULL ORDER BY pm.pageMemberId.memberId")
 	List<Long> findByBucketIdAndPageIdIsNullOrderByMemberId(long bucketId);
 
-	@Query("SELECT COUNT(memberId) FROM PageMemberEntity WHERE viewId = :viewId AND page IS NOT NULL AND memberId IN (:memberIds)")
+	@Query(value = "SELECT COUNT(distinct member_id) FROM page_members WHERE view_id = :viewId AND "+
+			"page_id IS NOT NULL AND member_id IN (:memberIds)", nativeQuery = true)
 	long countPaginatedMembersByViewId(long viewId, @Param("memberIds") List<Long> pageMembers);
 }
