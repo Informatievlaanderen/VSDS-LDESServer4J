@@ -15,6 +15,7 @@
     <modules>
         <module>ldes-server-ingest-common</module>
         <module>ldes-server-ingest-rest</module>
+        <module>ldes-server-ingest-kafka</module>
     </modules>
 
 </project>

@@ -16,14 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class IngestionRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MemberIdNotFoundException.class })
-	protected ResponseEntity<Object> handleGeneralException(
-			RuntimeException ex, WebRequest request) {
-		logger.error(ex.getMessage());
-		String bodyOfResponse = ex.getMessage();
-		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
-
 	@ExceptionHandler(value = { ShaclValidationException.class })
 	protected ResponseEntity<Object> handleShaclValidationException(
 			ShaclValidationException ex, WebRequest request) {

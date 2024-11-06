@@ -7,9 +7,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclVal
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.BlankNodesValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.PathsValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator.MemberIngestValidator;
@@ -90,7 +90,7 @@ class MemberIngestControllerTest {
         byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-with-multiple-nodes.nq", Lang.NQUADS);
 
         when(memberIngester.ingest(eq("mobility-hindrances"), any()))
-                .thenThrow(new MemberIdNotFoundException(ModelFactory.createDefaultModel()));
+                .thenThrow(new MemberSubjectNotFoundException(ModelFactory.createDefaultModel()));
 
         mockMvc.perform(post("/mobility-hindrances")
                         .contentType("application/n-quads")
@@ -116,7 +116,7 @@ class MemberIngestControllerTest {
                 Lang.NQUADS);
 
         when(memberIngester.ingest(eq("mobility-hindrances"), any()))
-                .thenThrow(new MemberIdNotFoundException(ModelFactory.createDefaultModel()));
+                .thenThrow(new MemberSubjectNotFoundException(ModelFactory.createDefaultModel()));
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
