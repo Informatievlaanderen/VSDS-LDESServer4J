@@ -36,6 +36,9 @@ public class Paginator implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
+		long viewId = Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString());
+		long alreadyPaginatedCount = pageMemberRepository.getPaginatedMemberCountForView(viewId, members);
+
 		Page openPage = pageRepository.getOpenPage(bucketId);
 
 		if (openPage.isNumberLess()) {
@@ -51,7 +54,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		updateViewStats(members.size(), Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString()));
+		updateViewStats(members.size() - alreadyPaginatedCount, viewId);
 
 		return RepeatStatus.FINISHED;
 	}
@@ -68,13 +71,13 @@ public class Paginator implements Tasklet {
 		}
 	}
 
-	private void updateViewStats(long uniqueMemberCount, long viewId) {
+	private void updateViewStats(long newlyPaginatedMemberCount, long viewId) {
 		String sql = """
 				 update view_stats vs set
 					paginated_count = vs.paginated_count + ?
 					where view_id = ?;
 				""";
 
-		jdbcTemplate.update(sql, uniqueMemberCount, viewId);
+		jdbcTemplate.update(sql, newlyPaginatedMemberCount, viewId);
 	}
 }

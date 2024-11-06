@@ -25,4 +25,10 @@ public class PageMemberPostgresRepository implements be.vlaanderen.informatievla
     public void assignMembersToPage(Page openPage, List<Long> pageMembers) {
         entityRepository.updatePageForMembers(new PageEntity(openPage.getId()), openPage.getBucketId(), pageMembers);
     }
+
+    @Override
+    public long getPaginatedMemberCountForView(long viewId, List<Long> pageMembers) {
+        return entityRepository.countPaginatedMembersByViewId(viewId, pageMembers);
+    }
+
 }

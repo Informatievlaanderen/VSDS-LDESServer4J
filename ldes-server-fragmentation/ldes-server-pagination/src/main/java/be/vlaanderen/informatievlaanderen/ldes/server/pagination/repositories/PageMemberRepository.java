@@ -20,4 +20,12 @@ public interface PageMemberRepository {
 	 * @param pageMembers A list of member ids that will be assigned to a page
 	 */
 	void assignMembersToPage(Page openPage, List<Long> pageMembers);
+
+	/**
+	 * Returns the number of members that are already paginated for the given view
+	 * @param viewId Id of the view
+	 * @param pageMembers A list of member ids to check if already paginated
+	 * @return The count of members that are already paginated
+	 */
+	long getPaginatedMemberCountForView(long viewId, List<Long> pageMembers);
 }
