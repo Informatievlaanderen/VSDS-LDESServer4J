@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.listener.IngestListener;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.IngestValidator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
@@ -24,34 +25,23 @@ public class KafkaListenerContainerManager {
 	private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 	private final KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory;
 	private final KafkaProperties kafkaProperties;
-	private final DefaultListableBeanFactory beanFactory;
+	private final IngestValidator ingestValidator;
+	private final MemberIngester memberIngester;
 
-	public KafkaListenerContainerManager(KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry, KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory, KafkaProperties kafkaProperties, DefaultListableBeanFactory beanFactory) {
+	public KafkaListenerContainerManager(KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry,
+	                                     KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory,
+	                                     KafkaProperties kafkaProperties, IngestValidator ingestValidator,
+	                                     MemberIngester memberIngester) {
 		this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
 		this.kafkaListenerContainerFactory = kafkaListenerContainerFactory;
 		this.kafkaProperties = kafkaProperties;
-		this.beanFactory = beanFactory;
+		this.ingestValidator = ingestValidator;
+		this.memberIngester = memberIngester;
 	}
 
-	public KafkaListenerEndpoint createKafkaListenerEndpoint(String listenerId, String topic, String mimeType) throws NoSuchMethodException {
-		MethodKafkaListenerEndpoint<String, String> kafkaListenerEndpoint = new MethodKafkaListenerEndpoint<>();
-		kafkaListenerEndpoint.setId(listenerId);
-		kafkaListenerEndpoint.setGroupId(kafkaProperties.getConsumer().getGroupId());
-		kafkaListenerEndpoint.setAutoStartup(true);
-		kafkaListenerEndpoint.setTopics(topic);
-		kafkaListenerEndpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
-
-		Lang lang = RDFLanguages.contentTypeToLang(mimeType);
-
-		kafkaListenerEndpoint.setBean(new IngestListener(lang));
-
-		kafkaListenerEndpoint.setMethod(IngestListener.class.getMethod("onMessage", ConsumerRecord.class, Acknowledgment.class));
-		return kafkaListenerEndpoint;
-	}
-
-	public void registerListener(String listenerId, String topic, String mimeType, boolean startImmediately) throws NoSuchMethodException {
+	public void registerListener(String listenerId, String collection, String topic, String mimeType, boolean startImmediately) throws NoSuchMethodException {
 		kafkaListenerEndpointRegistry.registerListenerContainer(
-				createKafkaListenerEndpoint(listenerId, topic, mimeType), kafkaListenerContainerFactory, startImmediately
+				createKafkaListenerEndpoint(listenerId, collection, topic, mimeType), kafkaListenerContainerFactory, startImmediately
 		);
 	}
 
@@ -67,9 +57,19 @@ public class KafkaListenerContainerManager {
 		kafkaListenerEndpointRegistry.unregisterListenerContainer(listenerId);
 	}
 
-	private void registerBean(String pipelineName, Object bean) {
-		if (!beanFactory.containsSingleton(pipelineName)) {
-			beanFactory.registerSingleton(pipelineName, bean);
-		}
+	private KafkaListenerEndpoint createKafkaListenerEndpoint(String listenerId, String collection, String topic, String mimeType) throws NoSuchMethodException {
+		MethodKafkaListenerEndpoint<String, String> kafkaListenerEndpoint = new MethodKafkaListenerEndpoint<>();
+		kafkaListenerEndpoint.setId(listenerId);
+		kafkaListenerEndpoint.setGroupId(kafkaProperties.getConsumer().getGroupId());
+		kafkaListenerEndpoint.setAutoStartup(true);
+		kafkaListenerEndpoint.setTopics(topic);
+		kafkaListenerEndpoint.setMessageHandlerMethodFactory(new DefaultMessageHandlerMethodFactory());
+
+		Lang lang = RDFLanguages.contentTypeToLang(mimeType);
+
+		kafkaListenerEndpoint.setBean(new IngestListener(collection, lang, ingestValidator, memberIngester));
+
+		kafkaListenerEndpoint.setMethod(IngestListener.class.getMethod("onMessage", ConsumerRecord.class, Acknowledgment.class));
+		return kafkaListenerEndpoint;
 	}
 }

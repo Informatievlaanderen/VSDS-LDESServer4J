@@ -5,8 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.BlankNodesValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.PathsValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator.BlankNodesValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator.PathsValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.memberingestvalidator.MemberIngestValidator;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -25,7 +26,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MemberIngestValidatorTest {
     private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";

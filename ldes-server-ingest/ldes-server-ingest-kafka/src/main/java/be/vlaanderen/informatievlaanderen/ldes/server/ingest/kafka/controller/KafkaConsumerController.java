@@ -26,6 +26,7 @@ public class KafkaConsumerController {
 	public void create(@RequestBody KafkaConsumerRequest req) throws NoSuchMethodException {
 		kafkaListenerContainerManager.registerListener(
 				UUID.randomUUID().toString(),
+				req.collection(),
 				req.topic(),
 				req.mimeType(),
 				req.startImmediately()
