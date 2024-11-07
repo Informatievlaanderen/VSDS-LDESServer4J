@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class EventStreamReaderTest {
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
@@ -36,7 +37,8 @@ class EventStreamReaderTest {
 		RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(retentionModelExtractor,
 				new FragmentationConfigExtractor(), prefixConstructor);
-		eventStreamReader = new EventStreamReader(viewSpecificationConverter, retentionModelExtractor);
+		KafkaSourceReader kafkaSourceReader = mock(KafkaSourceReader.class);
+		eventStreamReader = new EventStreamReader(viewSpecificationConverter, retentionModelExtractor, kafkaSourceReader);
 		shacl = RDFDataMgr.loadModel("shacl/collection-shape.ttl");
 	}
 

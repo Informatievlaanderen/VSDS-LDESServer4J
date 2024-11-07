@@ -8,9 +8,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+    private static final String adminPackage = "be.vlaanderen.informatievlaanderen.ldes.server.admin.rest";
+    private static final String kafkaDebugPackage = "be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka";
     @Bean
     public GroupedOpenApi adminGroup(BuildProperties buildProperties) {
-        String[] packages = {"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest"};
         return GroupedOpenApi.builder()
                 .group("admin")
                 .addOpenApiCustomizer(openApi -> openApi.info(new Info()
@@ -18,13 +19,12 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("This API makes it possible to manage an LDES Server")
                 ))
-                .packagesToScan(packages)
+                .packagesToScan(adminPackage)
                 .build();
     }
 
     @Bean
     public GroupedOpenApi kafkaDebugGroup(BuildProperties buildProperties) {
-        String[] packages = {"be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka"};
         return GroupedOpenApi.builder()
                 .group("kafka-debug")
                 .addOpenApiCustomizer(openApi -> openApi.info(new Info()
@@ -32,13 +32,12 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("Purely meant as a developer debugging tool")
                 ))
-                .packagesToScan(packages)
+                .packagesToScan(kafkaDebugPackage)
                 .build();
     }
 
     @Bean
     public GroupedOpenApi defaultGroup(BuildProperties buildProperties) {
-        String[] packages = {"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest"};
         return GroupedOpenApi.builder()
                 .group("base")
                 .addOpenApiCustomizer(openApi -> openApi.info(new Info()
@@ -46,7 +45,7 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("These API endpoints are available to ingest and fetch linked data")
                 ))
-                .packagesToExclude(packages)
+                .packagesToExclude(adminPackage, kafkaDebugPackage)
                 .build();
     }
 }

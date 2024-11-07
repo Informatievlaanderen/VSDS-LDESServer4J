@@ -5,22 +5,7 @@ import org.apache.jena.rdf.model.Model;
 import java.util.List;
 import java.util.Objects;
 
-public class EventSource {
-    private final String collectionName;
-    private final List<Model> retentionPolicies;
-
-    public EventSource(String collectionName, List<Model> retentionPolicies) {
-        this.collectionName = collectionName;
-        this.retentionPolicies = retentionPolicies;
-    }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public List<Model> getRetentionPolicies() {
-        return retentionPolicies;
-    }
+public record EventSource(String collectionName, List<Model> retentionPolicies) {
 
     @Override
     public boolean equals(Object o) {
@@ -29,7 +14,7 @@ public class EventSource {
         if (o == null || getClass() != o.getClass())
             return false;
         EventSource eventSource = (EventSource) o;
-        return collectionName.equals(eventSource.getCollectionName());
+        return collectionName.equals(eventSource.collectionName());
     }
 
     @Override

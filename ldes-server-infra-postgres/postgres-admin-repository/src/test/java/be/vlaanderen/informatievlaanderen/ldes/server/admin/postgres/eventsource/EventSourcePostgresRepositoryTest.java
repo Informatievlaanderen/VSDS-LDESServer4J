@@ -68,7 +68,7 @@ class EventSourcePostgresRepositoryTest {
         final var result = eventSourcePostgresRepository.getAllEventSources();
 
         assertThat(result)
-                .map(EventSource::getCollectionName)
+                .map(EventSource::collectionName)
                 .containsExactlyInAnyOrder(COLLECTION_NAME, otherCollectionName);
     }
 

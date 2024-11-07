@@ -23,10 +23,10 @@ public class EventSourcePostgresRepository implements EventSourceRepository {
 
     @Override
     public void saveEventSource(EventSource eventSource) {
-        eventSourceEntityRepository.findByCollectionName(eventSource.getCollectionName())
-                .or(() -> eventStreamEntityRepository.findByName(eventSource.getCollectionName()).map(EventSourceEntity::new))
+        eventSourceEntityRepository.findByCollectionName(eventSource.collectionName())
+                .or(() -> eventStreamEntityRepository.findByName(eventSource.collectionName()).map(EventSourceEntity::new))
                 .ifPresent(eventSourceEntity -> {
-                    eventSourceEntity.setRetentionPolicies(eventSource.getRetentionPolicies());
+                    eventSourceEntity.setRetentionPolicies(eventSource.retentionPolicies());
                     eventSourceEntityRepository.save(eventSourceEntity);
                 });
     }

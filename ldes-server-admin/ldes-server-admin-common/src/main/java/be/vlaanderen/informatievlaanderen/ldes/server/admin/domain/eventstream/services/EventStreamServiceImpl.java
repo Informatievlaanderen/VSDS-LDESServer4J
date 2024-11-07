@@ -111,6 +111,11 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
 		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);
 		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
+
+		if (eventStreamTO.getKafkaSourceProperties() != null) {
+			var kafkaSourceProps = eventStreamTO.getKafkaSourceProperties();
+			eventPublisher.publishEvent(new KafkaSourceAddedEvent(eventStreamTO.getCollection(), kafkaSourceProps.topic(), kafkaSourceProps.mimeType()));
+		}
 	}
 
 }

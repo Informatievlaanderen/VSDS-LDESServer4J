@@ -1,0 +1,8 @@
+@prefix ns0: <https://w3id.org/ldes#> .
+@prefix dc:  <http://purl.org/dc/terms/> .
+
+<http://localhost:8080/mobility-hindrances>
+    a                 <https://w3id.org/ldes#EventStream> ;
+    ns0:timestampPath dc:created ;
+    ns0:versionOfPath dc:isVersionOf ;
+    ns0:kafkaSource   [ ns0:mimeType "application/n-quads" ] .

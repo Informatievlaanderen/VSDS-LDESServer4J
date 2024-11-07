@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.listener.IngestListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.IngestValidator;
@@ -7,6 +8,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.context.event.EventListener;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerEndpoint;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class KafkaListenerContainerManager {
@@ -39,9 +42,9 @@ public class KafkaListenerContainerManager {
 		this.memberIngester = memberIngester;
 	}
 
-	public void registerListener(String listenerId, String collection, String topic, String mimeType, boolean startImmediately) throws NoSuchMethodException {
+	public void registerListener(String listenerId, String collection, String topic, String mimeType) throws NoSuchMethodException {
 		kafkaListenerEndpointRegistry.registerListenerContainer(
-				createKafkaListenerEndpoint(listenerId, collection, topic, mimeType), kafkaListenerContainerFactory, startImmediately
+				createKafkaListenerEndpoint(listenerId, collection, topic, mimeType), kafkaListenerContainerFactory, true
 		);
 	}
 
@@ -55,6 +58,11 @@ public class KafkaListenerContainerManager {
 
 	public void unregisterListener(String listenerId) {
 		kafkaListenerEndpointRegistry.unregisterListenerContainer(listenerId);
+	}
+
+	@EventListener(KafkaSourceAddedEvent.class)
+	public void onKafkaSourceAdded(KafkaSourceAddedEvent event) throws NoSuchMethodException {
+		registerListener(UUID.randomUUID().toString(), event.collection(), event.topic(), event.mimeType());
 	}
 
 	private KafkaListenerEndpoint createKafkaListenerEndpoint(String listenerId, String collection, String topic, String mimeType) throws NoSuchMethodException {

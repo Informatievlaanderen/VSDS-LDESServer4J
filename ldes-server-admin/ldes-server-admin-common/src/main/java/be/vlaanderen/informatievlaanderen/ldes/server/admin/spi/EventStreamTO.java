@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.InvalidSkolemisationDomainException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.KafkaSourceProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -18,6 +19,7 @@ public class EventStreamTO {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final VersionCreationProperties versionCreationProperties;
+	private final KafkaSourceProperties kafkaSourceProperties;
 	private final boolean closed;
 	private final String skolemizationDomain;
 	private final List<ViewSpecification> views;
@@ -36,6 +38,7 @@ public class EventStreamTO {
 		shacl = builder.shacl;
 		eventSourceRetentionPolicies = builder.eventSourceRetentionPolicies;
 		dcatDataset = builder.dcatDataset != null ? builder.dcatDataset : new DcatDataset(builder.collection);
+		kafkaSourceProperties = builder.kafkaSourceProperties;
 	}
 
 	public String getCollection() {
@@ -56,6 +59,10 @@ public class EventStreamTO {
 
 	public boolean isVersionCreationEnabled() {
 		return versionCreationProperties.isVersionCreationEnabled();
+	}
+
+	public KafkaSourceProperties getKafkaSourceProperties() {
+		return kafkaSourceProperties;
 	}
 
 	public boolean isClosed() {
@@ -114,6 +121,7 @@ public class EventStreamTO {
 		private String timestampPath;
 		private String versionOfPath;
 		private VersionCreationProperties versionCreationProperties = VersionCreationProperties.disabled();
+		private KafkaSourceProperties kafkaSourceProperties;
 		private boolean closed = false;
 		private String skolemizationDomain;
 		private List<ViewSpecification> views = List.of();
@@ -143,6 +151,11 @@ public class EventStreamTO {
 
 		public Builder withVersionOfPath(String val) {
 			versionOfPath = val;
+			return this;
+		}
+
+		public Builder withKafkaSourceProperties(KafkaSourceProperties val) {
+			kafkaSourceProperties = val;
 			return this;
 		}
 

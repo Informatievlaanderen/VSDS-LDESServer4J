@@ -28,8 +28,7 @@ public class KafkaConsumerController {
 				UUID.randomUUID().toString(),
 				req.collection(),
 				req.topic(),
-				req.mimeType(),
-				req.startImmediately()
+				req.mimeType()
 		);
 	}
 
@@ -81,11 +80,6 @@ public class KafkaConsumerController {
 		listenerContainer.resume();
 	}
 
-	@PutMapping(path = "stop")
-	public void stopAll() {
-		kafkaListenerContainerManager.listContainers().forEach(container -> stop(container.getListenerId()));
-	}
-
 	@PutMapping(path = "/{listenerId}/stop")
 	public void stop(@PathVariable String listenerId) {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
@@ -93,11 +87,6 @@ public class KafkaConsumerController {
 			throw new RuntimeException("Consumer is already stopped: " + listenerId);
 		}
 		listenerContainer.stop();
-	}
-
-	@DeleteMapping
-	public void deleteAll() {
-		kafkaListenerContainerManager.listContainers().forEach(container -> delete(container.getListenerId()));
 	}
 
 	@DeleteMapping(path = "{listenerId}")
