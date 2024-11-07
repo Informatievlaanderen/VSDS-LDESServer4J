@@ -39,7 +39,7 @@ class KafkaSourceReaderTest {
 
 	@Test
 	void readKafkaSourceProperties_KafkaIngestEnabled() {
-		beanFactory.registerSingleton("KafkaListenerContainerManager", Object.class);
+		beanFactory.registerSingleton("kafkaListenerContainerManager", Object.class);
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/with-kafka-source/ldes-with-kafkaES.ttl");
 		KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(eventStreamModel);
 		assertNotNull(kafkaSourceProperties);
@@ -50,7 +50,7 @@ class KafkaSourceReaderTest {
 	@ParameterizedTest()
 	@ValueSource(strings = {"ldes-with-kafkaES-noTopic.ttl", "ldes-with-kafkaES-noMime.ttl"})
 	void readKafkaSourceProperties_PropertyMissing(String fileName) {
-		beanFactory.registerSingleton("KafkaListenerContainerManager", Object.class);
+		beanFactory.registerSingleton("kafkaListenerContainerManager", Object.class);
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/with-kafka-source/" + fileName);
 		assertThrows(IllegalArgumentException.class, ()-> kafkaSourceReader.readKafkaSourceProperties(eventStreamModel));
 	}
