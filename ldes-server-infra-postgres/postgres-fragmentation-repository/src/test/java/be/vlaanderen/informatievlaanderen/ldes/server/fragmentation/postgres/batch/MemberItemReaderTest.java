@@ -54,6 +54,8 @@ class MemberItemReaderTest {
 			false
 	);
 	private static final String VIEW_NAME = "by-page";
+	private static final long COLLECTION_ID = 1;
+	private static final long BY_PAGE_ID = 2;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -84,7 +86,7 @@ class MemberItemReaderTest {
 
 	@Test
 	void given_EmptyMembersTable_when_ReadNewMembers_then_ReturnNull() throws Exception {
-		setupStepScope(COLLECTION_NAME, VIEW_NAME);
+		setupStepScope(COLLECTION_ID, COLLECTION_NAME, BY_PAGE_ID, VIEW_NAME);
 
 		final FragmentationMember result = newMemberReader.read();
 
@@ -95,7 +97,7 @@ class MemberItemReaderTest {
 	@ValueSource(strings = {"fantasy/non-existing", "mobility-hindrances/fantasy-view", "fantasy/by-page"})
 	void given_AbsentCollectionsAndViews_when_RefragmentMembers_then_ReturnNull(String viewNameAsString) throws Exception {
 		final ViewName viewName = ViewName.fromString(viewNameAsString);
-		setupStepScope(viewName.getCollectionName(), viewName.getViewName());
+		setupStepScope(10, viewName.getCollectionName(), 10, viewName.getViewName());
 
 		final FragmentationMember result = newMemberReader.read();
 
@@ -105,7 +107,7 @@ class MemberItemReaderTest {
 	@Test
 	void given_MembersPresentInDb_test_ReadNewMembers() throws Exception {
 		int count = 5;
-		setupStepScope(COLLECTION_NAME, VIEW_NAME);
+		setupStepScope(COLLECTION_ID, COLLECTION_NAME, BY_PAGE_ID, VIEW_NAME);
 		insertMembers(count);
 
 		final List<FragmentationMember> readMembers = new ArrayList<>();
@@ -130,8 +132,10 @@ class MemberItemReaderTest {
 				.isEqualToIgnoringNanos(START_TIME);
 	}
 
-	private void setupStepScope(String collectionName, String viewName) {
+	private void setupStepScope(long collectionId, String collectionName, long viewId, String viewName) {
 		JobParameters jobParameters = new JobParametersBuilder()
+				.addLong("collectionId", collectionId)
+				.addLong("viewId", viewId)
 				.addString("collectionName", collectionName)
 				.addString("viewName", viewName)
 				.addLong("collectionId", 1L)
