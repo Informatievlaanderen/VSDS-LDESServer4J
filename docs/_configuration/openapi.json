@@ -3,7 +3,7 @@
   "info": {
     "title": "LDES Server Admin API",
     "description": "This API makes it possible to manage an LDES Server",
-    "version": "3.1.0"
+    "version": "3.5.0"
   },
   "servers": [
     {
@@ -383,7 +383,7 @@
               "schema": {
                 "type": "string"
               },
-              "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n\n<> a ldes:EventSource ;\n    ldes:retentionPolicy [\n        a ldes:DurationAgoPolicy ;\n        tree:value \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> ;\n      ] .\n"
+              "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n\n<> a ldes:EventSource ;\n\tldes:retentionPolicy [\n\t\ta ldes:DurationAgoPolicy ;\n\t\ttree:value \"PT5S\"^^<http://www.w3.org/2001/XMLSchema#duration> ;\n\t] .\n"
             },
             "application/n-quads": {
               "schema": {
@@ -854,24 +854,126 @@
               "schema": {
                 "type": "string"
               },
-              "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix server: <http://localhost:8080/> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream: <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+              "examples": {
+                "Version Objects ingestion": {
+                  "description": "An event stream that ingests version objects",
+                  "value": "@prefix ldes:           <https://w3id.org/ldes#> .\n@prefix dcterms:        <http://purl.org/dc/terms/> .\n@prefix prov:           <http://www.w3.org/ns/prov#> .\n@prefix tree:           <https://w3id.org/tree#>.\n@prefix sh:             <http://www.w3.org/ns/shacl#> .\n@prefix server:         <http://localhost:8080/> .\n@prefix xsd:            <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream:   <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                },
+                "State Objects ingestion": {
+                  "description": "An event stream that ingests state objects",
+                  "value": "@prefix ldes:           <https://w3id.org/ldes#> .\n@prefix dcterms:        <http://purl.org/dc/terms/> .\n@prefix prov:           <http://www.w3.org/ns/prov#> .\n@prefix tree:           <https://w3id.org/tree#>.\n@prefix sh:             <http://www.w3.org/ns/shacl#> .\n@prefix server:         <http://localhost:8080/> .\n@prefix xsd:            <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream:   <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\tldes:createVersions true ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                },
+                "State Objects ingestion with custom delimiter": {
+                  "description": "An event stream that ingests state objects with a custom version delimiter",
+                  "value": "@prefix ldes:           <https://w3id.org/ldes#> .\n@prefix dcterms:        <http://purl.org/dc/terms/> .\n@prefix prov:           <http://www.w3.org/ns/prov#> .\n@prefix tree:           <https://w3id.org/tree#>.\n@prefix sh:             <http://www.w3.org/ns/shacl#> .\n@prefix server:         <http://localhost:8080/> .\n@prefix xsd:            <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream:   <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\tldes:createVersions true ;\n\tldes:versionDelimiter \"&version=\" ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                }
+              }
             },
             "application/n-quads": {
               "schema": {
                 "type": "string"
               },
-              "example": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+              "examples": {
+                "Version Objects ingestion": {
+                  "description": "An event stream that ingests version objects",
+                  "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                },
+                "State Objects ingestion": {
+                  "description": "An event stream that ingests state objects",
+                  "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> \"true\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                },
+                "State Objects ingestion with custom delimiter": {
+                  "description": "An event stream that ingests state objects with a custom version delimiter",
+                  "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> \"true\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionDelimiter> \"&version=\"^^<http://www.w3.org/2001/XMLSchema#string> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                }
+              }
             },
             "application/ld+json": {
               "schema": {
                 "type": "string"
               },
-              "example": "[{\"@id\":\"http://localhost:8080/event-stream\",\"@type\":[\"https://w3id.org/ldes#EventStream\"],\"https://w3id.org/ldes#timestampPath\":[{\"@id\":\"http://purl.org/dc/terms/created\"}],\"https://w3id.org/ldes#versionOfPath\":[{\"@id\":\"http://purl.org/dc/terms/isVersionOf\"}],\"https://w3id.org/tree#shape\":[{\"@id\":\"http://localhost:8080/event-stream/shape\"}]},{\"@id\":\"http://localhost:8080/event-stream/shape\",\"@type\":[\"http://www.w3.org/ns/shacl#NodeShape\"]},{\"@id\":\"http://purl.org/dc/terms/created\"},{\"@id\":\"http://purl.org/dc/terms/isVersionOf\"},{\"@id\":\"http://www.w3.org/ns/shacl#NodeShape\"},{\"@id\":\"https://w3id.org/ldes#EventStream\"}]"
+              "examples": {
+                "Version Objects ingestion": {
+                  "description": "An event stream that ingests version objects",
+                  "value": {
+                    "@context": {
+                      "dcterms": "http://purl.org/dc/terms/",
+                      "event-stream": "http://localhost:8080/event-stream/",
+                      "ldes": "https://w3id.org/ldes#",
+                      "tree": "https://w3id.org/tree#"
+                    },
+                    "@id": "http://localhost:8080/event-stream",
+                    "@type": "ldes:EventStream",
+                    "ldes:timestampPath": {
+                      "@id": "dcterms:created"
+                    },
+                    "ldes:versionOfPath": {
+                      "@id": "dcterms:isVersionOf"
+                    },
+                    "tree:shape": {
+                      "@id": "event-stream:shape",
+                      "@type": "http://www.w3.org/ns/shacl#NodeShape"
+                    }
+                  }
+                },
+                "State Objects ingestion": {
+                  "description": "An event stream that ingests state objects",
+                  "value": {
+                    "@context": {
+                      "dcterms": "http://purl.org/dc/terms/",
+                      "event-stream": "http://localhost:8080/event-stream/",
+                      "ldes": "https://w3id.org/ldes#",
+                      "tree": "https://w3id.org/tree#"
+                    },
+                    "@id": "http://localhost:8080/event-stream",
+                    "@type": "ldes:EventStream",
+                    "ldes:timestampPath": {
+                      "@id": "dcterms:created"
+                    },
+                    "ldes:versionOfPath": {
+                      "@id": "dcterms:isVersionOf"
+                    },
+                    "ldes:createVersions": true,
+                    "tree:shape": {
+                      "@id": "event-stream:shape",
+                      "@type": "http://www.w3.org/ns/shacl#NodeShape"
+                    }
+                  }
+                },
+                "State Objects ingestion with custom delimiter": {
+                  "description": "An event stream that ingests state objects with a custom version delimiter",
+                  "value": {
+                    "@context": {
+                      "dcterms": "http://purl.org/dc/terms/",
+                      "event-stream": "http://localhost:8080/event-stream/",
+                      "ldes": "https://w3id.org/ldes#",
+                      "tree": "https://w3id.org/tree#"
+                    },
+                    "@id": "http://localhost:8080/event-stream",
+                    "@type": "ldes:EventStream",
+                    "ldes:timestampPath": {
+                      "@id": "dcterms:created"
+                    },
+                    "ldes:versionOfPath": {
+                      "@id": "dcterms:isVersionOf"
+                    },
+                    "ldes:createVersions": true,
+                    "ldes:versionDelimiter": "&version=",
+                    "tree:shape": {
+                      "@id": "event-stream:shape",
+                      "@type": "http://www.w3.org/ns/shacl#NodeShape"
+                    }
+                  }
+                }
+              }
             }
           },
           "required": true
         },
         "responses": {
+          "400": {
+            "description": "The provided config is not valid"
+          },
           "201": {
             "description": "Created",
             "content": {
@@ -879,66 +981,117 @@
                 "schema": {
                   "type": "string"
                 },
-                "example": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix tree: <https://w3id.org/tree#>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix server: <http://localhost:8080/> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream: <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\tldes:createVersions false ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                "examples": {
+                  "Version Objects ingestion": {
+                    "description": "An event stream that ingests version objects",
+                    "value": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix prov: <http://www.w3.org/ns/prov#> .\n@prefix tree: <https://w3id.org/tree#>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix server: <http://localhost:8080/> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream: <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                  },
+                  "State Objects ingestion": {
+                    "description": "An event stream that ingests state objects",
+                    "value": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix prov: <http://www.w3.org/ns/prov#> .\n@prefix tree: <https://w3id.org/tree#>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix server: <http://localhost:8080/> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream: <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\tldes:createVersions true ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                  },
+                  "State Objects ingestion with custom delimiter": {
+                    "description": "An event stream that ingests state objects with a custom version delimiter",
+                    "value": "@prefix ldes: <https://w3id.org/ldes#> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix prov: <http://www.w3.org/ns/prov#> .\n@prefix tree: <https://w3id.org/tree#>.\n@prefix sh:   <http://www.w3.org/ns/shacl#> .\n@prefix server: <http://localhost:8080/> .\n@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .\n@prefix event-stream: <http://localhost:8080/event-stream/> .\n\nserver:event-stream a ldes:EventStream ;\n\tldes:timestampPath dcterms:created ;\n\tldes:versionOfPath dcterms:isVersionOf ;\n\tldes:createVersions true ;\n\tldes:versionDelimiter \"&version=\" ;\n\ttree:shape event-stream:shape .\n\nevent-stream:shape a sh:NodeShape .\n"
+                  }
+                }
               },
               "application/n-quads": {
                 "schema": {
                   "type": "string"
                 },
-                "example": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n               <http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n               <http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n               <http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> \"false\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n               <http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n               <http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                "examples": {
+                  "Version Objects ingestion": {
+                    "description": "An event stream that ingests version objects",
+                    "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                  },
+                  "State Objects ingestion": {
+                    "description": "An event stream that ingests state objects",
+                    "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> \"true\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                  },
+                  "State Objects ingestion with custom delimiter": {
+                    "description": "An event stream that ingests state objects with a custom version delimiter",
+                    "value": "<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> \"true\"^^<http://www.w3.org/2001/XMLSchema#boolean> .\n<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionDelimiter> \"&version=\"^^<http://www.w3.org/2001/XMLSchema#string> .\n<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .\n<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .\n"
+                  }
+                }
               },
               "application/ld+json": {
-                "example": [
-                  {
-                    "@id": "http://localhost:8080/event-stream",
-                    "@type": [
-                      "https://w3id.org/ldes#EventStream"
-                    ],
-                    "https://w3id.org/ldes#timestampPath": [
-                      {
-                        "@id": "http://purl.org/dc/terms/created"
+                "examples": {
+                  "Version Objects ingestion": {
+                    "description": "An event stream that ingests version objects",
+                    "value": {
+                      "@context": {
+                        "dcterms": "http://purl.org/dc/terms/",
+                        "event-stream": "http://localhost:8080/event-stream/",
+                        "ldes": "https://w3id.org/ldes#",
+                        "tree": "https://w3id.org/tree#"
+                      },
+                      "@id": "http://localhost:8080/event-stream",
+                      "@type": "ldes:EventStream",
+                      "ldes:timestampPath": {
+                        "@id": "dcterms:created"
+                      },
+                      "ldes:versionOfPath": {
+                        "@id": "dcterms:isVersionOf"
+                      },
+                      "tree:shape": {
+                        "@id": "event-stream:shape",
+                        "@type": "http://www.w3.org/ns/shacl#NodeShape"
                       }
-                    ],
-                    "https://w3id.org/ldes#versionOfPath": [
-                      {
-                        "@id": "http://purl.org/dc/terms/isVersionOf"
+                    }
+                  },
+                  "State Objects ingestion": {
+                    "description": "An event stream that ingests state objects",
+                    "value": {
+                      "@context": {
+                        "dcterms": "http://purl.org/dc/terms/",
+                        "event-stream": "http://localhost:8080/event-stream/",
+                        "ldes": "https://w3id.org/ldes#",
+                        "tree": "https://w3id.org/tree#"
+                      },
+                      "@id": "http://localhost:8080/event-stream",
+                      "@type": "ldes:EventStream",
+                      "ldes:timestampPath": {
+                        "@id": "dcterms:created"
+                      },
+                      "ldes:versionOfPath": {
+                        "@id": "dcterms:isVersionOf"
+                      },
+                      "ldes:createVersions": true,
+                      "tree:shape": {
+                        "@id": "event-stream:shape",
+                        "@type": "http://www.w3.org/ns/shacl#NodeShape"
                       }
-                    ],
-                    "https://w3id.org/ldes#createVersions": [
-                      {
-                        "@value": false
+                    }
+                  },
+                  "State Objects ingestion with custom delimiter": {
+                    "description": "An event stream that ingests state objects with a custom version delimiter",
+                    "value": {
+                      "@context": {
+                        "dcterms": "http://purl.org/dc/terms/",
+                        "event-stream": "http://localhost:8080/event-stream/",
+                        "ldes": "https://w3id.org/ldes#",
+                        "tree": "https://w3id.org/tree#"
+                      },
+                      "@id": "http://localhost:8080/event-stream",
+                      "@type": "ldes:EventStream",
+                      "ldes:timestampPath": {
+                        "@id": "dcterms:created"
+                      },
+                      "ldes:versionOfPath": {
+                        "@id": "dcterms:isVersionOf"
+                      },
+                      "ldes:createVersions": true,
+                      "ldes:versionDelimiter": "&version=",
+                      "tree:shape": {
+                        "@id": "event-stream:shape",
+                        "@type": "http://www.w3.org/ns/shacl#NodeShape"
                       }
-                    ],
-                    "https://w3id.org/tree#shape": [
-                      {
-                        "@id": "http://localhost:8080/event-stream/shape"
-                      }
-                    ]
-                  },
-                  {
-                    "@id": "http://localhost:8080/event-stream/shape",
-                    "@type": [
-                      "http://www.w3.org/ns/shacl#NodeShape"
-                    ]
-                  },
-                  {
-                    "@id": "http://purl.org/dc/terms/created"
-                  },
-                  {
-                    "@id": "http://purl.org/dc/terms/isVersionOf"
-                  },
-                  {
-                    "@id": "http://www.w3.org/ns/shacl#NodeShape"
-                  },
-                  {
-                    "@id": "https://w3id.org/ldes#EventStream"
+                    }
                   }
-                ]
+                }
               }
             }
-          },
-          "400": {
-            "description": "The provided config is not valid"
           }
         }
       }

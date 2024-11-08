@@ -6,3 +6,10 @@ spring:
 
 ldes-server:
   compaction-duration: "PT1M"
+
+zonky:
+  test:
+    database:
+      postgres:
+        docker:
+          image: postgres:14-alpine

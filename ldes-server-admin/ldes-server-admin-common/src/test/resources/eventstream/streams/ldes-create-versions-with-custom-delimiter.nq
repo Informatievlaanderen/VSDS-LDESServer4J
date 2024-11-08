@@ -1,0 +1,7 @@
+<http://localhost:8080/animals> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+<http://localhost:8080/animals> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+<http://localhost:8080/animals> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+<http://localhost:8080/animals> <https://w3id.org/ldes#createVersions> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<http://localhost:8080/animals> <https://w3id.org/ldes#versionDelimiter> "&version=" .
+<http://localhost:8080/animals> <https://w3id.org/tree#shape> _:genid1 .
+_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .

@@ -1,31 +1,31 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.TreeMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberRowMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class MemberPostgresRepository implements MemberRepository, TreeMemberRepository {
+public class MemberPostgresRepository implements MemberRepository {
+	private static final String INSERT_SQL = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model) VALUES (?,?,?,?,?,?)";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 	private final DatabaseColumnModelConverter modelConverter;
 	private final JdbcTemplate jdbcTemplate;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper, DatabaseColumnModelConverter modelConverter, DataSource dataSource) {
+	                                MemberEntityMapper mapper,
+	                                DatabaseColumnModelConverter modelConverter,
+	                                DataSource dataSource) {
 		this.repository = repository;
 		this.mapper = mapper;
 		this.modelConverter = modelConverter;
@@ -34,13 +34,15 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 
 	@Override
 	@Transactional
-	public List<IngestedMember> insertAll(List<IngestedMember> members) {
+	public int insertAll(List<IngestedMember> members) {
 		final int collectionId = getCollectionId(members.getFirst().getCollectionName());
-		final List<String> subjects = members.stream().map(IngestedMember::getSubject).toList();
-		if (!membersContainDuplicateIds(members) && !membersExistInCollection(collectionId, subjects)) {
-			String sql = "INSERT INTO members (subject, collection_id, version_of, timestamp, transaction_id, member_model, old_id) VALUES (?,?,?,?,?,?,?)";
 
-			final List<Object[]> batchArgs = members.stream()
+		if (membersContainDuplicateIds(members)) {
+			return 0;
+		}
+
+		try {
+			var batchArgs = members.stream()
 					.map(member -> new Object[]{
 							member.getSubject(),
 							collectionId,
@@ -48,35 +50,36 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 							member.getTimestamp(),
 							member.getTransactionId(),
 							modelConverter.convertToDatabaseColumn(member.getModel()),
-							member.getCollectionName() + "/" + member.getSubject()
 					})
 					.toList();
 
-			jdbcTemplate.batchUpdate(sql, batchArgs);
+			jdbcTemplate.batchUpdate(INSERT_SQL, batchArgs);
 
-			return members;
-		} else {
-			return List.of();
+			updateCollectionStats(members.size(), collectionId);
+
+			return members.size();
+		} catch (DuplicateKeyException e) {
+			return 0;
 		}
 	}
 
-	protected boolean membersExistInCollection(int collectionId, List<String> subjects) {
-		return repository.existsByCollectionAndSubjectIn(collectionId, subjects);
+	private void updateCollectionStats(int memberCount, int collectionId) {
+		String sql = """
+				update collection_stats cs set
+				ingested_count = cs.ingested_count + ?
+				where collection_id = ?;
+				""";
+
+		jdbcTemplate.update(sql, ps -> {
+			ps.setInt(1, memberCount);
+			ps.setInt(2, collectionId);
+		});
 	}
 
 	protected boolean membersContainDuplicateIds(List<IngestedMember> members) {
-		return members.stream()
-				.map(IngestedMember::getSubject)
-				.collect(Collectors.toSet())
-				.size() != members.size();
+		return members.size() != members.stream().map(IngestedMember::getSubject).distinct().count();
 	}
 
-	@Override
-	public Stream<IngestedMember> findAllByIds(List<String> memberIds) {
-		return repository.findAllByOldIdIn(memberIds)
-				.stream()
-				.map(mapper::toMember);
-	}
 
 	@Override
 	public Stream<IngestedMember> findAllByCollectionAndSubject(String collectionName, List<String> subjects) {
@@ -89,23 +92,6 @@ public class MemberPostgresRepository implements MemberRepository, TreeMemberRep
 	@Transactional
 	public void deleteMembersByCollectionNameAndSubjects(String collectionName, List<String> subjects) {
 		repository.deleteAllByCollectionNameAndSubjectIn(collectionName, subjects);
-	}
-
-	@Override
-	@Transactional
-	public void removeFromEventSource(List<Long> ids) {
-        jdbcTemplate.update("UPDATE members SET is_in_event_source = false WHERE member_id IN ?", ids);
-    }
-
-	@Override
-	public Stream<Member> findAllByTreeNodeUrl(String url) {
-		final String sql = """
-				SELECT m.subject, m.member_model
-				FROM members m
-				    JOIN page_members USING (member_id)
-				    JOIN pages p USING (page_id)
-				WHERE p.partial_url = ?""";
-		return jdbcTemplate.query(sql, new MemberRowMapper(), url).stream();
 	}
 
 	private int getCollectionId(String collectionName) {

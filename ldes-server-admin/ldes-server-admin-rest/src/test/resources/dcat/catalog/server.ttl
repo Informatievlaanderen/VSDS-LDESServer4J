@@ -1,0 +1,24 @@
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix legal: <http://www.w3.org/ns/legal#> .
+@prefix locn:  <http://www.w3.org/ns/locn#> .
+@prefix m8g:   <http://data.europa.eu/m8g/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+
+<http://sample.org/company/PublisherX>
+        a                      foaf:Agent ;
+        m8g:contactPoint       [ a             m8g:ContactPoint ;
+                                 m8g:hasEmail  "info@data-publishing-company.com"
+                               ] ;
+        m8g:registeredAddress  [ a                 locn:Address ;
+                                 locn:fullAddress  "Some full address here"
+                               ] ;
+        legal:legalName        "Data Publishing Company BV" ;
+        foaf:name              "Data Publishing Company" .
+
+[ a                dcat:Catalog ;
+  dct:description  "All LDES'es from publiser X"@en ;
+  dct:publisher    <http://sample.org/company/PublisherX> ;
+  dct:title        "My LDES'es"@en
+] .

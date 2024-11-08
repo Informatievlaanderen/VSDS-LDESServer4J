@@ -26,6 +26,7 @@ public class RdfConstants {
 	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
 	public static final Property LDES_CREATE_VERSIONS = createProperty(LDES, "createVersions");
+	public static final Property LDES_VERSION_DELIMITER = createProperty(LDES, "versionDelimiter");
 	public static final Property LDES_EVENT_SOURCE = createProperty(LDES, "eventSource");
 	public static final Property LDES_SKOLEMIZATION_DOMAIN = createProperty(LDES, "skolemizationDomain");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";

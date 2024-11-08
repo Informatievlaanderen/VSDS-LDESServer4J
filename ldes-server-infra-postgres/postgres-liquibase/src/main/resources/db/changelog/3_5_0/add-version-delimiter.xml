@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add-version-delimiter-column" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="collections" columnName="version_delimiter"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="collections">
+            <column name="version_delimiter" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <sql>UPDATE collections SET version_delimiter = '/' WHERE create_versions;</sql>
+        <dropColumn tableName="collections" columnName="create_versions"/>
+    </changeSet>
+</databaseChangeLog>

@@ -9,12 +9,11 @@ import java.util.List;
 public interface MemberEntityRepository extends JpaRepository<MemberEntity, String> {
 
 	@Query(value = """
-			select count(*)
-			from members m
-			INNER JOIN public.collections c on c.collection_id = m.collection_id
-			WHERE c.name = :collectionName
-			LIMIT 1
-			""", nativeQuery = true)
+		SELECT cs.ingested_count
+		FROM collection_stats cs
+		INNER JOIN collections c on c.collection_id = cs.collection_id
+		WHERE c.name = :collectionName
+		""", nativeQuery = true)
 	int countMemberEntitiesByColl(String collectionName);
 
 	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
@@ -23,8 +22,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 			"AND subject IN :subjects",
 			nativeQuery = true)
 	boolean existsByCollectionAndSubjectIn(int collectionId, List<String> subjects);
-
-	List<MemberEntity> findAllByOldIdIn(List<String> oldIds);
 
 	List<MemberEntity> findAllByCollectionNameAndSubjectIn(String collectionName, List<String> subjects);
 

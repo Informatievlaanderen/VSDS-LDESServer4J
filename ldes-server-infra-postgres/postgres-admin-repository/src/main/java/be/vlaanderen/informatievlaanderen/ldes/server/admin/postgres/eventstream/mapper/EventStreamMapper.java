@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.mapper.ViewSpecificationMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class EventStreamMapper {
                 .withCollection(entity.getName())
                 .withTimestampPath(entity.getTimestampPath())
                 .withVersionOfPath(entity.getVersionOfPath())
-                .withVersionCreationEnabled(entity.isVersionCreationEnabled())
+                .withVersionDelimiter(entity.getVersionDelimiter())
                 .withClosed(entity.isClosed())
                 .withSkolemizationDomain(entity.getSkolemizationDomain())
                 .withViews(entity.getViews().stream().map(ViewSpecificationMapper::fromEntity).toList())
@@ -36,7 +37,7 @@ public class EventStreamMapper {
                 projection.getName(),
                 projection.getTimestampPath(),
                 projection.getVersionOfPath(),
-                projection.isVersionCreationEnabled(),
+                VersionCreationProperties.ofNullableDelimiter(projection.getVersionDelimiter()),
                 projection.isClosed(),
                 projection.getSkolemizationDomain()
         );
@@ -46,7 +47,7 @@ public class EventStreamMapper {
         final EventStreamEntity entity = new EventStreamEntity(eventStream.getCollection(),
                 eventStream.getTimestampPath(),
                 eventStream.getVersionOfPath(),
-                eventStream.isVersionCreationEnabled(),
+                eventStream.getVersionDelimiter(),
                 eventStream.isClosed(),
                 eventStream.getSkolemizationDomain());
         final List<ViewEntity> views = eventStream.getViews().stream()

@@ -41,7 +41,7 @@ Feature: LDES Server Fragmentation
     And this fragment is mutable
     And this fragment has no relations
     Examples:
-      | eventStreamDescriptionFile                                      | viewDescriptionFile                                                       | template                                   | collection            | ingestedMemberCount | restCount |
+      | eventStreamDescriptionFile                                      | viewDescriptionFile                                                        | template                                   | collection            | ingestedMemberCount | restCount |
       | "data/input/eventstreams/fragmentation/mobility-hindrances.ttl" | "data/input/eventstreams/fragmentation/mobility-hindrances.view.paged.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 617                 | 17        |
 
   @geospatial
@@ -82,9 +82,11 @@ Feature: LDES Server Fragmentation
     And I fetch the next fragment through the first "GreaterThanOrEqualToRelation"
     And I fetch the next fragment through the first "Relation"
     Examples:
-      | eventStreamDescriptionFile                                              | template                                           | collection            | ingestedMembers |
-      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 5               |
-      | "data/input/eventstreams/fragmentation/observations/by-time.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 10              |
+      | eventStreamDescriptionFile                                              | template                                               | collection            | ingestedMembers |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.template.ttl"             | "mobility-hindrances" | 5               |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.string-time.template.ttl" | "mobility-hindrances" | 5               |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.string-time.template.ttl" | "mobility-hindrances" | 5               |
+      | "data/input/eventstreams/fragmentation/observations/by-time.ttl"        | "data/input/members/two-observations.template.ttl"     | "observations"        | 10              |
 
   @reference
   Scenario Outline: Server Can Fragment an LDES using the Reference Fragmentation strategy

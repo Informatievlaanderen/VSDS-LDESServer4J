@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.projection.TreeMemberProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageMemberId;
@@ -13,8 +12,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PageMemberEntityRepository extends JpaRepository<PageMemberEntity, PageMemberId> {
-	@Query("SELECT m.subject AS subject, m.model AS model, m.versionOf AS versionOf, m.timestamp AS timestamp FROM PageMemberEntity p JOIN p.member m WHERE p.page.id = :pageId")
-	List<TreeMemberProjection> findAllMembersByPageId(long pageId);
 
 	@Modifying
 	@Query("UPDATE PageMemberEntity m SET m.page = (SELECT p FROM PageEntity p WHERE p.id = :newPageId) WHERE m.page.id IN (:pageIds)")
@@ -49,5 +46,4 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 	       "pm.page IS NULL ORDER BY pm.pageMemberId.memberId")
 	List<Long> findByBucketIdAndPageIdIsNullOrderByMemberId(long bucketId);
 
-	void deleteAllByBucket_View_EventStream_NameAndBucket_View_NameAndMember_IdIn(String collectionName, String viewName, List<Long> memberIds);
 }

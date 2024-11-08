@@ -6,15 +6,15 @@ public class EventStreamPropertiesTestImpl implements EventStreamProperties {
 	private final String name;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final boolean versionCreationEnabled;
+	private final String versionDelimiter;
 	private final boolean closed;
 	private final String skolemizationDomain;
 
-	public EventStreamPropertiesTestImpl(String name, String timestampPath, String versionOfPath, boolean versionCreationEnabled, boolean closed, String skolemizationDomain) {
+	public EventStreamPropertiesTestImpl(String name, String timestampPath, String versionOfPath, String versionDelimiter, boolean closed, String skolemizationDomain) {
 		this.name = name;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-		this.versionCreationEnabled = versionCreationEnabled;
+		this.versionDelimiter = versionDelimiter;
 		this.closed = closed;
 		this.skolemizationDomain = skolemizationDomain;
 	}
@@ -35,8 +35,8 @@ public class EventStreamPropertiesTestImpl implements EventStreamProperties {
 	}
 
 	@Override
-	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
+	public String getVersionDelimiter() {
+		return versionDelimiter;
 	}
 
 	@Override

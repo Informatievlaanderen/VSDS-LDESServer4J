@@ -107,7 +107,7 @@ class ShaclShapePostgresRepositoryTest {
     }
 
     private ShaclShapeEntity initShaclShapeEntity(Model model) {
-        final EventStreamEntity eventStreamEntity = new EventStreamEntity(COLLECTION, "", "", false, false, null);
+        final EventStreamEntity eventStreamEntity = new EventStreamEntity(COLLECTION, "", "", null, false, null);
         final ShaclShapeEntity shaclShapeEntity = new ShaclShapeEntity(eventStreamEntity);
         shaclShapeEntity.setModel(model);
         return shaclShapeEntity;

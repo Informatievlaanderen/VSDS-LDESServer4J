@@ -9,24 +9,19 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>3.4.1-SNAPSHOT</version>
+    <version>3.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>ldes-server-domain</module>
+        <module>ldes-server-fragmentation</module>
+        <module>ldes-server-admin</module>
+        <module>ldes-server-ingest</module>
+        <module>ldes-server-fetch</module>
+        <module>ldes-server-maintenance</module>
         <module>ldes-server-infra-postgres</module>
         <module>ldes-server-application</module>
-        <module>ldes-fragmentisers</module>
-        <module>ldes-server-admin</module>
-        <module>ldes-server-port-ingest</module>
-        <module>ldes-server-port-ingest-rest</module>
-        <module>ldes-server-retention</module>
-        <module>ldes-server-port-fetch</module>
-        <module>ldes-server-port-fetch-rest</module>
-        <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
-        <module>ldes-server-instrumentation</module>
-        <module>ldes-server-pagination</module>
     </modules>
 
     <developers>
@@ -78,15 +73,15 @@
         <spring-boot.version>3.1.5</spring-boot.version>
 
         <!-- SPRING DATA -->
-        <spring-data.version>3.2.3</spring-data.version>
+        <spring-data.version>3.3.4</spring-data.version>
 
         <!-- SPRING -->
         <spring.version>6.0.13</spring.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.10.0</apache-jena.version>
+        <apache-jena.version>5.1.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
-        <google-guava.version>33.0.0-jre</google-guava.version>
+        <google-guava.version>33.3.1-jre</google-guava.version>
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
@@ -101,7 +96,7 @@
         <assertj-core.version>3.25.3</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
+        <depencency-check-maven.version>10.0.4</depencency-check-maven.version>
 
         <!-- Monitoring and Logging -->
         <spring.aop.version>3.2.3</spring.aop.version>
@@ -144,8 +139,8 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ldes-fragmentisers-impl</artifactId>
+                <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                <artifactId>ldes-server-maintenance-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -430,6 +425,19 @@
         </pluginManagement>
 
         <plugins>
+
+            <plugin>
+                <groupId>com.github.ferstl</groupId>
+                <artifactId>depgraph-maven-plugin</artifactId>
+                <version>4.0.3</version>
+                <configuration>
+                    <reduceEdges>true</reduceEdges>
+                    <scope>compile</scope>
+                    <includes>be.vlaanderen.informatievlaanderen.vsds*</includes>
+                    <excludes>be.vlaanderen.informatievlaanderen.vsds:*domain*</excludes>
+                    <graphFormat>dot</graphFormat>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

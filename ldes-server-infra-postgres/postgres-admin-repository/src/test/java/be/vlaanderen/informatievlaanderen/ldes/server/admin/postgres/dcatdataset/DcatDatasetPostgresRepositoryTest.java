@@ -146,7 +146,7 @@ class DcatDatasetPostgresRepositoryTest {
     }
 
     private DcatDatasetEntity initializeEntity(Model dcatModel) {
-        final EventStreamEntity eventStreamEntity = new EventStreamEntity(DATASET_COLLECTION_NAME, "", "", false, false, null);
+        final EventStreamEntity eventStreamEntity = new EventStreamEntity(DATASET_COLLECTION_NAME, "", "", null, false, null);
         final DcatDatasetEntity datasetEntity = new DcatDatasetEntity(eventStreamEntity);
         datasetEntity.setModel(dcatModel);
         return datasetEntity;

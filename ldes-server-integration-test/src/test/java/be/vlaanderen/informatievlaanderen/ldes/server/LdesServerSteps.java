@@ -16,6 +16,9 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
 import org.awaitility.Awaitility;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -44,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch.MaintenanceFlows.MAINTENANCE_JOB;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -84,23 +88,21 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
-		return RDFParser.fromString(mockMvc.perform(get(url)
-								.accept(contentType))
-						.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
-				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
+		final String content = mockMvc.perform(get(url).accept(contentType))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		return RDFParser.create().fromString(content).lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
 	@When("I ingest {int} members to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
-							.replace("ID", String.valueOf(i))
-							.replace("DATETIME", "2023-04-06T09:58:15.867Z"))
-					.lang(Lang.TURTLE)
-					.toModel();
+			String member = readMemberTemplate("data/input/members/mob-hind.template.ttl")
+					.replace("ID", String.valueOf(i))
+					.replace("DATETIME", "2023-04-06T09:58:15.867Z");
 			mockMvc.perform(post("/" + collectionName)
 							.contentType("text/turtle")
-							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+							.content(member))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
@@ -185,14 +187,14 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
 				.replace("CURRENTTIME", getCurrentTimestamp());
 
-		String eventStreamName = RDFParser.fromString(mockMvc.perform(post("/admin/api/v1/eventstreams")
-								.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
-								.content(eventstream))
-						.andExpect(status().isCreated())
-						.andReturn()
-						.getResponse()
-						.getContentAsString())
-				.lang(Lang.TURTLE)
+		final String content = mockMvc.perform(post("/admin/api/v1/eventstreams")
+						.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+						.content(eventstream))
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+		String eventStreamName = RDFParser.create().fromString(content).lang(Lang.TURTLE)
 				.toModel()
 				.listStatements(null, RDF.type, createResource("https://w3id.org/ldes#EventStream"))
 				.next()
@@ -260,7 +262,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
-							       .toList().size() == expectedMemberCount;
+							.toList().size() == expectedMemberCount;
 				});
 	}
 
@@ -351,7 +353,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		if (response.getStatus() == 404) {
-			return null;
+			return ModelFactory.createDefaultModel();
 		}
 		return new ResponseToModelConverter(response).convert();
 	}
@@ -361,5 +363,14 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
 				.andReturn().getResponse();
 		assertTrue(response.getContentAsString().contains("%s{collection=\"%s\"} %s".formatted(message, collection, value)));
+	}
+
+	@And("the background processes did not fail")
+	public void theBackgroundProcessesDidNotFail() {
+		JobInstance lastJobInstance = Objects.requireNonNull(jobExplorer.getLastJobInstance(MAINTENANCE_JOB));
+		JobExecution lastJobExecution = Objects.requireNonNull(jobExplorer.getLastJobExecution(lastJobInstance));
+		boolean hasFailedExecutions = lastJobExecution.getStepExecutions().stream()
+				.anyMatch(stepExecution -> stepExecution.getStatus().equals(BatchStatus.FAILED));
+		assertThat(hasFailedExecutions).isFalse();
 	}
 }
