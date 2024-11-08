@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.InvalidSkolemisationDomainException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.KafkaSourceProperties;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -19,6 +20,7 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EventStreamTOTest {
 	private static final String COLLECTION = "collection";
@@ -63,6 +65,17 @@ class EventStreamTOTest {
 		assertThatThrownBy(builder::build)
 				.isInstanceOf(InvalidSkolemisationDomainException.class)
 				.hasMessage("Invalid Skolemisation Domain. Should be URI. Provided skolemizationDomain : example.com");
+	}
+
+	@Test
+	void test_kafka_props() {
+		var eventStreamTO = getBaseBuilder()
+				.withKafkaSourceProperties(new KafkaSourceProperties("collection", "topic", "mimeType"))
+				.build();
+
+		assertEquals(eventStreamTO.getKafkaSourceProperties().collection(), "collection");
+		assertEquals(eventStreamTO.getKafkaSourceProperties().topic(), "topic");
+		assertEquals(eventStreamTO.getKafkaSourceProperties().mimeType(), "mimeType");
 	}
 
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {

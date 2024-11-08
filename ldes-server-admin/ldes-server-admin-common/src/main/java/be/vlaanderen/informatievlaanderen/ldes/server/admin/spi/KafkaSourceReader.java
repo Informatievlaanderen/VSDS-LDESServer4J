@@ -18,7 +18,7 @@ public class KafkaSourceReader {
 		this.beanFactory = beanFactory;
 	}
 
-	public KafkaSourceProperties readKafkaSourceProperties(Model model) {
+	public KafkaSourceProperties readKafkaSourceProperties(String collection, Model model) {
 
 		var kafkaSourceStmts = model.listObjectsOfProperty(null, createProperty(LDES, "kafkaSource"));
 		if (!kafkaSourceStmts.hasNext()) {
@@ -42,7 +42,7 @@ public class KafkaSourceReader {
 					.asLiteral()
 					.getString();
 
-			return new KafkaSourceProperties(topic, mimeType);
+			return new KafkaSourceProperties(collection, topic, mimeType);
 		}
 		catch (NoSuchElementException e) {
 			throw new IllegalArgumentException("KafkaSource properties are missing");

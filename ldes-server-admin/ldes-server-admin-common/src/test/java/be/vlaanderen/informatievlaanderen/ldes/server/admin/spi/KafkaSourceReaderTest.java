@@ -27,24 +27,25 @@ class KafkaSourceReaderTest {
 
 	@Test
 	void readKafkaSourceProperties_NoKafkaSourcePresent() {
-		KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(ModelFactory.createDefaultModel());
+		KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties("collection", ModelFactory.createDefaultModel());
 		assertNull(kafkaSourceProperties);
 	}
 
 	@Test
 	void readKafkaSourceProperties_KafkaIngestNotEnabled() {
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/with-kafka-source/ldes-with-kafkaES.ttl");
-		assertThrows(IllegalStateException.class, ()-> kafkaSourceReader.readKafkaSourceProperties(eventStreamModel));
+		assertThrows(IllegalStateException.class, ()-> kafkaSourceReader.readKafkaSourceProperties("collection", eventStreamModel));
 	}
 
 	@Test
 	void readKafkaSourceProperties_KafkaIngestEnabled() {
 		beanFactory.registerSingleton("kafkaListenerContainerManager", Object.class);
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/with-kafka-source/ldes-with-kafkaES.ttl");
-		KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(eventStreamModel);
+		KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties("collection", eventStreamModel);
 		assertNotNull(kafkaSourceProperties);
 		assertEquals("testTopic", kafkaSourceProperties.topic());
 		assertEquals("application/n-quads", kafkaSourceProperties.mimeType());
+		assertEquals("collection", kafkaSourceProperties.collection());
 	}
 
 	@ParameterizedTest()
@@ -52,7 +53,7 @@ class KafkaSourceReaderTest {
 	void readKafkaSourceProperties_PropertyMissing(String fileName) {
 		beanFactory.registerSingleton("kafkaListenerContainerManager", Object.class);
 		final Model eventStreamModel = RDFDataMgr.loadModel("eventstream/streams/with-kafka-source/" + fileName);
-		assertThrows(IllegalArgumentException.class, ()-> kafkaSourceReader.readKafkaSourceProperties(eventStreamModel));
+		assertThrows(IllegalArgumentException.class, ()-> kafkaSourceReader.readKafkaSourceProperties("collection", eventStreamModel));
 	}
 
 }

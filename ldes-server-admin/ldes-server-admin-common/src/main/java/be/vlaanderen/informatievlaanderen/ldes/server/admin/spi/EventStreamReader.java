@@ -31,7 +31,7 @@ public class EventStreamReader {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
 				.orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
 
-		final KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(model);
+		final KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(collection, model);
 
 		return new EventStreamTO.Builder()
 				.withCollection(collection)

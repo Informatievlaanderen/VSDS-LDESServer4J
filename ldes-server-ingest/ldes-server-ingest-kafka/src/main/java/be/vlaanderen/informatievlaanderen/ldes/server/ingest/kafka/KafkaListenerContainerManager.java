@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.listener.IngestListener;
@@ -62,7 +63,12 @@ public class KafkaListenerContainerManager {
 
 	@EventListener(KafkaSourceAddedEvent.class)
 	public void onKafkaSourceAdded(KafkaSourceAddedEvent event) throws NoSuchMethodException {
-		registerListener(UUID.randomUUID().toString(), event.collection(), event.topic(), event.mimeType());
+		registerListener(UUID.randomUUID().toString(), event.kafkaSource().collection(), event.kafkaSource().topic(), event.kafkaSource().mimeType());
+	}
+
+	@EventListener(EventStreamDeletedEvent.class)
+	public void onEventStreamDeleted(EventStreamDeletedEvent event) {
+		unregisterListener(event.collectionName());
 	}
 
 	private KafkaListenerEndpoint createKafkaListenerEndpoint(String listenerId, String collection, String topic, String mimeType) throws NoSuchMethodException {

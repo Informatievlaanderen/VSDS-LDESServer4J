@@ -3,11 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource.KafkaSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.KafkaSourceProperties;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,15 +22,17 @@ import java.util.List;
 public class EventStreamServiceImpl implements EventStreamService {
 	public static final String RESOURCE_TYPE = "eventstream";
 	private final EventStreamRepository eventStreamRepository;
+	private final KafkaSourceRepository kafkaSourceRepository;
 	private final DcatServerService dcatServerService;
 	private final EventSourceService eventSourceService;
 	private final ApplicationEventPublisher eventPublisher;
 	private final ViewValidator viewValidator;
 
-	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository,
+	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository, KafkaSourceRepository kafkaSourceRepository,
 	                              DcatServerService dcatServerService, EventSourceService eventSourceService,
 	                              ApplicationEventPublisher eventPublisher, ViewValidator viewValidator) {
 		this.eventStreamRepository = eventStreamRepository;
+		this.kafkaSourceRepository = kafkaSourceRepository;
 		this.dcatServerService = dcatServerService;
 		this.eventSourceService = eventSourceService;
 		this.eventPublisher = eventPublisher;
@@ -52,6 +56,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		if (deletedRows == 0) {
 			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
+		kafkaSourceRepository.delete(collectionName);
 		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
@@ -62,6 +67,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 		eventStreamRepository.saveEventStream(eventStreamTO);
 		publishEventStreamTOCreatedEvents(eventStreamTO);
+		publishKafkaSource(eventStreamTO.getKafkaSourceProperties());
 
 		return eventStreamTO;
 	}
@@ -105,16 +111,21 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventStreamRepository.retrieveAllEventStreams().stream()
 				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
+		kafkaSourceRepository.getAll().stream()
+				.map(KafkaSourceAddedEvent::new)
+				.forEach(eventPublisher::publishEvent);
 	}
 
 	private void publishEventStreamTOCreatedEvents(EventStreamTO eventStreamTO) {
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
 		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);
 		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
+	}
 
-		if (eventStreamTO.getKafkaSourceProperties() != null) {
-			var kafkaSourceProps = eventStreamTO.getKafkaSourceProperties();
-			eventPublisher.publishEvent(new KafkaSourceAddedEvent(eventStreamTO.getCollection(), kafkaSourceProps.topic(), kafkaSourceProps.mimeType()));
+	private void publishKafkaSource(KafkaSourceProperties kafkaSourceProperties) {
+		if (kafkaSourceProperties != null) {
+			kafkaSourceRepository.save(kafkaSourceProperties);
+			eventPublisher.publishEvent(new KafkaSourceAddedEvent(kafkaSourceProperties));
 		}
 	}
 
