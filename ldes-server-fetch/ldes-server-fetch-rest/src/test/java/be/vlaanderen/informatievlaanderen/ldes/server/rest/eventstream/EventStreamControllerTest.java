@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -62,11 +64,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestResponseEntityExceptionHandler.class, EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
-		PrefixConstructor.class, RdfModelConverter.class
+		PrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
 	private static final Integer CONFIGURED_MAX_AGE_MUTABLE = 180;
+	private static final String VERSION = "4.0.4-SNAPSHOT";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -94,6 +97,7 @@ class EventStreamControllerTest {
 	                                                           String expectedEtagHeaderValue) throws Exception {
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}", COLLECTION)
 						.accept(mediaType))
+				.andExpect(header().string("X-App-Version", VERSION))
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
@@ -175,6 +179,7 @@ class EventStreamControllerTest {
 			mockMvc.perform(get("/")
 							.accept(MediaType.ALL))
 					.andExpect(status().isOk())
+					.andExpect(header().string("X-App-Version", VERSION))
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
 						Model actualModel = RDFParser.create().fromString(contentAsString).lang(Lang.TURTLE).toModel();
@@ -202,6 +207,11 @@ class EventStreamControllerTest {
 		@Bean
 		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 			return new EtagCachingStrategy(hostName);
+		}
+
+		@Bean
+		public String appVersion() {
+			return VERSION;
 		}
 	}
 }
