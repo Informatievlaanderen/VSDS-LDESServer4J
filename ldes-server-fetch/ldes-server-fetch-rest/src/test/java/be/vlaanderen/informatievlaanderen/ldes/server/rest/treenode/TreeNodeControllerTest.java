@@ -56,6 +56,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -90,8 +91,6 @@ class TreeNodeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private BuildProperties buildProperties;
-	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 	@MockBean
 	private StreamingTreeNodeFactory streamingTreeNodeFactory;
@@ -107,7 +106,6 @@ class TreeNodeControllerTest {
 	@BeforeEach
 	void setUp() {
 		fullViewName = COLLECTION_NAME + "/" + VIEW_NAME;
-		when(buildProperties.getVersion()).thenReturn(VERSION);
 	}
 
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
@@ -318,8 +316,10 @@ class TreeNodeControllerTest {
 		}
 
 		@Bean
-		public String appVersion() {
-			return VERSION;
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.setProperty("version", VERSION);
+			return new BuildProperties(properties);
 		}
 	}
 

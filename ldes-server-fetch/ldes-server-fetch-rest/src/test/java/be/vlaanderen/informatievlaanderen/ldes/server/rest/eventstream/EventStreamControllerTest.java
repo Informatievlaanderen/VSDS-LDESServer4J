@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,6 +44,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -210,8 +212,10 @@ class EventStreamControllerTest {
 		}
 
 		@Bean
-		public String appVersion() {
-			return VERSION;
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.put("version", VERSION);
+			return new BuildProperties(properties);
 		}
 	}
 }
