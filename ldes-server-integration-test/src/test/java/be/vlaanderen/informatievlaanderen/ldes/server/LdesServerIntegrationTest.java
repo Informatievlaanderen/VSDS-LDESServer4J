@@ -39,7 +39,7 @@ import javax.sql.DataSource;
 @TestPropertySource(properties = {
 		"ldes-server.fragmentation-cron=*/1 * * * * *",
 		"ldes-server.maintenance-cron=*/10 * * * * *",
-		"ldes-server.compaction-duration=PT1S",
+		"ldes-server.compaction-duration=PT1S"
 })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
