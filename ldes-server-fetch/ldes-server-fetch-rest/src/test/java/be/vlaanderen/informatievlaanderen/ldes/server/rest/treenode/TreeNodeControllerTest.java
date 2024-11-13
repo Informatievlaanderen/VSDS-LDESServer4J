@@ -22,6 +22,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.versioning.VersionHeaderControllerAdvice;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -35,6 +36,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -54,6 +56,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -74,7 +77,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
 		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
-		TreeNodeStatementCreatorImpl.class, CharsetEncodingConfig.class})
+		TreeNodeStatementCreatorImpl.class, CharsetEncodingConfig.class, VersionHeaderControllerAdvice.class,
+})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
@@ -82,6 +86,7 @@ class TreeNodeControllerTest {
 	private String fullViewName;
 	private static final Integer CONFIGURED_MAX_AGE = 180;
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
+	private static final String VERSION = "4.0.4-SNAPSHOT";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -132,6 +137,7 @@ class TreeNodeControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(header().string("Cache-Control", expectedHeaderValue))
 				.andExpect(header().string("Etag", "\"" + expectedEtag + "\""))
+				.andExpect(header().string("X-App-Version", VERSION))
 				.andExpect(content().encoding(StandardCharsets.UTF_8))
 				.andExpect(content().contentTypeCompatibleWith(expectedContentType))
 				.andReturn();
@@ -170,6 +176,7 @@ class TreeNodeControllerTest {
 						.accept(mediaType))
 				.andExpect(status().isOk())
 				.andExpect(content().encoding(StandardCharsets.UTF_8))
+				.andExpect(header().string("X-App-Version", VERSION))
 				.andExpect(content().contentTypeCompatibleWith(mediaType))
 				.andExpect(content().string(containsString("ë")))
 				.andExpect(content().string(containsString("你好")))
@@ -224,6 +231,7 @@ class TreeNodeControllerTest {
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept("application/n-quads"))
 				.andExpect(status().isNotFound())
+				.andExpect(header().string("X-App-Version", VERSION))
 				.andExpect(content().string("Resource of type: fragment with id: bucketDescriptor could not be found."));
 	}
 
@@ -305,6 +313,13 @@ class TreeNodeControllerTest {
 		@Bean
 		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 			return new EtagCachingStrategy(hostName);
+		}
+
+		@Bean
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.setProperty("version", VERSION);
+			return new BuildProperties(properties);
 		}
 	}
 

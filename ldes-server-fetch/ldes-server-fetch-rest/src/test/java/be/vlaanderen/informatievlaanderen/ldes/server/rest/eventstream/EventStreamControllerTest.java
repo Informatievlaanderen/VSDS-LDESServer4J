@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingSt
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.versioning.VersionHeaderControllerAdvice;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -26,6 +27,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,6 +44,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -53,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -62,11 +66,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestResponseEntityExceptionHandler.class, EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
-		PrefixConstructor.class, RdfModelConverter.class
+		PrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
 	private static final Integer CONFIGURED_MAX_AGE_MUTABLE = 180;
+	private static final String VERSION = "4.0.4-SNAPSHOT";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -94,6 +99,7 @@ class EventStreamControllerTest {
 	                                                           String expectedEtagHeaderValue) throws Exception {
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}", COLLECTION)
 						.accept(mediaType))
+				.andExpect(header().string("X-App-Version", VERSION))
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
@@ -175,6 +181,7 @@ class EventStreamControllerTest {
 			mockMvc.perform(get("/")
 							.accept(MediaType.ALL))
 					.andExpect(status().isOk())
+					.andExpect(header().string("X-App-Version", VERSION))
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
 						Model actualModel = RDFParser.create().fromString(contentAsString).lang(Lang.TURTLE).toModel();
@@ -202,6 +209,13 @@ class EventStreamControllerTest {
 		@Bean
 		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 			return new EtagCachingStrategy(hostName);
+		}
+
+		@Bean
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.put("version", VERSION);
+			return new BuildProperties(properties);
 		}
 	}
 }

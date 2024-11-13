@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.versioning.AdminVersionHeaderControllerAdvice;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -24,8 +25,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -58,13 +62,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
+		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})
+@Import(BuildProperties.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	public static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	@MockBean
 	private EventStreamService eventStreamService;
+	@SpyBean
+	private AdminVersionHeaderControllerAdvice adminVersionHeaderControllerAdvice;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -124,6 +131,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
+			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
 		}
 	}
 
@@ -149,6 +157,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
+			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
 		}
 
 		@Test
