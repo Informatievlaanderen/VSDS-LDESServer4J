@@ -2,10 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.versioning;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.info.BuildProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-@ControllerAdvice("adminVersionHeaderControllerAdvice")
+@ControllerAdvice
+@Component("adminVersionHeaderControllerAdvice")
 public class VersionHeaderControllerAdvice {
 	private static final String APP_VERSION_HEADER_KEY = "X-App-Version";
 	private final String appVersion;
