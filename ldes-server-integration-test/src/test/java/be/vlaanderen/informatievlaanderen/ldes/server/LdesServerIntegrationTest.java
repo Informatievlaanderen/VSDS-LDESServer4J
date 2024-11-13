@@ -11,10 +11,12 @@ import jakarta.persistence.EntityManager;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,7 @@ import javax.sql.DataSource;
 @ActiveProfiles("postgres-test")
 @ContextConfiguration(classes = {MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class})
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server"})
+@Import({BuildProperties.class})
 @TestPropertySource(properties = {
 		"ldes-server.fragmentation-cron=*/1 * * * * *",
 		"ldes-server.maintenance-cron=*/10 * * * * *",
