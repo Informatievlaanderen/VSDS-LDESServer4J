@@ -12,6 +12,7 @@ open module ldes.admin {
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
+	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository;
 	exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services;
