@@ -32,7 +32,7 @@ class TimeBasedRelationsAttributerTest {
 	}
 
 	@Test
-	void when_RelationNotPresent_AndCachingDisabled_ThenRelationIsAdded_NextUpdateTsIsNotSet_ChildrenStayMutable() {
+	void when_RelationNotPresent_ThenRelationIsAdded_NextUpdateTsIsNotSet_ChildrenStayMutable() {
 		Bucket child = parentBucket.createChild(monthPair);
 
 		TreeRelation gteRelation = new TreeRelation(
