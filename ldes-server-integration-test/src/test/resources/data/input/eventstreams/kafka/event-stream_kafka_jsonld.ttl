@@ -7,7 +7,7 @@
 @prefix xsd:          <http://www.w3.org/2001/XMLSchema#> .
 @prefix event-stream: <http://localhost:8080/event-stream2/> .
 
-server:event-stream
+server:jsonld
     a                   ldes:EventStream ;
     ldes:timestampPath  dcterms:created ;
     ldes:versionOfPath  dcterms:isVersionOf ;
