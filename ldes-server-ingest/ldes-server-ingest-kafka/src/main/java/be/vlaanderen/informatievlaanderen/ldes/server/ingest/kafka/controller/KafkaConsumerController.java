@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.controller;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.KafkaListenerContainerManager;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.exception.KafkaConsumerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerAssignment;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerResponse;
@@ -50,7 +51,7 @@ public class KafkaConsumerController {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
 
 		if (listenerContainer.isRunning()) {
-			throw new RuntimeException("Consumer is already running : " + listenerId);
+			throw new KafkaConsumerException("Consumer is already running : " + listenerId);
 		}
 
 		listenerContainer.start();
@@ -60,11 +61,11 @@ public class KafkaConsumerController {
 	public void pause(@PathVariable String listenerId) {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
 		if (!listenerContainer.isRunning()) {
-			throw new RuntimeException("Consumer is not running: " + listenerId);
+			throw new KafkaConsumerException("Consumer is not running: " + listenerId);
 		} else if (listenerContainer.isContainerPaused()) {
-			throw new RuntimeException("Consumer is already paused: " + listenerId);
+			throw new KafkaConsumerException("Consumer is already paused: " + listenerId);
 		} else if (listenerContainer.isPauseRequested()) {
-			throw new RuntimeException("Consumer pause is already requested: " + listenerId);
+			throw new KafkaConsumerException("Consumer pause is already requested: " + listenerId);
 		}
 		listenerContainer.pause();
 	}
@@ -73,9 +74,9 @@ public class KafkaConsumerController {
 	public void resume(@PathVariable String listenerId) {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
 		if (!listenerContainer.isRunning()) {
-			throw new RuntimeException("Consumer is not running: " + listenerId);
+			throw new KafkaConsumerException("Consumer is not running: " + listenerId);
 		} else if (!listenerContainer.isContainerPaused()) {
-			throw new RuntimeException("Consumer is not paused: " + listenerId);
+			throw new KafkaConsumerException("Consumer is not paused: " + listenerId);
 		}
 		listenerContainer.resume();
 	}
@@ -84,7 +85,7 @@ public class KafkaConsumerController {
 	public void stop(@PathVariable String listenerId) {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
 		if (!listenerContainer.isRunning()) {
-			throw new RuntimeException("Consumer is already stopped: " + listenerId);
+			throw new KafkaConsumerException("Consumer is already stopped: " + listenerId);
 		}
 		listenerContainer.stop();
 	}
@@ -99,7 +100,7 @@ public class KafkaConsumerController {
 	private MessageListenerContainer getListenerContainer(String listenerId) {
 		Optional<MessageListenerContainer> listenerContainerOpt = kafkaListenerContainerManager.getContainer(listenerId);
 		if (listenerContainerOpt.isEmpty()) {
-			throw new RuntimeException("No such consumer: " + listenerId);
+			throw new KafkaConsumerException("No such consumer: " + listenerId);
 		}
 
 		return listenerContainerOpt.get();
@@ -113,7 +114,7 @@ public class KafkaConsumerController {
 				.assignments(Optional.ofNullable(listenerContainer.getAssignedPartitions())
 						.map(topicPartitions -> topicPartitions.stream()
 								.map(this::createKafkaConsumerAssignmentResponse)
-								.collect(Collectors.toList()))
+								.toList())
 						.orElse(null))
 				.build();
 	}

@@ -73,9 +73,9 @@ class EventStreamTOTest {
 				.withKafkaSourceProperties(new KafkaSourceProperties("collection", "topic", "mimeType"))
 				.build();
 
-		assertEquals(eventStreamTO.getKafkaSourceProperties().collection(), "collection");
-		assertEquals(eventStreamTO.getKafkaSourceProperties().topic(), "topic");
-		assertEquals(eventStreamTO.getKafkaSourceProperties().mimeType(), "mimeType");
+		assertEquals("collection", eventStreamTO.getKafkaSourceProperties().collection());
+		assertEquals("topic", eventStreamTO.getKafkaSourceProperties().topic());
+		assertEquals("mimeType", eventStreamTO.getKafkaSourceProperties().mimeType());
 	}
 
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {

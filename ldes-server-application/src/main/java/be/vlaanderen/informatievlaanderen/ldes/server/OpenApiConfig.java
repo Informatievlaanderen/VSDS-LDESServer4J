@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
-    private static final String adminPackage = "be.vlaanderen.informatievlaanderen.ldes.server.admin.rest";
-    private static final String kafkaDebugPackage = "be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka";
+    private static final String ADMIN_PACKAGE = "be.vlaanderen.informatievlaanderen.ldes.server.admin.rest";
+    private static final String KAFKA_DEBUG_PACKAGE = "be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka";
     @Bean
     public GroupedOpenApi adminGroup(BuildProperties buildProperties) {
         return GroupedOpenApi.builder()
@@ -19,7 +19,7 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("This API makes it possible to manage an LDES Server")
                 ))
-                .packagesToScan(adminPackage)
+                .packagesToScan(ADMIN_PACKAGE)
                 .build();
     }
 
@@ -32,7 +32,7 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("Purely meant as a developer debugging tool")
                 ))
-                .packagesToScan(kafkaDebugPackage)
+                .packagesToScan(KAFKA_DEBUG_PACKAGE)
                 .build();
     }
 
@@ -45,7 +45,7 @@ public class OpenApiConfig {
                         .version(buildProperties.getVersion())
                         .description("These API endpoints are available to ingest and fetch linked data")
                 ))
-                .packagesToExclude(adminPackage, kafkaDebugPackage)
+                .packagesToExclude(ADMIN_PACKAGE, KAFKA_DEBUG_PACKAGE)
                 .build();
     }
 }
