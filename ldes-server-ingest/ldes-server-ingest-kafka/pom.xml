@@ -11,10 +11,6 @@
 
     <artifactId>ldes-server-ingest-kafka</artifactId>
 
-    <properties>
-        <spring.kafka.version>3.1.2</spring.kafka.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>

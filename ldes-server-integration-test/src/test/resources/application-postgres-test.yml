@@ -18,6 +18,14 @@ spring:
       initialize-schema: always
       isolation-level-for-create: READ_COMMITTED
 
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: ldes
+      auto-offset-reset: earliest
+
 zonky:
   test:
     database:

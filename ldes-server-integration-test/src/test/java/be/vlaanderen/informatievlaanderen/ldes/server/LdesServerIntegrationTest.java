@@ -16,10 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.*;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import javax.sql.DataSource;
 
@@ -38,6 +40,7 @@ import javax.sql.DataSource;
 		"ldes-server.maintenance-cron=*/10 * * * * *",
 		"ldes-server.compaction-duration=PT1S"
 })
+@Testcontainers
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
 	@Autowired
@@ -59,4 +62,14 @@ public class LdesServerIntegrationTest {
 
 	@Autowired
 	JobExplorer jobExplorer;
+
+	@Container
+	static final KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
+			.withKraft();
+
+	@DynamicPropertySource
+	static void overrideProperties(DynamicPropertyRegistry registry) {
+		kafka.start();
+		registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+	}
 }

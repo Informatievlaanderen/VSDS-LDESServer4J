@@ -29,9 +29,9 @@ class KafkaConsumerControllerTest {
 
     @Test
     void create() throws NoSuchMethodException {
-        KafkaConsumerRequest request = new KafkaConsumerRequest("collection", "topic", "mimeType", true);
+        KafkaConsumerRequest request = new KafkaConsumerRequest("collection", "topic", "mimeType");
         kafkaConsumerController.create(request);
-        verify(kafkaListenerContainerManager, times(1)).registerListener(anyString(), eq("collection"), eq("topic"), eq("mimeType"), eq(true));
+        verify(kafkaListenerContainerManager, times(1)).registerListener(anyString(), eq("collection"), eq("topic"), eq("mimeType"));
     }
 
     @Test
