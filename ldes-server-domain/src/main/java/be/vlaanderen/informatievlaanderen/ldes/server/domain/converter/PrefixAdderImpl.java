@@ -5,13 +5,11 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
 public class PrefixAdderImpl implements PrefixAdder {
 
 	private static final String VALID_LOCALNAME_REGEX = "([a-zA-Z][\\-_a-zA-Z0-9]*)$";

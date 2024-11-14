@@ -1,0 +1,15 @@
+foaf,http://xmlns.com/foaf/0.1/
+rdf,http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs,http://www.w3.org/2000/01/rdf-schema#
+skos,http://www.w3.org/2004/02/skos/core#
+owl,http://www.w3.org/2002/07/owl#
+xsd,http://www.w3.org/2001/XMLSchema#
+geo,http://www.opengis.net/ont/geosparql#
+dcat,http://www.w3.org/ns/dcat#
+dct,http://purl.org/dc/terms/
+prov,http://www.w3.org/ns/prov#
+m8g,http://data.europa.eu/m8g/
+tree,https://w3id.org/tree#
+ldes,https://w3id.org/ldes#
+sh,http://www.w3.org/ns/shacl#
+shsh,http://www.w3.org/ns/shacl-shacl#

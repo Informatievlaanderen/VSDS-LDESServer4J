@@ -43,6 +43,7 @@ public class EventStreamWriter {
 		final List<Statement> eventSourceStatements = getEventSourceStatements(eventStreamTO.getEventSourceRetentionPolicies(), subject);
 
 		Model eventStreamModel = createDefaultModel()
+				.setNsPrefix(eventStreamTO.getCollection(), prefixConstructor.getHostname() + "/" + eventStreamTO.getCollection() + "/")
 				.add(collectionNameStmt)
 				.add(dcatTypeStmt)
 				.add(getVersionOfStatements(subject, eventStreamTO))

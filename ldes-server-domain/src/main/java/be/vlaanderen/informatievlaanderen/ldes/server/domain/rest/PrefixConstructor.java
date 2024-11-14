@@ -23,6 +23,10 @@ public class PrefixConstructor {
 		this.useRelativeUrl = useRelativeUrl;
 	}
 
+	public String getHostname() {
+		return hostname;
+	}
+
 	public String buildPrefix() {
 		if (!useRelativeUrl) {
 			return hostname;
