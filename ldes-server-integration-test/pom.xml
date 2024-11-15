@@ -14,6 +14,7 @@
     <properties>
         <kafka.version>1.18.3</kafka.version>
         <kafka-clients.version>3.6.0</kafka-clients.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -146,7 +147,8 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.18.3</version>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

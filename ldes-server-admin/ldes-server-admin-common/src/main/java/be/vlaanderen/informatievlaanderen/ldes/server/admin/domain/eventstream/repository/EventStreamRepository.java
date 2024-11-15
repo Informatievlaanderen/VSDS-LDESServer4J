@@ -15,7 +15,7 @@ public interface EventStreamRepository {
 
 	Optional<EventStreamTO> retrieveEventStreamTO(String collectionName);
 
-	void saveEventStream(EventStreamTO eventStreamTO);
+	Integer saveEventStream(EventStreamTO eventStreamTO);
 
 	int deleteEventStream(String collectionName);
 

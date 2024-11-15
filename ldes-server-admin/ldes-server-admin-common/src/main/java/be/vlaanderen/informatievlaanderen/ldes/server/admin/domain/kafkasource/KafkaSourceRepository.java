@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.KafkaSourcePr
 import java.util.List;
 
 public interface KafkaSourceRepository {
-	void save(KafkaSourceProperties kafkaSource);
-	void delete(String id);
+	void save(KafkaSourceProperties kafkaSource, Integer eventStreamId);
 	List<KafkaSourceProperties> getAll();
 }

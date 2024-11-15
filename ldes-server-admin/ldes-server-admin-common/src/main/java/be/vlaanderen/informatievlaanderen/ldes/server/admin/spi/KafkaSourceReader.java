@@ -12,6 +12,10 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 @Component
 public class KafkaSourceReader {
+	private static final String KAFKA_SOURCE = "kafkaSource";
+	private static final String KAFKA_BEAN = "kafkaListenerContainerManager";
+	private static final String KAFKA_TOPIC = "topic";
+	private static final String KAFKA_MIME_TYPE = "mimeType";
 	private final DefaultListableBeanFactory beanFactory;
 
 	public KafkaSourceReader(DefaultListableBeanFactory beanFactory) {
@@ -20,24 +24,20 @@ public class KafkaSourceReader {
 
 	public KafkaSourceProperties readKafkaSourceProperties(String collection, Model model) {
 
-		var kafkaSourceStmts = model.listObjectsOfProperty(null, createProperty(LDES, "kafkaSource"));
+		var kafkaSourceStmts = model.listObjectsOfProperty(null, createProperty(LDES, KAFKA_SOURCE));
 		if (!kafkaSourceStmts.hasNext()) {
 			return null;
 		}
 
-		// Check if bean of type KafkaListenerContainerManager exists
-		if (!beanFactory.containsBean("kafkaListenerContainerManager")) {
-			throw new IllegalStateException("Kafka Ingest module is not enabled");
-		}
-
+		checkKafkaIngestModuleEnabled();
 
 		try {
 			var kafkaSource = kafkaSourceStmts.next();
-			String topic = model.listObjectsOfProperty(kafkaSource.asResource(), createProperty(LDES, "topic"))
+			String topic = model.listObjectsOfProperty(kafkaSource.asResource(), createProperty(LDES, KAFKA_TOPIC))
 					.next()
 					.asLiteral()
 					.getString();
-			String mimeType = model.listObjectsOfProperty(kafkaSource.asResource(), createProperty(LDES, "mimeType"))
+			String mimeType = model.listObjectsOfProperty(kafkaSource.asResource(), createProperty(LDES, KAFKA_MIME_TYPE))
 					.next()
 					.asLiteral()
 					.getString();
@@ -46,6 +46,12 @@ public class KafkaSourceReader {
 		}
 		catch (NoSuchElementException e) {
 			throw new IllegalArgumentException("KafkaSource properties are missing");
+		}
+	}
+
+	private void checkKafkaIngestModuleEnabled() {
+		if (!beanFactory.containsBean(KAFKA_BEAN)) {
+			throw new IllegalStateException("Kafka Ingest module is not enabled");
 		}
 	}
 }

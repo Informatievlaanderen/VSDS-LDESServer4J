@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -179,6 +180,7 @@ class EventStreamPostgresRepositoryTest {
     @Test
     void test_insertion() {
         final EventStreamEntity expectedEntity = createEventStreamEntity(COLLECTION_NAME);
+        when(eventStreamEntityRepository.save(any())).thenReturn(expectedEntity);
 
         repository.saveEventStream(EVENT_STREAM_TO);
 
@@ -204,6 +206,7 @@ class EventStreamPostgresRepositoryTest {
                 false,
                 SKOLEMIZATION_DOMAIN
         );
+        eventStreamEntity.setId(1);
         eventStreamEntity.setShaclShapeEntity(new ShaclShapeEntity(eventStreamEntity, ModelFactory.createDefaultModel()));
         eventStreamEntity.setViews(List.of());
         eventStreamEntity.setEventSourceEntity(new EventSourceEntity(eventStreamEntity, List.of()));

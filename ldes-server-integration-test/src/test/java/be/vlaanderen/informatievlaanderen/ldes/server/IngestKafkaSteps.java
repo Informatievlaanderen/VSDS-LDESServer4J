@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @Testcontainers
 public class IngestKafkaSteps extends LdesServerIntegrationTest {
 

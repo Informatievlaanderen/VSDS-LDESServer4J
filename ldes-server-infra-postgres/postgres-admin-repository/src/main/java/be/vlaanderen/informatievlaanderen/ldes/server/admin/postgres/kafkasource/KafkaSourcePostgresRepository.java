@@ -17,13 +17,8 @@ public class KafkaSourcePostgresRepository implements KafkaSourceRepository {
 	}
 
 	@Override
-	public void save(KafkaSourceProperties kafkaSource) {
-		repository.save(new KafkaSourceEntity(kafkaSource.collection(), kafkaSource.topic(), kafkaSource.mimeType()));
-	}
-
-	@Override
-	public void delete(String collection) {
-		repository.deleteById(collection);
+	public void save(KafkaSourceProperties kafkaSource, Integer eventStreamId) {
+		repository.save(new KafkaSourceEntity(eventStreamId, kafkaSource.collection(), kafkaSource.topic(), kafkaSource.mimeType()));
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public class EventStreamTO {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final VersionCreationProperties versionCreationProperties;
-	private final KafkaSourceProperties kafkaSourceProperties;
+	private final Optional<KafkaSourceProperties> kafkaSourceProperties;
 	private final boolean closed;
 	private final String skolemizationDomain;
 	private final List<ViewSpecification> views;
@@ -38,7 +39,7 @@ public class EventStreamTO {
 		shacl = builder.shacl;
 		eventSourceRetentionPolicies = builder.eventSourceRetentionPolicies;
 		dcatDataset = builder.dcatDataset != null ? builder.dcatDataset : new DcatDataset(builder.collection);
-		kafkaSourceProperties = builder.kafkaSourceProperties;
+		kafkaSourceProperties = Optional.ofNullable(builder.kafkaSourceProperties);
 	}
 
 	public String getCollection() {
@@ -61,7 +62,7 @@ public class EventStreamTO {
 		return versionCreationProperties.isVersionCreationEnabled();
 	}
 
-	public KafkaSourceProperties getKafkaSourceProperties() {
+	public Optional<KafkaSourceProperties> getKafkaSourceProperties() {
 		return kafkaSourceProperties;
 	}
 

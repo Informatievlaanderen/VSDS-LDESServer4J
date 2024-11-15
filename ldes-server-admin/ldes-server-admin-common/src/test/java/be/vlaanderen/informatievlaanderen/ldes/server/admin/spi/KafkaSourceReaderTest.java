@@ -17,8 +17,6 @@ class KafkaSourceReaderTest {
 	private KafkaSourceReader kafkaSourceReader;
 	private DefaultListableBeanFactory beanFactory;
 
-	// Cover all cases of the readKafkaSourceProperties method
-
 	@BeforeEach
 	void setup() {
 		beanFactory = new DefaultListableBeanFactory();

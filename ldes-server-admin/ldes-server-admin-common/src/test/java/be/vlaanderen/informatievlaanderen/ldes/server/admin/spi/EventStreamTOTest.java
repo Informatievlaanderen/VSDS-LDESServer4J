@@ -21,6 +21,7 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EventStreamTOTest {
 	private static final String COLLECTION = "collection";
@@ -73,9 +74,11 @@ class EventStreamTOTest {
 				.withKafkaSourceProperties(new KafkaSourceProperties("collection", "topic", "mimeType"))
 				.build();
 
-		assertEquals("collection", eventStreamTO.getKafkaSourceProperties().collection());
-		assertEquals("topic", eventStreamTO.getKafkaSourceProperties().topic());
-		assertEquals("mimeType", eventStreamTO.getKafkaSourceProperties().mimeType());
+		assertTrue(eventStreamTO.getKafkaSourceProperties().isPresent());
+		var kafkaSourceProperties = eventStreamTO.getKafkaSourceProperties().get();
+		assertEquals("collection", kafkaSourceProperties.collection());
+		assertEquals("topic", kafkaSourceProperties.topic());
+		assertEquals("mimeType", kafkaSourceProperties.mimeType());
 	}
 
 	static class EventStreamResponseArgumentsProvider implements ArgumentsProvider {

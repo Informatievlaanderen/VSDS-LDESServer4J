@@ -17,6 +17,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventStreamServiceImpl implements EventStreamService {
@@ -56,7 +57,6 @@ public class EventStreamServiceImpl implements EventStreamService {
 		if (deletedRows == 0) {
 			throw new MissingResourceException(RESOURCE_TYPE, collectionName);
 		}
-		kafkaSourceRepository.delete(collectionName);
 		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
@@ -65,9 +65,9 @@ public class EventStreamServiceImpl implements EventStreamService {
 		checkCollectionDoesNotYetExist(eventStreamTO.getCollection());
 		eventStreamTO.getViews().forEach(viewValidator::validateView);
 
-		eventStreamRepository.saveEventStream(eventStreamTO);
+		var eventStreamId = eventStreamRepository.saveEventStream(eventStreamTO);
 		publishEventStreamTOCreatedEvents(eventStreamTO);
-		publishKafkaSource(eventStreamTO.getKafkaSourceProperties());
+		publishKafkaSource(eventStreamTO.getKafkaSourceProperties(), eventStreamId);
 
 		return eventStreamTO;
 	}
@@ -122,10 +122,10 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies()));
 	}
 
-	private void publishKafkaSource(KafkaSourceProperties kafkaSourceProperties) {
-		if (kafkaSourceProperties != null) {
-			kafkaSourceRepository.save(kafkaSourceProperties);
-			eventPublisher.publishEvent(new KafkaSourceAddedEvent(kafkaSourceProperties));
+	private void publishKafkaSource(Optional<KafkaSourceProperties> kafkaSourceProperties, Integer eventStreamId) {
+		if (kafkaSourceProperties.isPresent()) {
+			kafkaSourceRepository.save(kafkaSourceProperties.get(), eventStreamId);
+			eventPublisher.publishEvent(new KafkaSourceAddedEvent(kafkaSourceProperties.get()));
 		}
 	}
 

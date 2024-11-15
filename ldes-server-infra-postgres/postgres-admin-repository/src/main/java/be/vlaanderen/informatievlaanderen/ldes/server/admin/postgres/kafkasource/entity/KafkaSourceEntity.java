@@ -9,9 +9,11 @@ import jakarta.persistence.Table;
 @Table(name = "collection_kafka_sources")
 public class KafkaSourceEntity {
 	@Id
+	@Column(name = "collection_id")
+	private Integer collectionId;
 	@Column(name = "collection")
 	private String collection;
-	@Column(name = "collection_id")
+	@Column(name = "topic")
 	private String topic;
 	@Column(name = "mime_type")
 	private String mimeType;
@@ -19,7 +21,8 @@ public class KafkaSourceEntity {
 	public KafkaSourceEntity() {
 	}
 
-	public KafkaSourceEntity(String collection, String topic, String mimeType) {
+	public KafkaSourceEntity(Integer collectionId, String collection, String topic, String mimeType) {
+		this.collectionId = collectionId;
 		this.collection = collection;
 		this.topic = topic;
 		this.mimeType = mimeType;
