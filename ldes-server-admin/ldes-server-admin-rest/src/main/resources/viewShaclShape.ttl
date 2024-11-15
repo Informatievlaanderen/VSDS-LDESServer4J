@@ -47,7 +47,7 @@ tree:HierarchicalTimeBasedFragmentation
     sh:class: tree:HierarchicalTimeBasedFragmentation ;
     sh:targetClass tree:HierarchicalTimeBasedFragmentation ;
     sh:zeroOrOnePath true;
-    sh:property tree:FragmentationPath, tree:MaxGranularity, tree:LinearTimeCachingEnabled, tree:FragmentSubjectFilter .
+    sh:property tree:FragmentationPath, tree:MaxGranularity, tree:FragmentSubjectFilter .
 
 tree:MaxGranularity
     a sh:PropertyShape;
@@ -57,15 +57,6 @@ tree:MaxGranularity
     sh:datatype xsd:string ;
     sh:in ( "year" "month" "day" "hour" "minute" "second" ) ;
     sh:minCount 1 ;
-    sh:maxCount 1 .
-
-tree:LinearTimeCachingEnabled
-    a sh:PropertyShape;
-    sh:name "Linear Time Caching Enabled" ;
-    sh:description "Indicates if fragments should be cached by linear time" ;
-    sh:path tree:linearTimeCachingEnabled ;
-    sh:datatype xsd:string ;
-    sh:minCount 0 ;
     sh:maxCount 1 .
 
 tree:FragmentSubjectFilter

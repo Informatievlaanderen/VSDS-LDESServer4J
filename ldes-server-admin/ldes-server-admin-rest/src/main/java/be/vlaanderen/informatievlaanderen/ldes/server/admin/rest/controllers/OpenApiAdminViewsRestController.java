@@ -105,7 +105,6 @@ public interface OpenApiAdminViewsRestController {
 										tree:fragmentationStrategy ([
 											a tree:HierarchicalTimeBasedFragmentation ;
 											tree:maxGranularity "day" ;
-											tree:linearTimeCachingEnabled "true" ;
 									        tree:fragmentationPath ldes:timestampPath ;
 									    ]) ;
 									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
