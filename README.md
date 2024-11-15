@@ -52,18 +52,19 @@ Each maven profile represents a different functionality of the LDES server that 
 The default exported image contains all the profiles, but a custom image can be created with only the needed
 dependencies.
 
-| Profile                    | Dependencies                                           | Description                                                                                                                 |
-|----------------------------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `fragmentation`            | `postgres-pagination-repository`                       | Allows basic fragmentation (pagination)                                                                                     |
-| `maintenance`              | `postgres-maintenance-repository`                      | Allows the LDES server to perform maintenance operations on its Event Streams and Members: compaction, retention, deletion. |
-| **Interfaces**             |                                                        |                                                                                                                             |
-| `http-admin`               | `ldes-server-admin-rest`,`postgres-admin-repository`*  | Gives access to REST API to create and manage Event Streams and Views.                                                      |
-| `http-ingest`              | `ldes-server-ingest-rest`,`postgres-ingest-repository` | Gives access to REST API to ingest members into the LDES.                                                                   |
-| `http-fetch`               | `ldes-server-fetch-rest`,`postgres-fetch-repository`   | Gives access to REST API to fetch Event Streams, its Views and pages.                                                       |
-| **Plugin Fragmentations**  |                                                        |                                                                                                                             |
-| `fragmentation-timebased`  | `ldes-server-fragmentation-timebased-hierarchical`     | Allows fragmentation in based on a timebased property.                                                                      |
-| `fragmentation-geospatial` | `ldes-server-fragmentation-geospatial`                 | Allows fragmentation in based on a geospatial property.                                                                     |
-| `fragmentation-reference`  | `ldes-server-fragmentation-reference`                  | Allows fragmentation in based on a textual property.                                                                        |
+| Profile                    | Dependencies                                            | Description                                                                                                                 |
+|----------------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `fragmentation`            | `postgres-pagination-repository`                        | Allows basic fragmentation (pagination)                                                                                     |
+| `maintenance`              | `postgres-maintenance-repository`                       | Allows the LDES server to perform maintenance operations on its Event Streams and Members: compaction, retention, deletion. |
+| **Interfaces**             |                                                         |                                                                                                                             |
+| `http-admin`               | `ldes-server-admin-rest`,`postgres-admin-repository`*   | Gives access to REST API to create and manage Event Streams and Views.                                                      |
+| `http-ingest`              | `ldes-server-ingest-rest`,`postgres-ingest-repository`  | Gives access to REST API to ingest members into the LDES.                                                                   |
+| `kafka-ingest`             | `ldes-server-ingest-kafka`,`postgres-ingest-repository` | Allows Kafka member ingestion into the LDES.                                                                                |
+| `http-fetch`               | `ldes-server-fetch-rest`,`postgres-fetch-repository`    | Gives access to REST API to fetch Event Streams, its Views and pages.                                                       |
+| **Plugin Fragmentations**  |                                                         |                                                                                                                             |
+| `fragmentation-timebased`  | `ldes-server-fragmentation-timebased-hierarchical`      | Allows fragmentation in based on a timebased property.                                                                      |
+| `fragmentation-geospatial` | `ldes-server-fragmentation-geospatial`                  | Allows fragmentation in based on a geospatial property.                                                                     |
+| `fragmentation-reference`  | `ldes-server-fragmentation-reference`                   | Allows fragmentation in based on a textual property.                                                                        |
 
 
 *: The `postgres-admin-repository`, as shown by the dependency graph, will be loaded in by the other above-mentioned functionality profiles. 

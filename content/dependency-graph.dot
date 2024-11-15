@@ -14,6 +14,7 @@ digraph "ldes-server" {
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-common:jar:compile"[label=<ldes-server-ingest-common>]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-rest:jar:compile"[label=<ldes-server-fetch-rest>, fillcolor="#87CEFA", style="filled"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-common:jar:compile"[label=<ldes-server-fetch-common>]
+  "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-kafka:jar:compile"[label=<ldes-server-ingest-kafka>, fillcolor="#87CEFA", style="filled"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-retention:jar:compile"[label=<ldes-server-retention>]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-maintenance-common:jar:compile"[label=<ldes-server-maintenance-common>]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-compaction:jar:compile"[label=<ldes-server-compaction>]
@@ -33,6 +34,7 @@ digraph "ldes-server" {
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fragmentation-reference:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fragmentation-common:jar:compile"
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-admin-rest:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-admin-common:jar:compile"
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-rest:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-common:jar:compile"
+  "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-kafka:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-common:jar:compile"
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-rest:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-common:jar:compile"
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-rest:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-admin-common:jar:compile"
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-retention:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-maintenance-common:jar:compile"
@@ -52,6 +54,7 @@ digraph "ldes-server" {
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:postgres-liquibase:jar:compile" [label="Database Changes"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-rest:jar:compile" [label="Ingest REST API"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:postgres-ingest-repository:jar:compile" [label="Ingest Implementation"]
+  "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-ingest-kafka:jar:compile" [label="Ingest Kafka"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fetch-rest:jar:compile" [label="Fetch REST API"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:postgres-fetch-repository:jar:compile" [label="Fetch Implementation"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:postgres-pagination-repository:jar:compile" [label="Basic Fragmentation Implementation"]
@@ -60,4 +63,5 @@ digraph "ldes-server" {
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-fragmentation-reference:jar:compile" [label="Plugin Fragmentation"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:ldes-server-admin-rest:jar:compile" [label="Admin REST API"]
   "be.vlaanderen.informatievlaanderen.vsds:ldes-server-application:jar:compile" -> "be.vlaanderen.informatievlaanderen.vsds:postgres-maintenance-repository:jar:compile" [label="Maintenance Implementation"]
+
 }

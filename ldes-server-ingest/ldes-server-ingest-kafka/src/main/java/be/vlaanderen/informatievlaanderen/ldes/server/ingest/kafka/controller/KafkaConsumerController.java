@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/consumers")
@@ -38,7 +37,7 @@ public class KafkaConsumerController {
 		return kafkaListenerContainerManager.listContainers()
 				.stream()
 				.map(this::createKafkaConsumerResponse)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@GetMapping(path="/{listenerId}")
