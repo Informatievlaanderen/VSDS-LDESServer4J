@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exceptio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.graph.GraphMemFactory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -27,11 +27,11 @@ public class ViewSpecificationConverter {
 	public static final int DEFAULT_PAGE_SIZE = 100;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
-	private final PrefixConstructor prefixConstructor;
+	private final UriPrefixConstructor prefixConstructor;
 
 	public ViewSpecificationConverter(RetentionModelExtractor retentionModelExtractor,
 									  FragmentationConfigExtractor fragmentationConfigExtractor,
-									  PrefixConstructor prefixConstructor) {
+									  UriPrefixConstructor prefixConstructor) {
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
 		this.prefixConstructor = prefixConstructor;

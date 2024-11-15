@@ -8,7 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.StreamingTreeNodeFactory;
@@ -75,7 +76,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
-		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
+		RestResponseEntityExceptionHandler.class, UriPrefixConstructor.class,
 		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
 		TreeNodeStatementCreatorImpl.class, CharsetEncodingConfig.class, VersionHeaderControllerAdvice.class,
 })
@@ -306,7 +307,7 @@ class TreeNodeControllerTest {
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName, @Autowired TreeNodeStatementCreator treeNodeStatementCreator) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+			HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		}
 

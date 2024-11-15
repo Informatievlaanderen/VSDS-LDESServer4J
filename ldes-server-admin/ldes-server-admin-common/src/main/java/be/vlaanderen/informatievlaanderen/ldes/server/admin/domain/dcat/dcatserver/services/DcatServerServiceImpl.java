@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -26,7 +26,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 	private final DcatServerRepository dcatServerRepository;
 	private final DcatViewService dcatViewService;
 	private final DcatDatasetService dcatDatasetService;
-	private final PrefixConstructor prefixConstructor;
+	private final UriPrefixConstructor prefixConstructor;
 
 	private final ModelValidator dcatShaclValidator;
 
@@ -34,7 +34,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 								 DcatViewService dcatViewService,
 								 DcatDatasetService dcatDatasetService,
 								 DcatShaclValidator dcatShaclValidator,
-								 PrefixConstructor prefixConstructor) {
+								 UriPrefixConstructor prefixConstructor) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
 		this.dcatDatasetService = dcatDatasetService;

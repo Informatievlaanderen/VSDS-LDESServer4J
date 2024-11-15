@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
@@ -38,7 +38,7 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private static final Resource VIEW_URI = createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
-	private final PrefixConstructor prefixConstructor = new PrefixConstructor(HOST_NAME, false);
+	private final HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(HOST_NAME);
 	private final TreeNodeStatementCreatorImpl treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
 	private TreeNodeConverterImpl treeNodeConverter;
 

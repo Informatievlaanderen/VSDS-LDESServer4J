@@ -14,14 +14,14 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PrefixConstructorTest {
+class HostNamePrefixConstructorTest {
 
     private final String hostname = "http://localhost";
-    private PrefixConstructor prefixConstructor;
+    private HostNamePrefixConstructor prefixConstructor;
 
     @Test
     void when_NotUsingRelativeUrls_Then_GetHostname() {
-        prefixConstructor = new PrefixConstructor(hostname, false);
+        prefixConstructor = new HostNamePrefixConstructor(hostname);
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         request.setRequestURI("any/any");
@@ -33,7 +33,7 @@ class PrefixConstructorTest {
     @ParameterizedTest(name = "Request with URI {0} returns {1}")
     @ArgumentsSource(RequestUriArgumentsProvider.class)
     void when_UsingRelativeUrls_Then_GetCorrectPrefix(String requestUri, String expected) {
-        prefixConstructor = new PrefixConstructor(hostname, true);
+        prefixConstructor = new HostNamePrefixConstructor(hostname);
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         request.setRequestURI(requestUri);

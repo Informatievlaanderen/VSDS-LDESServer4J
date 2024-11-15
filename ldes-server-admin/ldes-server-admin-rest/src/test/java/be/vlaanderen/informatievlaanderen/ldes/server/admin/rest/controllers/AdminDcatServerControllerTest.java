@@ -11,7 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ContextConfiguration(classes = { AdminServerDcatController.class, HttpModelConverter.class, PrefixAdderImpl.class,
-		AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class, RdfModelConverter.class })
+		AdminRestResponseEntityExceptionHandler.class, UriPrefixConstructor.class, RdfModelConverter.class })
 @ExtendWith(MockitoExtension.class)
 class AdminDcatServerControllerTest {
 	private static final String ID = "id";

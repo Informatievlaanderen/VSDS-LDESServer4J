@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -35,7 +35,7 @@ class EventStreamWriterTest {
 	@BeforeEach
 	void setUp() {
 		String hostName = "http://localhost:8080";
-		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+		HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(
 				new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(),

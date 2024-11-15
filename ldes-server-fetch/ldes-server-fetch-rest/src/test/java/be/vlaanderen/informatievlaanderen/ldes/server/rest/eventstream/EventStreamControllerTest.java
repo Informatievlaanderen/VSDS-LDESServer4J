@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModel
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -66,7 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestResponseEntityExceptionHandler.class, EventStreamWriter.class, EventStreamReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
-		PrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class
+		UriPrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";

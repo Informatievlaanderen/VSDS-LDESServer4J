@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 @Component
 public class EventStreamWriter {
@@ -26,9 +24,9 @@ public class EventStreamWriter {
 
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
-	private final PrefixConstructor prefixConstructor;
+	private final UriPrefixConstructor prefixConstructor;
 
-	public EventStreamWriter(ViewSpecificationConverter viewSpecificationConverter, PrefixAdder prefixAdder, PrefixConstructor prefixConstructor) {
+	public EventStreamWriter(ViewSpecificationConverter viewSpecificationConverter, PrefixAdder prefixAdder, UriPrefixConstructor prefixConstructor) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
 		this.prefixAdder = prefixAdder;
 		this.prefixConstructor = prefixConstructor;
@@ -43,7 +41,6 @@ public class EventStreamWriter {
 		final List<Statement> eventSourceStatements = getEventSourceStatements(eventStreamTO.getEventSourceRetentionPolicies(), subject);
 
 		Model eventStreamModel = createDefaultModel()
-				.setNsPrefix(eventStreamTO.getCollection(), prefixConstructor.getHostname() + "/" + eventStreamTO.getCollection() + "/")
 				.add(collectionNameStmt)
 				.add(dcatTypeStmt)
 				.add(getVersionOfStatements(subject, eventStreamTO))
@@ -54,6 +51,10 @@ public class EventStreamWriter {
 				.add(getViewStatements(eventStreamTO.getViews()))
 				.add(eventSourceStatements)
 				.add(dataset);
+
+		if(prefixConstructor instanceof UriPrefixConstructor) {
+			eventStreamModel.setNsPrefix(eventStreamTO.getCollection(), prefixConstructor.buildPrefix() + "/" + eventStreamTO.getCollection() + "/");
+		}
 
 		Statement shaclStatement = getShaclReferenceStatement(eventStreamTO.getShacl(), subject);
 

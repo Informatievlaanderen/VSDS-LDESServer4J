@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { DcatViewsRestController.class, PrefixAdderImpl.class,
-		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class,
+		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, UriPrefixConstructor.class,
 		RdfModelConverter.class})
 class DcatViewsRestControllerTest {
 

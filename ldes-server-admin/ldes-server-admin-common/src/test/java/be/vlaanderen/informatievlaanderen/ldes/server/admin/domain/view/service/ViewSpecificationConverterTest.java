@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -35,7 +35,7 @@ class ViewSpecificationConverterTest {
 	void setup() throws URISyntaxException {
 		viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(),
-				new PrefixConstructor(HOST_NAME, false));
+				new HostNamePrefixConstructor(HOST_NAME));
 		Model retentionModel = readModelFromFile("retention/example_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");
