@@ -65,6 +65,7 @@
         <skipdeploy>false</skipdeploy>
         <sis-embedded-db.version>1.4</sis-embedded-db.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+        <zonky.embbeded-db.version>2.5.1</zonky.embbeded-db.version>
 
         <!-- VSDS -->
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>

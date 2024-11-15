@@ -62,7 +62,7 @@
         <dependency>
             <groupId>io.zonky.test</groupId>
             <artifactId>embedded-database-spring-test</artifactId>
-            <version>2.5.1</version>
+            <version>${zonky.embbeded-db.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
