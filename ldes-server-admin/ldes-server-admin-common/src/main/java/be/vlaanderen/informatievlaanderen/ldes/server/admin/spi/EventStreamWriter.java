@@ -53,8 +53,8 @@ public class EventStreamWriter {
 				.add(eventSourceStatements)
 				.add(dataset);
 
-		if(prefixConstructor instanceof HostNamePrefixConstructor) {
-			eventStreamModel.setNsPrefix(eventStreamTO.getCollection(), prefixConstructor.buildPrefix() + "/" + eventStreamTO.getCollection() + "/");
+		if(prefixConstructor instanceof HostNamePrefixConstructor hostNamePrefixConstructor) {
+			eventStreamModel.setNsPrefixes(hostNamePrefixConstructor.buildCollectionUri(eventStreamTO.getCollection()));
 		}
 
 		Statement shaclStatement = getShaclReferenceStatement(eventStreamTO.getShacl(), subject);

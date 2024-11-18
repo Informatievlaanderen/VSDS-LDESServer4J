@@ -1,57 +1,48 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.stream.Stream;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HostNamePrefixConstructorTest {
 
-    private final String hostname = "http://localhost";
+    private final String hostname = "http://localhost:8080";
     private HostNamePrefixConstructor prefixConstructor;
 
-    @Test
-    void when_NotUsingRelativeUrls_Then_GetHostname() {
+    @BeforeEach
+    void setUp() {
         prefixConstructor = new HostNamePrefixConstructor(hostname);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        request.setRequestURI("any/any");
+    }
 
+    @Test
+    void when_BuildPrefix_Then_ReturnHostname() {
         String prefix = prefixConstructor.buildPrefix();
 
         assertThat(prefix).isEqualTo(hostname);
     }
-    @ParameterizedTest(name = "Request with URI {0} returns {1}")
-    @ArgumentsSource(RequestUriArgumentsProvider.class)
-    void when_UsingRelativeUrls_Then_GetCorrectPrefix(String requestUri, String expected) {
-        prefixConstructor = new HostNamePrefixConstructor(hostname);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        request.setRequestURI(requestUri);
 
-        String prefix = prefixConstructor.buildPrefix();
+    @Test
+    void given_CollectionUri_When_CreateUri_then_ReturnMap() {
+        Map<String, String> result = prefixConstructor.buildCollectionUri("event-stream");
 
-        assertThat(prefix).isEqualTo(expected);
+        assertThat(result)
+                .containsEntry("event-stream", "http://localhost:8080/event-stream/");
     }
 
-    static class RequestUriArgumentsProvider implements ArgumentsProvider {
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
-            return Stream.of(
-                    Arguments.of("test", ".."),
-                    Arguments.of("test/testing", "../.."),
-                    Arguments.of("/test/testing", "../.."),
-                    Arguments.of("", ""),
-                    Arguments.of("test/testing/testing/testing", "../../../.."));
-        }
+    @ParameterizedTest
+    @ValueSource(strings = {"/event-stream/timebased", "/event-stream/timebased?pageNumber=1"})
+    void given_FragmentId_when_CreatePrefixes_then_ReturnValidMap(String fragmentId) {
+        Map<String, String> result = prefixConstructor.buildFragmentUri("event-stream", fragmentId);
+
+        assertThat(result)
+                .containsExactlyInAnyOrderEntriesOf(Map.of(
+                        "timebased", "http://localhost:8080/event-stream/timebased/",
+                        "event-stream", "http://localhost:8080/event-stream/"
+                ));
     }
 }
