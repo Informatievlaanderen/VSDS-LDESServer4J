@@ -37,7 +37,7 @@ class TreeNodeConverterImplTest {
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
 	private static final Resource VIEW_URI = createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
-	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
+	private final PrefixAdder prefixAdder = new PrefixAdderImpl(List.of());
 	private final HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(HOST_NAME);
 	private final TreeNodeStatementCreatorImpl treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
 	private TreeNodeConverterImpl treeNodeConverter;

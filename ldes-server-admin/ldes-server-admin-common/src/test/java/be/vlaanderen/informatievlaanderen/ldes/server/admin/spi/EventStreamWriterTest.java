@@ -41,7 +41,7 @@ class EventStreamWriterTest {
 				new FragmentationConfigExtractor(),
 				prefixConstructor
 		);
-		eventStreamWriter = new EventStreamWriter(viewSpecificationConverter, new PrefixAdderImpl(), prefixConstructor);
+		eventStreamWriter = new EventStreamWriter(viewSpecificationConverter, new PrefixAdderImpl(List.of()), prefixConstructor);
 		shacl = RDFDataMgr.loadModel("shacl/collection-shape.ttl");
 		dataSetModel = RDFDataMgr.loadModel("dcat/dataset/valid.ttl");
 		eventSourceRetentionModels = List.of(RDFDataMgr.loadModel("retention/example_timebased.ttl"));
