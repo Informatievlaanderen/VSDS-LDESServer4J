@@ -47,8 +47,9 @@ public class EventStreamPostgresRepository implements EventStreamRepository {
 
     @Override
     @Transactional
-    public void saveEventStream(EventStreamTO eventStreamTO) {
-        repository.save(EventStreamMapper.toEntity(eventStreamTO));
+    public Integer saveEventStream(EventStreamTO eventStreamTO) {
+        var es = repository.save(EventStreamMapper.toEntity(eventStreamTO));
+        return es.getId();
     }
 
     @Override

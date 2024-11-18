@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource.KafkaSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
@@ -55,6 +56,8 @@ class EventStreamServiceImplTest {
 
 	@Mock
 	private EventStreamRepository eventStreamRepository;
+	@Mock
+	private KafkaSourceRepository kafkaSourceRepository;
 	@Mock
 	private ApplicationEventPublisher eventPublisher;
 	@Captor

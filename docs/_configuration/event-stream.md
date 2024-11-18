@@ -64,6 +64,10 @@ server:generic-eventstream a ldes:EventStream ;
 genericES:shape a sh:NodeShape .
 ````
 
+## Configuring an Event Stream with a Kafka source
+
+To configure an Event Stream that ingests members from a Kafka topic, please visit the [Kafka Ingest documentation](../ingest/kafka).
+
 ## Configuring a SHACL Shape
 
 [SHACL (Shapes Constraint Language)](https://www.w3.org./TR/shacl/) is a standard for validating RDF data and ensuring

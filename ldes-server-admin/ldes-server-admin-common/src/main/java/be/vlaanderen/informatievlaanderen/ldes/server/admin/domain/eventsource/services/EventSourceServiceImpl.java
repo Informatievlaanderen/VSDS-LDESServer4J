@@ -44,6 +44,6 @@ public class EventSourceServiceImpl implements EventSourceService {
         repository
                 .getAllEventSources()
                 .forEach(eventSource -> eventPublisher
-                        .publishEvent(new DeletionPolicyChangedEvent(eventSource.getCollectionName(), eventSource.getRetentionPolicies())));
+                        .publishEvent(new DeletionPolicyChangedEvent(eventSource.collectionName(), eventSource.retentionPolicies())));
     }
 }

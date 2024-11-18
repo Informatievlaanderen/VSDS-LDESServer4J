@@ -115,4 +115,8 @@ public class EventStreamEntity {
     public void setEventSourceEntity(EventSourceEntity eventSourceEntity) {
         this.eventSourceEntity = eventSourceEntity;
     }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class,
-		EventStreamWriter.class, EventStreamReader.class,
+		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
 		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})

@@ -1,0 +1,30 @@
+[
+  {
+    "@id": "http://test-data/mobility-hindrance/1"
+  },
+  {
+    "@id": "http://test-data/mobility-hindrance/1/ID",
+    "http://purl.org/dc/terms/isVersionOf": [
+      {
+        "@id": "http://test-data/mobility-hindrance/1"
+      }
+    ],
+    "@type": [
+      "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
+    ],
+    "http://www.opengis.net/ont/geosparql#asWKT": [
+      {
+        "@value": "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))",
+        "@type": "http://www.opengis.net/ont/geosparql#wktLiteral"
+      }
+    ],
+    "http://purl.org/dc/terms/created": [
+      {
+        "@value": "DATETIME"
+      }
+    ]
+  },
+  {
+    "@id": "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
+  }
+]

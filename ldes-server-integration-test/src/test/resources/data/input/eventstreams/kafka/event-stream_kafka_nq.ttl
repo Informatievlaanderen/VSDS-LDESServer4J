@@ -1,0 +1,16 @@
+@prefix ldes:         <https://w3id.org/ldes#> .
+@prefix dcterms:      <http://purl.org/dc/terms/> .
+@prefix prov:         <http://www.w3.org/ns/prov#> .
+@prefix tree:         <https://w3id.org/tree#>.
+@prefix sh:           <http://www.w3.org/ns/shacl#> .
+@prefix server:       <http://localhost:8080/> .
+@prefix xsd:          <http://www.w3.org/2001/XMLSchema#> .
+@prefix event-stream: <http://localhost:8080/event-stream/> .
+
+server:nq
+    a                   ldes:EventStream ;
+    ldes:timestampPath  dcterms:created ;
+    ldes:versionOfPath  dcterms:isVersionOf ;
+    ldes:kafkaSource   [ ldes:topic    "nq" ;
+                         ldes:mimeType "application/n-quads" ; ] ;
+    tree:shape          [ a sh:NodeShape] .

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators;
 
 import org.apache.jena.rdf.model.Model;
 
