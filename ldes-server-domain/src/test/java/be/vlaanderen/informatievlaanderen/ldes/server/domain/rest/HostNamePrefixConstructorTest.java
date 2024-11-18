@@ -35,7 +35,7 @@ class HostNamePrefixConstructorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/event-stream/timebased", "/event-stream/timebased?pageNumber=1"})
+    @ValueSource(strings = {"/event-stream/timebased", "/event-stream/timebased?pageNumber=1", "http://localhost:8080/event-stream/timebased", "http://localhost:8080/event-stream/timebased?pageNumber=1"})
     void given_FragmentId_when_CreatePrefixes_then_ReturnValidMap(String fragmentId) {
         Map<String, String> result = prefixConstructor.buildFragmentUri("event-stream", fragmentId);
 

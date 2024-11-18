@@ -167,7 +167,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void testHandleDcatViewEvents() {
-		final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+		final TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME, null);
 		final ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		final Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();

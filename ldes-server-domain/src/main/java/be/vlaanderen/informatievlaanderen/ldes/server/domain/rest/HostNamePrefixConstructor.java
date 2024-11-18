@@ -19,10 +19,10 @@ public class HostNamePrefixConstructor implements UriPrefixConstructor {
 	}
 
 	public Map<String, String> buildFragmentUri(String collectionName, String fragmentId) {
-		String[] fragmentIdParts = fragmentId.split("[/?]");
+		String[] fragmentIdParts = fragmentId.split(collectionName + "/" + "|\\?");
 		return Map.of(
 				collectionName, createCollectionUri(collectionName),
-				fragmentIdParts[2], hostname + fragmentId.split("\\?")[0] + "/"
+				fragmentIdParts[1], "%s/%s/%s/".formatted(hostname, collectionName, fragmentIdParts[1])
 		);
 	}
 
