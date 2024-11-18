@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator;
 
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.Resource;

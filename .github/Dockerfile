@@ -15,6 +15,8 @@ COPY ./ldes-server-ingest/ldes-server-ingest-rest/target/ldes-server-ingest-rest
 COPY ./ldes-server-fetch/ldes-server-fetch-rest/target/ldes-server-fetch-rest-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-admin/ldes-server-admin-rest/target/ldes-server-admin-rest-jar-with-dependencies.jar ./lib/
 
+COPY ./ldes-server-ingest/ldes-server-ingest-kafka/target/ldes-server-ingest-kafka-jar-with-dependencies.jar ./lib/
+
 # Plugin Fragmentations
 COPY ./ldes-server-fragmentation/ldes-server-fragmentation-geospatial/target/ldes-server-fragmentation-geospatial-jar-with-dependencies.jar ./lib/
 COPY ./ldes-server-fragmentation/ldes-server-fragmentation-timebased-hierarchical/target/ldes-server-fragmentation-timebased-hierarchical-jar-with-dependencies.jar ./lib/

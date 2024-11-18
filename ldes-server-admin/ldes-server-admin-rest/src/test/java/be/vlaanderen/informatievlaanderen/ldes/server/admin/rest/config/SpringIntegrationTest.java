@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.repository.EventSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource.KafkaSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
@@ -75,6 +76,9 @@ public class SpringIntegrationTest {
 	@Autowired
 	@MockBean
 	protected ShaclShapeRepository shaclShapeRepository;
+
+	@MockBean
+	protected KafkaSourceRepository kafkaSourceRepository;
 
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.MissingStatementException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.KafkaSourceProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,20 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 public class EventStreamReader {
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final RetentionModelExtractor retentionModelExtractor;
+	private final KafkaSourceReader kafkaSourceReader;
 
-	public EventStreamReader(ViewSpecificationConverter viewSpecificationConverter, RetentionModelExtractor retentionModelExtractor) {
+	public EventStreamReader(ViewSpecificationConverter viewSpecificationConverter, RetentionModelExtractor retentionModelExtractor, KafkaSourceReader kafkaSourceReader) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
 		this.retentionModelExtractor = retentionModelExtractor;
+		this.kafkaSourceReader = kafkaSourceReader;
 	}
 
 	public EventStreamTO read(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
 				.orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
+
+		final KafkaSourceProperties kafkaSourceProperties = kafkaSourceReader.readKafkaSourceProperties(collection, model);
+
 		return new EventStreamTO.Builder()
 				.withCollection(collection)
 				.withTimestampPath(getResource(model, LDES_TIMESTAMP_PATH).orElse(null))
@@ -36,6 +42,7 @@ public class EventStreamReader {
 				.withViews(getViews(model, collection))
 				.withShacl(getShaclFromModel(model))
 				.withEventSourceRetentionPolicies(getEventSourceRetentionPolicies(model))
+				.withKafkaSourceProperties(kafkaSourceProperties)
 				.build();
 	}
 

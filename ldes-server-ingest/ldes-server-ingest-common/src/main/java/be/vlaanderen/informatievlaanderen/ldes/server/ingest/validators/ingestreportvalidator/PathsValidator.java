@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.datatypes.RDFDatatype;

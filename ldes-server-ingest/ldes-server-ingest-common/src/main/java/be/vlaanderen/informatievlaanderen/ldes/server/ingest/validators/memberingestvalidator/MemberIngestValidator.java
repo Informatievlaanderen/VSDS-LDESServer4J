@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.memberingestvalidator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
@@ -6,9 +6,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.IngestReportValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.ShaclReportManager;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.IngestValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator.IngestReportValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.ingestreportvalidator.ShaclReportManager;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.shacl.ValidationReport;
