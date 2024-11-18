@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
@@ -188,5 +189,16 @@ class TreeNodeConverterImplTest {
 		treeNodeStatementCreator.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
 
 		assertThatThrownBy(() -> treeNodeConverter.toModel(treeNode)).isInstanceOf(MissingResourceException.class);
+	}
+
+	@Test
+	void given_RelativeUrlEnabled_when_Convert_then_DoNotCreateTreeNodePrefixes() {
+		treeNodeConverter = new TreeNodeConverterImpl(model -> model, new RelativeUriPrefixConstructor(), treeNodeStatementCreator);
+		TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
+				COLLECTION_NAME, null);
+
+		final Model result = treeNodeConverter.toModel(treeNode);
+
+		assertThat(result.getNsPrefixMap()).isEmpty();
 	}
 }

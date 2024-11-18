@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,5 +33,16 @@ class RelativeUriPrefixConstructorTest {
 		String prefix = prefixConstructor.buildPrefix();
 
 		assertThat(prefix).isEqualTo(expected);
+	}
+
+	@Test
+	void when_RequestAttributesAreNull_test_BuildPrefix() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(null);
+		request.setRequestURI("/test");
+
+		String prefix = prefixConstructor.buildPrefix();
+
+		assertThat(prefix).isEmpty();
 	}
 }
