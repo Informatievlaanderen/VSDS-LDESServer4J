@@ -9,7 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.StreamingTreeNodeFactory;
@@ -76,7 +77,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
-		RestResponseEntityExceptionHandler.class, UriPrefixConstructor.class,
+		RestResponseEntityExceptionHandler.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class,
 		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
 		TreeNodeStatementCreatorImpl.class, CharsetEncodingConfig.class, VersionHeaderControllerAdvice.class,
 })
@@ -306,7 +307,7 @@ class TreeNodeControllerTest {
 
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName, @Autowired TreeNodeStatementCreator treeNodeStatementCreator) {
-			PrefixAdder prefixAdder = new PrefixAdderImpl();
+			PrefixAdder prefixAdder = new PrefixAdderImpl(List.of());
 			HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		}

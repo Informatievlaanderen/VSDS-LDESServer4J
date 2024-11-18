@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -52,7 +53,7 @@ public class EventStreamWriter {
 				.add(eventSourceStatements)
 				.add(dataset);
 
-		if(prefixConstructor instanceof UriPrefixConstructor) {
+		if(prefixConstructor instanceof HostNamePrefixConstructor) {
 			eventStreamModel.setNsPrefix(eventStreamTO.getCollection(), prefixConstructor.buildPrefix() + "/" + eventStreamTO.getCollection() + "/");
 		}
 

@@ -11,7 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -41,8 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = { AdminServerDcatController.class, HttpModelConverter.class, PrefixAdderImpl.class,
-		AdminRestResponseEntityExceptionHandler.class, UriPrefixConstructor.class, RdfModelConverter.class })
+@ContextConfiguration(classes = {AdminServerDcatController.class, HttpModelConverter.class, PrefixAdderImpl.class,
+		AdminRestResponseEntityExceptionHandler.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class,
+		RdfModelConverter.class})
 @ExtendWith(MockitoExtension.class)
 class AdminDcatServerControllerTest {
 	private static final String ID = "id";
@@ -67,8 +69,8 @@ class AdminDcatServerControllerTest {
 			when(service.createDcatServer(any())).thenReturn(new DcatServer(ID, model));
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(readDataFromFile()))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
 					.andExpect(status().isCreated())
 					.andExpect(content().string(ID));
 
@@ -86,8 +88,8 @@ class AdminDcatServerControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(modelString))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(modelString))
 					.andExpect(status().isBadRequest());
 
 			verify(validator).validate(any(), any());
@@ -99,8 +101,8 @@ class AdminDcatServerControllerTest {
 			when(service.createDcatServer(any())).thenThrow(ExistingResourceException.class);
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(readDataFromFile()))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
 					.andExpect(status().isBadRequest());
 
 			InOrder inOrder = inOrder(service, validator);
@@ -119,8 +121,8 @@ class AdminDcatServerControllerTest {
 			when(service.createDcatServer(any())).thenReturn(new DcatServer(ID, model));
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(readDataFromFile()))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(service, validator);
@@ -137,8 +139,8 @@ class AdminDcatServerControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(modelString))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(modelString))
 					.andExpect(status().isBadRequest());
 
 			verify(validator).validate(any(), any());
@@ -151,8 +153,8 @@ class AdminDcatServerControllerTest {
 			when(service.updateDcatServer(eq(ID), any())).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-					.contentType(Lang.TURTLE.getHeaderString())
-					.content(readDataFromFile()))
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
 					.andExpect(status().isNotFound());
 
 			InOrder inOrder = inOrder(service, validator);
@@ -204,7 +206,7 @@ class AdminDcatServerControllerTest {
 			when(service.getComposedDcat()).thenReturn(model);
 
 			mockMvc.perform(get("/admin/api/v1/dcat")
-					.accept(MediaType.ALL))
+							.accept(MediaType.ALL))
 					.andExpect(status().isOk())
 					.andExpect(IsIsomorphic.with(model));
 
@@ -217,7 +219,7 @@ class AdminDcatServerControllerTest {
 			doThrow(new ShaclValidationException("validation-report", null)).when(service).getComposedDcat();
 
 			mockMvc.perform(get("/admin/api/v1/dcat")
-					.accept(MediaType.ALL))
+							.accept(MediaType.ALL))
 					.andExpect(status().isInternalServerError());
 
 			verify(service).getComposedDcat();

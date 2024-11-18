@@ -18,7 +18,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.encodig.CharsetEnco
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -54,9 +55,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminViewsRestController.class, CharsetEncodingConfig.class, PrefixAdderImpl.class,
 		HttpModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class,
-		ViewSpecificationConverter.class, ValidatorsConfig.class,
+		ViewSpecificationConverter.class, ValidatorsConfig.class, RdfModelConverter.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
-		FragmentationConfigExtractor.class, UriPrefixConstructor.class, RdfModelConverter.class})
+		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class})
 class AdminViewsRestControllerTest {
 	private static final String COLLECTION_NAME = "name1";
 	private static final String VIEW_NAME = "view1";

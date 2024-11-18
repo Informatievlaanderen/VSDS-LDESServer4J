@@ -9,7 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -31,10 +32,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { DcatViewsRestController.class, PrefixAdderImpl.class,
-		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, UriPrefixConstructor.class,
-		RdfModelConverter.class})
+@ActiveProfiles({"test", "rest"})
+@ContextConfiguration(classes = {DcatViewsRestController.class, PrefixAdderImpl.class,
+		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, RdfModelConverter.class,
+		HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class})
 class DcatViewsRestControllerTest {
 
 	private static final String COLLECTION_NAME = "collectionName";
@@ -62,8 +63,8 @@ class DcatViewsRestControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
+							.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
 
 			verifyNoInteractions(dcatViewService);
@@ -73,8 +74,8 @@ class DcatViewsRestControllerTest {
 		void should_Return201_when_CreatedSuccessfully() throws Exception {
 			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(dcat))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.content(writeToTurtle(dcat))
+							.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isCreated());
 
 			verify(dcatViewService)
@@ -91,8 +92,8 @@ class DcatViewsRestControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
+							.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
 
 			verifyNoInteractions(dcatViewService);
@@ -102,8 +103,8 @@ class DcatViewsRestControllerTest {
 		void should_Return200_when_UpdatedSuccessfully() throws Exception {
 			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(dcat))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.content(writeToTurtle(dcat))
+							.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isOk());
 
 			verify(dcatViewService)
@@ -116,8 +117,8 @@ class DcatViewsRestControllerTest {
 
 			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(dcat))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.content(writeToTurtle(dcat))
+							.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isNotFound());
 
 			verify(dcatViewService)
