@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.versioning.AdminVersionHeaderControllerAdvice;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -17,6 +16,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})
+		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class})
 @Import(BuildProperties.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
@@ -71,7 +71,7 @@ class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
 	@SpyBean
-	private AdminVersionHeaderControllerAdvice adminVersionHeaderControllerAdvice;
+	private VersionHeaderControllerAdvice versionHeaderControllerAdvice;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -131,7 +131,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
-			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
+			verify(versionHeaderControllerAdvice).addVersionHeader(any());
 		}
 	}
 
@@ -157,7 +157,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
-			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
+			verify(versionHeaderControllerAdvice).addVersionHeader(any());
 		}
 
 		@Test

@@ -12,7 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingSt
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.versioning.VersionHeaderControllerAdvice;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.versioning;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.info.BuildProperties;

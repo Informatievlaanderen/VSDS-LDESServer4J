@@ -22,7 +22,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.versioning.VersionHeaderControllerAdvice;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
