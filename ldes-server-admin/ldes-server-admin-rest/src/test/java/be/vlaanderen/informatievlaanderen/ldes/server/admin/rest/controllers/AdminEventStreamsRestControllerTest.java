@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.versioning.AdminVersionHeaderControllerAdvice;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -18,6 +17,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +28,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -45,6 +46,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeNQuads;
@@ -53,8 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 @ActiveProfiles({"test", "rest"})
@@ -63,17 +64,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class,
-		RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})
-@Import(BuildProperties.class)
+		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class})
+@Import(AdminEventStreamsRestControllerTest.VersionConfig.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	public static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	@MockBean
 	private EventStreamService eventStreamService;
-	@SpyBean
-	private AdminVersionHeaderControllerAdvice adminVersionHeaderControllerAdvice;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -128,12 +126,12 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(header().exists("X-App-Version"))
 					.andExpect(content().encoding(StandardCharsets.UTF_8))
 					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
-			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
 		}
 	}
 
@@ -154,12 +152,12 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(header().exists("X-App-Version"))
 					.andExpect(content().encoding(StandardCharsets.UTF_8))
 					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
-			verify(adminVersionHeaderControllerAdvice).addVersionHeader(any());
 		}
 
 		@Test
@@ -346,6 +344,16 @@ class AdminEventStreamsRestControllerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 		return Files.lines(path).collect(Collectors.joining());
+	}
+
+	@TestConfiguration
+	static class VersionConfig {
+		@Bean
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.setProperty("version", "1.0.0");
+			return new BuildProperties(properties);
+		}
 	}
 
 }

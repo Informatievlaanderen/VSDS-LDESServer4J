@@ -11,6 +11,7 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.mock;
 		"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres"
 })
 @ContextConfiguration(classes = {BucketisedMemberItemWriterConfig.class})
-@Import(PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class)
+@Import({PostgresBucketisationIntegrationTest.EventStreamControllerTestConfiguration.class, BuildProperties.class})
 @SuppressWarnings("java:S2187")
 public class PostgresBucketisationIntegrationTest {
 	@MockBean

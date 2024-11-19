@@ -95,8 +95,7 @@ public class PaginationSteps extends PostgresPaginationIntegrationTest {
 		final List<Object[]> batchArgs = memberIds.stream()
 				.map(member -> new Object[]{
 						"http://example.com/es/%d".formatted(member), collectionId, eventStream,
-						LocalDateTime.now(), 0, new byte[]{},
-						"%s/%s/%d".formatted(eventStream, eventStream, member)
+						LocalDateTime.now(), 0, new byte[]{}
 				})
 				.toList();
 
