@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
         IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, MemberIngestValidator.class,
-        BlankNodesValidator.class, PathsValidator.class, VersionHeaderControllerAdvice.class,
+        BlankNodesValidator.class, PathsValidator.class, VersionHeaderFilterConfig.class,
         MemberIngestControllerTest.VersionConfig.class})
 class MemberIngestControllerTest {
     private static final String VERSION = "4.0.4-SNAPSHOT";

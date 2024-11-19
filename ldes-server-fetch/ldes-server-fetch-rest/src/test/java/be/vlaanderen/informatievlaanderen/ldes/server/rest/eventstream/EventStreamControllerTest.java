@@ -12,7 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingSt
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderControllerAdvice;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -66,7 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		RestResponseEntityExceptionHandler.class, EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
-		PrefixConstructor.class, RdfModelConverter.class, VersionHeaderControllerAdvice.class
+		PrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
