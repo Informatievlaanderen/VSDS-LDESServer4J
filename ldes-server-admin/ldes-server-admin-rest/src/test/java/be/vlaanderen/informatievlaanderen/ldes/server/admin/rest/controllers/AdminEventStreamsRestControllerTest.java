@@ -15,7 +15,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
@@ -66,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
 		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class})
-@Import(BuildProperties.class)
+@Import(AdminEventStreamsRestControllerTest.VersionConfig.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
