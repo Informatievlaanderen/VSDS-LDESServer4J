@@ -8,7 +8,7 @@
   },"1": {
     "doc": "How To Run",
     "title": "LDES Server Config",
-    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case. An example basic config can be found here: . ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: datasource: url: jdbc:postgresql://localhost:5432/test username: admin password: admin batch: jdbc: initialize-schema: always rest: max-age: 120 max-age-immutable: 604800 . Here is an explanation provided for all the possibilities on how to tweak and configure your LDES Server: . | Feature | . | Property | Description | Required | Default value | . | API endpoints documentation | . | springdoc.api-docs.path | The url1 that will point to the Open API documentation. More Open-API documentation | No | . | springdoc.swagger-ui.path | The url1 that will point to the Swagger documentation. More Swagger UI documentation | No | true | . | URL Configuration | . | server.address | This is the url that will be used by the server application to bind to. This is especially useful when exposing actuator endpoints publicly. However, it must be known if the address cannot be found or is unavailable, the application will be unable to start. | No | | . | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url. | Yes | | . | ldes-server.use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI. For more | No | false | . | Ingest/Fetch | . | rest.max-age | Time in seconds that a mutable fragment can be considered up-to-date | No | 60 | . | rest.max-age-immutable | Time in seconds that an immutable fragment should not be refreshed | No | 604800 | . | PostgreSQL Storage2 | . | spring.datasource.url | URL that points to the PostgreSQL server | | | . | spring.datasource.username | Username to log into provided PostgreSQL instance | | | . | spring.datasource.password | Password to log into provided PostgreSQL instance | | | . | Bucketisation &amp; pagination batching | . | ldes-server.fragmentation-cron | Defines how often Fragmentation Service will check for unprocessed members (when present, trigger fragmentation job). | No | */30 * * * * * | . | Fragment Compaction | . | ldes-server.compaction-duration | Defines how long the redundant compacted fragments will remain on the server | No | PD7 | . | Maintenance | . | ldes-server.maintenance-cron | Defines how often the maintenance job will run, which includes retention, compaction and deletion3 | No | 0 0 0 * * * | . | Ports | . | ldes-server.ingest.port | Defines on which port the ingest endpoint is available | No | 8080 | . | ldes-server.fetch.port | Defines on which port the fetch endpoints are available | No | 8080 | . | ldes-server.admin.port | Defines on which port the admin endpoints are available4 | No | 8080 | . Note 1: The specified url will be prefixed by an optional server.servlet.context-path . Note 2: Since the 3.0 release, the MongoDB got replaced with a PostgreSQL implementation. For Migration instructions, please check the below migration paragraph. Note 3: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation @Scheduled adds a 6th parameter to support seconds. The cron schedules are in timezone ‘UTC’. More information about this can be found in the spring documentation . Note 4: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port. ",
+    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case. An example basic config can be found here: . ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: datasource: url: jdbc:postgresql://localhost:5432/test username: admin password: admin batch: jdbc: initialize-schema: always rest: max-age: 120 max-age-immutable: 604800 . Here is an explanation provided for all the possibilities on how to tweak and configure your LDES Server: . | Feature | . | Property | Description | Required | Default value | . | API endpoints documentation | . | springdoc.api-docs.path | The url1 that will point to the Open API documentation. More Open-API documentation | No | . | springdoc.swagger-ui.path | The url1 that will point to the Swagger documentation. More Swagger UI documentation | No | true | . | URL Configuration | . | server.address | This is the url that will be used by the server application to bind to. This is especially useful when exposing actuator endpoints publicly. However, it must be known if the address cannot be found or is unavailable, the application will be unable to start. | No | | . | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url. | Yes | | . | ldes-server.use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI. For more | No | false | . | Ingest/Fetch | . | rest.max-age | Time in seconds that a mutable fragment can be considered up-to-date | No | 60 | . | rest.max-age-immutable | Time in seconds that an immutable fragment should not be refreshed | No | 604800 | . | ldes-server.formatting.prefixes | Prefixes that will be used in the LDES Server when fetching data from the server in text/turtle format | No | | . | PostgreSQL Storage2 | . | spring.datasource.url | URL that points to the PostgreSQL server | | | . | spring.datasource.username | Username to log into provided PostgreSQL instance | | | . | spring.datasource.password | Password to log into provided PostgreSQL instance | | | . | Bucketisation &amp; pagination batching | . | ldes-server.fragmentation-cron | Defines how often Fragmentation Service will check for unprocessed members (when present, trigger fragmentation job). | No | */30 * * * * * | . | Fragment Compaction | . | ldes-server.compaction-duration | Defines how long the redundant compacted fragments will remain on the server | No | PD7 | . | Maintenance | . | ldes-server.maintenance-cron | Defines how often the maintenance job will run, which includes retention, compaction and deletion3 | No | 0 0 0 * * * | . | Ports | . | ldes-server.ingest.port | Defines on which port the ingest endpoint is available | No | 8080 | . | ldes-server.fetch.port | Defines on which port the fetch endpoints are available | No | 8080 | . | ldes-server.admin.port | Defines on which port the admin endpoints are available4 | No | 8080 | . Note 1: The specified url will be prefixed by an optional server.servlet.context-path . Note 2: Since the 3.0 release, the MongoDB got replaced with a PostgreSQL implementation. For Migration instructions, please check the below migration paragraph. Note 3: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation @Scheduled adds a 6th parameter to support seconds. The cron schedules are in timezone ‘UTC’. More information about this can be found in the spring documentation . Note 4: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port. ",
     "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/how-to-run.html#ldes-server-config",
     
     "relUrl": "/how-to-run.html#ldes-server-config"
@@ -461,34 +461,62 @@
     
     "relUrl": "/features/compaction"
   },"66": {
+    "doc": "RDF Prefixes",
+    "title": "RDF Prefixes",
+    "content": "For some RDF formats, e.g. text/turtle, prefixes can be added to have a more clean and readable output. There are several ways that prefixes will be added to the output of the LDES Server. | Well known prefixes | Configured prefixes | Event Stream and fragment specific prefixes | . ",
+    "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/rdf-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes"
+  },"67": {
+    "doc": "RDF Prefixes",
+    "title": "Well known prefixes",
+    "content": "Well known prefixes are some of the prefixes that are most frequent used in LDES and are hard coded in the LDES server and can be found here: . | Prefix | URI | . | foaf | http://xmlns.com/foaf/0.1/ | . | rdf | http://www.w3.org/1999/02/22-rdf-syntax-ns# | . | rdfs | http://www.w3.org/2000/01/rdf-schema# | . | skos | http://www.w3.org/2004/02/skos/core# | . | owl | http://www.w3.org/2002/07/owl# | . | xsd | http://www.w3.org/2001/XMLSchema# | . | geo | http://www.opengis.net/ont/geosparql# | . | dcat | http://www.w3.org/ns/dcat# | . | dct | http://purl.org/dc/terms/ | . | prov | http://www.w3.org/ns/prov# | . | m8g | http://data.europa.eu/m8g/ | . | tree | https://w3id.org/tree# | . | ldes | https://w3id.org/ldes# | . | sh | http://www.w3.org/ns/shacl# | . | shsh | http://www.w3.org/ns/shacl-shacl# | . ",
+    "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/rdf-prefixes#well-known-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#well-known-prefixes"
+  },"68": {
+    "doc": "RDF Prefixes",
+    "title": "Configured prefixes",
+    "content": "When needed, additional prefixes can be added to the LDES Server. This can come in handy for project specific prefixes. To add these prefixes, a map can be added to the application properties as follows . ldes-server: formatting: prefixes: prefix1: uri1 prefix2: uri2 prefix3: uri3 . In the following example are two prefixes added to the LDES Server: . ldes-server: formatting: prefixes: example: http://example.org/ vsds-verkeersmetingen: http://data.vlaanderen.be/ns/verkeersmetingen# . ",
+    "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/rdf-prefixes#configured-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#configured-prefixes"
+  },"69": {
+    "doc": "RDF Prefixes",
+    "title": "Event Stream and fragment specific prefixes",
+    "content": "Per event stream and fragment, prefixes will be extracted and added to the output. Those will look something like this: . Event stream . | collectionName: ${ldes-server.host-name}/{collectionName} | . Tree node . | collectionName: ${ldes-server.host-name}/{collectionName} | viewName: ${ldes-server.host-name}/{collectionName}/{viewName} | . ",
+    "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/rdf-prefixes#event-stream-and-fragment-specific-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#event-stream-and-fragment-specific-prefixes"
+  },"70": {
     "doc": "Using relative URI's",
     "title": "Using relative URI’s",
     "content": "When using the server with relative URI’s, all resources hosted on the server will have a URI relative to the page on which they are found. Note: When using relative urls, requests can not be performed with application/n-quads or application/n-triples as accept-type. This is because these types don’t support resolving the relative URI’s. Some alternatives that do support this are: text/turtle, application/trig, application/ld+json, etc. ",
     "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/relative-urls#using-relative-uris",
     
     "relUrl": "/features/relative-urls#using-relative-uris"
-  },"67": {
+  },"71": {
     "doc": "Using relative URI's",
     "title": "Using relative URI's",
     "content": " ",
     "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/relative-urls",
     
     "relUrl": "/features/relative-urls"
-  },"68": {
+  },"72": {
     "doc": "Skolemization",
     "title": "Skolemization",
     "content": " ",
     "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/skolemization",
     
     "relUrl": "/features/skolemization"
-  },"69": {
+  },"73": {
     "doc": "Skolemization",
     "title": "What is Skolemization",
     "content": "In the context of Linked Data, Skolemization is a process used to handle blank nodes or anonymous nodes in RDF (Resource Description Framework) graphs. These nodes, which lack unique identifiers, are frequently employed in RDF/S knowledge bases to represent complex attributes or resources with known properties but unknown identities. Skolemization in Linked Data involves the transformation of these blank nodes into Skolem Uniform Resource Identifiers (URIs). The process enhances the clarity makes it easier to reference these nodes in future datasets. This process is particularly useful when dealing with substantial volumes of unstructured data distributed across diverse sources. By improving the accuracy and relevance of RDF summaries in relation to original datasets, Skolemization enhances the efficiency and effectiveness of subsequent queries against these summaries. In summary, Skolemization in Linked Data provides a way to handle the complexity introduced by blank nodes in RDF graphs, thereby enhancing the clarity, interoperability, and usability of the data. Example . Suppose we have the following RDF triples with a blank node represented as _:: . _:bnode &lt;http://purl.org/dc/terms/title&gt; \"The Lord of the Rings\" . _:bnode &lt;http://purl.org/dc/terms/creator&gt; \"J.R.R. Tolkien\" . In this example, _: is a blank node that represents a resource (a book in this case) with known properties (title and creator) but an unknown identity. Through Skolemization, we can replace the blank node with a Skolem URI. The Skolem URI is typically a URL that is unique to the blank node and is generated by the system handling the RDF data. Here’s how it might look: . &lt;http://example.org/.well-known/genid/123456&gt; &lt;http://purl.org/dc/terms/title&gt; \"The Lord of the Rings\" . &lt;http://example.org/.well-known/genid/123456&gt; &lt;http://purl.org/dc/terms/creator&gt; \"J.R.R. Tolkien\" . In this Skolemized version, the blank node has been replaced with the Skolem URI http://example.org/.well-known/genid/123456. This URI is unique to the resource previously represented by the blank node, and can now be used to reference this resource in other datasets. This is a simple example, but it illustrates the basic process of Skolemization in Linked Data. ",
     "url": "/VSDS-LDESServer4J/3.6.0-SNAPSHOT/features/skolemization#what-is-skolemization",
     
     "relUrl": "/features/skolemization#what-is-skolemization"
-  },"70": {
+  },"74": {
     "doc": "Skolemization",
     "title": "Skolemization in LDES Server",
     "content": "Skolemization can be configured on Event Stream level. ",
