@@ -7,7 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.LdesFragmentIdentifier;
@@ -37,8 +38,8 @@ class TreeNodeConverterImplTest {
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
 	private static final Resource VIEW_URI = createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
-	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
-	private final PrefixConstructor prefixConstructor = new PrefixConstructor(HOST_NAME, false);
+	private final PrefixAdder prefixAdder = new PrefixAdderImpl(List.of());
+	private final HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(HOST_NAME);
 	private final TreeNodeStatementCreatorImpl treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
 	private TreeNodeConverterImpl treeNodeConverter;
 
@@ -167,7 +168,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void testHandleDcatViewEvents() {
-		final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+		final TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME, null);
 		final ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		final Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
@@ -188,5 +189,16 @@ class TreeNodeConverterImplTest {
 		treeNodeStatementCreator.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
 
 		assertThatThrownBy(() -> treeNodeConverter.toModel(treeNode)).isInstanceOf(MissingResourceException.class);
+	}
+
+	@Test
+	void given_RelativeUrlEnabled_when_Convert_then_DoNotCreateTreeNodePrefixes() {
+		treeNodeConverter = new TreeNodeConverterImpl(model -> model, new RelativeUriPrefixConstructor(), treeNodeStatementCreator);
+		TreeNode treeNode = new TreeNode("/" + COLLECTION_NAME + "/" + VIEW_NAME, false, true, List.of(), List.of(),
+				COLLECTION_NAME, null);
+
+		final Model result = treeNodeConverter.toModel(treeNode);
+
+		assertThat(result.getNsPrefixMap()).isEmpty();
 	}
 }

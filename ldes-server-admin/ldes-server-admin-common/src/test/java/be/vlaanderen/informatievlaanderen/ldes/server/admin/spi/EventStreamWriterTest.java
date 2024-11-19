@@ -5,8 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
@@ -35,16 +38,42 @@ class EventStreamWriterTest {
 	@BeforeEach
 	void setUp() {
 		String hostName = "http://localhost:8080";
-		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+		UriPrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(
 				new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(),
 				prefixConstructor
 		);
-		eventStreamWriter = new EventStreamWriter(viewSpecificationConverter, new PrefixAdderImpl(), prefixConstructor);
+		eventStreamWriter = new EventStreamWriter(viewSpecificationConverter, new PrefixAdderImpl(List.of()), prefixConstructor);
 		shacl = RDFDataMgr.loadModel("shacl/collection-shape.ttl");
 		dataSetModel = RDFDataMgr.loadModel("dcat/dataset/valid.ttl");
 		eventSourceRetentionModels = List.of(RDFDataMgr.loadModel("retention/example_timebased.ttl"));
+	}
+
+	@Test
+	void when_RelativeUrlEnabled_when_ConvertToModel_then_ModelHasEmptyPrefixMap() {
+		final UriPrefixConstructor uriPrefixConstructor = new RelativeUriPrefixConstructor();
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(
+				new RetentionModelExtractor(),
+				new FragmentationConfigExtractor(),
+				uriPrefixConstructor
+		);
+		final EventStreamWriter writerWithoutPrefixes = new EventStreamWriter(viewSpecificationConverter, model -> model, uriPrefixConstructor);
+
+		final Model result = writerWithoutPrefixes.write(baseBuilder().withShacl(ModelFactory.createDefaultModel()).build());
+
+		assertThat(result.getNsPrefixMap()).isEmpty();
+	}
+
+	@Test
+	void test_PrefixMapIsNotEmpty() {
+		final EventStreamTO eventStream = baseBuilder()
+				.withShacl(shacl)
+				.build();
+
+		final Model convertedModel = eventStreamWriter.write(eventStream);
+
+		assertThat(convertedModel.getNsPrefixMap()).containsKey(COLLECTION_NAME);
 	}
 
 	@Nested

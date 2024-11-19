@@ -16,7 +16,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +63,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})
+		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class,
+		RdfModelConverter.class, AdminVersionHeaderControllerAdvice.class})
 @Import(BuildProperties.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";

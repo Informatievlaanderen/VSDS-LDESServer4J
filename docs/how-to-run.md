@@ -99,6 +99,12 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>No</td>
     <td>604800</td>
   </tr>
+  <tr>
+    <td>ldes-server.formatting.prefixes</td>
+    <td><a href="./features/rdf-prefixes">Prefixes</a> that will be used in the LDES Server when fetching data from the server in text/turtle format</td>
+    <td>No</td>
+    <td></td>
+  </tr>
   <tr><td colspan="4"><b>PostgreSQL Storage</b><sup>2</sup></td></tr>
   <tr>
     <td>spring.datasource.url</td>
