@@ -12,7 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.Existing
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -37,7 +37,7 @@ class DcatServerServiceImplTest {
 	private static final String ID = "2a896d35-8c72-4723-83b3-add9b1be96aa";
 	private static final Model DCAT = ModelFactory.createDefaultModel();
 	private static final DcatServer SERVER_DCAT = new DcatServer(ID, DCAT);
-	private final PrefixConstructor prefixConstructor = new PrefixConstructor("http://localhost.dev", false);
+	private final HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor("http://localhost.dev");
 	private DcatServerService service;
 	@Mock
 	private DcatServerRepository repository;

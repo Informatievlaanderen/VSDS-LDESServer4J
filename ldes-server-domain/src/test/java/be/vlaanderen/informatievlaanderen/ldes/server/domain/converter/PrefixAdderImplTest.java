@@ -1,45 +1,32 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.collections.Prefixes;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PrefixAdderImplTest {
-	PrefixAdder prefixAdder = new PrefixAdderImpl();
+	private final Prefixes gipodPrefixes = () -> Map.of("gipod", "http://data.vlaanderen.be/ns/gipod#");
+	private final Prefixes wellKnownPrefixes = () -> Map.of(
+			"rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+			"dcterms", "http://purl.org/dc/terms/"
+	);
+	private final PrefixAdderImpl prefixAdder = new PrefixAdderImpl(List.of(gipodPrefixes, wellKnownPrefixes, Map::of));
 
 	@Test
-	void when_PrefixesAndLocalNamesAreValid_TheyAreAddedToPrefixMap() throws URISyntaxException, IOException {
-		Model model = readLdesMemberFromFile(getClass().getClassLoader(), "eventstream/example-gipod.nq");
-		Model updatedModel = prefixAdder.addPrefixesToModel(model);
-		Map<String, String> nsPrefixMap = updatedModel.getNsPrefixMap();
+	void test_AddPrefixesToMap() {
+		Model model = ModelFactory.createDefaultModel();
 
-		// verify that there is no prefix for a namespace if ONE or MORE of its
-		// localNames is invalid.
-		assertFalse(nsPrefixMap.containsKey("mobiliteit"));
+		final Map<String, String> nsPrefixMap = prefixAdder.addPrefixesToModel(model).getNsPrefixMap();
 
-		assertTrue(nsPrefixMap.containsKey("statuses"));
-		assertTrue(nsPrefixMap.containsKey("rdf"));
-	}
-
-	private Model readLdesMemberFromFile(ClassLoader classLoader, String fileName)
-			throws URISyntaxException, IOException {
-		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-
-		return RDFParserBuilder.create()
-				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
-				.toModel();
+		assertThat(nsPrefixMap)
+				.hasSize(3)
+				.containsAllEntriesOf(gipodPrefixes.getPrefixes())
+				.containsAllEntriesOf(wellKnownPrefixes.getPrefixes());
 	}
 }

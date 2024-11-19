@@ -16,6 +16,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -63,8 +65,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class})
-@Import(AdminEventStreamsRestControllerTest.VersionConfig.class)
+		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class})
+@Import(BuildProperties.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";

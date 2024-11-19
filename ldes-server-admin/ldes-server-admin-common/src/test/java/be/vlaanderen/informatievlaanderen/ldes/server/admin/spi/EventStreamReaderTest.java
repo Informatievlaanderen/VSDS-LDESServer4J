@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -33,7 +33,7 @@ class EventStreamReaderTest {
 	@BeforeEach
 	void setUp() {
 		String hostName = "http://localhost:8080";
-		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+		HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 		RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(retentionModelExtractor,
 				new FragmentationConfigExtractor(), prefixConstructor);
