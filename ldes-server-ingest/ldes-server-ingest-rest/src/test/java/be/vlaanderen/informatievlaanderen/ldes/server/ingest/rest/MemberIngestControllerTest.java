@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberSubjectNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
@@ -27,9 +28,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,22 +45,23 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
         IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, MemberIngestValidator.class,
-        BlankNodesValidator.class, PathsValidator.class})
+        BlankNodesValidator.class, PathsValidator.class, VersionHeaderFilterConfig.class,
+        MemberIngestControllerTest.VersionConfig.class})
 class MemberIngestControllerTest {
-
+    private static final String VERSION = "4.0.4-SNAPSHOT";
     @Autowired
     private MockMvc mockMvc;
 
@@ -81,7 +86,8 @@ class MemberIngestControllerTest {
         byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberBytes))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(header().exists("X-App-Version"));
         verify(memberIngester, times(1)).ingest(anyString(), any(Model.class));
     }
 
@@ -96,7 +102,8 @@ class MemberIngestControllerTest {
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Only 1 member is allowed per request on collection with version creation disabled")));
+		        .andExpect(header().exists("X-App-Version"))
+		        .andExpect(content().string(containsString("Only 1 member is allowed per request on collection with version creation disabled")));
     }
 
     @Test
@@ -106,6 +113,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
+		        .andExpect(header().exists("X-App-Version"))
                 .andExpect(content().string(containsString("Member must have exactly 1 statement with timestamp path: http://www.w3.org/ns/prov#generatedAtTime")));
         verifyNoInteractions(memberIngester);
     }
@@ -120,7 +128,8 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member must have exactly 1 statement with versionOf path: http://purl.org/dc/terms/isVersionOf")));
+		        .andExpect(header().exists("X-App-Version"))
+		        .andExpect(content().string(containsString("Member must have exactly 1 statement with versionOf path: http://purl.org/dc/terms/isVersionOf")));
     }
 
     @Test
@@ -135,7 +144,8 @@ class MemberIngestControllerTest {
         mockMvc.perform(post("/another-collection-name")
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+		        .andExpect(header().exists("X-App-Version"));
     }
 
     @Test
@@ -143,7 +153,8 @@ class MemberIngestControllerTest {
         String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
         mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+		        .andExpect(header().exists("X-App-Version"));
 
         verify(memberIngester).ingest(anyString(), any(Model.class));
     }
@@ -154,7 +165,8 @@ class MemberIngestControllerTest {
         doThrow(new ShaclValidationException("", ModelFactory.createDefaultModel())).when(memberIngester).ingest(anyString(), any(Model.class));
 
         mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+		        .andExpect(header().exists("X-App-Version"));
     }
 
     private byte[] readLdesMemberDataFromFile(String fileName, Lang rdfFormat) {
@@ -196,4 +208,13 @@ class MemberIngestControllerTest {
         }
     }
 
+    @TestConfiguration
+    static class VersionConfig {
+        @Bean
+        public BuildProperties buildProperties() {
+            final Properties properties = new Properties();
+            properties.setProperty("version", VERSION);
+            return new BuildProperties(properties);
+        }
+    }
 }
