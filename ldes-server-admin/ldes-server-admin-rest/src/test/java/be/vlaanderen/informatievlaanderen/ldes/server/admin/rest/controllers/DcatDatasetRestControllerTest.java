@@ -9,7 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { HttpModelConverter.class, PrefixAdderImpl.class, DcatDatasetRestController.class,
-		AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class, RdfModelConverter.class, RdfModelConverter.class })
+		AdminRestResponseEntityExceptionHandler.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class,
+		RdfModelConverter.class, RdfModelConverter.class })
 class DcatDatasetRestControllerTest {
 	private static final String COLLECTION_NAME = "collection";
 	@Autowired
