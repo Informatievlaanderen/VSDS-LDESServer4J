@@ -35,7 +35,7 @@ jobs:
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $>> $GITHUB_OUTPUT
       - name: Setup Ruby
-        uses: ruby/setup-ruby@0a29871fe2b0200a17a4497bae54fe5df0d973aa
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
@@ -47,7 +47,7 @@ jobs:
           bundle exec jekyll build --baseurl "${{env.base_url}}/${{steps.version.outputs.version}}" -s "./" -d "./_site"
         env:
           JEKYLL_ENV: production
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
