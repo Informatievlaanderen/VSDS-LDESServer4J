@@ -34,7 +34,7 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 	@Override
 	public Optional<TreeNode> findByFragmentIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
 		return pageEntityRepository
-				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
+				.findTreeNodeProjectionByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
 				.map(page -> {
 					var versionObjectCreator = versionObjectCreatorMap.get(page.getBucket().getView().getEventStream().getName());
 
@@ -45,15 +45,15 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 											treeMemberProjection.getModel(), treeMemberProjection.getVersionOf(),
 											treeMemberProjection.getTimestamp())))
 							.toList();
-					return TreeNodeMapper.fromPageEntity(page, members);
+					return TreeNodeMapper.fromProjection(page, members);
 				});
 	}
 
 	@Override
 	public Optional<TreeNode> findTreeNodeWithoutMembers(LdesFragmentIdentifier fragmentIdentifier) {
 		return pageEntityRepository
-				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
-				.map(page -> TreeNodeMapper.fromPageEntity(page, List.of()));
+				.findTreeNodeProjectionByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
+				.map(projection -> TreeNodeMapper.fromProjection(projection, List.of()));
 	}
 
 	@EventListener

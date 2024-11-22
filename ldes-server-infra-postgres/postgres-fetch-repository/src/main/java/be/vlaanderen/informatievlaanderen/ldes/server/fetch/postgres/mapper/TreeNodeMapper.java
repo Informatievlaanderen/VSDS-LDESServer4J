@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.entity.FetchPageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.projection.TreeNodeProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 
@@ -10,7 +10,7 @@ public class TreeNodeMapper {
 	private TreeNodeMapper() {
 	}
 
-	public static TreeNode fromPageEntity(FetchPageEntity page, List<Member> members) {
+	public static TreeNode fromProjection(TreeNodeProjection page, List<Member> members) {
 		return new TreeNode(
 				page.getPartialUrl(),
 				page.isImmutable(),
@@ -21,4 +21,5 @@ public class TreeNodeMapper {
 				page.getNextUpdateTs()
 		);
 	}
+
 }
