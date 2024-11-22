@@ -72,3 +72,13 @@ Feature: event streams can be configured at runtime
       | eventstream/streams/ldes.ttl                       | 201            | eventstream/streams-with-dcat/ldes-with-dcat.ttl | the saved event stream has no skolemization domain |
       | eventstream/streams/ldes-with-valid-skol-dom.ttl   | 201            | eventstream/streams-with-dcat/ldes-with-dcat.ttl | the saved event stream has a skolemization domain  |
       | eventstream/streams/ldes-with-invalid-skol-dom.ttl | 400            | shacl/invalid-skol-dom-report.ttl                | no event stream has been saved to the db           |
+
+  Scenario: put an event source to an existing event stream
+    Given a db containing one event stream
+    When the client posts an event source to that event stream
+    Then the client receives HTTP status 200
+
+  Scenario: put an event source to an existing event stream
+    Given an empty db
+    When the client posts an event source to that event stream
+    Then the client receives HTTP status 404

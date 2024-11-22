@@ -101,6 +101,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		Model shape = readModelFromFile("shacl/server-shape.ttl");
 		final EventStreamTO eventStreamTO = new EventStreamTO.Builder().withEventStream(eventStream).withShacl(shape).build();
 		when(eventStreamRepository.retrieveEventStreamTO(COLLECTION)).thenReturn(Optional.of(eventStreamTO));
+		when(eventSourceRepository.getEventSource(COLLECTION)).thenReturn(Optional.of(new EventSource(COLLECTION, List.of())));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 	}
 
@@ -222,5 +223,12 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@And("I verify no event stream has been saved to the db")
 	public void iVerifyNoEventStreamHasBeenSavedToTheDb() {
 		verify(eventStreamRepository, never()).saveEventStream(any());
+	}
+
+	@When("the client posts an event source to that event stream")
+	public void theClientPostsAnEventSourceToThatEventStream() throws Exception {
+		resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/{collection}/eventsource", COLLECTION)
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(readDataFromFile("retention/event-source.ttl")));
 	}
 }

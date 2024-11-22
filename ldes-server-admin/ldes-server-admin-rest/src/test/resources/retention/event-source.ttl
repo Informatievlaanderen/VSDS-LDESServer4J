@@ -1,0 +1,9 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+
+<> a ldes:EventSource ;
+    ldes:retentionPolicy [
+        a ldes:LatestVersionSubset ;
+        ldes:amount 2 ;
+      ].

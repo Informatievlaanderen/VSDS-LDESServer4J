@@ -81,7 +81,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 	@Override
 	public void updateEventSource(String collectionName, List<Model> eventSourceModel) {
-		eventSourceService.saveEventSource(collectionName, eventSourceModel);
+		eventSourceService.updateEventSource(collectionName, eventSourceModel);
 	}
 
 	@Override
