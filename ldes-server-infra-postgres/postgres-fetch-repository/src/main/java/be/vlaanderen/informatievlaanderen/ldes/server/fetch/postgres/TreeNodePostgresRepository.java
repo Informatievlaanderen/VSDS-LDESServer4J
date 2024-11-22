@@ -34,26 +34,26 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 	@Override
 	public Optional<TreeNode> findByFragmentIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
 		return pageEntityRepository
-				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
-				.map(page -> {
-					var versionObjectCreator = versionObjectCreatorMap.get(page.getBucket().getView().getEventStream().getName());
+				.findTreeNodeProjectionByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
+				.map(projection -> {
+					var versionObjectCreator = versionObjectCreatorMap.get(projection.getBucket().getView().getEventStream().getName());
 
-					final List<Member> members = pageMemberEntityRepository.findAllMembersByPageId(page.getId())
+					final List<Member> members = pageMemberEntityRepository.findAllMembersByPageId(projection.getId())
 							.stream()
 							.map(treeMemberProjection -> new Member(treeMemberProjection.getSubject(),
 									versionObjectCreator.createFromMember(treeMemberProjection.getSubject(),
 											treeMemberProjection.getModel(), treeMemberProjection.getVersionOf(),
 											treeMemberProjection.getTimestamp())))
 							.toList();
-					return TreeNodeMapper.fromPageEntity(page, members);
+					return TreeNodeMapper.fromProjection(projection, members);
 				});
 	}
 
 	@Override
 	public Optional<TreeNode> findTreeNodeWithoutMembers(LdesFragmentIdentifier fragmentIdentifier) {
 		return pageEntityRepository
-				.findTreeNodeByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
-				.map(page -> TreeNodeMapper.fromPageEntity(page, List.of()));
+				.findTreeNodeProjectionByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
+				.map(projection -> TreeNodeMapper.fromProjection(projection, List.of()));
 	}
 
 	@EventListener
