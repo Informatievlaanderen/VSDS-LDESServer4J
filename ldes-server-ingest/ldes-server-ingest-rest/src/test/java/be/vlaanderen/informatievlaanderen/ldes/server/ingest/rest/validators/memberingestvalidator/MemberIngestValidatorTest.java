@@ -109,8 +109,6 @@ class MemberIngestValidatorTest {
                             List.of("Member must have exactly 1 statement with timestamp path: " + TIMESTAMP_PATH)),
                     Arguments.of("example-ldes-member-multiple-version-ofs.nq", VERSION,
                             List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
-                    Arguments.of("example-ldes-member-without-version-of.nq", VERSION,
-                            List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
                     Arguments.of("example-ldes-member-wrong-type-version-of.nq", VERSION,
                             List.of("Object of statement with predicate: " + VERSIONOF_PATH + " should be a resource")),
                     Arguments.of("example-ldes-member-wrong-type-timestamp.nq", VERSION,
@@ -128,7 +126,8 @@ class MemberIngestValidatorTest {
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-state.nq"), STATE),
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-typeless-time.nq"), VERSION),
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-string-time.nq"), VERSION),
-                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION)
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION),
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member-without-version-of.nq"), VERSION)
             );
         }
     }
