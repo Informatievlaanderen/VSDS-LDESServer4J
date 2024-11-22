@@ -10,15 +10,15 @@ public class TreeNodeMapper {
 	private TreeNodeMapper() {
 	}
 
-	public static TreeNode fromProjection(TreeNodeProjection projection, List<Member> members) {
+	public static TreeNode fromProjection(TreeNodeProjection page, List<Member> members) {
 		return new TreeNode(
-				projection.getPartialUrl(),
-				projection.isImmutable(),
-				projection.isView(),
-				projection.getRelations().stream().map(TreeRelationMapper::fromRelation).toList(),
+				page.getPartialUrl(),
+				page.isImmutable(),
+				page.isView(),
+				page.getRelations().stream().map(TreeRelationMapper::fromRelation).toList(),
 				members,
-				projection.getBucket().getView().getEventStream().getName(),
-				projection.getNextUpdateTs()
+				page.getBucket().getView().getEventStream().getName(),
+				page.getNextUpdateTs()
 		);
 	}
 

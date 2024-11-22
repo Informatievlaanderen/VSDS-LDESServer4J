@@ -35,17 +35,17 @@ public class TreeNodePostgresRepository implements TreeNodeRepository {
 	public Optional<TreeNode> findByFragmentIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
 		return pageEntityRepository
 				.findTreeNodeProjectionByPartialUrl(fragmentIdentifier.asDecodedFragmentId())
-				.map(projection -> {
-					var versionObjectCreator = versionObjectCreatorMap.get(projection.getBucket().getView().getEventStream().getName());
+				.map(page -> {
+					var versionObjectCreator = versionObjectCreatorMap.get(page.getBucket().getView().getEventStream().getName());
 
-					final List<Member> members = pageMemberEntityRepository.findAllMembersByPageId(projection.getId())
+					final List<Member> members = pageMemberEntityRepository.findAllMembersByPageId(page.getId())
 							.stream()
 							.map(treeMemberProjection -> new Member(treeMemberProjection.getSubject(),
 									versionObjectCreator.createFromMember(treeMemberProjection.getSubject(),
 											treeMemberProjection.getModel(), treeMemberProjection.getVersionOf(),
 											treeMemberProjection.getTimestamp())))
 							.toList();
-					return TreeNodeMapper.fromProjection(projection, members);
+					return TreeNodeMapper.fromProjection(page, members);
 				});
 	}
 
