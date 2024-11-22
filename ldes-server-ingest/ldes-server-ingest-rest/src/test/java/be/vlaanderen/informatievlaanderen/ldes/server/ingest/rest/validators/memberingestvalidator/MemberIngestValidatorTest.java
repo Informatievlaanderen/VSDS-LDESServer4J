@@ -111,6 +111,8 @@ class MemberIngestValidatorTest {
                             List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
                     Arguments.of("example-ldes-member-wrong-type-version-of.nq", VERSION,
                             List.of("Object of statement with predicate: " + VERSIONOF_PATH + " should be a resource")),
+                    Arguments.of("example-ldes-member-without-version-of.nq", VERSION,
+                            List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
                     Arguments.of("example-ldes-member-wrong-type-timestamp.nq", VERSION,
                             List.of("Object of statement with predicate: " + TIMESTAMP_PATH + " should be a literal either of type " + XSDDatatype.XSDdateTime.getURI() + " or " + XSDDatatype.XSDstring.getURI())),
                     Arguments.of("example-ldes-member-dangling-nodes.nq", VERSION, List.of("Object graphs don't allow blank nodes to occur outside of a named object.")),
@@ -126,8 +128,7 @@ class MemberIngestValidatorTest {
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-state.nq"), STATE),
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-typeless-time.nq"), VERSION),
                     Arguments.of(RDFDataMgr.loadModel("example-ldes-member-string-time.nq"), VERSION),
-                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION),
-                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member-without-version-of.nq"), VERSION)
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION)
             );
         }
     }
