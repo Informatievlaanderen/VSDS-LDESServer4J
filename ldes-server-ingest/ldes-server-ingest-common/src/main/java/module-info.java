@@ -8,8 +8,7 @@ module ldes.ingest.domain {
     requires org.apache.jena.arq;
     requires micrometer.core;
     requires micrometer.observation;
-	requires spring.core;
-	exports be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories;
     exports be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 }
