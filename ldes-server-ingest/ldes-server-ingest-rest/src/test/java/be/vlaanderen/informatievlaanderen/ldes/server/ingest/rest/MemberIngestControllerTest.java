@@ -103,8 +103,7 @@ class MemberIngestControllerTest {
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
 		        .andExpect(header().exists("X-App-Version"))
-		        .andExpect(content().string(containsString("Member must have exactly 1 statement with versionOf path")))
-		        .andExpect(content().string(containsString("Member must have exactly 1 statement with timestamp path")));
+		        .andExpect(content().string(containsString("Only 1 member is allowed per request on collection with version creation disabled")));
     }
 
     @Test
