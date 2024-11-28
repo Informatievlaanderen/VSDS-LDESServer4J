@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface EventSourceService {
     Optional<EventSource> getEventSource(String collectionName);
 
-    void saveEventSource(String collectionName, List<Model> retentionPolicies);
+    void updateEventSource(String collectionName, List<Model> retentionPolicies);
 }

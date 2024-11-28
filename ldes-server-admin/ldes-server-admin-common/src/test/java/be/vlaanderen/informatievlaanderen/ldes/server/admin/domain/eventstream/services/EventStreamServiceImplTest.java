@@ -146,7 +146,7 @@ class EventStreamServiceImplTest {
 		service.updateEventSource(COLLECTION, List.of());
 
 		InOrder inOrder = Mockito.inOrder(eventSourceService, eventPublisher);
-		inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
+		inOrder.verify(eventSourceService).updateEventSource(COLLECTION, List.of());
 	}
 
 	@Nested
