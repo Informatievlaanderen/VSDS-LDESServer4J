@@ -28,6 +28,7 @@ public class Paginator implements Tasklet {
 		long bucketId = context.getLong("bucketId");
 
 		List<Long> members = pageMemberRepository.getUnpaginatedMembersForBucket(bucketId);
+		chunkContext.getStepContext().getStepExecution().setReadCount(members.size());
 
 		if (members.isEmpty()) {
 			return RepeatStatus.FINISHED;
@@ -48,7 +49,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		contribution.getStepExecution().setWriteCount(members.size());
+		chunkContext.getStepContext().getStepExecution().setWriteCount(members.size());
 		return RepeatStatus.FINISHED;
 	}
 
