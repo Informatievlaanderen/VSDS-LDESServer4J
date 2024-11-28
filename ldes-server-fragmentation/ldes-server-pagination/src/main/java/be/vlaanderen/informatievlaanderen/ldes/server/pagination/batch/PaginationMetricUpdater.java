@@ -23,17 +23,20 @@ public class PaginationMetricUpdater implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		final long bucketisedMemberCount = getBucketisationStepExecution(jobExecution).getWriteCount();
-		updateViewStats(bucketisedMemberCount, Objects.requireNonNull(jobExecution.getJobParameters().getLong("viewId")));
-		fragmentationMetricsService.updatePaginationCounts(jobExecution.getJobParameters().getString("collectionName"));
+		long viewId = Objects.requireNonNull(jobExecution.getJobParameters().getLong("viewId"));
+		String collectionName = Objects.requireNonNull(jobExecution.getJobParameters().getString("collectionName"));
+
+		updateViewStats(getBucketisedMemberCount(jobExecution), viewId);
+		fragmentationMetricsService.updatePaginationCounts(collectionName);
 	}
 
 
-	private StepExecution getBucketisationStepExecution(JobExecution jobExecution) {
+	private long getBucketisedMemberCount(JobExecution jobExecution) {
 		return jobExecution.getStepExecutions().stream()
 				.filter(stepExecution -> stepExecution.getStepName().equals(BUCKETISATION_STEP))
 				.findFirst()
-				.orElseThrow(() -> new IllegalStateException("No step execution found"));
+				.map(StepExecution::getWriteCount)
+				.orElse(0L);
 	}
 
 	private void updateViewStats(long uniqueMemberCount, long viewId) {

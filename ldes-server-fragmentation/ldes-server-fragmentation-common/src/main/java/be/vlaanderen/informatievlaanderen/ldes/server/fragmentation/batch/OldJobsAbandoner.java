@@ -12,21 +12,21 @@ import java.time.LocalDateTime;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefintions.FRAGMENTATION_JOB;
 
 @Component
-public class OldJobsCleaner implements CommandLineRunner {
+public class OldJobsAbandoner implements CommandLineRunner {
 	private final JobRepository jobRepository;
 	private final JobExplorer jobExplorer;
 
-	public OldJobsCleaner(JobRepository jobRepository, JobExplorer jobExplorer) {
+	public OldJobsAbandoner(JobRepository jobRepository, JobExplorer jobExplorer) {
 		this.jobRepository = jobRepository;
 		this.jobExplorer = jobExplorer;
 	}
 
 	@Override
 	public void run(String... args) {
-		jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB).forEach(this::stopJob);
+		jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB).forEach(this::abandonJob);
 	}
 
-	private void stopJob(JobExecution jobExecution) {
+	private void abandonJob(JobExecution jobExecution) {
 		jobExecution.setStatus(BatchStatus.ABANDONED);
 		jobExecution.setEndTime(LocalDateTime.now());
 		jobRepository.update(jobExecution);
