@@ -1,7 +1,7 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix tree: <https://w3id.org/tree#>.
 @prefix server: <http://localhost:8080/name1/> .
-@prefix viewName: <http://localhost:8080/name1/view2/> .
+@prefix viewName: <http://localhost:8080/name1/view1/> .
 
 viewName:description
     a tree:ViewDescription ;
@@ -10,10 +10,7 @@ viewName:description
         a ldes:DurationAgoPolicy ;
         tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
       ] ;
-    tree:fragmentationStrategy ([
-      a     tree:ReferenceFragmentation ;
-      tree:property  "ldes:propertyPath"
-    ]) .
+    tree:fragmentationStrategy () .
 
-server:view2 a tree:Node ;
-        tree:viewDescription <http://localhost:8080/name1/view2/description> .
+server:view1 a tree:Node ;
+        tree:viewDescription <http://localhost:8080/name1/view1/description> .

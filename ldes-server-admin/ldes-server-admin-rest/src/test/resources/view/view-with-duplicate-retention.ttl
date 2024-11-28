@@ -15,7 +15,7 @@ viewName:description
         tree:value "P1D"^^<http://www.w3.org/2001/XMLSchema#duration> ;
       ] ;
     tree:fragmentationStrategy ([
-      a     tree:ExampleFragmentation ;
+      a     tree:ReferenceFragmentation ;
       tree:property  "ldes:propertyPath"
     ]) .
 

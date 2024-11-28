@@ -15,7 +15,7 @@ viewName:description
       ldes:amount 2 ;
     ] ;
     tree:fragmentationStrategy ([
-      a     tree:ExampleFragmentation ;
+      a     tree:ReferenceFragmentation ;
       tree:property  "ldes:propertyPath"
     ]) .
 
