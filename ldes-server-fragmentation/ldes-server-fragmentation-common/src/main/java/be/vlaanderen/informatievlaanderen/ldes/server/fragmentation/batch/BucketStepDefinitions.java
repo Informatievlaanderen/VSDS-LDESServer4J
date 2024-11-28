@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class BucketJobDefinitions {
+public class BucketStepDefinitions {
 	public static final String BUCKETISATION_STEP = "bucketisation";
 	public static final int CHUNK_SIZE = 250;
 

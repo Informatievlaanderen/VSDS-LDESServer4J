@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationMetricsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationJobScheduler;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.FragmentationMetricsService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch.delegates.BucketisedMemberItemWriterConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
@@ -25,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.mockito.Mockito.mock;
 
 @CucumberContextConfiguration
-@EnableAutoConfiguration(exclude = FragmentationService.class)
+@EnableAutoConfiguration(exclude = FragmentationJobScheduler.class)
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase(refresh = AutoConfigureEmbeddedDatabase.RefreshMode.BEFORE_EACH_TEST_METHOD)
 @EnableBatchProcessing

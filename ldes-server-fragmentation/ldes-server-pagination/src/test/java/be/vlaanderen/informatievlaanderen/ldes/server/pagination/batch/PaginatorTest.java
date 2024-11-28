@@ -15,7 +15,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -35,8 +34,6 @@ class PaginatorTest {
 	private PageMemberRepository pageMemberRepository;
 	@Mock
 	private PageRepository pageRepository;
-	@Mock
-	private JdbcTemplate jdbcTemplate;
 	@InjectMocks
 	Paginator paginator;
 	@Captor
