@@ -53,6 +53,10 @@ public class MemberPostgresRepository implements MemberRepository {
 					})
 					.toList();
 
+			// Note: that we lock the collection row to ensure no interleaved sequence numbers are assigned to the member_id
+			// Note: that the lock is released when txn is committed (upon method exit as it is transactional)
+			jdbcTemplate.queryForObject("SELECT name FROM collections WHERE collection_id = ? FOR UPDATE", String.class, collectionId);
+
 			jdbcTemplate.batchUpdate(INSERT_SQL, batchArgs);
 
 			updateCollectionStats(members.size(), collectionId);
