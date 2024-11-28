@@ -62,7 +62,7 @@ public class BucketisationItemWriter implements ItemWriter<Bucket> {
 				      bucketized_count = vs.bucketized_count + ?,
 				      bucketized_last_id = ?
 				    where view_id = ?;
-				    """;
+				""";
 
 		jdbcTemplate.update(sql, uniqueMemberCount, lastMemberId, viewId);
 	}

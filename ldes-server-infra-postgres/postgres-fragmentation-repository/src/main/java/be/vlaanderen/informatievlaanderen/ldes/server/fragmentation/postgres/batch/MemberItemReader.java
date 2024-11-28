@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketJobDefinitions.CHUNK_SIZE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketStepDefinitions.CHUNK_SIZE;
 
 @Configuration
 public class MemberItemReader {

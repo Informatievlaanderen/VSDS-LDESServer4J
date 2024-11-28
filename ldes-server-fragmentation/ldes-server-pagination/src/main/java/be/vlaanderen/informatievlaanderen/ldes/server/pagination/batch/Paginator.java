@@ -8,7 +8,6 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,12 +16,10 @@ import java.util.List;
 public class Paginator implements Tasklet {
 	private final PageMemberRepository pageMemberRepository;
 	private final PageRepository pageRepository;
-	private final JdbcTemplate jdbcTemplate;
 
-	public Paginator(PageMemberRepository pageMemberRepository, PageRepository pageRepository, JdbcTemplate jdbcTemplate) {
+	public Paginator(PageMemberRepository pageMemberRepository, PageRepository pageRepository) {
 		this.pageMemberRepository = pageMemberRepository;
 		this.pageRepository = pageRepository;
-		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
@@ -51,8 +48,7 @@ public class Paginator implements Tasklet {
 			openPage = fillPageWithMembers(openPage, pageMembers);
 		}
 
-		updateViewStats(members.size(), Long.parseLong(chunkContext.getStepContext().getJobParameters().get("viewId").toString()));
-
+		contribution.getStepExecution().setWriteCount(members.size());
 		return RepeatStatus.FINISHED;
 	}
 
@@ -62,19 +58,9 @@ public class Paginator implements Tasklet {
 
 		if (openPage.isFull()) {
 			return pageRepository.createNextPage(openPage);
-		}
-		else {
+		} else {
 			return openPage;
 		}
 	}
 
-	private void updateViewStats(long uniqueMemberCount, long viewId) {
-		String sql = """
-				 update view_stats vs set
-					paginated_count = vs.paginated_count + ?
-					where view_id = ?;
-				""";
-
-		jdbcTemplate.update(sql, uniqueMemberCount, viewId);
-	}
 }

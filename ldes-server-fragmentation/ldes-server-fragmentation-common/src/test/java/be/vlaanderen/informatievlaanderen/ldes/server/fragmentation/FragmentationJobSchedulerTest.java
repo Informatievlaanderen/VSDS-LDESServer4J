@@ -15,6 +15,8 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 
@@ -22,13 +24,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationJobScheduler.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FragmentationServiceTest {
+class FragmentationJobSchedulerTest {
 	private static final String COLLECTION = "collection";
+	private static final String FRAGMENTATION_JOB_NAME = "fragmentation";
 	@Mock
 	private Step bucketStep;
 	@Mock
@@ -45,12 +48,16 @@ class FragmentationServiceTest {
 	private UnprocessedViewRepository unprocessedViewRepository;
 	@Captor
 	private ArgumentCaptor<JobParameters> captor;
-	private FragmentationService fragmentationService;
+	private FragmentationJobScheduler fragmentationJobScheduler;
 	private List<UnprocessedView> unprocessedViews;
 
 	@BeforeEach
 	void setUp() {
-		fragmentationService = new FragmentationService(jobLauncher, jobRepository, jobExplorer, bucketStep, paginationStep, unprocessedViewRepository);
+		final SimpleJobBuilder builder = new JobBuilder(FRAGMENTATION_JOB_NAME, jobRepository)
+				.start(bucketStep)
+				.next(paginationStep);
+
+		fragmentationJobScheduler = new FragmentationJobScheduler(jobLauncher, jobExplorer, builder, unprocessedViewRepository);
 		unprocessedViews =  List.of(
 				new UnprocessedView(1, COLLECTION, 1, "v1"),
 				new UnprocessedView(1, COLLECTION, 2, "v2")
@@ -61,11 +68,11 @@ class FragmentationServiceTest {
 	void when_unprocessedViews_then_triggerJobsForEachView() throws Exception {
 		when(unprocessedViewRepository.findAll()).thenReturn(unprocessedViews);
 
-		fragmentationService.scheduledJobLauncher();
+		fragmentationJobScheduler.scheduleJobs();
 
 		verify(jobLauncher, times(2)).run(any(), captor.capture());
 		assertThat(captor.getAllValues())
-				.map(FragmentationServiceTest::mapParamsToUnprocessedView)
+				.map(FragmentationJobSchedulerTest::mapParamsToUnprocessedView)
 				.containsExactlyInAnyOrderElementsOf(unprocessedViews);
 	}
 
@@ -73,7 +80,7 @@ class FragmentationServiceTest {
 	void when_noUnprocessedViews_then_triggerNone() {
 		when(unprocessedViewRepository.findAll()).thenReturn(List.of());
 
-		fragmentationService.scheduledJobLauncher();
+		fragmentationJobScheduler.scheduleJobs();
 
 		verifyNoInteractions(jobLauncher);
 	}
@@ -90,13 +97,13 @@ class FragmentationServiceTest {
 				.addString(COLLECTION_NAME, COLLECTION)
 				.toJobParameters();
 		when(jobExecution.getJobParameters()).thenReturn(jobParameters);
-		when(jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB)).thenReturn(Set.of(jobExecution));
+		when(jobExplorer.findRunningJobExecutions("fragmentation")).thenReturn(Set.of(jobExecution));
 
-		fragmentationService.scheduledJobLauncher();
+		fragmentationJobScheduler.scheduleJobs();
 
 		verify(jobLauncher).run(any(), captor.capture());
 		assertThat(captor.getValue())
-				.extracting(FragmentationServiceTest::mapParamsToUnprocessedView)
+				.extracting(FragmentationJobSchedulerTest::mapParamsToUnprocessedView)
 				.isEqualTo(new UnprocessedView(1, COLLECTION, 2, "v2"));
 	}
 
