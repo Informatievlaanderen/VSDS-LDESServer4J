@@ -4,20 +4,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Unp
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.UnprocessedViewRepository;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
@@ -49,23 +47,26 @@ public class FragmentationJobScheduler {
 
 	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduleJobs() {
-		unprocessedViewRepository.findAll()
-				.parallelStream()
-				.filter(this::noJobsRunning)
-				.forEach(unprocessedView -> {
-					try {
-						jobLauncher.run(fragmentationJob, new JobParametersBuilder()
-								.addLong(VIEW_ID, (long) unprocessedView.viewId())
-								.addLong(COLLECTION_ID, (long) unprocessedView.collectionId())
-								.addString(VIEW_NAME, unprocessedView.viewName())
-								.addString(COLLECTION_NAME, unprocessedView.collectionName())
-								.addLocalDateTime("triggered", LocalDateTime.now())
-								.toJobParameters());
-					} catch (JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
-					         JobParametersInvalidException | JobRestartException e) {
-						throw new FragmentationJobException(e);
-					}
-				});
+		List<UnprocessedView> unprocessedViews = unprocessedViewRepository.findAll();
+		while (!unprocessedViews.isEmpty()) {
+			unprocessedViews
+					.parallelStream()
+					.filter(this::noJobsRunning)
+					.forEach(unprocessedView -> {
+						try {
+							jobLauncher.run(fragmentationJob, new JobParametersBuilder()
+									.addLong(VIEW_ID, (long) unprocessedView.viewId())
+									.addLong(COLLECTION_ID, (long) unprocessedView.collectionId())
+									.addString(VIEW_NAME, unprocessedView.viewName())
+									.addString(COLLECTION_NAME, unprocessedView.collectionName())
+									.addLocalDateTime("triggered", LocalDateTime.now())
+									.toJobParameters());
+						} catch (JobExecutionException e) {
+							throw new FragmentationJobException(e);
+						}
+					});
+			unprocessedViews = unprocessedViewRepository.findAll();
+		}
 	}
 
 	private boolean noJobsRunning(UnprocessedView unprocessedView) {
