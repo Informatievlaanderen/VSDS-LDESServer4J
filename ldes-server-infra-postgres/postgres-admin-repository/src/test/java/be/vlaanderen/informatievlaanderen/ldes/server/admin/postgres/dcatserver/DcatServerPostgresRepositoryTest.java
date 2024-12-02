@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,16 +96,6 @@ class DcatServerPostgresRepositoryTest {
 
 	@Nested
 	class FindSingleDcatServer {
-
-		@Test
-		void should_ThrowException_when_MoreThanOneResultFound() {
-			List<DcatCatalogEntity> entities = List.of(
-					new DcatCatalogEntity("id1", ""),
-					new DcatCatalogEntity("id2", ""));
-			when(dcatCatalogEntityRepository.findAll()).thenReturn(entities);
-
-			assertThrows(IllegalStateException.class, () -> dcatServerRepository.findSingleDcatServer());
-		}
 
 		@Test
 		void should_ReturnEmpty_when_NoResultsFound() {

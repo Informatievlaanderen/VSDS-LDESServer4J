@@ -43,11 +43,9 @@ public class DcatCatalogPostgresRepository implements DcatServerRepository {
 
 	@Override
 	public Optional<DcatServer> findSingleDcatServer() {
-		List<DcatServer> servers = repository.findAll().stream().map(converter::toDcatServer).toList();
-		if (servers.size() > 1) {
-			throw new IllegalStateException("Multiple dcatServers found. There should be 0 or 1 record of this.");
-		}
-
-		return servers.isEmpty() ? Optional.empty() : Optional.of(servers.get(0));
+		return repository.findAll()
+				.stream()
+				.map(converter::toDcatServer)
+				.findFirst();
 	}
 }
