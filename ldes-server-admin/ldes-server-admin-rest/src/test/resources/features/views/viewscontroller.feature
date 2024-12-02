@@ -5,11 +5,17 @@ Feature: AdminViewsRestController
     When I POST a view from file "<fileName>" to "/admin/api/v1/eventstreams/name1/views"
     Then I obtain an HTTP status <status>
     Examples:
-      | fileName                                | status |
-      | view/view-without-retention.ttl        | 201    |
-      | view/view.ttl                          | 201    |
-      | view/view-with-duplicate-retention.ttl | 400    |
-      | view/view-with-two-diff-retention.ttl  | 201    |
+      | fileName                                    | status |
+      | view/view-without-retention.ttl             | 201    |
+      | view/view.ttl                               | 201    |
+      | view/view-with-duplicate-retention.ttl      | 400    |
+      | view/view-with-two-diff-retention.ttl       | 201    |
+      | view/view-with-empty-retention.ttl          | 400    |
+      | view/view-with-wrong-type-retention.ttl     | 400    |
+      | view/view-with-wrong-type-fragmentation.ttl | 400    |
+      | view/view-without-fragmentation.ttl         | 400    |
+      | view/view-with-empty-fragmentation.ttl      | 201    |
+      | view/view-with-multiple-fragmentations.ttl  | 201    |
 
   Scenario: Add a view to a non-existing event stream
     Given an LDES server with an event stream

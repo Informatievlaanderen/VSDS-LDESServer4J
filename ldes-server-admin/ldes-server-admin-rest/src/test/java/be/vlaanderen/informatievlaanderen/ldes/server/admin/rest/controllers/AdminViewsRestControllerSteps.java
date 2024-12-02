@@ -76,7 +76,7 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 		view2 = RDFDataMgr.loadModel("view/another-view.ttl");
 
 		final FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("ExampleFragmentation");
+		fragmentationConfig.setName("ReferenceFragmentation");
 		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 
 		final Model retention = RDFDataMgr.loadModel("retention/ten-minutes-timebased-policy.ttl");
