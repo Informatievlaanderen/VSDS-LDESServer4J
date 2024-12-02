@@ -1,0 +1,21 @@
+@prefix server: <http://localhost:8080/mobility-hindrances/> .
+@prefix tree: <https://w3id.org/tree#> .
+@prefix viewName: <http://localhost:8080/mobility-hindrances/geospatial/> .
+
+server:geospatial
+        a tree:Node ;
+        tree:viewDescription viewName:description .
+
+viewName:description
+        a   tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
+        tree:fragmentationStrategy ([
+            a tree:GeospatialFragmentation ;
+            tree:maxZoom 15;
+            tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
+        ] [
+            a tree:HierarchicalTimeBasedFragmentation ;
+            tree:maxGranularity "day"  ;
+            tree:fragmentationPath <http://www.w3.org/ns/prov#generatedAtTime> ;
+        ] ) .
+
