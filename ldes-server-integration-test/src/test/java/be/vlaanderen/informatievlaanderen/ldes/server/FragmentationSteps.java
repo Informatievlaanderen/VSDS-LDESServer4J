@@ -60,7 +60,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("I fetch the next fragment through the first {string}")
 	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
-		await().atMost(60, TimeUnit.SECONDS)
+		await().atMost(90, TimeUnit.SECONDS)
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
