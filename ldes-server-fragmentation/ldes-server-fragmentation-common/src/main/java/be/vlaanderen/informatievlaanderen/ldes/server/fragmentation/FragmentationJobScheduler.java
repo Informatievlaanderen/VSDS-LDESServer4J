@@ -3,24 +3,23 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.UnprocessedView;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.FragmentationJobException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.UnprocessedViewRepository;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionException;
-import org.springframework.batch.core.JobParametersBuilder;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.ContinueFragmentationTriggerEvent;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.FRAGMENTATION_CRON;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BatchConfiguration.ASYNC_JOB_LAUNCHER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefintions.FRAGMENTATION_JOB;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefinitions.FRAGMENTATION_JOB;
 
 @Service
 @EnableScheduling
@@ -47,40 +46,42 @@ public class FragmentationJobScheduler {
 
 	@Scheduled(cron = FRAGMENTATION_CRON)
 	public void scheduleJobs() {
-		List<UnprocessedView> unprocessedViews = unprocessedViewRepository.findAll();
-		while (!unprocessedViews.isEmpty()) {
-			unprocessedViews
-					.parallelStream()
-					.filter(this::noJobsRunning)
-					.forEach(unprocessedView -> {
-						try {
-							jobLauncher.run(fragmentationJob, new JobParametersBuilder()
-									.addLong(VIEW_ID, (long) unprocessedView.viewId())
-									.addLong(COLLECTION_ID, (long) unprocessedView.collectionId())
-									.addString(VIEW_NAME, unprocessedView.viewName())
-									.addString(COLLECTION_NAME, unprocessedView.collectionName())
-									.addLocalDateTime("triggered", LocalDateTime.now())
-									.toJobParameters());
-						} catch (JobExecutionException e) {
-							throw new FragmentationJobException(e);
-						}
-					});
-			unprocessedViews = unprocessedViewRepository.findAll();
-		}
+		unprocessedViewRepository.findAll()
+				.parallelStream()
+				.filter(this::noJobsRunning)
+				.map(unprocessedView -> new JobParametersBuilder()
+						.addLong(VIEW_ID, (long) unprocessedView.viewId())
+						.addLong(COLLECTION_ID, (long) unprocessedView.collectionId())
+						.addString(VIEW_NAME, unprocessedView.viewName())
+						.addString(COLLECTION_NAME, unprocessedView.collectionName())
+						.addLocalDateTime("triggered", LocalDateTime.now())
+						.toJobParameters())
+				.forEach(this::launchSingleFragmentationJob);
+	}
+
+	@EventListener
+	public void handleContinueFragmentationTriggerEvent(ContinueFragmentationTriggerEvent event) {
+		launchSingleFragmentationJob(event.getNewlyTriggeredJobParameters());
 	}
 
 	private boolean noJobsRunning(UnprocessedView unprocessedView) {
 		return jobExplorer.findRunningJobExecutions(FRAGMENTATION_JOB)
 				.stream()
-				.noneMatch(jobExecution -> {
-					var params = jobExecution.getJobParameters();
-					final UnprocessedView fromParams = new UnprocessedView(
-							Objects.requireNonNull(params.getLong(COLLECTION_ID)).intValue(),
-							params.getString(COLLECTION_NAME),
-							Objects.requireNonNull(params.getLong(VIEW_ID)).intValue(),
-							params.getString(VIEW_NAME)
-					);
-					return Objects.equals(fromParams, unprocessedView);
-				});
+				.map(JobExecution::getJobParameters)
+				.map(params -> new UnprocessedView(
+						Objects.requireNonNull(params.getLong(COLLECTION_ID)).intValue(),
+						params.getString(COLLECTION_NAME),
+						Objects.requireNonNull(params.getLong(VIEW_ID)).intValue(),
+						params.getString(VIEW_NAME)
+				))
+				.noneMatch(unprocessedViewFromParams -> Objects.equals(unprocessedView, unprocessedViewFromParams));
+	}
+
+	private void launchSingleFragmentationJob(JobParameters jobParams) {
+		try {
+			jobLauncher.run(fragmentationJob, jobParams);
+		} catch (JobExecutionException e) {
+			throw new FragmentationJobException(e);
+		}
 	}
 }

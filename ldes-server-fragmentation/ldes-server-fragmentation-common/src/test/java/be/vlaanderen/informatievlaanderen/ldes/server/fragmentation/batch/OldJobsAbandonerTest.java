@@ -11,7 +11,7 @@ import org.springframework.batch.core.repository.JobRepository;
 
 import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefintions.FRAGMENTATION_JOB;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefinitions.FRAGMENTATION_JOB;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

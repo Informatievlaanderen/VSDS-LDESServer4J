@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefintions.FRAGMENTATION_JOB;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.FragmentationJobDefinitions.FRAGMENTATION_JOB;
 
 @Component
 public class OldJobsAbandoner implements CommandLineRunner {
