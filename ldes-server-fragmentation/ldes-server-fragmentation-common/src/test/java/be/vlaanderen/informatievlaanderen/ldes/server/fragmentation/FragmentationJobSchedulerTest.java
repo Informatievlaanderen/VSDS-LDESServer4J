@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.MemberMetricsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.UnprocessedView;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.UnprocessedViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.valueobjects.ContinueFragmentationTriggerEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
@@ -36,8 +33,6 @@ class FragmentationJobSchedulerTest {
 	private Step bucketStep;
 	@Mock
 	private Step paginationStep;
-	@Mock
-	private MemberMetricsRepository memberMetricsRepository;
 	@Mock
 	private JobLauncher jobLauncher;
 	@Mock
@@ -105,6 +100,24 @@ class FragmentationJobSchedulerTest {
 		assertThat(captor.getValue())
 				.extracting(FragmentationJobSchedulerTest::mapParamsToUnprocessedView)
 				.isEqualTo(new UnprocessedView(1, COLLECTION, 2, "v2"));
+	}
+
+	@Test
+	void test_HandleContinueFragmentationTriggerEvent() throws JobExecutionException {
+		JobParameters jobParameters = new JobParametersBuilder()
+				.addLong(VIEW_ID, 1L)
+				.addLong(COLLECTION_ID, 1L)
+				.addString(VIEW_NAME, "v1")
+				.addString(COLLECTION_NAME, COLLECTION)
+				.toJobParameters();
+		ContinueFragmentationTriggerEvent event = new ContinueFragmentationTriggerEvent(jobParameters);
+
+		fragmentationJobScheduler.handleContinueFragmentationTriggerEvent(event);
+
+		verify(jobLauncher).run(any(), captor.capture());
+		assertThat(captor.getValue())
+				.extracting(FragmentationJobSchedulerTest::mapParamsToUnprocessedView)
+				.isEqualTo(new UnprocessedView(1, COLLECTION, 1, "v1"));
 	}
 
 	private static UnprocessedView mapParamsToUnprocessedView(JobParameters params) {

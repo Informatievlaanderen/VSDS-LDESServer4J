@@ -12,17 +12,19 @@ import org.springframework.context.annotation.Configuration;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.batch.BucketStepDefinitions.BUCKETISATION_STEP;
 
 @Configuration
-public class FragmentationJobDefintions {
+public class FragmentationJobDefinitions {
 	public static final String FRAGMENTATION_JOB = "fragmentation";
 
 	@Bean
 	public SimpleJobBuilder fragmentationJobBuilder(JobRepository jobRepository,
 	                                                @Qualifier(BUCKETISATION_STEP) Step bucketisationStep,
 	                                                Step paginationStep,
-	                                                JobExecutionListener paginationViewStatsUpdater) {
+	                                                JobExecutionListener paginationMetricUpdater,
+	                                                JobExecutionListener fragmentationReadinessListener) {
 		return new JobBuilder(FRAGMENTATION_JOB, jobRepository)
 				.start(bucketisationStep)
 				.next(paginationStep)
-				.listener(paginationViewStatsUpdater);
+				.listener(paginationMetricUpdater)
+				.listener(fragmentationReadinessListener);
 	}
 }
