@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
@@ -261,6 +262,12 @@ class EventStreamServiceImplTest {
 
 		Mockito.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		Mockito.verify(eventPublisher, Mockito.never()).publishEvent(new EventStreamClosedEvent(COLLECTION));
+	}
+
+	@Test
+	void when_deleteKafkaSource_then_deleteKafkaSource() {
+		((EventStreamServiceImpl) service).handleKafkaSourceDeleted(new KafkaSourceDeletedEvent(COLLECTION));
+		Mockito.verify(kafkaSourceRepository).deleteWithTopic(COLLECTION);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.controller;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.KafkaListenerContainerManager;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerResponse;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.listener.MessageListenerContainer;
 
 import java.util.Collections;
@@ -20,11 +23,13 @@ class KafkaConsumerControllerTest {
 
     private KafkaListenerContainerManager kafkaListenerContainerManager;
     private KafkaConsumerController kafkaConsumerController;
+    private ApplicationEventPublisher eventPublisher;
 
     @BeforeEach
     void setUp() {
         kafkaListenerContainerManager = mock(KafkaListenerContainerManager.class);
-        kafkaConsumerController = new KafkaConsumerController(kafkaListenerContainerManager);
+        eventPublisher = mock(ApplicationEventPublisher.class);
+        kafkaConsumerController = new KafkaConsumerController(kafkaListenerContainerManager, eventPublisher);
     }
 
     @Test
@@ -93,8 +98,11 @@ class KafkaConsumerControllerTest {
     void delete() {
         MessageListenerContainer container = mock(MessageListenerContainer.class);
         when(kafkaListenerContainerManager.getContainer(anyString())).thenReturn(Optional.of(container));
+        when(container.getAssignedPartitions()).thenReturn(List.of(new TopicPartition("topic", 0)));
         kafkaConsumerController.delete("listenerId");
         verify(container, times(1)).stop();
         verify(kafkaListenerContainerManager, times(1)).unregisterListener("listenerId");
+        verify(eventPublisher, times(1)).publishEvent(new KafkaSourceDeletedEvent("topic"));
+
     }
 }

@@ -30,4 +30,9 @@ public class KafkaSourcePostgresRepository implements KafkaSourceRepository {
 								kafkaSourceEntity.getMimeType()))
 				.toList();
 	}
+
+	@Override
+	public void deleteWithTopic(String topic) {
+		repository.deleteByTopic(topic);
+	}
 }
