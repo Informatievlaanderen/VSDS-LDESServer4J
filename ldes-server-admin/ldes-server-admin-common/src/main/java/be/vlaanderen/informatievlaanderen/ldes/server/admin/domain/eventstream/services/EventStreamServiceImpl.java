@@ -116,6 +116,11 @@ public class EventStreamServiceImpl implements EventStreamService {
 				.forEach(eventPublisher::publishEvent);
 	}
 
+	@EventListener(KafkaSourceDeletedEvent.class)
+	public void handleKafkaSourceDeleted(KafkaSourceDeletedEvent event) {
+		kafkaSourceRepository.deleteWithTopic(event.topic());
+	}
+
 	private void publishEventStreamTOCreatedEvents(EventStreamTO eventStreamTO) {
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStreamTO.extractEventStreamProperties()));
 		eventStreamTO.getViews().stream().map(ViewAddedEvent::new).forEach(eventPublisher::publishEvent);

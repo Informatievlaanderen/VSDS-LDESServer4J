@@ -1,15 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.controller;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.KafkaListenerContainerManager;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.exception.KafkaConsumerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerAssignment;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.kafka.model.KafkaConsumerResponse;
 import org.apache.kafka.common.TopicPartition;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,9 +20,11 @@ import java.util.UUID;
 @RequestMapping(path = "/consumers")
 public class KafkaConsumerController {
 	private final KafkaListenerContainerManager kafkaListenerContainerManager;
+	private final ApplicationEventPublisher eventPublisher;
 
-	public KafkaConsumerController(KafkaListenerContainerManager kafkaListenerContainerManager) {
+	public KafkaConsumerController(KafkaListenerContainerManager kafkaListenerContainerManager, ApplicationEventPublisher eventPublisher) {
 		this.kafkaListenerContainerManager = kafkaListenerContainerManager;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@PostMapping
@@ -94,6 +99,11 @@ public class KafkaConsumerController {
 		MessageListenerContainer listenerContainer = getListenerContainer(listenerId);
 		listenerContainer.stop();
 		kafkaListenerContainerManager.unregisterListener(listenerId);
+		Objects.requireNonNull(listenerContainer.getAssignedPartitions())
+				.stream()
+				.map(TopicPartition::topic)
+				.map(KafkaSourceDeletedEvent::new)
+				.forEach(eventPublisher::publishEvent);
 	}
 
 	private MessageListenerContainer getListenerContainer(String listenerId) {
