@@ -102,7 +102,7 @@ class KafkaConsumerControllerTest {
         kafkaConsumerController.delete("listenerId");
         verify(container, times(1)).stop();
         verify(kafkaListenerContainerManager, times(1)).unregisterListener("listenerId");
-        verify(eventPublisher, times(1)).publishEvent(eq(new KafkaSourceDeletedEvent("topic")));
+        verify(eventPublisher, times(1)).publishEvent(new KafkaSourceDeletedEvent("topic"));
 
     }
 }
