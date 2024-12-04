@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class EventStreamReaderTest {
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
@@ -32,11 +33,12 @@ class EventStreamReaderTest {
 	@BeforeEach
 	void setUp() {
 		String hostName = "http://localhost:8080";
-		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+		HostNamePrefixConstructor prefixConstructor = new HostNamePrefixConstructor(hostName);
 		RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(retentionModelExtractor,
 				new FragmentationConfigExtractor(), prefixConstructor);
-		eventStreamReader = new EventStreamReader(viewSpecificationConverter, retentionModelExtractor);
+		KafkaSourceReader kafkaSourceReader = mock(KafkaSourceReader.class);
+		eventStreamReader = new EventStreamReader(viewSpecificationConverter, retentionModelExtractor, kafkaSourceReader);
 		shacl = RDFDataMgr.loadModel("shacl/collection-shape.ttl");
 	}
 

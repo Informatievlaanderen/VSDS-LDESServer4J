@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.repository.EventSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventSource;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -28,7 +29,10 @@ public class EventSourceServiceImpl implements EventSourceService {
     }
 
     @Override
-    public void saveEventSource(String collectionName, List<Model> retentionPolicies) {
+    public void updateEventSource(String collectionName, List<Model> retentionPolicies) {
+        if(repository.getEventSource(collectionName).isEmpty()) {
+            throw new MissingResourceException("eventstream", collectionName);
+        }
         repository.saveEventSource(new EventSource(collectionName, retentionPolicies));
         eventPublisher.publishEvent(new DeletionPolicyChangedEvent(collectionName, retentionPolicies));
     }
@@ -44,6 +48,6 @@ public class EventSourceServiceImpl implements EventSourceService {
         repository
                 .getAllEventSources()
                 .forEach(eventSource -> eventPublisher
-                        .publishEvent(new DeletionPolicyChangedEvent(eventSource.getCollectionName(), eventSource.getRetentionPolicies())));
+                        .publishEvent(new DeletionPolicyChangedEvent(eventSource.collectionName(), eventSource.retentionPolicies())));
     }
 }

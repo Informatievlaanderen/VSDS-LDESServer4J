@@ -1,11 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.UriPrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -15,10 +18,10 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final PrefixConstructor prefixConstructor;
+	private final UriPrefixConstructor prefixConstructor;
 	private final TreeNodeStatementCreator treeNodeStatementCreator;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, PrefixConstructor prefixConstructor, TreeNodeStatementCreator treeNodeStatementCreator) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, UriPrefixConstructor prefixConstructor, TreeNodeStatementCreator treeNodeStatementCreator) {
 		this.prefixAdder = prefixAdder;
 		this.prefixConstructor = prefixConstructor;
 		this.treeNodeStatementCreator = treeNodeStatementCreator;
@@ -43,6 +46,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					.forEach(model::add);
 		}
 
-		return prefixAdder.addPrefixesToModel(model);
+		return prefixAdder.addPrefixesToModel(model).setNsPrefixes(createTreeNodePrefixes(treeNode));
+	}
+
+	private Map<String, String> createTreeNodePrefixes(TreeNode treeNode) {
+		if(prefixConstructor instanceof HostNamePrefixConstructor hostNamePrefixConstructor) {
+			return hostNamePrefixConstructor.buildFragmentUri(treeNode.getCollectionName(), treeNode.getFragmentId());
+		}
+		return Map.of();
 	}
 }

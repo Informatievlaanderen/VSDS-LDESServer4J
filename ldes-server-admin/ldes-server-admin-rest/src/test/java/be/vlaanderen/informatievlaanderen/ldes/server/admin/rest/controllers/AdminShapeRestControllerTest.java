@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -140,7 +141,7 @@ class AdminShapeRestControllerTest {
 	static class AdminShapeRestControllerTestConfig {
 		@Bean
 		public HttpModelConverter modelConverter() {
-			return new HttpModelConverter(new PrefixAdderImpl(), new RdfModelConverter());
+			return new HttpModelConverter(new PrefixAdderImpl(List.of()), new RdfModelConverter());
 		}
 	}
 }

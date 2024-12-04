@@ -7,7 +7,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.stereotype.Component;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.COLLECTION_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationJobScheduler.COLLECTION_NAME;
 
 @Component
 public class BucketMetricUpdater implements StepExecutionListener {

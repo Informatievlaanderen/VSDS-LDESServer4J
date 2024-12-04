@@ -16,7 +16,7 @@ viewName:description
         a       dcat:DataService , tree:ViewDescription ;
         tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
-                ([ a  tree:ExampleFragmentation ;
+                ([ a  tree:ReferenceFragmentation ;
                   tree:pageSize  "100" ;
                   tree:property  "example/property"
                 ]) ;

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validators.IngestValidator;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpStatus;

@@ -5,13 +5,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.repository.EventSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource.KafkaSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -31,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminViewsRestController.class, AdminServerDcatController.class,
 		DcatViewsRestController.class, DcatDatasetRestController.class, EventSourceServiceImpl.class, PrefixAdderImpl.class,
-		PrefixConstructor.class, RdfModelConverter.class})
+		HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class, RdfModelConverter.class})
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.spi",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",
@@ -75,6 +77,9 @@ public class SpringIntegrationTest {
 	@Autowired
 	@MockBean
 	protected ShaclShapeRepository shaclShapeRepository;
+
+	@MockBean
+	protected KafkaSourceRepository kafkaSourceRepository;
 
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;

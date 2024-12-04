@@ -5,12 +5,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.kafkasource.KafkaSourceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.KafkaSourceDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.VersionCreationProperties;
@@ -55,6 +57,8 @@ class EventStreamServiceImplTest {
 
 	@Mock
 	private EventStreamRepository eventStreamRepository;
+	@Mock
+	private KafkaSourceRepository kafkaSourceRepository;
 	@Mock
 	private ApplicationEventPublisher eventPublisher;
 	@Captor
@@ -143,7 +147,7 @@ class EventStreamServiceImplTest {
 		service.updateEventSource(COLLECTION, List.of());
 
 		InOrder inOrder = Mockito.inOrder(eventSourceService, eventPublisher);
-		inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
+		inOrder.verify(eventSourceService).updateEventSource(COLLECTION, List.of());
 	}
 
 	@Nested
@@ -258,6 +262,12 @@ class EventStreamServiceImplTest {
 
 		Mockito.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		Mockito.verify(eventPublisher, Mockito.never()).publishEvent(new EventStreamClosedEvent(COLLECTION));
+	}
+
+	@Test
+	void when_deleteKafkaSource_then_deleteKafkaSource() {
+		((EventStreamServiceImpl) service).handleKafkaSourceDeleted(new KafkaSourceDeletedEvent(COLLECTION));
+		Mockito.verify(kafkaSourceRepository).deleteWithTopic(COLLECTION);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

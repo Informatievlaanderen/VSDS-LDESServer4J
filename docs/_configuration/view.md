@@ -14,7 +14,7 @@ A view config needs to have the following structure:
 
 * A `tree:viewDescription` object with its subject referring to the event stream object
   * a `tree:FragmentationStrategy` object that contains an ordered rdf list of fragmentations.
-  * a `ldes:retentionPolicy` object that contains a set of retention policies.
+  * a `ldes:retentionPolicy` object that contains a set of retention policies. When no retention policies are required, this is omitted.
   * a `tree:pageSize` object that marks how many members should be partitioned per fragment.
 
 For more info, visit the [Swagger API documentation.](./admin-api)
@@ -44,7 +44,6 @@ visit the [Retention Policies Subsection](./retention-policies).
 server:view-name tree:viewDescription [
     a tree:fragmentationStrategy;
     tree:fragmentationStrategy  () ;
-    ldes:retentionPolicy [] ;
     tree:pageSize "10"^^<http://www.w3.org/2001/XMLSchema#int> ;
 ] .
 ````

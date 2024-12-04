@@ -49,6 +49,7 @@ public class AdminViewsRestController implements OpenApiAdminViewsRestController
             contentTypeNQuads})
     public void createView(@PathVariable String collectionName,
                            @RequestBody @Validated Model view) {
+        viewValidator.validate(view);
         viewService.addView(viewConverter.viewFromModel(view, collectionName));
     }
 

@@ -6,10 +6,16 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
-        <version>3.5.1-SNAPSHOT</version>
+        <version>3.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ldes-server-integration-test</artifactId>
+
+    <properties>
+        <kafka.version>1.18.3</kafka.version>
+        <kafka-clients.version>3.6.0</kafka-clients.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
+    </properties>
 
     <dependencies>
         <!-- VSDS -->
@@ -84,6 +90,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-server-ingest-kafka</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Test Dependencies -->
 
         <dependency>
@@ -93,7 +106,7 @@
         <dependency>
             <groupId>io.zonky.test</groupId>
             <artifactId>embedded-database-spring-test</artifactId>
-            <version>2.5.0</version>
+            <version>${zonky.embbeded-db.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -130,6 +143,27 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${kafka.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-clients.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

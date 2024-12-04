@@ -15,7 +15,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.HostNamePrefixConstructorConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RelativeUriPrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.versioning.VersionHeaderFilterConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +26,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +46,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeNQuads;
@@ -48,17 +55,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class,
-		EventStreamWriter.class, EventStreamReader.class,
+		EventStreamWriter.class, EventStreamReader.class, KafkaSourceReader.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class, CharsetEncodingConfig.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
+		FragmentationConfigExtractor.class, HostNamePrefixConstructorConfig.class, RelativeUriPrefixConstructor.class, RdfModelConverter.class, VersionHeaderFilterConfig.class})
+@Import(AdminEventStreamsRestControllerTest.VersionConfig.class)
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	public static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
@@ -119,6 +126,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(header().exists("X-App-Version"))
 					.andExpect(content().encoding(StandardCharsets.UTF_8))
 					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
@@ -144,6 +152,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(header().exists("X-App-Version"))
 					.andExpect(content().encoding(StandardCharsets.UTF_8))
 					.andExpect(content().contentTypeCompatibleWith(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(model));
@@ -335,6 +344,16 @@ class AdminEventStreamsRestControllerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 		return Files.lines(path).collect(Collectors.joining());
+	}
+
+	@TestConfiguration
+	static class VersionConfig {
+		@Bean
+		public BuildProperties buildProperties() {
+			final Properties properties = new Properties();
+			properties.setProperty("version", "1.0.0");
+			return new BuildProperties(properties);
+		}
 	}
 
 }

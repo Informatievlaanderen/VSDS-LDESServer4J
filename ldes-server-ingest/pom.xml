@@ -6,7 +6,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
-        <version>3.5.1-SNAPSHOT</version>
+        <version>3.6.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
 
@@ -15,6 +15,7 @@
     <modules>
         <module>ldes-server-ingest-common</module>
         <module>ldes-server-ingest-rest</module>
+        <module>ldes-server-ingest-kafka</module>
     </modules>
 
 </project>

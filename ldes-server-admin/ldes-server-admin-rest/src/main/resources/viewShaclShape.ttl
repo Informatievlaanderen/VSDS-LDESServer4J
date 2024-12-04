@@ -9,26 +9,42 @@
 tree:ViewDescription
 	sh:order 1;
   	a sh:NodeShape ;
+	sh:targetClass tree:ViewDescription;
 	sh:property [
       	sh:path tree:fragmentationStrategy ;
 		sh:name "List of fragmentations";
         sh:description "Ordered list of fragmentations how a member for this view should be processed";
-    	sh:or (tree:GeospatialFragmentation tree:HierarchicalTimeBasedFragmentation) ;
+    	sh:or (tree:List rdf:nil) ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
     ];
 	sh:property [
       	sh:path ldes:retentionPolicy;
-        sh:targetClass ldes:RetentionPolicy  ;
         sh:name "List of retention policies";
         sh:description "Unordered list of retention policies that declare when a member should be removed from the collection";
+    	sh:or (ldes:TimeBasedRetentionPolicy ldes:VersionBasedRetentionPolicy) ;
     ].
+
+tree:List
+  	a sh:PropertyShape ;
+    sh:property [
+        sh:path rdf:first ;
+    	sh:or (tree:GeospatialFragmentation tree:HierarchicalTimeBasedFragmentation tree:ReferenceFragmentation) ;
+        ];
+    sh:property [
+        sh:path rdf:rest ;
+        sh:or (tree:List rdf:nil);
+] .
+
+rdf:nil
+    a sh:PropertyShape ;
+    sh:hasValue rdf:nil .
 
 tree:GeospatialFragmentation
 	sh:order 2;
     a sh:NodeShape;
-	sh:class tree:GeospatialFragmentation ;
 	sh:targetClass tree:GeospatialFragmentation ;
+	sh:class tree:GeospatialFragmentation ;
     sh:property [
       	sh:name "Max Zoom";
       	sh:description "Maximal zoom level the fragmentation should go";
@@ -44,10 +60,17 @@ tree:GeospatialFragmentation
 tree:HierarchicalTimeBasedFragmentation
     sh:order 2 ;
     a sh:NodeShape ;
-    sh:class: tree:HierarchicalTimeBasedFragmentation ;
     sh:targetClass tree:HierarchicalTimeBasedFragmentation ;
-    sh:zeroOrOnePath true;
-    sh:property tree:FragmentationPath, tree:MaxGranularity, tree:LinearTimeCachingEnabled, tree:FragmentSubjectFilter .
+    sh:class tree:HierarchicalTimeBasedFragmentation ;
+    sh:property tree:FragmentationPath, tree:MaxGranularity, tree:FragmentSubjectFilter .
+
+tree:ReferenceFragmentation
+	sh:order 2;
+    a sh:NodeShape;
+	sh:targetClass tree:ReferenceFragmentation ;
+	sh:class tree:ReferenceFragmentation ;
+    sh:property tree:FragmentationKey ;
+    sh:property tree:FragmentationPathRef  .
 
 tree:MaxGranularity
     a sh:PropertyShape;
@@ -57,15 +80,6 @@ tree:MaxGranularity
     sh:datatype xsd:string ;
     sh:in ( "year" "month" "day" "hour" "minute" "second" ) ;
     sh:minCount 1 ;
-    sh:maxCount 1 .
-
-tree:LinearTimeCachingEnabled
-    a sh:PropertyShape;
-    sh:name "Linear Time Caching Enabled" ;
-    sh:description "Indicates if fragments should be cached by linear time" ;
-    sh:path tree:linearTimeCachingEnabled ;
-    sh:datatype xsd:string ;
-    sh:minCount 0 ;
     sh:maxCount 1 .
 
 tree:FragmentSubjectFilter
@@ -90,10 +104,63 @@ tree:MemberLimit
 tree:FragmentationPath
 	a sh:PropertyShape;
 	sh:name "Fragmentation Path";
-    sh:description "Path the fragmentation should use to find the ";
+    sh:description "Path the fragmentation should use to find the property used for fragmentation";
     sh:path tree:fragmentationPath ;
     sh:nodeKind sh:IRI ;
     sh:minCount 1 ;
     sh:maxCount 1 .
 
+tree:FragmentationPathRef
+	a sh:PropertyShape;
+	sh:name "Fragmentation Path";
+    sh:description "Path the fragmentation should use to find the property used for fragmentation";
+    sh:path tree:fragmentationPath ;
+    sh:nodeKind sh:IRI ;
+    sh:maxCount 1 .
 
+tree:FragmentationKey
+	a sh:PropertyShape;
+	sh:name "Fragmentation Path";
+    sh:description "Defines the request parameter that will be used in the uri";
+    sh:path tree:fragmentationKey ;
+    sh:nodeKind sh:IRI ;
+    sh:maxCount 1 .
+
+ldes:TimeBasedRetentionPolicy
+    sh:order 2 ;
+	a sh:PropertyShape;
+	sh:name "Timebased Retention Policy";
+    sh:description "Retention Policy defining how old members have to be before they are removed from the view.";
+    sh:targetClass ldes:DurationAgoPolicy ;
+    sh:class ldes:DurationAgoPolicy ;
+    sh:zeroOrOnePath true;
+    sh:property tree:TimebasedRetentionValue .
+
+ldes:VersionBasedRetentionPolicy
+    sh:order 2 ;
+	a sh:PropertyShape;
+	sh:name "Versionbased Retention Policy";
+    sh:description "Retention Policy defining how many version-members of the same state object are retained in the view.";
+    sh:targetClass ldes:LatestVersionSubset ;
+    sh:class ldes:LatestVersionSubset ;
+    sh:zeroOrOnePath true;
+    sh:property ldes:VersionbaserRetentionAmount .
+
+tree:TimebasedRetentionValue
+	a sh:PropertyShape;
+    sh:name "Value";
+    sh:description "The duration during which members will be kept for a certain retention policy.";
+    sh:path tree:value ;
+    sh:datatype <http://www.w3.org/2001/XMLSchema#duration> ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .
+
+ldes:VersionbaserRetentionAmount
+	a sh:PropertyShape;
+    sh:name "Amount";
+    sh:description "The duration during which members will be kept for a certain retention policy.";
+    sh:path ldes:amount ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .

@@ -1,0 +1,15 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix server: <http://localhost:8080/name1/> .
+@prefix viewName: <http://localhost:8080/name1/view1/> .
+
+viewName:description
+    a tree:ViewDescription ;
+    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
+    ldes:retentionPolicy [
+        a ldes:DurationAgoPolicy ;
+        tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+      ] .
+
+server:view1 a tree:Node ;
+        tree:viewDescription <http://localhost:8080/name1/view1/description> .

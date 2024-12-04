@@ -10,13 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class HttpModelConverterTest {
-	private final HttpModelConverter httpModelConverter = new HttpModelConverter(new PrefixAdderImpl(), new RdfModelConverter());
+	private final HttpModelConverter httpModelConverter = new HttpModelConverter(new PrefixAdderImpl(List.of()), new RdfModelConverter());
 
 	@Test
 	void when_ReadHttpInputMessage_then_ReturnModel() throws IOException {
