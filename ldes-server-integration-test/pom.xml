@@ -13,7 +13,7 @@
 
     <properties>
         <kafka.version>1.18.3</kafka.version>
-        <kafka-clients.version>3.6.0</kafka-clients.version>
+        <kafka-clients.version>3.7.1</kafka-clients.version>
         <testcontainers.version>1.18.3</testcontainers.version>
     </properties>
 
