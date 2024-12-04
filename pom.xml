@@ -71,7 +71,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>3.1.5</spring-boot.version>
+        <spring-boot.version>3.4.0</spring-boot.version>
 
         <!-- SPRING DATA -->
         <spring-data.version>3.3.4</spring-data.version>
