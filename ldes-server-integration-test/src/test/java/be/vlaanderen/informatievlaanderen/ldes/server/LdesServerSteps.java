@@ -15,10 +15,13 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.awaitility.Awaitility;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -262,7 +265,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					Model fragmentPage = fetchFragment(fragmentUrl);
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
-							.toList().size() == expectedMemberCount;
+							       .toList().size() == expectedMemberCount;
 				});
 	}
 
@@ -270,9 +273,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
 		await().atMost(60, SECONDS)
 				.until(() -> jdbcTemplate
-						.queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
-								Integer.class, collection)
-						== expectedMemberCount);
+						             .queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
+								             Integer.class, collection)
+				             == expectedMemberCount);
 	}
 
 	@After
@@ -367,10 +370,27 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the background processes did not fail")
 	public void theBackgroundProcessesDidNotFail() {
-		JobInstance lastJobInstance = Objects.requireNonNull(jobExplorer.getLastJobInstance(MAINTENANCE_JOB));
-		JobExecution lastJobExecution = Objects.requireNonNull(jobExplorer.getLastJobExecution(lastJobInstance));
-		boolean hasFailedExecutions = lastJobExecution.getStepExecutions().stream()
-				.anyMatch(stepExecution -> stepExecution.getStatus().equals(BatchStatus.FAILED));
-		assertThat(hasFailedExecutions).isFalse();
+		assertThat(jobExplorer.getLastJobInstance(MAINTENANCE_JOB))
+				.isNotNull()
+				.extracting(jobExplorer::getLastJobExecution)
+				.isNotNull()
+				.extracting(JobExecution::getStepExecutions, InstanceOfAssertFactories.list(StepExecution.class))
+				.map(StepExecution::getStatus)
+				.doesNotContain(BatchStatus.FAILED);
+	}
+
+	@And("the batch tables has been cleaned")
+	public void theBatchTablesHasBeenCleaned() throws NoSuchJobException {
+		final JobInstance lastJobInstance = jobExplorer.getLastJobInstance(MAINTENANCE_JOB);
+		assertThat(lastJobInstance).isNotNull();
+		await()
+				.untilAsserted(() -> assertThat(jobExplorer.getLastJobExecution(lastJobInstance))
+						.isNotNull()
+						.extracting(JobExecution::isRunning, InstanceOfAssertFactories.BOOLEAN)
+						.isFalse());
+		assertThat(jobExplorer.getJobInstanceCount(MAINTENANCE_JOB)).isEqualTo(1);
+		assertThat(jobExplorer.getJobNames())
+				.doesNotContain("fragmentation")
+				.hasSize(1);
 	}
 }
