@@ -55,6 +55,7 @@ Feature: LDES Server basic Ingest functionality
     Given I create the eventstream "data/input/eventstreams/simpsons.ttl"
     When I ingest 2 files of state objects from folder "data/input/members/simpsons" to the collection "simpsons"
     Then the LDES "simpsons" contains 7 members
+    And I wait until all members are fragmented
     When I fetch the root "paged" fragment of "simpsons"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 7 members
