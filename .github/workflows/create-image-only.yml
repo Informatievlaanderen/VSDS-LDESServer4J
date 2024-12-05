@@ -50,7 +50,7 @@ jobs:
         id: determine-version
         run: |
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Analyse & publish package
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
