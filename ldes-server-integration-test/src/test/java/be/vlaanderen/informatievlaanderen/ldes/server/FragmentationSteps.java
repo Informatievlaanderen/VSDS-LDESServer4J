@@ -24,6 +24,7 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -62,7 +63,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
 		await()
 				.atMost(90, TimeUnit.SECONDS)
-				.pollInterval(30, TimeUnit.SECONDS)
+				.pollInterval(fibonacci(1, TimeUnit.SECONDS))
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
 					assertNotNull(currentFragment);
