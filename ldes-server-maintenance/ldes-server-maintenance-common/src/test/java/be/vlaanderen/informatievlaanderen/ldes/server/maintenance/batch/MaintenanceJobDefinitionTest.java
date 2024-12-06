@@ -47,6 +47,8 @@ class MaintenanceJobDefinitionTest {
 	private Step deletionStep;
 	@SpyBean(name = "eventSourceRetentionStep")
 	private Step eventSourceRetentionStep;
+	@SpyBean(name = "completedJobExecutionsStep")
+	private Step completedJobExecutionsStep;
 
 	@MockBean(name = "viewRetentionExecutionDecider")
 	private JobExecutionDecider viewRetentionExecutionDecider;
@@ -96,17 +98,19 @@ class MaintenanceJobDefinitionTest {
 	void given_AllShouldBeSkipped_when_Execute_then_VerifyNoStepsInteraction() throws Exception {
 		when(viewRetentionExecutionDecider.decide(any(), any())).thenReturn(new FlowExecutionStatus("SKIP"));
 		when(eventSourceRetentionExecutionDecider.decide(any(), any())).thenReturn(new FlowExecutionStatus("SKIP"));
+		doNothing().when(viewRetentionStep).execute(any());
 		final JobParameters jobParameters = new JobParametersBuilder()
 				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters();
 
 		final JobExecution result = jobLauncherTestUtils.launchJob(jobParameters);
 
-		assertThat(result.getExitStatus().getExitCode()).isEqualTo(ExitStatus.NOOP.getExitCode());
+		assertThat(result.getExitStatus().getExitCode()).isEqualTo(ExitStatus.COMPLETED.getExitCode());
 		verify(viewRetentionStep, never()).execute(any());
 		verify(compactionStep, never()).execute(any());
 		verify(deletionStep, never()).execute(any());
 		verify(eventSourceRetentionStep, never()).execute(any());
+		verify(completedJobExecutionsStep).execute(any());
 	}
 
 	@Test
@@ -143,16 +147,25 @@ class MaintenanceJobDefinitionTest {
 					.tasklet(tasklet, transactionManager)
 					.build();
 		}
+
 		@Bean(name = "deletionStep")
 		public Step deletionStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new StepBuilder("deletionStep", jobRepository)
 					.tasklet(tasklet, transactionManager)
 					.build();
 		}
+
 		@Bean(name = "eventSourceRetentionStep")
 		public Step eventSourceRetentionStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 			return new StepBuilder("eventSourceRetentionStep", jobRepository)
 					.tasklet(tasklet, transactionManager)
+					.build();
+		}
+
+		@Bean(name = "completedJobExecutionsStep")
+		public Step completedJobExecutionsStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
+			return new StepBuilder("completedJobExecutionsStep", jobRepository)
+					.tasklet(tasklet, platformTransactionManager)
 					.build();
 		}
 	}

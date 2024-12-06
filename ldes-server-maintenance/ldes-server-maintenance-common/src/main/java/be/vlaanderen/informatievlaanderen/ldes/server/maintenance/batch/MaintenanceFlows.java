@@ -19,10 +19,12 @@ public class MaintenanceFlows {
 	@Bean
 	public FlowJobBuilder maintenanceJobBuilder(JobRepository jobRepository,
 	                                            Flow viewRetentionFlow,
-	                                            Flow eventSourceRetentionFlow) {
+	                                            Flow eventSourceRetentionFlow,
+	                                            Step completedJobExecutionsStep) {
 		return new JobBuilder(MAINTENANCE_JOB, jobRepository)
 				.start(viewRetentionFlow)
 				.next(eventSourceRetentionFlow)
+				.next(completedJobExecutionsStep)
 				.end();
 	}
 

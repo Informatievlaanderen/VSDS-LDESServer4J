@@ -9,4 +9,6 @@ open module ldes.server.retention {
     requires ldes.server.maintenance.common;
     requires spring.tx;
 	requires spring.core;
+	requires spring.jdbc;
+    requires java.sql;
 }
