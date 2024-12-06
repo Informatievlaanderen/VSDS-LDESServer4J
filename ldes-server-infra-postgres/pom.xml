@@ -24,7 +24,7 @@
 
     <properties>
         <postgresql.version>42.7.4</postgresql.version>
-        <hibernate-extensions.version>3.7.4</hibernate-extensions.version>
+        <hibernate-extensions.version>3.9.0</hibernate-extensions.version>
     </properties>
 
     <dependencies>
