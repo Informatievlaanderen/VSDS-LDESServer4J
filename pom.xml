@@ -91,7 +91,7 @@
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.10.2</jupiter.version>
         <mockito.version>5.14.2</mockito.version>
-        <byte-buddy.version>1.14.12</byte-buddy.version>
+        <byte-buddy.version>1.15.10</byte-buddy.version>
         <wiremock-jre8.version>2.35.2</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.15.0</cucumber.version>
