@@ -93,7 +93,7 @@
         <mockito.version>5.14.2</mockito.version>
         <byte-buddy.version>1.15.10</byte-buddy.version>
         <wiremock-jre8.version>2.35.2</wiremock-jre8.version>
-        <awaitility.version>4.2.0</awaitility.version>
+        <awaitility.version>4.2.2</awaitility.version>
         <cucumber.version>7.20.1</cucumber.version>
         <assertj-core.version>3.25.3</assertj-core.version>
 
