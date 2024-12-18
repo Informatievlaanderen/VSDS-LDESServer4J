@@ -27,6 +27,9 @@ public class CompactionPageEntity {
 	@Column(name = "partial_url", nullable = false, unique = true)
 	private String partialUrl;
 
+	@Column(name = "is_root", nullable = false, columnDefinition = "BOOLEAN")
+	private boolean isRoot;
+
 	public CompactionPageEntity() {
 	}
 

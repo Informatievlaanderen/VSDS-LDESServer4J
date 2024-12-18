@@ -22,7 +22,7 @@ public interface CompactionPageEntityRepository extends JpaRepository<Compaction
 			WHERE c.name = :collectionName
 			AND v.name = :viewName
 			AND p.expiration IS NULL AND p.immutable
-			AND p.partial_url <> CONCAT('/', :collectionName , '/' , :viewName)
+			AND NOT p.is_root
 			GROUP BY p.page_id, r.to_page_id
 			HAVING COUNT(*) < :capacityPerPage
 			""", nativeQuery = true)

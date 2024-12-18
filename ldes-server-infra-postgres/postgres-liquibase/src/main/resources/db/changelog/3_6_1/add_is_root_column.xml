@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add_is_root_column" author="vsds">
+        <preConditions onError="MARK_RAN">
+            <not>
+                <columnExists tableName="pages" columnName="is_root" />
+            </not>
+        </preConditions>
+        <addColumn tableName="pages">
+            <column name="is_root" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sqlFile path="add_is_root_values.sql" relativeToChangelogFile="true" />
+    </changeSet>
+</databaseChangeLog>

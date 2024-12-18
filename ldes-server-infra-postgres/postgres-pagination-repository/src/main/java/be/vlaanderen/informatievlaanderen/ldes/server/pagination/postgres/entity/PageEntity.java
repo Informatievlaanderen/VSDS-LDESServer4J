@@ -30,6 +30,9 @@ public class PageEntity {
 	@Column(name = "partial_url", nullable = false, unique = true)
 	private String partialUrl;
 
+	@Column(name = "is_root", nullable = false, columnDefinition = "BOOLEAN")
+	private boolean isRoot;
+
 	@OneToMany(mappedBy = "fromPage")
 	private List<PageRelationEntity> relations;
 
