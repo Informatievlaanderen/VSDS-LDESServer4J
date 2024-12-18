@@ -2,8 +2,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.vocabulary.RDF;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,17 +24,34 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.awaitility.Awaitility.await;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("java:S3415")
 public class CompactionServiceSteps extends LdesServerIntegrationTest {
 	private int versionIncremeter = 1;
+	private ScheduledExecutorService executorService;
+	private Future<?> seedingTask;
+
+	@Before
+	public void setup() {
+		executorService = Executors.newSingleThreadScheduledExecutor();
+	}
+
+	@After
+	public void cleanup() {
+		executorService.shutdown();
+	}
 
 	@And("I ingest {int} members of different versions")
 	public void ingestDifferentVersions(int amount) throws Exception {
@@ -143,5 +167,71 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
+	}
+
+	@And("I start seeding {int} members every {int} seconds")
+	public void iStartSeedingMembersEverySeconds(int numberOfMembers, int seconds) {
+		seedingTask = executorService.scheduleAtFixedRate(() -> ingestNumberOfVersionObjects(numberOfMembers), 0, seconds, SECONDS);
+	}
+
+	private void ingestNumberOfVersionObjects(int numberOfMembers) {
+		try {
+			String memberTemplate = readMemberTemplate("data/input/members/observation.template.json");
+			for (int i = 0; i < numberOfMembers; i++) {
+				String memberContent = memberTemplate
+						.replace("ID", String.valueOf(i))
+						.replace("DATETIME", getCurrentTimestamp());
+				mockMvc.perform(post("/observations")
+								.contentType(Lang.JSONLD.getHeaderString())
+								.content(memberContent))
+						.andExpect(status().is2xxSuccessful());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Then("I wait until {int} members are ingested")
+	public void iWaitUntilMembersAreIngested(int number) {
+		await().atMost(Duration.ofMinutes(3))
+				.pollInterval(Duration.ofSeconds(15))
+				.untilAsserted(() -> assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members", Long.class)).isEqualTo(number));
+	}
+
+	@Then("I stop seeding members")
+	public void iStopSeedingMembers() {
+		seedingTask.cancel(true);
+	}
+
+
+	@When("I wait until the first page does not exits anymore")
+	public void iWaitUntilThePageWithPageNumberDoesNotExitsAnymore() {
+		await()
+				.atMost(Duration.ofMinutes(2))
+				.pollInterval(Duration.ofSeconds(5))
+				.untilAsserted(() -> mockMvc.perform(get("/observations/time-based?pageNumber=1"))
+						.andExpect(status().isNotFound()));
+	}
+
+	@And("I only have one open page")
+	public void iOnlyHaveOneOpenPage() {
+		final Long openPageCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM open_pages", Long.class);
+		assertThat(openPageCount).isEqualTo(1);
+	}
+
+	@Then("the root page points to a compacted page")
+	public void theRootPagePointsToACompactedPage() throws Exception {
+		final var response = mockMvc.perform(get("/observations/time-based").accept(Lang.NQ.getHeaderString()))
+				.andExpect(status().is2xxSuccessful())
+				.andReturn()
+				.getResponse();
+		final String pageNumber = new ResponseToModelConverter(response).convert()
+				.listSubjectsWithProperty(RDF.type, ResourceFactory.createProperty("https://w3id.org/tree#Relation"))
+				.nextResource()
+				.listProperties(ResourceFactory.createProperty("https://w3id.org/tree#node"))
+				.nextStatement()
+				.getResource()
+				.getLocalName();
+		assertThatNoException().isThrownBy(() -> UUID.fromString(pageNumber));
 	}
 }
