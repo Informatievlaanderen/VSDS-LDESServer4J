@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PageEntityRepository extends JpaRepository<PageEntity, Long> {
 	@Modifying
-	@Query(value = "UPDATE pages SET immutable = true WHERE page_id = ?", nativeQuery = true)
+	@Query(value = "UPDATE pages SET immutable = true WHERE page_id = ? AND NOT is_root", nativeQuery = true)
 	void setPageImmutable(long pageId);
 
 	@Modifying

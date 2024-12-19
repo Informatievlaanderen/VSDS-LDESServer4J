@@ -41,7 +41,7 @@ class BucketPostgresRepositoryTest extends PostgresBucketisationIntegrationTest 
 		final Bucket bucketToSave = new Bucket(BucketDescriptor.of(new BucketDescriptorPair("key", "value"), new BucketDescriptorPair("k", "v")), VIEW_NAME);
 		final Bucket expectedSavedBucket = new Bucket(1L, BucketDescriptor.of(new BucketDescriptorPair("key", "value"), new BucketDescriptorPair("k", "v")), VIEW_NAME, List.of(), 0);
 
-		final Bucket result = bucketPostgresRepository.insertBucket(bucketToSave);
+		final Bucket result = bucketPostgresRepository.insertRootBucket(bucketToSave);
 
 		assertThat(result)
 				.usingRecursiveComparison()

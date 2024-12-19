@@ -1,0 +1,20 @@
+{
+  "@context": {
+    "@base": "http://example.org/id/",
+    "@vocab": "http://purl.org/dc/terms/",
+    "isVersionOf": {
+      "@type": "@id"
+    }
+  },
+  "@id": "ID#DATETIME",
+  "@type": [
+    "something"
+  ],
+  "created": [
+    {
+      "@value": "DATETIME",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    }
+  ],
+  "isVersionOf": "http://example.org/id/ID"
+}

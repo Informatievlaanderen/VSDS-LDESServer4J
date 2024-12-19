@@ -136,7 +136,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>ldes-server.compaction-duration</td>
     <td>Defines how long the redundant compacted fragments will remain on the server</td>
     <td>No</td>
-    <td>PD7</td>
+    <td>P7D</td>
   </tr>
   <tr><td colspan="4"><b>Maintenance</b></td></tr>
   <tr>

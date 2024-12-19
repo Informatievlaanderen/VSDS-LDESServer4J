@@ -16,7 +16,7 @@ public class RootBucketCreatorImpl implements RootBucketCreator {
 	@Override
 	public void createRootBucketForView(ViewName viewName) {
 		if (bucketRepository.retrieveRootBucket(viewName).isEmpty()) {
-			bucketRepository.insertBucket(Bucket.createRootBucketForView(viewName));
+			bucketRepository.insertRootBucket(Bucket.createRootBucketForView(viewName));
 		}
 	}
 }

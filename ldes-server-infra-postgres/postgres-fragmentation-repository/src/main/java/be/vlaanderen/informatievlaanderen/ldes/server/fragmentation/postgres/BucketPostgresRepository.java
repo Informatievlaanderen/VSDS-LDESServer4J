@@ -31,10 +31,10 @@ public class BucketPostgresRepository implements BucketRepository {
 
 	@Override
 	@Transactional
-	public Bucket insertBucket(Bucket bucket) {
+	public Bucket insertRootBucket(Bucket bucket) {
 		String sql = """
-				INSERT INTO pages (bucket_id, expiration, partial_url)
-				VALUES (:bucketId, NULL, :partialUrl)
+				INSERT INTO pages (bucket_id, expiration, partial_url, is_root)
+				VALUES (:bucketId, NULL, :partialUrl, true)
 				ON CONFLICT DO NOTHING
 				""";
 		ViewEntity view = viewEntityRepository.findByViewName(bucket.getViewName().getCollectionName(), bucket.getViewName().getViewName())
