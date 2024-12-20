@@ -29,7 +29,7 @@ class RootBucketCreatorImplTest {
 
 		InOrder inOrder = inOrder(bucketRepository);
 		inOrder.verify(bucketRepository).retrieveRootBucket(VIEW_NAME);
-		inOrder.verify(bucketRepository).insertBucket(Bucket.createRootBucketForView(VIEW_NAME));
+		inOrder.verify(bucketRepository).insertRootBucket(Bucket.createRootBucketForView(VIEW_NAME));
 		inOrder.verifyNoMoreInteractions();
 	}
 

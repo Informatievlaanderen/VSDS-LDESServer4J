@@ -6,7 +6,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server-infra-postgres</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>postgres-pagination-repository</artifactId>

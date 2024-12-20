@@ -48,7 +48,7 @@ Example properties:
 
 tree:fragmentationStrategy [
      a tree:ReferenceFragmentation ;
-     tree:fragmentationPath "<http://purl.org/dc/terms/isVersionOf>" ;
+     tree:fragmentationPath <http://purl.org/dc/terms/isVersionOf> ;
      tree:fragmentationKey "version" ;
  ] .
 ```
@@ -84,6 +84,6 @@ The selected object would be
 `<http://njh.me/original-id/123>`
 
 After ingestion the member will be part of the following fragment
-- http://localhost:8080/addresses/by-version?version=<http://njh.me/original-id/123>
+- http://localhost:8080/addresses/by-version?version=http%3A%2F%2Fnjh.me%2Foriginal-id%2F123
 
 NOTE: "version" is based on the configuration property "tree:fragmentationKey".

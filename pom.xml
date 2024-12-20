@@ -9,7 +9,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>3.6.0</version>
+    <version>3.6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -48,7 +48,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.release>21</maven.compiler.release>
-        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -58,8 +58,8 @@
         <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.4.0</springdoc-openapi.version>
-        <swagger-annotations.version>2.2.20</swagger-annotations.version>
-        <pyroscope.version>0.13.0</pyroscope.version>
+        <swagger-annotations.version>2.2.26</swagger-annotations.version>
+        <pyroscope.version>0.15.2</pyroscope.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -74,7 +74,7 @@
         <spring-boot.version>3.1.5</spring-boot.version>
 
         <!-- SPRING DATA -->
-        <spring-data.version>3.3.4</spring-data.version>
+        <spring-data.version>3.4.0</spring-data.version>
 
         <!-- SPRING -->
         <spring.version>6.0.13</spring.version>
@@ -91,10 +91,10 @@
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.10.2</jupiter.version>
         <mockito.version>5.14.2</mockito.version>
-        <byte-buddy.version>1.14.12</byte-buddy.version>
+        <byte-buddy.version>1.15.10</byte-buddy.version>
         <wiremock-jre8.version>2.35.2</wiremock-jre8.version>
-        <awaitility.version>4.2.0</awaitility.version>
-        <cucumber.version>7.15.0</cucumber.version>
+        <awaitility.version>4.2.2</awaitility.version>
+        <cucumber.version>7.20.1</cucumber.version>
         <assertj-core.version>3.25.3</assertj-core.version>
 
         <!-- VULNERABILITY -->

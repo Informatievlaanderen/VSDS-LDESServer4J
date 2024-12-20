@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.maintenance.exceptions.Mai
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
@@ -16,7 +16,6 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.maintenance.batch.MaintenanceFlows.MAINTENANCE_JOB;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +44,6 @@ class MaintenanceServiceTest {
 		maintenanceService.scheduleMaintenanceJob();
 
 		verify(jobLauncher).run(any(), jobParametersCaptor.capture());
-
 	}
 
 	@Test
@@ -59,7 +57,7 @@ class MaintenanceServiceTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("jobExecutionExceptions")
+	@ValueSource(classes = {JobExecutionAlreadyRunningException.class, JobInstanceAlreadyCompleteException.class, JobParametersInvalidException.class, JobRestartException.class})
 	void when_JobExecutionExceptionIsThrownDuringLaunch_then_ThrowMaintenanceException(Class<? extends JobExecutionException> exceptionClass) throws JobExecutionException {
 		when(jobLauncher.run(any(), any())).thenThrow(exceptionClass);
 
@@ -70,14 +68,5 @@ class MaintenanceServiceTest {
 		assertThat(jobParametersCaptor.getValue())
 				.extracting(jobParams -> jobParams.getLocalDateTime("triggered"))
 				.isNotNull();
-	}
-
-	static Stream<Class<? extends JobExecutionException>> jobExecutionExceptions() {
-		return Stream.of(
-				JobInstanceAlreadyCompleteException.class,
-				JobExecutionAlreadyRunningException.class,
-				JobParametersInvalidException.class,
-				JobRestartException.class
-		);
 	}
 }

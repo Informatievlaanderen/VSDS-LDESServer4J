@@ -1,0 +1,31 @@
+@prefix ldes:       <https://w3id.org/ldes#> .
+@prefix tree:       <https://w3id.org/tree#>.
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix ex:         <http://example.org#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms:    <http://purl.org/dc/terms/> .
+
+</observations> a ldes:EventStream ;
+	ldes:timestampPath dcterms:created ;
+	ldes:versionOfPath dcterms:isVersionOf ;
+    tree:shape [ a sh:NodeShape ] ;
+    tree:view </observations/time-based> ;
+    ldes:eventSource [
+        a ldes:EventSource ;
+        ldes:retentionPolicy [
+            a ldes:DurationAgoPolicy ;
+            tree:value "PT2M"^^xsd:duration
+        ] ;
+    ] .
+
+</observations/time-based> a tree:Node ;
+  tree:viewDescription [
+		a tree:ViewDescription ;
+    tree:fragmentationStrategy () ;
+		tree:pageSize "7"^^xsd:integer ;
+    ldes:retentionPolicy [
+      a ldes:DurationAgoPolicy ;
+      tree:value "PT90S"^^xsd:duration
+    ]
+  ]
+.
