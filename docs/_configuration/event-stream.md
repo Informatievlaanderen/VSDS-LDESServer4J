@@ -152,9 +152,15 @@ policy of a few seconds can be set on the event source of the Event Stream.
 
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
+@prefix server: <http://localhost:8080/> .
+@prefix genericES: <http://localhost:8080/generic-eventstream/> .
 
-ldes:retentionPolicy [
+server:generic-eventstream a ldes:EventStream ;
+    ldes:eventSource genericES:eventSource .
+
+genericES:eventSource a ldes:EventSource ;
+    ldes:retentionPolicy [
         a ldes:LatestVersionSubset ;
         ldes:amount 0 ;
-      ] ;
+    ] .
 ````
