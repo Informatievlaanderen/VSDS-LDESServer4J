@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageRelationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.After;
@@ -126,6 +127,21 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 		});
 	}
 
+	@And("verify {long} members are connected to a compacted page")
+	public void verifyMembersAreConnectedToCompactedPage(long memberCount) {
+		await().untilAsserted(() -> {
+			var count = pageMemberEntityRepository.findAll()
+					.stream()
+					.map(PageMemberEntity::getPage)
+					.map(PageEntity::getPartialUrl)
+					.map(url -> url.split("pageNumber=")[1])
+					.filter(this::isValidUuid)
+					.count();
+
+			assertThat(count).isEqualTo(memberCount);
+		});
+	}
+
 	@And("verify the following pages have no members")
 	public void verifyFragmentationOfMembers(List<Long> ids) {
 		await().untilAsserted(() -> {
@@ -233,5 +249,41 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 				.getResource()
 				.getLocalName();
 		assertThatNoException().isThrownBy(() -> UUID.fromString(pageNumber));
+	}
+
+	@And("I ingest {int} members of version {int}")
+	public void iIngestMembersOfVersion(int numberOfMembers, int arg1) {
+		try {
+			String memberTemplate = readMemberTemplate("data/input/members/observation.template.json");
+			for (int i = 0; i < numberOfMembers; i++) {
+				String memberContent = memberTemplate
+						.replace("ID", String.valueOf(i))
+						.replace("DATETIME", getCurrentTimestamp());
+				mockMvc.perform(post("/observations")
+								.contentType(Lang.JSONLD.getHeaderString())
+								.content(memberContent))
+						.andExpect(status().is2xxSuccessful());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@And("I ingest {int} members of version {int} of template {string} for collection {string}")
+	public void iIngestMembersOfVersionOfTemplate(int numberOfMembers, int version, String template, String endpoint) {
+		try {
+			String memberTemplate = readMemberTemplate(template);
+			for (int i = 0; i < numberOfMembers; i++) {
+				String memberContent = memberTemplate
+						.replace("ID", String.valueOf(version))
+						.replace("TIMESTAMP", getCurrentTimestamp());
+				mockMvc.perform(post("/" + endpoint)
+								.contentType(Lang.TTL.getHeaderString())
+								.content(memberContent))
+						.andExpect(status().is2xxSuccessful());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

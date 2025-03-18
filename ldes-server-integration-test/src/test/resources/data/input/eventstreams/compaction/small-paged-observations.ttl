@@ -1,3 +1,4 @@
+
 @prefix ldes:       <https://w3id.org/ldes#> .
 @prefix tree:       <https://w3id.org/tree#>.
 @prefix sh:         <http://www.w3.org/ns/shacl#> .
@@ -7,25 +8,20 @@
 
 </observations> a ldes:EventStream ;
 	ldes:timestampPath dcterms:created ;
-	ldes:versionOfPath dcterms:isVersionOf ;
-    tree:shape [ a sh:NodeShape ] ;
-    tree:view </observations/time-based> ;
-    ldes:eventSource [
-        a ldes:EventSource ;
-        ldes:retentionPolicy [
-            a ldes:DurationAgoPolicy ;
-            tree:value "PT2M"^^xsd:duration
-        ] ;
-    ] .
+  	ldes:versionOfPath dcterms:isVersionOf ;
+  	ldes:createVersions true ;
+  	tree:view </observations/paged> ;
+  	tree:shape [ a sh:NodeShape ] .
 
-</observations/time-based> a tree:Node ;
+
+</observations/paged> a tree:Node ;
   tree:viewDescription [
 		a tree:ViewDescription ;
     tree:fragmentationStrategy () ;
-		tree:pageSize "7"^^xsd:integer ;
+		tree:pageSize "2"^^<http://www.w3.org/2001/XMLSchema#int> ;
     ldes:retentionPolicy [
-      a ldes:DurationAgoPolicy ;
-      tree:value "PT15S"^^xsd:duration
-    ]
+        a ldes:LatestVersionSubset;
+        ldes:amount 1 ;
+    ] ;
   ]
 .
