@@ -1,0 +1,527 @@
+{"0": {
+    "doc": "How To Run",
+    "title": "How to run",
+    "content": "We advise running the LDES Server as a Docker Image which we provide via Docker Hub: . | Latest Official version: | Latest Alpha version: | . To decide which version to take, visit the Release Management Advice and visit the LDES Server Github Release Page for an overview of all the releases. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/how-to-run.html#how-to-run",
+    
+    "relUrl": "/how-to-run.html#how-to-run"
+  },"1": {
+    "doc": "How To Run",
+    "title": "LDES Server Config",
+    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case. An example basic config can be found here: . ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: datasource: url: jdbc:postgresql://localhost:5432/test username: admin password: admin batch: jdbc: initialize-schema: always rest: max-age: 120 max-age-immutable: 604800 . Here is an explanation provided for all the possibilities on how to tweak and configure your LDES Server: . | Feature | . | Property | Description | Required | Default value | . | API endpoints documentation | . | springdoc.api-docs.path | The url1 that will point to the Open API documentation. More Open-API documentation | No | . | springdoc.swagger-ui.path | The url1 that will point to the Swagger documentation. More Swagger UI documentation | No | true | . | URL Configuration | . | server.address | This is the url that will be used by the server application to bind to. This is especially useful when exposing actuator endpoints publicly. However, it must be known if the address cannot be found or is unavailable, the application will be unable to start. | No | | . | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url. | Yes | | . | ldes-server.use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI. For more | No | false | . | Ingest/Fetch | . | rest.max-age | Time in seconds that a mutable fragment can be considered up-to-date | No | 60 | . | rest.max-age-immutable | Time in seconds that an immutable fragment should not be refreshed | No | 604800 | . | ldes-server.formatting.prefixes | Prefixes that will be used in the LDES Server when fetching data from the server in text/turtle format | No | | . | PostgreSQL Storage2 | . | spring.datasource.url | URL that points to the PostgreSQL server | | | . | spring.datasource.username | Username to log into provided PostgreSQL instance | | | . | spring.datasource.password | Password to log into provided PostgreSQL instance | | | . | Bucketisation &amp; pagination batching | . | ldes-server.fragmentation-cron | Defines how often Fragmentation Service will check for unprocessed members (when present, trigger fragmentation job). | No | */30 * * * * * | . | Fragment Compaction | . | ldes-server.compaction-duration | Defines how long the redundant compacted fragments will remain on the server | No | P7D | . | Maintenance | . | ldes-server.maintenance-cron | Defines how often the maintenance job will run, which includes retention, compaction and deletion3 | No | 0 0 0 * * * | . | Ports | . | ldes-server.ingest.port | Defines on which port the ingest endpoint is available | No | 8080 | . | ldes-server.fetch.port | Defines on which port the fetch endpoints are available | No | 8080 | . | ldes-server.admin.port | Defines on which port the admin endpoints are available4 | No | 8080 | . Note 1: The specified url will be prefixed by an optional server.servlet.context-path . Note 2: Since the 3.0 release, the MongoDB got replaced with a PostgreSQL implementation. For Migration instructions, please check the below migration paragraph. Note 3: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation @Scheduled adds a 6th parameter to support seconds. The cron schedules are in timezone ‘UTC’. More information about this can be found in the spring documentation . Note 4: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/how-to-run.html#ldes-server-config",
+    
+    "relUrl": "/how-to-run.html#ldes-server-config"
+  },"2": {
+    "doc": "How To Run",
+    "title": "Docker Compose",
+    "content": "services: ldes-server: container_name: basic_ldes-server image: ldes/ldes-server environment: - SPRING_CONFIG_LOCATION=/config/ volumes: - ./ldes-server.yml:/config/application.yml:ro ports: - 8080:8080 networks: - ldes depends_on: - ldes-postgres ldes-postgres: container_name: ldes-postgres image: postgres:14-alpine ports: - 5432:5432 environment: - POSTGRES_PASSWORD=admin - POSTGRES_USER=admin - POSTGRES_DB=test networks: - ldes networks: ldes: name: quick_start_network . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/how-to-run.html#docker-compose",
+    
+    "relUrl": "/how-to-run.html#docker-compose"
+  },"3": {
+    "doc": "How To Run",
+    "title": "Migration to 3.0",
+    "content": "Since the Mongodb implementation got replaced with a PostgreSQL one, a migration path has been provided. This migration path is only needed for those who wish to move their 2.x LDES servers to the latest version. To enable this, please first take in the 3.0.0 release and add the following properties to your config: . ldes-server: migrate-mongo: true spring: data: mongodb: uri: # connection string pointing to mongodb instance batch: jdbc: initialize-schema: always . ALTERNATIVE MIGRATION: Besides the provided migration solution, It is also possible to set up your new 3.x Server next to your 2.x Server and then use and LDES workbench to send over the data from the 2.x Server to the 3.x Server. This pipeline in LDIO should contain an LDES Client to read data from the 2.x Server and an LDIO Http Out to send data towards the 3.x Server. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/how-to-run.html#migration-to-30",
+    
+    "relUrl": "/how-to-run.html#migration-to-30"
+  },"4": {
+    "doc": "How To Run",
+    "title": "How To Run",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/how-to-run.html",
+    
+    "relUrl": "/how-to-run.html"
+  },"5": {
+    "doc": "Home",
+    "title": "Linked Data Event Stream Server",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/#linked-data-event-stream-server",
+    
+    "relUrl": "/#linked-data-event-stream-server"
+  },"6": {
+    "doc": "Home",
+    "title": "Introduction",
+    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/#introduction",
+    
+    "relUrl": "/#introduction"
+  },"7": {
+    "doc": "Home",
+    "title": "Home",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/",
+    
+    "relUrl": "/"
+  },"8": {
+    "doc": "Swagger Admin API",
+    "title": "Swagger Admin API",
+    "content": "Swagger UI | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/admin-api",
+    
+    "relUrl": "/configuration/admin-api"
+  },"9": {
+    "doc": "Configuring Data Catalog Vocabulary (DCAT)",
+    "title": "Configuring Data Catalog Vocabulary (DCAT)",
+    "content": "DCAT is an RDF vocabulary designed to facilitate interoperability between data catalogs published on the Web. This document defines the schema and provides examples for its use. DCAT enables a publisher to describe datasets and data services in a catalog using a standard model and vocabulary that facilitates the consumption and aggregation of metadata from multiple catalogs. This can increase the discoverability of datasets and data services. It also makes it possible to have a decentralized approach to publishing data catalogs and makes federated search for datasets across catalogs in multiple sites possible using the same query mechanism and structure. Aggregated DCAT metadata can serve as a manifest file as part of the digital preservation process. For more info on DCAT, visit the DCAT publication . There are DCAT templates available for two supported profiles on the GitHub repository . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/dcat",
+    
+    "relUrl": "/configuration/dcat"
+  },"10": {
+    "doc": "Configuring Data Catalog Vocabulary (DCAT)",
+    "title": "Validity of the configured DCAT",
+    "content": "The validity of the configured DCAT can be checked, but then first a DCAT shacl shape is required. This shacl shape can be configured with the following yaml: . ldes-server: dcat-shape: &lt;file-uri&gt; . When this is configured, two different endpoints can be polled to check the validity: . | the DCAT endpoint | . curl 'localhost:8080/admin/api/v1/dcat' . This endpoint returns a 200 status code together with the configured DCAT when it’s valid, and it returns 500 together with a validation report when it’s not valid. | the health endpoint(s) | . To poll this endpoint successfully, additional config is required. An example config will be provided here, but more info on how to configure the health endpoints can be found here. management: endpoints: web: exposure: include: - health endpoint: health: status: http-mapping: invalid: 500 unknown: 500 group: dcat-validity: show-components: always show-details: always include: dcat . This config will first enable the /actuator/health endpoints. Secondly, a mapping is provided, so when an UNKNOWN or INVALID status is returned, a http status 500 is associated with it. At last, a group is defined, this ensures that only the details of the DCAT and its validity are exposed and the rest of the health info is still hidden. With this config, the following health endpoint can be polled . curl http://localhost:8080/actuator/health/dcat-validity . If the configured DCAT is valid, a 200 response code with the following response body will be returned . { \"status\": \"UP\", \"components\": { \"dcat\": { \"status\": \"UP\" } } } . If not, a 500 response code will be returned with the following response body: . { \"status\": \"UNKNOWN\", \"components\": { \"dcat\": { \"status\": \"INVALID\", \"details\": { \"error\": \"be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException: Shacl validation failed: \\n\\nnull\" } } } } . All DCAT API endpoints can be found on the Swagger UI endpoint configured in the run guide. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/dcat#validity-of-the-configured-dcat",
+    
+    "relUrl": "/configuration/dcat#validity-of-the-configured-dcat"
+  },"11": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring a new Event Stream",
+    "content": "To host a new Event Stream on your server, it first needs to be configured. This can be done through the Admin API at the /admin/api/v1/eventstreams endpoint. An Event Stream config needs to contain a couple of items: . | a ldes:EventStream object containing: . | ldes:timestampPath object that defines which object property it should parse to handle timebased fragmentations, retention policies, … | ldes:versionOfPath object that defines which object property it should parse to handle version based retention policies. This property also indicates which state object your version object is a snapshot of. | ldes:createVersions object that defines whether the LDES should create version objects, indicating the LDES can ingest state objects. The default value of this object is false and the property can be omitted. | ldes:versionDelimiter object that defines how the version object id will be constructed. (versionOf + delimiter + dateObserved) The default value of this object is / and the property can be omitted. | ldes:eventSource object that defines which members are to be retained in the event stream. When omitted, all members are retained. More info on this can be found here | ldes:skolemizationDomain object that defines the skolemization domain. Using \"http://example.com\" as domain will result in all blank nodes being transformed to http://example.org/.well-known/genid/{unique_id}. | For more info, visit the Swagger API documentation. | . | . Create version objects vs ingest version objects . Until version 2.11.0, only version objects could be ingested. But from version 2.12.0, either version objects or state objects could be ingested in an event stream. This results in a slightly other meaning for both the ldes:timestampPath and ldes:versionOfPath properties. In case of version ingestion, those properties are used to extract the information of the member. In case of version creation, those properties are used to append information to the member on fetching. Example . Creating a generic Event Stream named “generic-eventstream” . @prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix dcterms: &lt;http://purl.org/dc/terms/&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix server: &lt;http://localhost:8080/&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix genericES: &lt;http://localhost:8080/generic-eventstream/&gt; . server:generic-eventstream a ldes:EventStream ; ldes:timestampPath dcterms:created ; ldes:versionOfPath dcterms:isVersionOf ; ldes:createVersions true ; tree:shape genericES:shape . genericES:shape a sh:NodeShape . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/event-stream",
+    
+    "relUrl": "/configuration/event-stream"
+  },"12": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring an Event Stream with a Kafka source",
+    "content": "To configure an Event Stream that ingests members from a Kafka topic, please visit the Kafka Ingest documentation. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/event-stream#configuring-an-event-stream-with-a-kafka-source",
+    
+    "relUrl": "/configuration/event-stream#configuring-an-event-stream-with-a-kafka-source"
+  },"13": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring a SHACL Shape",
+    "content": "SHACL (Shapes Constraint Language) is a standard for validating RDF data and ensuring that it conforms to a particular structure or shape. In the context of the Linked Data Event Stream (LDES), SHACL shapes are used to provide a machine-readable description of the expected structure of members in the stream. By incorporating SHACL shapes, LDES provides a powerful tool for ensuring data quality and consistency, making it a reliable and trustworthy source of data for various applications. By defining a SHACL shape for the LDES, data producers can ensure that the members they add to the LDES adhere to the required structure, while data consumers can use the shape to validate and reason about the data they receive. Defining a shape can be done through the /admin/api/v1/eventstreams/{collectionName}/shape endpoint. For more info, visit the Swagger API documentation. Example . @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; . [] a sh:NodeShape; sh:targetClass &lt;https://w3id.org/ldes#EventStream&gt; ; sh:closed true; sh:ignoredProperties (rdf:type) ; sh:property [ sh:class sh:NodeShape; sh:description \"The schema all elements of the eventstream must conform to.\"@en; sh:maxCount 1; sh:minCount 1; sh:name \"shape\"@en; sh:path &lt;https://w3id.org/tree#shape&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property of the members that idicates how members relate to each other from the time perspective.\"@en; sh:maxCount 1; sh:name \"timestampPath\"@en; sh:path &lt;https://w3id.org/ldes#timestampPath&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property that indicates the object identifier in a version object.\"@en; sh:maxCount 1; sh:name \"versionOfPath\"@en; sh:path &lt;https://w3id.org/ldes#versionOfPath&gt; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/event-stream#configuring-a-shacl-shape",
+    
+    "relUrl": "/configuration/event-stream#configuring-a-shacl-shape"
+  },"14": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring member deletion on an Event Stream",
+    "content": "To determine which members should be permanently deleted from the Event Stream, it is necessary to set one or more retention policies on the event source of the Event Stream. Definition of event source: . In Linked Data Event Streams, the ldes:EventSource class is designed to be the source for all derived views. The Linked Data Event Streams specification can also further elaborate on the ViewDescription by for example describing a retention policy on top of it. By default, no retention policy is set on the event source meaning that no data is removed from the Event Stream. Even when all views are deleted, the members will not be deleted from the Event Stream. When a retention policy is set on the event source of an Event Stream, every member that is not part of any view and which falls outside of the retention policy will be removed from the Event Stream. More information on which retention policies can be used can be found here. The event source is automatically created when creating an Event Stream but does not contain a retention policy by default. To add retention policies to the event source, the admin API can be used. More info on this can be found here. It is only possible to add or edit retention policies of an event source, other properties cannot be changed. Before introduction of the event source in the LDES Server, members were directly deleted when they weren’t part of any view anymore. With the event source, it is possible to delete all views of an Event Stream without losing members so that you can create new views without having to ingest data again. If members need to be deleted directly from the Event Stream when they aren’t part of any view, a timebased retention policy of a few seconds can be set on the event source of the Event Stream. Example: . @prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix server: &lt;http://localhost:8080/&gt; . @prefix genericES: &lt;http://localhost:8080/generic-eventstream/&gt; . server:generic-eventstream a ldes:EventStream ; ldes:eventSource genericES:eventSource . genericES:eventSource a ldes:EventSource ; ldes:retentionPolicy [ a ldes:LatestVersionSubset ; ldes:amount 0 ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/event-stream#configuring-member-deletion-on-an-event-stream",
+    
+    "relUrl": "/configuration/event-stream#configuring-member-deletion-on-an-event-stream"
+  },"15": {
+    "doc": "Geospatial Fragmentation",
+    "title": "Geospatial fragmentation",
+    "content": "Geospatial fragmentation will create fragments based on geospatial tiles selected of the fragmentationPath. This allows you to fragment the data on geolocations. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/geospatial#geospatial-fragmentation",
+    
+    "relUrl": "/configuration/fragmentations/geospatial#geospatial-fragmentation"
+  },"16": {
+    "doc": "Geospatial Fragmentation",
+    "title": "Properties",
+    "content": "@prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:GeospatialFragmentation ; tree:maxZoom { Mandatory: Required zoom level } ; tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ; tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/geospatial#properties",
+    
+    "relUrl": "/configuration/fragmentations/geospatial#properties"
+  },"17": {
+    "doc": "Geospatial Fragmentation",
+    "title": "Algorithm",
+    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath. | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the object that pass the above filters. | . | A bucket of tiles is created using the coordinates and provided zoomLevel. This is done using the Slippy Map algorithm. | The tiles are iterated. The member is added to every tile, or sub-fragmentations of these tiles. Taking into account: . | A new fragment is created if no fragment exists for the given tile. | There is no memberLimit or max size for a fragment. They do not become immutable. | The member is added to every related fragment. | . | When the member could not be added to any tile (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket tile=unknown. | . flowchart TD A[First statement is selected where the predicate matches fragmenterProperty AND subject matches fragmenterSubjectFilter] --&gt; B B[Coordinates of this statement are selected] --&gt; C C[Bucket of tiles is created using the coordinates and zoomLevel] --&gt; D{Next tile?} D --&gt; |true| E{Fragment for tile exists?} E ---&gt;|false| F[Create Fragment] E --&gt;|true| G[Add member to fragment] F ----&gt; G D -------&gt; |false| END(END) G --&gt; D . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/geospatial#algorithm",
+    
+    "relUrl": "/configuration/fragmentations/geospatial#algorithm"
+  },"18": {
+    "doc": "Geospatial Fragmentation",
+    "title": "Example",
+    "content": "Example properties: . @prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:GeospatialFragmentation ; tree:maxZoom 15 ; tree:fragmentationPath &lt;http://www.opengis.net/ont/geosparql#asWKT&gt; ; ] . With following example input: . @prefix dc: &lt;http://purl.org/dc/terms/&gt; . @prefix ns0: &lt;http://semweb.mmlab.be/ns/linkedconnections#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix ns1: &lt;http://vocab.gtfs.org/terms#&gt; . @prefix prov: &lt;http://www.w3.org/ns/prov#&gt; . @prefix ns2: &lt;http://www.opengis.net/ont/geosparql#&gt; . @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; . @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; . &lt;http://njh.me/original-id#2022-09-28T17:11:28.520Z&gt; dc:isVersionOf &lt;http://njh.me/original-id&gt; ; ns0:arrivalStop &lt;http://example.org/stops/402161&gt; ; ns0:arrivalTime \"2022-09-28T07:14:00.000Z\"^^xsd:dateTime ; ns0:departureStop &lt;http://example.org/stops/402303&gt; ; ns0:departureTime \"2022-09-28T07:09:00.000Z\"^^xsd:dateTime ; ns1:dropOffType ns1:Regular ; ns1:pickupType ns1:Regular ; ns1:route &lt;http://example.org/routes/Hasselt_-_Genk&gt; ; ns1:trip &lt;http://example.org/trips/Hasselt_-_Genk/Genk_-_Hasselt/20220928T0909&gt; ; a ns0:Connection ; prov:generatedAtTime \"2022-09-28T17:11:28.520Z\"^^xsd:dateTime . &lt;http://example.org/stops/402161&gt; ns2:asWKT \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Brug\" ; geo:lat 5.096420e+1 ; geo:long 5.472360e+0 . &lt;http://example.org/stops/402303&gt; ns2:asWKT \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Station perron 11\" ; geo:lat 5.096670e+1 ; geo:long 5.496610e+0 . The selected objects would be \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral and \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral . When we convert these coordinates to tiles, the bucket of tiles would be: . | “15/16884/10974” | “15/16882/10975” | . When geospatial fragmentation is the lowest level . After ingestion the member will be part of the following two fragments . | http://localhost:8080/addresses/by-zone?tile=15/16884/10974&amp;pageNumber=1 | http://localhost:8080/addresses/by-zone?tile=15/16882/10975&amp;pageNumber=1 | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/geospatial#example",
+    
+    "relUrl": "/configuration/fragmentations/geospatial#example"
+  },"19": {
+    "doc": "Geospatial Fragmentation",
+    "title": "Geospatial Fragmentation",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/geospatial",
+    
+    "relUrl": "/configuration/fragmentations/geospatial"
+  },"20": {
+    "doc": "Fragmentations",
+    "title": "LDES Fragmentations",
+    "content": "To reduce the volume of data that consumers need to replicate or to speed up certain queries, the LDES server can be configured to create several fragmentations. Fragmentations are similar to indexes in databases but then published on the Web. The RDF predicate on which the fragmentation must be applied is defined through configuration. The fragmenting of a Linked Data Event Stream (LDES) is a crucial technique for managing and processing large amounts of data more efficiently. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/index#ldes-fragmentations",
+    
+    "relUrl": "/configuration/fragmentations/index#ldes-fragmentations"
+  },"21": {
+    "doc": "Fragmentations",
+    "title": "Partitioning",
+    "content": "By default, every Event Stream will be partitioned, wich means that the LDES server will create fragments based on the order of arrival of the LDES member. The members arriving on the LDES server are added to the first page, while the latest members are always included on the latest page. Algorithm . | The fragment to which the member should be added is determined. | The currently open fragment is retrieved from the database. | If this fragment contains members equal to or exceeding the member limit or no fragment can be found, a new fragment is created instead. | . | If a new fragment is created, the following steps are taken. | The new fragment becomes the new open fragment and the previous fragment becomes immutable1. | This newly created fragment and the previous fragment are then linked with each other by 2 generic relationships1. | The pagenumber of the new fragment is determined based on the old fragment or is set to 1 in case of the first fragment. | . | . 1 In case of the first fragment, a previous fragment does not exist so these steps are skipped. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/index#partitioning",
+    
+    "relUrl": "/configuration/fragmentations/index#partitioning"
+  },"22": {
+    "doc": "Fragmentations",
+    "title": "Default Fragment",
+    "content": "If a member is fragmented that can not be added to any fragment (ex. the fragmentation property is missing or not valid), then the member will be added to a default fragment. This is a responsibility of the individual fragmentation strategy so if a custom fragmentation strategy is created it must also implement this logic. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/index#default-fragment",
+    
+    "relUrl": "/configuration/fragmentations/index#default-fragment"
+  },"23": {
+    "doc": "Fragmentations",
+    "title": "Supported Fragmentations:",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/index#supported-fragmentations",
+    
+    "relUrl": "/configuration/fragmentations/index#supported-fragmentations"
+  },"24": {
+    "doc": "Fragmentations",
+    "title": "Fragmentations",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/index",
+    
+    "relUrl": "/configuration/fragmentations/index"
+  },"25": {
+    "doc": "Reference Fragmentation",
+    "title": "Reference fragmentation",
+    "content": "Reference fragmentation will create fragments based on a provided property path defined as tree:fragmentationPath. When no fragmentationPath is defined, “rdf:type” is used by default. A tree:fragmentationKey can be used to customize the request parameter key. This is useful when nesting multiple reference fragmentations. You can have a fragment that looks like this http://{hostname}/{collection}/{view}?type={a-type}&amp;version={a-version}. This allows you to fragment the data on references. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/reference#reference-fragmentation",
+    
+    "relUrl": "/configuration/fragmentations/reference#reference-fragmentation"
+  },"26": {
+    "doc": "Reference Fragmentation",
+    "title": "Properties",
+    "content": "@prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:ReferenceFragmentation ; tree:fragmentationPath { Optional: defines which property will be used for bucketizing } ; tree:fragmentationKey { Optional: defines the request parameter that will be used in the uri } ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/reference#properties",
+    
+    "relUrl": "/configuration/fragmentations/reference#properties"
+  },"27": {
+    "doc": "Reference Fragmentation",
+    "title": "Algorithm",
+    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the property path matches the fragmentationPath | We select all the object that pass the above filters. | . | A bucket of references is created using the object value(s) | The buckets are iterated. The member is added to every bucket. Taking into account: . | A new fragment is created if no fragment exists for the given reference. | The member is added to every related fragment | . | When the member could not be added to any bucket (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket key=unknown. | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/reference#algorithm",
+    
+    "relUrl": "/configuration/fragmentations/reference#algorithm"
+  },"28": {
+    "doc": "Reference Fragmentation",
+    "title": "Example",
+    "content": "Example properties: . @prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:ReferenceFragmentation ; tree:fragmentationPath &lt;http://purl.org/dc/terms/isVersionOf&gt; ; tree:fragmentationKey \"version\" ; ] . With following example input: . @prefix dc: &lt;http://purl.org/dc/terms/&gt; . @prefix ns0: &lt;http://semweb.mmlab.be/ns/linkedconnections#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix ns1: &lt;http://vocab.gtfs.org/terms#&gt; . @prefix prov: &lt;http://www.w3.org/ns/prov#&gt; . @prefix ns2: &lt;http://www.opengis.net/ont/geosparql#&gt; . @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; . @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; . &lt;http://njh.me/original-id/123#2022-09-28T17:11:28.520Z&gt; dc:isVersionOf &lt;http://njh.me/original-id/123&gt; ; ns0:arrivalStop &lt;http://example.org/stops/402161&gt; ; ns0:arrivalTime \"2022-09-28T07:14:00.000Z\"^^xsd:dateTime ; ns0:departureStop &lt;http://example.org/stops/402303&gt; ; ns0:departureTime \"2022-09-28T07:09:00.000Z\"^^xsd:dateTime ; ns1:dropOffType ns1:Regular ; ns1:pickupType ns1:Regular ; ns1:route &lt;http://example.org/routes/Hasselt_-_Genk&gt; ; ns1:trip &lt;http://example.org/trips/Hasselt_-_Genk/Genk_-_Hasselt/20220928T0909&gt; ; a ns0:Connection ; prov:generatedAtTime \"2022-09-28T17:11:28.520Z\"^^xsd:dateTime . The selected object would be . &lt;http://njh.me/original-id/123&gt; . After ingestion the member will be part of the following fragment . | http://localhost:8080/addresses/by-version?version=http%3A%2F%2Fnjh.me%2Foriginal-id%2F123 | . NOTE: “version” is based on the configuration property “tree:fragmentationKey”. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/reference#example",
+    
+    "relUrl": "/configuration/fragmentations/reference#example"
+  },"29": {
+    "doc": "Reference Fragmentation",
+    "title": "Reference Fragmentation",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/reference",
+    
+    "relUrl": "/configuration/fragmentations/reference"
+  },"30": {
+    "doc": "Timebased Fragmentation",
+    "title": "Timebased fragmentation",
+    "content": "Timebased fragmentation will create fragments based on a time selected from the fragmentationPath and a given granularity. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/timebased#timebased-fragmentation",
+    
+    "relUrl": "/configuration/fragmentations/timebased#timebased-fragmentation"
+  },"31": {
+    "doc": "Timebased Fragmentation",
+    "title": "Properties",
+    "content": "@prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:HierarchicalTimeBasedFragmentation ; tree:maxGranularity { Mandatory: defines the depth level of the fragments } ; tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ; tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ; ] . For maxGranularity the following values are allowed: . | year, | month, | day, | hour, | minute, | second. | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/timebased#properties",
+    
+    "relUrl": "/configuration/fragmentations/timebased#properties"
+  },"32": {
+    "doc": "Timebased Fragmentation",
+    "title": "Algorithm",
+    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath. | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the objects that pass the above filters. | . | The fragment of the member is determined. For each unit of time starting with year and ending with the chosen granularity from maxGranularity we do the following: . | We take the value of this unit of time from the fragmentationObject. eg: the value of month for 2023-03-02T06:30:40 is 03. | We check if the previous fragment has a child fragment with this value for the unit of time. (In the case of year, the previous fragment is the root fragment.) | If no such fragment exists, a new one is created. | . | The member is added to the last fragment. | When the member could not be added to any bucket (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket year=unknown. | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/timebased#algorithm",
+    
+    "relUrl": "/configuration/fragmentations/timebased#algorithm"
+  },"33": {
+    "doc": "Timebased Fragmentation",
+    "title": "Example",
+    "content": "Example properties: . @prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:HierarchicalTimeBasedFragmentation ; tree:maxGranularity \"day\" ; tree:fragmentationPath &lt;http://www.w3.org/ns/prov#generatedAtTime&gt; ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/timebased#example",
+    
+    "relUrl": "/configuration/fragmentations/timebased#example"
+  },"34": {
+    "doc": "Timebased Fragmentation",
+    "title": "Timebased Fragmentation",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/fragmentations/timebased",
+    
+    "relUrl": "/configuration/fragmentations/timebased"
+  },"35": {
+    "doc": "Binding the server ports",
+    "title": "Configuring the available ports of de LDES server",
+    "content": "The LDES server has multiple APIs that each serve a distinct function and will be used by different people. To enable separate levels of protection for each of these APIs, the fetch, ingest and admin endpoints can each be configured to use a separate port. The properties to bind to these ports are optional. This means that if no port is specified, the API will be available on the default server port. Any and all of these port can share the same port, whether by sharing the default server port or specifying the same port number in the configuration. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/ports#configuring-the-available-ports-of-de-ldes-server",
+    
+    "relUrl": "/configuration/ports#configuring-the-available-ports-of-de-ldes-server"
+  },"36": {
+    "doc": "Binding the server ports",
+    "title": "Example",
+    "content": "ldes-server: ingest: port: 8089 fetch: port: 8088 admin: port: 8087 . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/ports#example",
+    
+    "relUrl": "/configuration/ports#example"
+  },"37": {
+    "doc": "Binding the server ports",
+    "title": "The Admin API and swagger",
+    "content": "All swagger endpoints are reachable under the admin port. When the admin port is separate of the ingest and fetch ports, the try it out option will not work for the ingest and fetch endpoints. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/ports#the-admin-api-and-swagger",
+    
+    "relUrl": "/configuration/ports#the-admin-api-and-swagger"
+  },"38": {
+    "doc": "Binding the server ports",
+    "title": "Binding the server ports",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/ports",
+    
+    "relUrl": "/configuration/ports"
+  },"39": {
+    "doc": "Retention Policies",
+    "title": "Retention Policies",
+    "content": "To reduce storage fill up, it is possible to set a retention policy per view. A retention policy has to be added together with its view. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/index",
+    
+    "relUrl": "/configuration/retention-policies/index"
+  },"40": {
+    "doc": "Retention Policies",
+    "title": "Deletion Policies",
+    "content": "When a member is removed from its last view, they are no longer automatically removed from the event stream. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/index#deletion-policies",
+    
+    "relUrl": "/configuration/retention-policies/index#deletion-policies"
+  },"41": {
+    "doc": "Retention Policies",
+    "title": "Retention polling interval",
+    "content": "By default, every day, the server checks if there are members that can be deleted that are not conform to the retention policy anymore. If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression. To configure this interval, please refer to the Configuration Page. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/index#retention-polling-interval",
+    
+    "relUrl": "/configuration/retention-policies/index#retention-polling-interval"
+  },"42": {
+    "doc": "Retention Policies",
+    "title": "Supported Retention Policies:",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/index#supported-retention-policies",
+    
+    "relUrl": "/configuration/retention-policies/index#supported-retention-policies"
+  },"43": {
+    "doc": "Timebased Retention",
+    "title": "Timebased Retention Policy",
+    "content": "https://w3id.org/ldes#DurationAgoPolicy . Timebased Retention Policy will filter out members based on their ldes:timestampPath. This retention policy works with a sliding window and not with a hard-set value. The sliding window can be defined with a ISO 8601 Temporal Duration. Any members’ ldes:timestampPath that falls outside of this range will be removed. gantt title Timebased Retention (Range: P2D) dateFormat YYYY-MM-DD todayMarker off section Day 1 Current Day: crit, milestone, 2023-11-11, 0d Original Stream: active, 2023-11-08, 3d Sliding Window (Current Day -2 days): 2023-11-9, 2d Stream After Retention Day 1: active, 2023-11-9, 2d section Day 2 Current Day: crit, milestone, 2023-11-12, 0d Original Stream: active, 2023-11-9, 3d Sliding Window (Current Day -2 days): 2023-11-10, 2d Stream After Retention Day 2: active, 2023-11-10, 2d . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/timebased#timebased-retention-policy",
+    
+    "relUrl": "/configuration/retention-policies/timebased#timebased-retention-policy"
+  },"44": {
+    "doc": "Timebased Retention",
+    "title": "Example",
+    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:DurationAgoPolicy ; tree:value \"PT10M\"^^&lt;http://www.w3.org/2001/XMLSchema#duration&gt; ; ] ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/timebased#example",
+    
+    "relUrl": "/configuration/retention-policies/timebased#example"
+  },"45": {
+    "doc": "Timebased Retention",
+    "title": "Timebased Retention",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/timebased",
+    
+    "relUrl": "/configuration/retention-policies/timebased"
+  },"46": {
+    "doc": "Version Based Retention",
+    "title": "Version Based Retention Policy",
+    "content": "https://w3id.org/ldes#LatestVersionSubset . To keep the Event Stream clean with less history, the Version Based Retention Policy allows to only keep a certain amount of versions of a state object (referenced through ldes:versionOfPath). The amount of version to retain can be set as a number (higher than 0). ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/version-based#version-based-retention-policy",
+    
+    "relUrl": "/configuration/retention-policies/version-based#version-based-retention-policy"
+  },"47": {
+    "doc": "Version Based Retention",
+    "title": "Example",
+    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:LatestVersionSubset ; ldes:amount 2 ; ] ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/version-based#example",
+    
+    "relUrl": "/configuration/retention-policies/version-based#example"
+  },"48": {
+    "doc": "Version Based Retention",
+    "title": "Version Based Retention",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/retention-policies/version-based",
+    
+    "relUrl": "/configuration/retention-policies/version-based"
+  },"49": {
+    "doc": "Configuring a new View",
+    "title": "Configuring a new View for an Event Stream",
+    "content": "After having created an Event Stream, a view needs to be defined to be able to retrieve the data. This can be done through the Admin API at the /admin/api/v1/eventstreams/{event stream}/views endpoint. A view config needs to have the following structure: . | A tree:viewDescription object with its subject referring to the event stream object . | a tree:FragmentationStrategy object that contains an ordered rdf list of fragmentations. | a ldes:retentionPolicy object that contains a set of retention policies. When no retention policies are required, this is omitted. | a tree:pageSize object that marks how many members should be partitioned per fragment. | . | . For more info, visit the Swagger API documentation. Fragmentations . To provide a more structured overview of the data, a fragmentation list can be defined. For a more detailed explanation on fragmentation, together with all the available options, visit the Fragmentations Subsection. Retention Policies . To reduce the amount of historical data kept in the LDES Server, one can configure a set of retention policies. For a more detailed explanation on retention policies, together with all the available options, visit the Retention Policies Subsection. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/view#configuring-a-new-view-for-an-event-stream",
+    
+    "relUrl": "/configuration/view#configuring-a-new-view-for-an-event-stream"
+  },"50": {
+    "doc": "Configuring a new View",
+    "title": "Example",
+    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix server: &lt;http://localhost:8080/generic-eventstream/&gt; . server:view-name tree:viewDescription [ a tree:fragmentationStrategy; tree:fragmentationStrategy () ; tree:pageSize \"10\"^^&lt;http://www.w3.org/2001/XMLSchema#int&gt; ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/view#example",
+    
+    "relUrl": "/configuration/view#example"
+  },"51": {
+    "doc": "Configuring a new View",
+    "title": "Configuring a new View",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/configuration/view",
+    
+    "relUrl": "/configuration/view"
+  },"52": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Ingest Members With HTTP",
+    "content": "An Event Stream without its members is nothing. Therefore, new members can be ingested via a POST HTTP Endpoint. This endpoint follows the following pattern: {ldes server hostname}/{event-stream}. Note that this event stream should already be configured. (Read Configuring a Event Stream for more details) . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http",
+    
+    "relUrl": "/ingest/http"
+  },"53": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Accepted formats",
+    "content": "The LDES Server accepts every RDF type supported by Apache JENA. When sending the RDF data, make sure this is specified in the Content-Type header. The most common types to use are application/n-quads, text/turtle and application/ld+json. For more details, please refer to the Swagger API under the base definition. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http#accepted-formats",
+    
+    "relUrl": "/ingest/http#accepted-formats"
+  },"54": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Version objects, state objects and version creation",
+    "content": "Currently, an event stream can ingest version objects by default. A version object describes the state of a specific version of a resource at a specific timestamp. However, an event stream can be configured in such a way that it can ingest state objects. Once the event stream and its fragments are retrieved, the members will be presented as version objects. A state object describes the latest state of a resource. When such an object is ingested, the server stores the RDF model as is, the timestamp of ingestion and determines the subject of that member. When the members of such an event stream are fetched, the stored RDF model is enriched with the version object properties, which includes: . | the named subject node, which is the versionOf, will be replaced with the member id, which has the following structure: {versionOf}{versionDelimiter}{timestamp}. By default, the versionDelimiter is /, but this can be configured with any string, which then results in the following structure for the named subject node: {versionOf}/{timestamp}. | the following statements will be added: . | &lt;{memberId}&gt; &lt;{timestamp-path-of-the-ldes}&gt; \"{timestamp}\"\"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; | &lt;{memberId}&gt; &lt;{version-of-path-of-the-ldes}&gt; &lt;versionOf&gt; | . | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http#version-objects-state-objects-and-version-creation",
+    
+    "relUrl": "/ingest/http#version-objects-state-objects-and-version-creation"
+  },"55": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Bulk ingestion",
+    "content": "When the event stream is configured to ingest state objects, a fun side effect is enabled, namely bulk ingest. This is a result of the extraction algorithm used to extract all the state objects out of the ingested RDF model. This algorithm searches for all the named subject nodes and then searches for all the nested statements that are related to each named subject. All the statements of each subject and its nested statements will be put together in an RDF model resulting in one or many members. CAUTION: when the ingestion fails for one of the members, e.g. due to a validation violation, the ingestion for all the members will fail and none of them will be stored. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http#bulk-ingestion",
+    
+    "relUrl": "/ingest/http#bulk-ingestion"
+  },"56": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Member Conformity",
+    "content": "Every member should conform to certain conditions, depending on the event stream on which they are ingested. Named nodes . Every named node is viewed as a member. Having a named node that is not intended as a member to be ingested on the collection can lead to several validation errors. Most commonly this will lead to a validation error stating the timestamp path and version-of path are missing, depending on the data itself. If by chance it conforms to the all following validation, it will be treated as any normal member. To prevent such cases, additional shacl validation can be configured on the event stream. Named Graphs . Named graphs are not supported. When a named graph is present, the model is rejected. Shared or Loose Blank Nodes . All blank nodes should be referenced by exactly 1 other subject. When a blank node is present that is not the object of a statement or the object of 2 or more statements with different subjects, the ingested model is rejected. This also means that the root node of every member should be a named node. It is still possible for a single subject to reference the same blank node multiple times. Timestamp and Version Of Path . Every event stream defines the property where the timestamp and version of can be found on each member. If the event stream has version creation NOT enabled, these properties should be present on each member. If version creation is enabled, these properties should NOT be present on the members received. The timestamp defined on the timestamp path should be of the type &lt;http://www.w3.org/2001/XMLSchema#dateTime&gt;. The timestamp must have this datatype explicitly declared. example: &lt;https://example.be/member/1&gt; &lt;http://www.w3.org/ns/prov#generatedAtTime&gt; \"1996-03-28T09:58:15.867Z\"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; . The object defined on the versionOf path must be a uri. This uri should represent the state object of which the member is a version. ex. &lt;https://example.be/member/1&gt; &lt;http://purl.org/dc/terms/isVersionOf&gt; &lt;https://example.be/member&gt; . Bulk Ingestion . Depending on if the event stream has version creation enabled, multiple members can be ingested with a single POST request. Later this will also be possible without version creation. For now, a request will be rejected if multiple named nodes are found which are not referenced by any triple. (Without version creation enabled) . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http#member-conformity",
+    
+    "relUrl": "/ingest/http#member-conformity"
+  },"57": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Duplicate Members",
+    "content": "When a member is ingested normally, it is saved in the server and a 201 ACCEPTED status is returned. Sometimes a member with the same ID as an existing member can be send to the ingest endpoint. In this case, the second member will be ignored, a warning will be logged and a 200 OK status will be returned. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/http#duplicate-members",
+    
+    "relUrl": "/ingest/http#duplicate-members"
+  },"58": {
+    "doc": "Ingest Members With Kafka",
+    "title": "Ingest Members With Kafka",
+    "content": "Ingesting members into an Event Stream without too much overhead? That’s now possible via ingestion over Apache Kafka. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/kafka",
+    
+    "relUrl": "/ingest/kafka"
+  },"59": {
+    "doc": "Ingest Members With Kafka",
+    "title": "Getting Started",
+    "content": "To get started with ingesting members via Kafka, you need to have the following: . | Kafka consumer configuration (in the Application Properties) | Event Stream configuration pointing to a Kafka topic (in the Admin API) | . Application Properties . The Kafka consumer configuration can be set in the application.properties file. The most basic properties that are needed are: . spring.kafka.consumer.bootstrap-servers=localhost:9092 spring.kafka.consumer.group-id=my-group . To guarantee that the Kafka consumer will always read from the beginning of the topic, you can add the following property: . spring.kafka.consumer.auto-offset-reset=earliest . For more advanced options to configure advanced Kafka connections, please refer to the Spring Kafka documentation. Event Stream Configuration . To configure a new Event Stream that uses Kafka as the ingestion method, you need to create an Event Stream configuration that points to a Kafka topic. This can be done by adding a https://w3id.org/ldes#KafkaEventStream object to the Event Stream configuration. This object should contain the following properties: . | ldes:topic - The Kafka topic to which the members should be ingested. | ldes:mimeType - The mime type in which the data of your topic will be. This is used to parse your member to a model. This can be application/ld+json, application/json, text/turtle, … All members in your topic need to therefor be in one mime type. | . Example . Creating a generic Event Stream named “event-stream” that uses Kafka as the ingestion method. @prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix dcterms: &lt;http://purl.org/dc/terms/&gt; . @prefix prov: &lt;http://www.w3.org/ns/prov#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix server: &lt;http://localhost:8080/&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix event-stream: &lt;http://localhost:8080/event-stream/&gt; . server:event-stream a ldes:EventStream ; ldes:timestampPath dcterms:created ; ldes:versionOfPath dcterms:isVersionOf ; tree:shape [ a sh:NodeShape ] ; ldes:kafkaSource [ ldes:topic \"testTopic\" ; ldes:mimeType \"application/n-quads\" ; ] . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/ingest/kafka#getting-started",
+    
+    "relUrl": "/ingest/kafka#getting-started"
+  },"60": {
+    "doc": "Read Linked Data Event Streams With HTTP",
+    "title": "Read Linked Data Event Streams With HTTP",
+    "content": "Although the Linked Data Event Streams are advised to read with an LDES Client, an Event Stream can also be retrieved via HTTP. When manually retrieving an LDES, we can make a distinction into 3 categories: . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/fetch/http",
+    
+    "relUrl": "/fetch/http"
+  },"61": {
+    "doc": "Read Linked Data Event Streams With HTTP",
+    "title": "Retrieving an Event Stream",
+    "content": "By browsing to an Event Stream following the pattern {hostname}/{event stream}, you are able to read the shape of the Event Stream, its views (along with its configured fragmentations) and configured DCAT information. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/fetch/http#retrieving-an-event-stream",
+    
+    "relUrl": "/fetch/http#retrieving-an-event-stream"
+  },"62": {
+    "doc": "Read Linked Data Event Streams With HTTP",
+    "title": "Retrieving a View",
+    "content": "By following the previously mentioned views or by following the pattern {hostname}/{event stream}/{view}, the view page will be shown. This contains information about how many members are in this Event Stream, the configured DCAT information and the tree:Relation that points to the root fragment. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/fetch/http#retrieving-a-view",
+    
+    "relUrl": "/fetch/http#retrieving-a-view"
+  },"63": {
+    "doc": "Read Linked Data Event Streams With HTTP",
+    "title": "Retrieving a fragment",
+    "content": "Finally, by following the root fragment from a view or by following the pattern {hostname}/{event stream}/{view}?{fragmentation specific parameters}, the fragment page will be shown. Depending on whether any fragmentations are defined, this either contains a partitioned fragment page or one or multipletree:Relation that point to partitioned fragment pages. These partitioned fragments contain the actual members. Retrieving a fragment in a streaming way . When retrieving a fragment, it is possible to receive the fragment page in a streaming way by specifying the accept type as text/event-stream. The fragment will then always be converted to the application/rdf+protobuf format. Because server-side events are used we encode the data to base64. When retrieving a fragment in this way, not all the data will be received at once. | First the statements relating to the fragment itself and its relations to other fragments will be send. This event will have the name: metadata. | Then all members will be send one by one. These events will have the name: member. | . Every piece of the fragment data is wrapped in the data part of a Server-side event. This method is useful when retrieving large fragments because you do not have to wait until every member is fetched and the entire fragment is constructed to start processing the data. When consuming a fragment in this way, it is important to recognise that an error can still occur after receiving an 200 OK response from the server. When such an error occurs, the error message will be send in a Server-side event named error. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/fetch/http#retrieving-a-fragment",
+    
+    "relUrl": "/fetch/http#retrieving-a-fragment"
+  },"64": {
+    "doc": "Read Linked Data Event Streams with the LDES Client",
+    "title": "Read Linked Data Event Streams with the LDES Client",
+    "content": "As a Linked Data Event Stream is mainly built to be read by machines, the LDES Client can take on a LDES endpoint. The LDES Client will replicate the Event Stream and then synchronise with it to listen for new updates. To use this component, please refer to the LDIO LDES Client Documentation . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/fetch/ldes-client",
+    
+    "relUrl": "/fetch/ldes-client"
+  },"65": {
+    "doc": "Fragment Compaction",
+    "title": "Fragment Compaction",
+    "content": "To prevent that clients need to read fragments which are almost empty, the system foresees an algorithm to merge such fragments together so that fragment size stays as optimal as possible. This algorithm is called compaction and allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the tree:pageSize object of the view). Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be “copied” to the new fragment. | Clients who haven’t consumed the compacted fragments yet will be directed towards the new fragment, skipping the smaller, compacted fragments. | Clients who are in the process of consuming the compacted fragments will be able to continue consumption of the compacted fragments for a limited, configurable, amount of time. The default value for conserving the compacted fragments is 7 days (PD7), unless configured otherwise. | . %%{init: { 'gitGraph': {'mainBranchName': 'stream'}}}%% gitGraph commit id: \"Fragment 1: 100%\" commit id: \"Fragment 2: 100%\" branch compaction checkout stream commit id: \"Fragment 3: 25%\" type: REVERSE commit id: \"Fragment 4: 25%\" type: REVERSE commit id: \"Fragment 5: 25%\" type: REVERSE checkout compaction commit id: \"Fragment 3/5: 75%\" type: REVERSE checkout stream merge compaction tag: \"compacted Stream\" type: HIGHLIGHT commit id: \"Fragment 6: 75% (Open)\" . Compaction wil run at configurable moments, so that the optimal time can be determined and impact on performance can be limited. Configuration parameters of the compaction algorithm can be found on the LDES Server Config section of the How to run page. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/compaction",
+    
+    "relUrl": "/features/compaction"
+  },"66": {
+    "doc": "RDF Prefixes",
+    "title": "RDF Prefixes",
+    "content": "For some RDF formats, e.g. text/turtle, prefixes can be added to have a more clean and readable output. There are several ways that prefixes will be added to the output of the LDES Server. | Well known prefixes | Configured prefixes | Event Stream and fragment specific prefixes | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/rdf-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes"
+  },"67": {
+    "doc": "RDF Prefixes",
+    "title": "Well known prefixes",
+    "content": "Well known prefixes are some of the prefixes that are most frequent used in LDES and are hard coded in the LDES server and can be found here: . | Prefix | URI | . | foaf | http://xmlns.com/foaf/0.1/ | . | rdf | http://www.w3.org/1999/02/22-rdf-syntax-ns# | . | rdfs | http://www.w3.org/2000/01/rdf-schema# | . | skos | http://www.w3.org/2004/02/skos/core# | . | owl | http://www.w3.org/2002/07/owl# | . | xsd | http://www.w3.org/2001/XMLSchema# | . | geo | http://www.opengis.net/ont/geosparql# | . | dcat | http://www.w3.org/ns/dcat# | . | dct | http://purl.org/dc/terms/ | . | prov | http://www.w3.org/ns/prov# | . | m8g | http://data.europa.eu/m8g/ | . | tree | https://w3id.org/tree# | . | ldes | https://w3id.org/ldes# | . | sh | http://www.w3.org/ns/shacl# | . | shsh | http://www.w3.org/ns/shacl-shacl# | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/rdf-prefixes#well-known-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#well-known-prefixes"
+  },"68": {
+    "doc": "RDF Prefixes",
+    "title": "Configured prefixes",
+    "content": "When needed, additional prefixes can be added to the LDES Server. This can come in handy for project specific prefixes. To add these prefixes, a map can be added to the application properties as follows . ldes-server: formatting: prefixes: prefix1: uri1 prefix2: uri2 prefix3: uri3 . In the following example are two prefixes added to the LDES Server: . ldes-server: formatting: prefixes: example: http://example.org/ vsds-verkeersmetingen: http://data.vlaanderen.be/ns/verkeersmetingen# . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/rdf-prefixes#configured-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#configured-prefixes"
+  },"69": {
+    "doc": "RDF Prefixes",
+    "title": "Event Stream and fragment specific prefixes",
+    "content": "Per event stream and fragment, prefixes will be extracted and added to the output. Those will look something like this: . Event stream . | collectionName: ${ldes-server.host-name}/{collectionName} | . Tree node . | collectionName: ${ldes-server.host-name}/{collectionName} | viewName: ${ldes-server.host-name}/{collectionName}/{viewName} | . ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/rdf-prefixes#event-stream-and-fragment-specific-prefixes",
+    
+    "relUrl": "/features/rdf-prefixes#event-stream-and-fragment-specific-prefixes"
+  },"70": {
+    "doc": "Using relative URI's",
+    "title": "Using relative URI’s",
+    "content": "When using the server with relative URI’s, all resources hosted on the server will have a URI relative to the page on which they are found. Note: When using relative urls, requests can not be performed with application/n-quads or application/n-triples as accept-type. This is because these types don’t support resolving the relative URI’s. Some alternatives that do support this are: text/turtle, application/trig, application/ld+json, etc. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/relative-urls#using-relative-uris",
+    
+    "relUrl": "/features/relative-urls#using-relative-uris"
+  },"71": {
+    "doc": "Using relative URI's",
+    "title": "Using relative URI's",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/relative-urls",
+    
+    "relUrl": "/features/relative-urls"
+  },"72": {
+    "doc": "Skolemization",
+    "title": "Skolemization",
+    "content": " ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/skolemization",
+    
+    "relUrl": "/features/skolemization"
+  },"73": {
+    "doc": "Skolemization",
+    "title": "What is Skolemization",
+    "content": "In the context of Linked Data, Skolemization is a process used to handle blank nodes or anonymous nodes in RDF (Resource Description Framework) graphs. These nodes, which lack unique identifiers, are frequently employed in RDF/S knowledge bases to represent complex attributes or resources with known properties but unknown identities. Skolemization in Linked Data involves the transformation of these blank nodes into Skolem Uniform Resource Identifiers (URIs). The process enhances the clarity makes it easier to reference these nodes in future datasets. This process is particularly useful when dealing with substantial volumes of unstructured data distributed across diverse sources. By improving the accuracy and relevance of RDF summaries in relation to original datasets, Skolemization enhances the efficiency and effectiveness of subsequent queries against these summaries. In summary, Skolemization in Linked Data provides a way to handle the complexity introduced by blank nodes in RDF graphs, thereby enhancing the clarity, interoperability, and usability of the data. Example . Suppose we have the following RDF triples with a blank node represented as _:: . _:bnode &lt;http://purl.org/dc/terms/title&gt; \"The Lord of the Rings\" . _:bnode &lt;http://purl.org/dc/terms/creator&gt; \"J.R.R. Tolkien\" . In this example, _: is a blank node that represents a resource (a book in this case) with known properties (title and creator) but an unknown identity. Through Skolemization, we can replace the blank node with a Skolem URI. The Skolem URI is typically a URL that is unique to the blank node and is generated by the system handling the RDF data. Here’s how it might look: . &lt;http://example.org/.well-known/genid/123456&gt; &lt;http://purl.org/dc/terms/title&gt; \"The Lord of the Rings\" . &lt;http://example.org/.well-known/genid/123456&gt; &lt;http://purl.org/dc/terms/creator&gt; \"J.R.R. Tolkien\" . In this Skolemized version, the blank node has been replaced with the Skolem URI http://example.org/.well-known/genid/123456. This URI is unique to the resource previously represented by the blank node, and can now be used to reference this resource in other datasets. This is a simple example, but it illustrates the basic process of Skolemization in Linked Data. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/skolemization#what-is-skolemization",
+    
+    "relUrl": "/features/skolemization#what-is-skolemization"
+  },"74": {
+    "doc": "Skolemization",
+    "title": "Skolemization in LDES Server",
+    "content": "Skolemization can be configured on Event Stream level. ",
+    "url": "/VSDS-LDESServer4J/3.6.2-SNAPSHOT/features/skolemization#skolemization-in-ldes-server",
+    
+    "relUrl": "/features/skolemization#skolemization-in-ldes-server"
+  }
+}
