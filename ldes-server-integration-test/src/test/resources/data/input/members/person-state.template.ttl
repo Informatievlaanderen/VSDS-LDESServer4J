@@ -1,0 +1,8 @@
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix terms: <http://purl.org/dc/terms/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+
+<https://example.com/John-ID>
+  a schema:Person ;
+  schema:date "TIMESTAMP" .
