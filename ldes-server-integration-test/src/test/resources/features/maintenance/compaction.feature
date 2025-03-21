@@ -21,6 +21,27 @@ Feature: LDES Server Compaction
       | 3 |
     And the background processes did not fail
 
+  Scenario Outline: Compaction With Retention Policy
+    Given I create the eventstream "data/input/eventstreams/compaction/small-paged-observations.ttl"
+    And I ingest 1 members of version 0 of template <template> for collection <collection>
+    And I ingest 3 members of version 1 of template <template> for collection <collection>
+    And I ingest 3 members of version 2 of template <template> for collection <collection>
+    And I ingest 3 members of version 3 of template <template> for collection <collection>
+    And I ingest 3 members of version 4 of template <template> for collection <collection>
+    Then I wait until all members are fragmented
+    Then wait until no fragments can be compacted
+    And verify the following pages have no members
+        | 1 |
+        | 2 |
+        | 3 |
+        | 4 |
+        | 5 |
+        | 6 |
+    And verify 3 members are connected to a compacted page
+    Examples:
+      | template                                       | collection     |
+      | "data/input/members/person-state.template.ttl" | "observations" |
+
   Scenario: Retention Compaction And Deletion works fine together
     Given I create the eventstream "data/input/eventstreams/compaction/observations.ttl"
     And I start seeding 5 members every 15 seconds

@@ -57,7 +57,16 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Analyse & publish package
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+      - name: Publish package
+        run: |
+          mvn deploy -DskipTests -Dmaven.javadoc.skip=true -B -P release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

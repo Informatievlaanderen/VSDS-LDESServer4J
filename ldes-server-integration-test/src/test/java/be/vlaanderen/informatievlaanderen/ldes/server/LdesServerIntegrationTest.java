@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.U
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.PageRelationPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PageRelationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -35,7 +36,7 @@ import javax.sql.DataSource;
 @AutoConfigureEmbeddedDatabase(type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES,
 		replace = AutoConfigureEmbeddedDatabase.Replace.ANY)
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = {MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class})
+@ContextConfiguration(classes = {MemberEntityRepository.class, PageRelationPostgresRepository.class, PageRelationEntityRepository.class, PageMemberEntityRepository.class})
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server"})
 @Import({BuildProperties.class})
 @TestPropertySource(properties = {
@@ -59,6 +60,8 @@ public class LdesServerIntegrationTest {
 	PageRelationEntityRepository pageRelationEntityRepository;
 	@Autowired
 	PageEntityRepository pageEntityRepository;
+	@Autowired
+	PageMemberEntityRepository pageMemberEntityRepository;
 
 	@Autowired
 	DataSource dataSource;

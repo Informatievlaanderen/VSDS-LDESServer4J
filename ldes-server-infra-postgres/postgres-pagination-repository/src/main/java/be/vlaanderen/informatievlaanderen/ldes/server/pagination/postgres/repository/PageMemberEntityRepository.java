@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.PageMemberId;
 import jakarta.persistence.Tuple;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,5 +46,9 @@ public interface PageMemberEntityRepository extends JpaRepository<PageMemberEnti
 	@Query("SELECT pm.pageMemberId.memberId FROM PageMemberEntity pm WHERE pm.pageMemberId.bucketId = :bucketId AND " +
 	       "pm.page IS NULL ORDER BY pm.pageMemberId.memberId")
 	List<Long> findByBucketIdAndPageIdIsNullOrderByMemberId(long bucketId);
+
+	@Override
+	@EntityGraph(attributePaths = {"page"})
+	List<PageMemberEntity> findAll();
 
 }
