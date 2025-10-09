@@ -242,3 +242,6 @@ spring:
 [LDES Client]: https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/ldio/ldio-inputs/ldio-ldes-client
 [LDIO Http Out]: https://informatievlaanderen.github.io/VSDS-Linked-Data-Interactions/ldio/ldio-outputs/ldio-http-out
 [spring documentation]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html
+
+## Credits
+shout-out to ej-technologies for providing us with a license for their [java profiler]( https://www.ej-technologies.com/products/jprofiler/overview.html)!
