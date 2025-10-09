@@ -9,6 +9,7 @@ env:
   SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
   SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
   DOCKER_NAMESPACE: ${{ vars.DOCKER_NAMESPACE }}
+  ANALYSE_PACKAGE: ${{ vars.ANALYSE_PACKAGE }}
 
 jobs:
   build:
@@ -55,6 +56,7 @@ jobs:
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Analyse & publish package
+        if: ${{ env.ANALYSE_PACKAGE == true }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Pcoverage
         env:
@@ -63,6 +65,10 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+      - name: build & publish package
+        if: ${{ env.ANALYSE_PACKAGE != true }}
+        run: |
+          mvn -B verify
       - name: Upload JARs
         uses: actions/upload-artifact@v4
         with:

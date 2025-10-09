@@ -73,11 +73,10 @@ jobs:
       - name: Create package
         if: ${{ env.ANALYSE_PACKAGE != true }}
         run: |
-          mvn -B install -Dparallel=all -DperCoreThreadCount=true
+          mvn -B package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
       - name: Publish package
         if: ${{ env.DEPLOY_PACKAGE_TO_OSSRH == true }}
         run: |
