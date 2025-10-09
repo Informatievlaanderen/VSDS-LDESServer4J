@@ -18,6 +18,7 @@ env:
 jobs:
 
   build:
+    if: ${{ vars.DEPLOY_DOCUMENTATION != 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,8 +54,8 @@ jobs:
           registry-url: https://npm.pkg.github.com/
       - run: npm i -g @yalz/gh-pages-multi
       - run: |
-          git config --global user.email "vsds@noreply.com"
-          git config --global user.name "VSDS CI"
+          git config --global user.name "${{ env.GIT_CONFIG_USERNAME }}"
+          git config --global user.email "${{ env.GIT_CONFIG_EMAIL }}"
           git config --global url.https://${{ env.PAT }}@github.com/.insteadOf https://github.com/
         env:
           PAT: ${{secrets.DEPLOY_DOCS_PAT}}
