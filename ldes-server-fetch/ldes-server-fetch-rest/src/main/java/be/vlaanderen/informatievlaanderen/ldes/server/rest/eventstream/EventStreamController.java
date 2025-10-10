@@ -49,6 +49,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 				.header(CONTENT_TYPE, getContentTypeHeader(language))
 				.header(CACHE_CONTROL, restConfig.generateMutableCacheControl(null))
 				.header(CONTENT_DISPOSITION, RestConfig.INLINE)
+                .header(VARY, ACCEPT)
 				.eTag(cachingStrategy.generateCacheIdentifier(eventStream.getCollection(), language))
 				.body(eventStream);
 	}

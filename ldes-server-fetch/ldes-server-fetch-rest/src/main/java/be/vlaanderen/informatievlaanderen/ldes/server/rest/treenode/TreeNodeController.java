@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig.DEFAULT_RDF_MEDIA_TYPE;
+import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.VARY;
 
 @Observed
 @RestController
@@ -73,6 +75,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 				.header(CONTENT_TYPE, MediaType.TEXT_EVENT_STREAM_VALUE)
 				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
 				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
+                .header(VARY, ACCEPT)
 				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(emitter);
 	}
@@ -91,6 +94,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 				.header(CONTENT_TYPE, getContentTypeHeader(language))
 				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
 				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
+                .header(VARY, ACCEPT)
 				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(treeNode);
 	}
