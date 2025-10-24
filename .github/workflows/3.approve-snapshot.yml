@@ -20,8 +20,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 21
+          distribution: ${{ vars.JAVA_DISTRIBUTION }}
+          java-version: ${{ vars.JAVA_VERSION }}
       - name: Define docker variables
         run: |
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
@@ -32,8 +32,8 @@ jobs:
             export NEWVERSION=$(echo ${VERSION/"-SNAPSHOT"/""})
             echo "New version: ${NEWVERSION}"
             mvn -B versions:set -DnewVersion=${NEWVERSION} -DgenerateBackupPoms=false
-            git config user.name 'VSDS CI Pipeline'
-            git config user.email 'vsds-ci@users.noreply.github.com'
+            git config user.name "${{ env.GIT_CONFIG_USERNAME }}"
+            git config user.email "${{ env.GIT_CONFIG_EMAIL }}"
             git add -A
             git commit -am "ci: Promoted version to ${NEWVERSION}"
             echo "NEW_VERSION=${NEWVERSION}" >> $GITHUB_ENV

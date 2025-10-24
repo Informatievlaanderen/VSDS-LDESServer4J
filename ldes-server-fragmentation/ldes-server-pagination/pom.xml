@@ -6,7 +6,7 @@
     <parent>
         <artifactId>ldes-server-fragmentation</artifactId>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <version>3.6.2</version>
+        <version>3.6.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>ldes-server-pagination</artifactId>

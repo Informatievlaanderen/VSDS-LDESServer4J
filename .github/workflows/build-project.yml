@@ -4,6 +4,11 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
+env:
+  SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+  SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+  ANALYSE_PACKAGE: ${{ vars.ANALYSE_PACKAGE }}
+
 jobs:
   build:
     name: build
@@ -15,8 +20,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'zulu'
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRIBUTION }}
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -30,13 +35,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        if: ${{ github.actor != 'dependabot[bot]' && !github.event.pull_request.head.repo.fork }}
+        if: ${{ github.actor != 'dependabot[bot]' && !github.event.pull_request.head.repo.fork && env.ANALYSE_PACKAGE == true }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Pcoverage
       - name: Build (Forks) # https://portal.productboard.com/sonarsource/1-sonarcloud/c/50-sonarcloud-analyzes-external-pull-request
-        if: ${{ github.actor == 'dependabot[bot]' || github.event.pull_request.head.repo.fork }}
+        if: ${{ github.actor == 'dependabot[bot]' || github.event.pull_request.head.repo.fork || env.ANALYSE_PACKAGE != true }}
         run: mvn -B verify
       - name: Upload JARs
         uses: actions/upload-artifact@v4

@@ -1,11 +1,11 @@
 Feature: Server basic fetching functionality
 
-  Scenario Outline: The LDES server has access control headers and etag
+  Scenario Outline: The LDES server has access control headers, vary header and an etag
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 1 members of template <template> to the collection "<collectionName>"
-    Then The response from requesting the url "/<collectionName>" has access control headers and an etag
-    And The response from requesting the url "/<collectionName>/paged" has access control headers and an etag
-    And The response from requesting the url "/<collectionName>/paged?pageNumber=1" has access control headers and an etag
+    Then The response from requesting the url "/<collectionName>" has access control headers, vary header and an etag
+    And The response from requesting the url "/<collectionName>/paged" has access control headers, vary header and an etag
+    And The response from requesting the url "/<collectionName>/paged?pageNumber=1" has access control headers, vary header and an etag
     And I delete the eventstream <collectionName>
     Examples:
       | eventStreamDescriptionFile                                       | template                                           | collectionName      |
