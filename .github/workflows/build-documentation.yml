@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  base_url: /VSDS-LDESServer4J
+  base_url: "/VSDS-LDESServer4J"
   title: "Linked Data Event Stream Server"
 
 jobs:
