@@ -234,7 +234,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.toList().isEmpty());
 	}
 
-	@Then("The response from requesting the url {string} has access control headers and an etag")
+	@Then("The response from requesting the url {string} has access control headers, vary header and an etag")
 	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) {
 		await()
 				.atMost(Duration.of(20, ChronoUnit.SECONDS))
@@ -244,6 +244,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 									.header("Origin", "http://www.someurl.com"))
 							.andExpect(status().isOk())
 							.andExpect(header().exists("Etag"))
+                            .andExpect(header().stringValues("Vary", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Accept"))
 							.andExpect(header().string("Access-Control-Allow-Origin", "*"));
 				});
 	}
