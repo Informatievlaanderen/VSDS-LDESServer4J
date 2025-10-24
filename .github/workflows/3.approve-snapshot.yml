@@ -20,8 +20,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 21
+          distribution: ${{ vars.JAVA_DISTRIBUTION }}
+          java-version: ${{ vars.JAVA_VERSION }}
       - name: Define docker variables
         run: |
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)

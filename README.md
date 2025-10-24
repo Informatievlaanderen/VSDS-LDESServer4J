@@ -322,3 +322,48 @@ Replace [LOGGING LEVEL] with the desired logging level from among: TRACE, DEBUG,
 curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "[LOGGING LEVEL]"}'
   http://localhost:8080/actuator/loggers/ROOT
 ```
+
+## Fork this repository
+There are some secrets and variables that you need to set in order to run the Github Actions. 
+
+There are some extra functionalities that you can enable by setting the following variables:
+
+`ANALYSE_PACKAGE`: when this is set to `true`, the Github Actions will run the SonarCloud analysis. You'll need to set
+the `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` variables and the `SONAR_TOKEN` secret.
+
+`DEPLOY_DOCUMENTATION`: when this is set to `true`, the Github Actions will deploy the documentation to the Github Pages.
+You'll need to set the `GIT_CONFIG_USERNAME` and `GIT_CONFIG_EMAIL` variables and the `DEPLOY_DOCS_PAT` secret.
+
+`DEPLOY_PACKAGE_TO_OSSRH`: when this is set to `true`, the Github Actions will deploy the package to the OSSRH.
+
+
+
+### Secrets
+
+| Secret name                   | Description                                                                       |
+|-------------------------------|-----------------------------------------------------------------------------------|
+| DEPLOY_DOCS_PAT               | a personal access token with the `repo` scope                                     |
+| DOCKER_PASSWORD               | Docker hub user password                                                          |
+| DOCKER_USER                   | Docker hub username or email address                                              |
+| OSSRH_GPG_SECRET_KEY          | GPG private key to use when signing the artifacts for publishing to Maven central |
+| OSSRH_GPG_SECRET_KEY_PASSWORD | The passphrase to use when signing the artifacts for publishing to Maven central  |
+| OSSRH_USERNAME                | Username for Maven Central                                                        |
+| OSSRH_TOKEN                   | Token for Maven Central                                                           |
+| SONAR_TOKEN                   | Token for publishing Sonar reports to Sonar cloud                                 |
+| SSH_PRIVATE_KEY               | The SSH private key to release Maven artifacts                                    |
+
+### Variables
+
+| Variable name           | Description                                                                                            | Example                                |
+|-------------------------|--------------------------------------------------------------------------------------------------------|----------------------------------------|
+| ANALYSE_PACKAGE         | Choose if you want to execute the Sonar scan and publish the reports to Sonar cloud                    | false                                  |
+| DEPLOY_DOCUMENTATION    | Choose if you want to create and deploy the documentation to Github pages                              | false                                  |
+| DEPLOY_PACKAGE_TO_OSSRH | Choose if you want to deploy the Maven package to Maven Central                                        | false                                  |
+| DOCKER_NAMESPACE        | The namespace where the Docker image should be published under (in Docker hub)                         | ldes                                   |
+| GIT_CONFIG_EMAIL        | The Git email address that is used for committing the Github pages and create new releases             | vsds-ci@users.noreply.github.com       |
+| GIT_CONFIG_USERNAME     | The Git username that is used for committing the Github pages and create new releases                  | VSDS CI Pipeline                       |
+| SONAR_ORGANIZATION      | The organisation of the Sonar project                                                                  | informatievlaanderen                   |
+| SONAR_PROJECT_KEY       | The project key of the Sonar project                                                                   | Informatievlaanderen_VSDS-LDESServer4J |
+| JAVA_VERSION            | The Java version to use to build the project in the Github actions                                     | 21                                     |
+| JAVA_DISTRIBUTION       | The Java distribution to use to build the project in the Github actions (temurin, zulu, corretto, ...) | zulu                                   |
+

@@ -12,8 +12,11 @@ on:
   workflow_dispatch:
 
 env:
-  base_url: "/VSDS-LDESServer4J"
-  title: "Linked Data Event Stream Server"
+  BASE_URL: "/VSDS-LDESServer4J"
+  TITLE: "Linked Data Event Stream Server"
+  GIT_CONFIG_USERNAME: ${{ vars.ANALYSE_PACKAGE }}
+  GIT_CONFIG_EMAIL: ${{ vars.GIT_CONFIG_EMAIL }}
+  DEPLOY_DOCS_PAT: ${{ secrets.DEPLOY_DOCS_PAT }}
 
 jobs:
 
@@ -28,8 +31,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 21
+          distribution: ${{ vars.JAVA_DISTRIBUTION }}
+          java-version: ${{ vars.JAVA_VERSION }}
       - name: Determine version
         id: version
         run: |
@@ -45,7 +48,7 @@ jobs:
         run: |
           cd docs 
           bundle install
-          bundle exec jekyll build --baseurl "${{env.base_url}}/${{steps.version.outputs.version}}" -s "./" -d "./_site"
+          bundle exec jekyll build --baseurl "${{env.BASE_URL}}/${{steps.version.outputs.version}}" -s "./" -d "./_site"
         env:
           JEKYLL_ENV: production
       - uses: actions/setup-node@v4
@@ -56,10 +59,10 @@ jobs:
       - run: |
           git config --global user.name "${{ env.GIT_CONFIG_USERNAME }}"
           git config --global user.email "${{ env.GIT_CONFIG_EMAIL }}"
-          git config --global url.https://${{ env.PAT }}@github.com/.insteadOf https://github.com/
+          git config --global url.https://${{ env.DEPLOY_DOCS_PAT }}@github.com/.insteadOf https://github.com/
         env:
           PAT: ${{secrets.DEPLOY_DOCS_PAT}}
       - run: |
-          gh-pages-multi deploy --title "${{env.title}}" -t ${{steps.version.outputs.version}} -s docs/_site
+          gh-pages-multi deploy --title "${{env.TITLE}}" -t ${{steps.version.outputs.version}} -s docs/_site
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
