@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
@@ -41,7 +42,7 @@ public class IngestedModelConverter implements HttpMessageConverter<Model> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
+        return RdfMediaType.getMediaTypes();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamWriter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
@@ -25,7 +26,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 @Observed
 @Component
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamTO> {
-	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamWriter eventStreamWriter;
 	private final RdfModelConverter rdfModelConverter;
 
@@ -45,8 +45,8 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	}
 
 	@Override
-	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
+	public @NotNull List<MediaType> getSupportedMediaTypes() {
+		return RdfMediaType.getMediaTypes();
 	}
 
 	@Override

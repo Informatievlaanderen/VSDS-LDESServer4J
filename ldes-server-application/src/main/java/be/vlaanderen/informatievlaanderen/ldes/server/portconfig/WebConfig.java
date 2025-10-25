@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.portconfig;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
@@ -12,12 +14,12 @@ import java.util.List;
 @SuppressWarnings("java:S6857")
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    public static final String ADMIN_URL_PREFIX = "/admin/api/v1/*";
+    public static final String ACTUATOR_URL_PREFIX = "/actuator";
     @Value("${springdoc.swagger-ui.path:/swagger}")
     public String swaggerPath;
     @Value("${springdoc.api-docs.path:/v3/api-docs}")
     public String swaggerApiDocsPath;
-    public static final String ADMIN_URL_PREFIX = "/admin/api/v1/*";
-    public static final String ACTUATOR_URL_PREFIX = "/actuator";
 
     @Bean
     public FilterRegistrationBean<AdminEndpointFilter> registerAdminEndpointsFilter(@Value("${ldes-server.admin.port:${server.port:8080}}") String adminPort) {
@@ -47,6 +49,11 @@ public class WebConfig implements WebMvcConfigurer {
         FilterRegistrationBean<IngestEndpointFilter> filterRegistrationBean = new FilterRegistrationBean<>(filter);
         filterRegistrationBean.addUrlPatterns("/*");
         return filterRegistrationBean;
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(RdfMediaType.DEFAULT_RDF_MEDIA_TYPE);
     }
 
     private List<String> getSwaggerPaths() {

@@ -40,7 +40,7 @@ public class HttpModelConverter implements HttpMessageConverter<Model> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
+        return RdfMediaType.getMediaTypes();
 	}
 
 	@Override
