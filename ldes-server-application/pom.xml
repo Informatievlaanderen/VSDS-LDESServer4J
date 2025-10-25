@@ -18,6 +18,10 @@
             <artifactId>postgres-liquibase</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-server-domain</artifactId>
+        </dependency>
 
 
         <!-- Starter -->
