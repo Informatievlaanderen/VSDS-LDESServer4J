@@ -15,7 +15,6 @@ public class RestConfig {
 	public static final String CACHE_CONTROL_IMMUTABLE = "immutable";
 	public static final String CACHE_CONTROL_MAX_AGE = "max-age";
 
-	public static final String TEXT_TURTLE = "text/turtle";
 	public static final String INLINE = "inline";
 
 	public static final int DEFAULT_MAX_AGE = 60;

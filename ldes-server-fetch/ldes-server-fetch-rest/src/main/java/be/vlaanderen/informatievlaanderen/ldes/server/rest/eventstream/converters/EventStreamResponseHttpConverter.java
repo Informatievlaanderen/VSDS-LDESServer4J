@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converte
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamWriter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -39,7 +40,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.valueOf(DEFAULT_RDF_MEDIA_TYPE), MediaType.ALL);
+        return RdfMediaType.getMediaTypes();
 	}
 
 	@Override

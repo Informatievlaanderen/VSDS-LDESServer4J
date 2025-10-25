@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 
 public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
@@ -41,7 +41,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.valueOf(DEFAULT_RDF_MEDIA_TYPE), MediaType.ALL);
+        return RdfMediaType.getMediaTypes();
 	}
 
 	@Override

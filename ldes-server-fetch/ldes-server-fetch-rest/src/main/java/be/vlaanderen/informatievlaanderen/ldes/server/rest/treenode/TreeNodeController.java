@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfMediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.StreamingTreeNodeFactory;
@@ -29,10 +30,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.VARY;
 
 @Observed
@@ -72,7 +71,6 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 		String language = MediaType.TEXT_EVENT_STREAM_VALUE;
 		return ResponseEntity
 				.ok()
-				.header(CONTENT_TYPE, MediaType.TEXT_EVENT_STREAM_VALUE)
 				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
 				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
                 .header(VARY, ACCEPT)
@@ -85,17 +83,16 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	@GetMapping(value = "{collectionName}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(@PathVariable("view") String view,
 														 @RequestParam Map<String, String> requestParameters,
-														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
+														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = RdfMediaType.DEFAULT_RDF_MEDIA_TYPE_VALUE) String language,
 														 @PathVariable String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = getFragment(viewName, requestParameters);
 		return ResponseEntity
 				.ok()
-				.header(CONTENT_TYPE, getContentTypeHeader(language))
 				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
 				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
                 .header(VARY, ACCEPT)
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
+                .eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(treeNode);
 	}
 
@@ -163,13 +160,6 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 		return treeNode.isImmutable()
 				? restConfig.generateImmutableCacheControl()
 				: restConfig.generateMutableCacheControl(treeNode.getNextUpdateTs());
-	}
-
-	private String getContentTypeHeader(String language) {
-		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
-			return RestConfig.TEXT_TURTLE;
-		else
-			return language.split(",")[0];
 	}
 
 }
