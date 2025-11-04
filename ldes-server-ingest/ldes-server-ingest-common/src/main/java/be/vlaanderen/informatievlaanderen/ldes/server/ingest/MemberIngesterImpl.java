@@ -39,6 +39,7 @@ public class MemberIngesterImpl implements MemberIngester {
     public boolean ingest(String collectionName, Model ingestedModel) {
         final List<IngestedMember> members = extractMembersFromModel(collectionName, ingestedModel);
 
+        log.atDebug().log("Validating members with size: {}", members.size());
         members.forEach(validator::validate);
         members.forEach(IngestedMember::removeTreeMember);
 
@@ -48,6 +49,7 @@ public class MemberIngesterImpl implements MemberIngester {
             log.warn(DUPLICATE_MEMBERS_DETECTED);
             return false;
         }
+        log.atDebug().log("Successfully ingested {} members", ingestedMembersCount);
         ingestionMetricsService.incrementIngestCount(collectionName, ingestedMembersCount);
         members.forEach(member -> logSuccessfulMemberIngestion(member.getSubject()));
         return true;
