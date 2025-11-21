@@ -12,6 +12,8 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("java:S3415")
 public class CompactionServiceSteps extends LdesServerIntegrationTest {
+    private static final Logger log = LoggerFactory.getLogger(CompactionServiceSteps.class);
     private int versionIncremeter = 1;
     private ScheduledExecutorService executorService;
     private Future<?> seedingTask;
@@ -249,6 +252,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse();
+        log.atDebug().log("theRootPagePointsToACompactedPage -> Response: {}", response.getContentAsString());
         final String pageNumber = new ResponseToModelConverter(response).convert()
                 .listSubjectsWithProperty(RDF.type, ResourceFactory.createProperty("https://w3id.org/tree#Relation"))
                 .nextResource()
@@ -256,6 +260,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
                 .nextStatement()
                 .getResource()
                 .getLocalName();
+        log.atDebug().log("theRootPagePointsToACompactedPage -> pageNumber: {}", pageNumber);
         assertThatNoException().isThrownBy(() -> UUID.fromString(pageNumber));
     }
 

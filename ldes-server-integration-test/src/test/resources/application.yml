@@ -1,0 +1,11 @@
+logging:
+  level:
+    be:
+      vlaanderen:
+        informatievlaanderen:
+          ldes:
+            server:
+              CompactionServiceSteps: DEBUG
+              FragmentationSteps: DEBUG
+              LdesServerSteps: DEBUG
+              LdesServerIntegrationTest: DEBUG

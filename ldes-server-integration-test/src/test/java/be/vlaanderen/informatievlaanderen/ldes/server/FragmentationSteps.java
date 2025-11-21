@@ -51,7 +51,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 						.accept("text/turtle"))
 				.andReturn()
 				.getResponse();
-
+        log.atDebug().log("fetchFragment({}) -> status: {}, response: {}", path, response.getStatus(), response.getContentAsString());
 		if (response.getStatus() != 404) {
 			currentFragmentCacheControl = response.getHeader("Cache-Control");
 			currentFragment = new ResponseToModelConverter(response).convert();
@@ -73,9 +73,11 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				});
 		Resource relationSubj = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 				.next().getSubject();
+        log.atDebug().log("relationSubj: {}", relationSubj.toString());
 
 		currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
 				.next().getObject().toString();
+        log.atDebug().log("currentPath: {}", currentPath);
 
 		await().atMost(60, TimeUnit.SECONDS)
 				.untilAsserted(() -> {
