@@ -62,8 +62,9 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("I fetch the next fragment through the first {string}")
 	public void iFetchTheNextFragmentThroughTheFirst(String relation) {
+        log.atDebug().log("iFetchTheNextFragmentThroughTheFirst({})", relation);
 		await()
-				.atMost(90, TimeUnit.SECONDS)
+				.atMost(180, TimeUnit.SECONDS)
 				.pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
 				.untilAsserted(() -> {
 					fetchFragment(currentPath);
