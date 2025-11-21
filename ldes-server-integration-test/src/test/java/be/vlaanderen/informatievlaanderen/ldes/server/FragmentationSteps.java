@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.entity.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.en.And;
@@ -188,6 +189,20 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	public void waitUntilAllMembersAreFragmented() {
 		await().until(() -> unprocessedViewRepository.findAll().isEmpty());
 	}
+
+    @Then("all members of {string} are marked as fragmented")
+    public void allMembersAreMarkedAsFragmented(String collection) {
+        allMembersAreMarkedFragmented(true);
+    }
+
+    private void allMembersAreMarkedFragmented(boolean isFragmented) {
+        assertThat(fragmentationMemberEntityRepository.findAll().stream().map(MemberEntity::isFragmented)).containsOnly(isFragmented);
+    }
+
+    @Then("all members of {string} are marked as unfragmented")
+    public void allMembersAreMarkedAsUnFragmented(String collection) {
+        allMembersAreMarkedFragmented(false);
+    }
 
 	private static Integer countSkolemizedIds(StmtIterator stmtIterator) {
 		return stmtIterator

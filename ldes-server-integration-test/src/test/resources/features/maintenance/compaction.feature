@@ -7,7 +7,8 @@ Feature: LDES Server Compaction
     And I ingest 5 members of the same version
     And I ingest 3 members of different versions
     Then I wait until all members are fragmented
-    Then wait until no fragments can be compacted
+    Then all members of "mobility-hindrances" are marked as fragmented
+    Then I wait until no fragments can be compacted for collection "mobility-hindrances" and view "paged" and capacity per page 5
     And verify there are 5 pages
     And verify the following pages have no relation pointing to them
       | 2 |
@@ -29,6 +30,7 @@ Feature: LDES Server Compaction
     And I ingest 3 members of version 3 of template <template> for collection <collection>
     And I ingest 3 members of version 4 of template <template> for collection <collection>
     Then I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     Then wait until no fragments can be compacted
     And verify the following pages have no members
         | 1 |
@@ -45,7 +47,7 @@ Feature: LDES Server Compaction
   Scenario: Retention Compaction And Deletion works fine together
     Given I create the eventstream "data/input/eventstreams/compaction/observations.ttl"
     And I start seeding 5 members every 15 seconds
-    When I wait until the first page does not exits anymore
+    When I wait until the first page does not exists anymore
     Then the root page points to a compacted page
     And I only have one open page
     Then I stop seeding members
