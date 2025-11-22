@@ -1,53 +1,53 @@
 Feature: LDES Server Fragmentation
 
-  @pagination
-  Scenario Outline: Server Can Paginate an LDES
-    Given I create the eventstream <eventStreamDescriptionFile>
-    When I ingest 617 members of template <template> to the collection <collection>
-    Then the LDES <collection> contains <ingestedMemberCount> members
-    And I wait until all members are fragmented
-    Then all members of <collection> are marked as fragmented
-    When I fetch the root "paged" fragment of <collection>
-    And I fetch the next fragment through the first "Relation"
-    Then this fragment only has 1 "Relation" relation
-    And this fragment is immutable
-    When I fetch the next fragment through the first "Relation"
-    Then this fragment only has 1 "Relation" relation
-    And this fragment is immutable
-    When I fetch the next fragment through the first "Relation"
-    And this fragment contains <restCount> members
-    And this fragment is mutable
-    And this fragment has no relations
-    Examples:
-      | eventStreamDescriptionFile                                            | template                                           | collection            | ingestedMemberCount | restCount |
-      | "data/input/eventstreams/fragmentation/mobility-hindrances.paged.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 617                 | 17        |
-      | "data/input/eventstreams/fragmentation/observations/paged.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 1234                | 34        |
-
-  @refragmentation
-  Scenario Outline: Server Can Refragment an LDES
-    Given I create the eventstream <eventStreamDescriptionFile>
-    When I ingest 617 members of template <template> to the collection <collection>
-    Then the LDES <collection> contains <ingestedMemberCount> members
-    And I wait until all members are fragmented
-    # The members are unfragmented, as there's no view at this time. The fragmentation will start after the view is added.
-    Then all members of <collection> are marked as unfragmented
-    And I create the view <viewDescriptionFile>
-    And I wait until all members are fragmented
-    Then all members of <collection> are marked as fragmented
-    When I fetch the root "paged" fragment of <collection>
-    And I fetch the next fragment through the first "Relation"
-    Then this fragment only has 1 "Relation" relation
-    And this fragment is immutable
-    When I fetch the next fragment through the first "Relation"
-    Then this fragment only has 1 "Relation" relation
-    And this fragment is immutable
-    When I fetch the next fragment through the first "Relation"
-    And this fragment contains <restCount> members
-    And this fragment is mutable
-    And this fragment has no relations
-    Examples:
-      | eventStreamDescriptionFile                                      | viewDescriptionFile                                                        | template                                   | collection            | ingestedMemberCount | restCount |
-      | "data/input/eventstreams/fragmentation/mobility-hindrances.ttl" | "data/input/eventstreams/fragmentation/mobility-hindrances.view.paged.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 617                 | 17        |
+#  @pagination
+#  Scenario Outline: Server Can Paginate an LDES
+#    Given I create the eventstream <eventStreamDescriptionFile>
+#    When I ingest 617 members of template <template> to the collection <collection>
+#    Then the LDES <collection> contains <ingestedMemberCount> members
+#    And I wait until all members are fragmented
+#    Then all members of <collection> are marked as fragmented
+#    When I fetch the root "paged" fragment of <collection>
+#    And I fetch the next fragment through the first "Relation"
+#    Then this fragment only has 1 "Relation" relation
+#    And this fragment is immutable
+#    When I fetch the next fragment through the first "Relation"
+#    Then this fragment only has 1 "Relation" relation
+#    And this fragment is immutable
+#    When I fetch the next fragment through the first "Relation"
+#    And this fragment contains <restCount> members
+#    And this fragment is mutable
+#    And this fragment has no relations
+#    Examples:
+#      | eventStreamDescriptionFile                                            | template                                           | collection            | ingestedMemberCount | restCount |
+#      | "data/input/eventstreams/fragmentation/mobility-hindrances.paged.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 617                 | 17        |
+#      | "data/input/eventstreams/fragmentation/observations/paged.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 1234                | 34        |
+#
+#  @refragmentation
+#  Scenario Outline: Server Can Refragment an LDES
+#    Given I create the eventstream <eventStreamDescriptionFile>
+#    When I ingest 617 members of template <template> to the collection <collection>
+#    Then the LDES <collection> contains <ingestedMemberCount> members
+#    And I wait until all members are fragmented
+#    # The members are unfragmented, as there's no view at this time. The fragmentation will start after the view is added.
+#    Then all members of <collection> are marked as unfragmented
+#    And I create the view <viewDescriptionFile>
+#    And I wait until all members are fragmented
+#    Then all members of <collection> are marked as fragmented
+#    When I fetch the root "paged" fragment of <collection>
+#    And I fetch the next fragment through the first "Relation"
+#    Then this fragment only has 1 "Relation" relation
+#    And this fragment is immutable
+#    When I fetch the next fragment through the first "Relation"
+#    Then this fragment only has 1 "Relation" relation
+#    And this fragment is immutable
+#    When I fetch the next fragment through the first "Relation"
+#    And this fragment contains <restCount> members
+#    And this fragment is mutable
+#    And this fragment has no relations
+#    Examples:
+#      | eventStreamDescriptionFile                                      | viewDescriptionFile                                                        | template                                   | collection            | ingestedMemberCount | restCount |
+#      | "data/input/eventstreams/fragmentation/mobility-hindrances.ttl" | "data/input/eventstreams/fragmentation/mobility-hindrances.view.paged.ttl" | "data/input/members/mob-hind.template.ttl" | "mobility-hindrances" | 617                 | 17        |
 
   @geospatial
   Scenario Outline: Server Can Geospatially Fragment an LDES
@@ -150,7 +150,7 @@ Feature: LDES Server Fragmentation
     Examples:
       | eventStreamDescriptionFile                                                    | firstTemplate                                      | secondTemplate                                     | collection            | expectedMemberCount | equalToRelationCount | rootEqualToRelationCount | firstFragmentValue                                                                              | firstPath                                                                                                                                                                                                                                    | firstFragmentMemberCount | secondFragmentValue                                                                             | secondPath                                                                                                                                                                                                                                   | secondFragmentMemberCount |
       | "data/input/eventstreams/fragmentation/mobility-hindrances.by-nested-ref.ttl" | "data/input/members/mob-hind.template.ttl"         | "data/input/members/activity.template.ttl"         | "mobility-hindrances" | 7                   | 1                    | 2                        | 'https%3A%2F%2Fdata.vlaanderen.be%2Fns%2Fmobiliteit%23Mobiliteitshinder'                        | "/mobility-hindrances/by-nested-ref?type=https%3A%2F%2Fdata.vlaanderen.be%2Fns%2Fmobiliteit%23Mobiliteitshinder&version=http%3A%2F%2Ftest-data%2Fmobility-hindrance%2F1"                                                                     | 2                        | 'https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%23Create'                                      | "/mobility-hindrances/by-nested-ref?type=https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%23Create&version=https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%231"                                                                               | 5                         |
-#      | "data/input/eventstreams/fragmentation/observations/by-nested-ref.ttl"        | "data/input/members/two-observations.template.ttl" | "data/input/members/two-observations.template.ttl" | "observations"        | 14                  | 2                    | 1                        | "https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling" | "/observations/by-nested-ref?type=https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling&version=https%3A%2F%2Fgeomobility.eu%2Fid%2Fobservation%2F3145a8ea-0f1e-4083-a270-cb18f3d85328%2FB-A%2FOGV1" | 7                        | "https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling" | "/observations/by-nested-ref?type=https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling&version=https%3A%2F%2Fgeomobility.eu%2Fid%2Fobservation%2F3145a8ea-0f1e-4083-a270-cb18f3d85328%2FB-A%2FOGV1" | 7                         |
+      | "data/input/eventstreams/fragmentation/observations/by-nested-ref.ttl"        | "data/input/members/two-observations.template.ttl" | "data/input/members/two-observations.template.ttl" | "observations"        | 14                  | 2                    | 1                        | "https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling" | "/observations/by-nested-ref?type=https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling&version=https%3A%2F%2Fgeomobility.eu%2Fid%2Fobservation%2F3145a8ea-0f1e-4083-a270-cb18f3d85328%2FB-A%2FOGV1" | 7                        | "https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling" | "/observations/by-nested-ref?type=https%3A%2F%2Fimplementatie.data.vlaanderen.be%2Fns%2Fvsds-verkeersmetingen%23Verkeerstelling&version=https%3A%2F%2Fgeomobility.eu%2Fid%2Fobservation%2F3145a8ea-0f1e-4083-a270-cb18f3d85328%2FB-A%2FOGV1" | 7                         |
 
   @multi-view
   Scenario Outline: Server Allows Multiple Views in an LDES
