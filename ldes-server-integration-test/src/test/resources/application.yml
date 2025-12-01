@@ -5,7 +5,7 @@ logging:
         informatievlaanderen:
           ldes:
             server:
-              CompactionServiceSteps: DEBUG
-              FragmentationSteps: DEBUG
-              LdesServerSteps: DEBUG
-              LdesServerIntegrationTest: DEBUG
+              CompactionServiceSteps: WARN
+              FragmentationSteps: WARN
+              LdesServerSteps: WARN
+              LdesServerIntegrationTest: WARN
