@@ -1,0 +1,11 @@
+logging:
+  level:
+    be:
+      vlaanderen:
+        informatievlaanderen:
+          ldes:
+            server:
+              CompactionServiceSteps: WARN
+              FragmentationSteps: WARN
+              LdesServerSteps: WARN
+              LdesServerIntegrationTest: WARN

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.valueobjects.PartialUrl;
@@ -32,6 +33,8 @@ class PaginatorTest {
 	private ChunkContext chunkContext;
 	@Mock
 	private PageMemberRepository pageMemberRepository;
+    @Mock
+    private MemberRepository memberRepository;
 	@Mock
 	private PageRepository pageRepository;
 	@InjectMocks
@@ -40,6 +43,8 @@ class PaginatorTest {
 	ArgumentCaptor<Page> pageCaptor;
 	@Captor
 	ArgumentCaptor<List<Long>> listCaptor;
+    @Captor
+    ArgumentCaptor<List<Long>> memberIdsCaptor;
 
 	@Test
 	void when_Paginating_withNoUnexpectedMembers_doNothing() {
@@ -69,15 +74,22 @@ class PaginatorTest {
 
 		paginator.execute(null, chunkContext);
 
-		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
+		InOrder inOrder = inOrder(pageMemberRepository, pageRepository, memberRepository);
 		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
-		inOrder.verify(pageMemberRepository, times(3)).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(pageCaptor.getAllValues().stream().map(Page::getId).toList())
 				.containsExactlyInAnyOrder(1L, 2L, 3L);
 		assertThat(listCaptor.getAllValues().stream().map(List::size).toList())
 				.containsExactlyInAnyOrder(2,2,1);
+        assertThat(memberIdsCaptor.getAllValues().stream().flatMap(List::stream).toList())
+                .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
 	}
 
 	@Test
@@ -97,15 +109,22 @@ class PaginatorTest {
 
 		paginator.execute(null, chunkContext);
 
-		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
+		InOrder inOrder = inOrder(pageMemberRepository, pageRepository, memberRepository);
 		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
-		inOrder.verify(pageMemberRepository, times(3)).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
+		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(pageCaptor.getAllValues().stream().map(Page::getId).toList())
 				.containsExactlyInAnyOrder(1L, 2L, 3L);
 		assertThat(listCaptor.getAllValues().stream().map(List::size).toList())
 				.containsExactlyInAnyOrder(2,2,1);
+        assertThat(memberIdsCaptor.getAllValues().stream().flatMap(List::stream).toList())
+                .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
 	}
 
 	@Test
@@ -122,20 +141,25 @@ class PaginatorTest {
 
 		paginator.execute(null, chunkContext);
 
-		InOrder inOrder = inOrder(pageMemberRepository, pageRepository);
+		InOrder inOrder = inOrder(pageMemberRepository, pageRepository, memberRepository);
 		inOrder.verify(pageMemberRepository).getUnpaginatedMembersForBucket(BUCKET_ID);
 		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verify(pageRepository).createNextPage(any());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
 		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verify(pageRepository).createNextPage(any());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
 		inOrder.verify(pageMemberRepository).assignMembersToPage(pageCaptor.capture(), listCaptor.capture());
 		inOrder.verify(pageRepository).createNextPage(any());
+        inOrder.verify(memberRepository).updateIsFragmented(eq(true), memberIdsCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(pageCaptor.getAllValues().stream().map(Page::getId).toList())
 				.containsExactlyInAnyOrder(1L, 2L, 3L);
 		assertThat(listCaptor.getAllValues().stream().map(List::size).toList())
 				.containsExactlyInAnyOrder(1,2,2);
+        assertThat(memberIdsCaptor.getAllValues().stream().flatMap(List::stream).toList())
+                .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L);
 	}
 
 	private void mockBucketId() {

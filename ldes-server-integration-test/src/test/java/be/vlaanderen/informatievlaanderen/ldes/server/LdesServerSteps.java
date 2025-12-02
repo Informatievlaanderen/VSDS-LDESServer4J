@@ -21,6 +21,8 @@ import org.apache.jena.riot.RDFWriter;
 import org.apache.jena.vocabulary.RDF;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.awaitility.Awaitility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -31,7 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.web.context.WebApplicationContext;
 import reactor.core.publisher.Flux;
@@ -72,8 +73,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
-
     public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
+    private static final Logger log = LoggerFactory.getLogger(LdesServerSteps.class);
     private final Stack<String> interactedStreams = new Stack<>();
     private String responseContentType;
     private String responseBody;
@@ -127,6 +128,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @When("I ingest {int} members of template {string} to the collection {string}")
     public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
             throws Exception {
+        log.atDebug().log("Ingesting {} members of template {} into collection {}", numberOfMembers, memberTemplate, collectionName);
         final String memberContentTemplate = readMemberTemplate(memberTemplate);
         for (int i = 0; i < numberOfMembers; i++) {
             String memberContent = memberContentTemplate
@@ -200,6 +202,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Given("^I create the eventstream ([^ ]+)")
     public void iCreateTheEventstreamEventStreamDescription(String eventStreamDescriptionFile) throws Exception {
+        log.atDebug().log("Creating eventstream {}", eventStreamDescriptionFile);
         String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
         String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
                 .replace("CURRENTTIME", getCurrentTimestamp());
@@ -223,6 +226,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("^I create the view ([^ ]+)")
     public void iCreateTheViewViewDescriptionFile(String viewDescriptionFile) throws Exception {
+        log.atDebug().log("Creating view {}", viewDescriptionFile);
         String viewDescriptionFileSanitized = viewDescriptionFile.replace("\"", "");
         String view = readBodyFromFile(viewDescriptionFileSanitized)
                 .replace("CURRENTTIME", getCurrentTimestamp());
@@ -235,6 +239,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("^I delete the eventstream ([^ ]+)")
     public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
+        log.atDebug().log("Deleting eventstream {}", eventStreamName);
         String eventStreamNameSanitized = eventStreamName.replace("\"", "");
         mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamNameSanitized))
                 .andExpect(status().isOk());
@@ -243,17 +248,20 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @Then("^I can fetch the TreeNode ([^ ]+) using accept content-types (.+)")
     public void iCanFetchTheTreeNodeTreeNodeUrlUsingAcceptContentTypesAcceptContentTypes(String treeNodeUrl, String acceptContentTypes)
             throws Exception {
+        log.atDebug().log("Fetching TreeNode {} with accept content-types {}", treeNodeUrl, acceptContentTypes);
         await().atMost(Duration.ofSeconds(4));
         assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), acceptContentTypes.replace("\"", "")).listStatements().toList().isEmpty());
     }
 
     @Then("^The content-type of the response header is (.+)")
     public void theContentTypeOfTheResponseIsContentType(String contentType) throws Exception {
+        log.atDebug().log("Checking content-type of response is {}", contentType);
         assertThat(responseContentType).startsWith(contentType.replace("\"", ""));
     }
 
     @And("^The content-type of the response content is (.+)")
     public void theContentTypeOfTheResponseContentIsContentType(String contentType) throws Exception {
+        log.atDebug().log("Checking content-type of response content is {}", contentType);
         assertThat(responseContentType).isEqualTo(contentType.replace("\"", ""));
     }
 
@@ -275,6 +283,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @Then("the first fragment of the {string} view in collection {string} contains {long} members")
     public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
             throws Exception {
+        log.atDebug().log("Checking first fragment of view {} in collection {} contains {} members", view, collection, expectedMemberCount);
         // Get only relation from view
         Awaitility.await()
                 .until(() -> fetchFragment("/%s/%s".formatted(collection, view))
@@ -295,6 +304,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("the LDES {string} contains {int} members")
     public void theLDESContainsMembers(String collection, int expectedMemberCount) {
+        log.atDebug().log("Checking LDES {} contains {} members", collection, expectedMemberCount);
         await().atMost(60, SECONDS)
                 .until(() -> jdbcTemplate
                         .queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
@@ -316,6 +326,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("The response from requesting the url {string} contains {long} remaining items statements")
     public void theResponseFromRequestingTheUrlDoesContainRemainingitemsStatement(String url, long statementCount) throws Exception {
+        log.atDebug().log("Checking response from requesting the url {} contains {} remaining items statements", url, statementCount);
         MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
                         .header("Access-Control-Request-Method", "GET")
                         .header("Origin", "http://www.someurl.com"))
@@ -328,6 +339,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @When("I ingest {int} files of state objects from folder {string} to the collection {string}")
     public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
+        log.atDebug().log("Ingesting {} files of state objects from folder {} into collection {}", numberOfStateFiles, folderName, collectionName);
         for (int i = 0; i < numberOfStateFiles; i++) {
             Model model = RDFParser.source("%s/%d.ttl".formatted(folderName, i + 1))
                     .lang(Lang.TURTLE)
