@@ -15,7 +15,7 @@ public class BatchConfiguration {
 	public JobLauncher simpleJobLauncher(JobRepository jobRepository) throws Exception {
 		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);
-		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor("fragmentation_batch"));
 		jobLauncher.afterPropertiesSet();
 		return jobLauncher;
 	}

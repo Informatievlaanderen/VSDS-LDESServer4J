@@ -1,7 +1,7 @@
 ldes-server:
   host-name: "http://localhost:8080"
-  fragmentation-cron: "*/10 * * * * *"
-  maintenance-cron: "*/5 * * * * *"
+  fragmentation-cron: "*/1 * * * * *"
+  maintenance-cron: "*/2 * * * * *"
   compaction-duration: PT2M
 
 springdoc.swaggerui.path: "/swagger"

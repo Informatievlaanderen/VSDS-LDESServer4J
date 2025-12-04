@@ -22,6 +22,7 @@ Feature: LDES Server basic Ingest functionality
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
     When I ingest 1016 members to the collection "mobility-hindrances"
     And I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     Then I can fetch the TreeNode "/mobility-hindrances/paged?pageNumber=1" and it contains 1016 members
     And The expected response is equal to "data/output/treenode_small_ldes_pageNumber_1.ttl"
     And I delete the eventstream "mobility-hindrances"
@@ -34,6 +35,7 @@ Feature: LDES Server basic Ingest functionality
     Then the LDES "mobility-hindrances" contains 2 members
     And the LDES "activities" contains 5 members
     And I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     When I fetch the root "paged" fragment of "mobility-hindrances"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 2 members
@@ -47,6 +49,7 @@ Feature: LDES Server basic Ingest functionality
     And I ingest 5 members of template "data/input/members/activity.template.ttl" to the collection "mobility-hindrances"
     Then the LDES "mobility-hindrances" contains 7 members
     And I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     When I fetch the root "paged" fragment of "mobility-hindrances"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 7 members
@@ -56,6 +59,7 @@ Feature: LDES Server basic Ingest functionality
     When I ingest 2 files of state objects from folder "data/input/members/simpsons" to the collection "simpsons"
     Then the LDES "simpsons" contains 7 members
     And I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     When I fetch the root "paged" fragment of "simpsons"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 7 members
@@ -65,6 +69,7 @@ Feature: LDES Server basic Ingest functionality
     When I ingest 1 members of template "<memberTemplateFile>" to the collection "mobility-hindrances"
     Then the LDES "mobility-hindrances" contains <expectedMemberCount> members
     And I wait until all members are fragmented
+    Then all members of "mobility-hindrances" are marked as fragmented
     When I fetch the root "paged" fragment of "mobility-hindrances"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains <expectedMemberCount> members with 2 skolemized identifiers
