@@ -91,7 +91,7 @@ Feature: LDES Server Fragmentation
     Examples:
       | eventStreamDescriptionFile                                              | template                                               | collection            | ingestedMembers |
       | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.template.ttl"             | "mobility-hindrances" | 5               |
-#      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.string-time.template.ttl" | "mobility-hindrances" | 5               |
+      | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.string-time.template.ttl" | "mobility-hindrances" | 5               |
       | "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl" | "data/input/members/mob-hind.string-time.template.ttl" | "mobility-hindrances" | 5               |
       | "data/input/eventstreams/fragmentation/observations/by-time.ttl"        | "data/input/members/two-observations.template.ttl"     | "observations"        | 10              |
 

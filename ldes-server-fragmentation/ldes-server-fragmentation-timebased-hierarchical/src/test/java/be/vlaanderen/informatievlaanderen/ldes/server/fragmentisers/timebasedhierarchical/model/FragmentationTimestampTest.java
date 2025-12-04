@@ -76,8 +76,8 @@ class FragmentationTimestampTest {
 					Arguments.of(TIME6am, Granularity.YEAR, "2023"),
 					Arguments.of(TIME6am, Granularity.MONTH, "2023-01"),
 					Arguments.of(TIME6am, Granularity.DAY, "2023-01-02"),
-					Arguments.of(TIME6am, Granularity.HOUR, "2023-01-02T06"),
-					Arguments.of(TIME6am, Granularity.MINUTE, "2023-01-02T06:30"),
+					Arguments.of(TIME6am, Granularity.HOUR, "2023-01-02T06:00:00"),
+					Arguments.of(TIME6am, Granularity.MINUTE, "2023-01-02T06:30:00"),
 					Arguments.of(TIME6am, Granularity.SECOND, "2023-01-02T06:30:40"),
 					Arguments.of(TIME6pm, Granularity.SECOND, "2023-01-02T18:30:40"));
 		}

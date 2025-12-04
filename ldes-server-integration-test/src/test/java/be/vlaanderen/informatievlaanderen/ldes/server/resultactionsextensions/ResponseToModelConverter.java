@@ -5,21 +5,26 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.riot.RDFParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.UnsupportedEncodingException;
 
 public class ResponseToModelConverter {
-	private final MockHttpServletResponse response;
+    private static final Logger log = LoggerFactory.getLogger(ResponseToModelConverter.class);
+    private final MockHttpServletResponse response;
 
 
-	public ResponseToModelConverter(MockHttpServletResponse response) {
-		this.response = response;
-	}
+    public ResponseToModelConverter(MockHttpServletResponse response) {
+        this.response = response;
+    }
 
-	public Model convert() throws UnsupportedEncodingException {
-		Lang lang = RDFLanguages.contentTypeToLang(ContentType.create(response.getContentType()));
-		return RDFParser.create().fromString(response.getContentAsString()).lang(lang).toModel();
-	}
+    public Model convert() throws UnsupportedEncodingException {
+        String contentAsString = response.getContentAsString();
+        log.atTrace().log("Response content: {}", contentAsString);
+        Lang lang = RDFLanguages.contentTypeToLang(ContentType.create(response.getContentType()));
+        return RDFParser.create().fromString(contentAsString).lang(lang).toModel();
+    }
 }
 

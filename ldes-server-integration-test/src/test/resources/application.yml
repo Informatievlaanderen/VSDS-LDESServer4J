@@ -1,11 +1,14 @@
 logging:
   level:
+
     be:
       vlaanderen:
         informatievlaanderen:
           ldes:
             server:
-              CompactionServiceSteps: WARN
-              FragmentationSteps: WARN
-              LdesServerSteps: WARN
-              LdesServerIntegrationTest: WARN
+              CompactionServiceSteps: INFO
+              FragmentationSteps: INFO
+              LdesServerSteps: INFO
+              LdesServerIntegrationTest: INFO
+              resultactionsextensions:
+                ResponseToModelConverter: INFO

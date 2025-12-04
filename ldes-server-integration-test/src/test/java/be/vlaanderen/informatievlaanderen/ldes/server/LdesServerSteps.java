@@ -75,6 +75,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LdesServerSteps extends LdesServerIntegrationTest {
     public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
     private static final Logger log = LoggerFactory.getLogger(LdesServerSteps.class);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'");
     private final Stack<String> interactedStreams = new Stack<>();
     private String responseContentType;
     private String responseBody;
@@ -100,7 +101,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     }
 
     private String getCurrentTimestamp() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+        return LocalDateTime.now().format(DATE_TIME_FORMATTER);
     }
 
     private Model getResponseAsModel(String url, String acceptedContentTypes) throws Exception {
@@ -134,6 +135,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
             String memberContent = memberContentTemplate
                     .replace("ID", String.valueOf(i))
                     .replace("DATETIME", getCurrentTimestamp());
+            if ("data/input/members/mob-hind.string-time.template.ttl".equals(memberTemplate)
+                    || "data/input/members/two-observations.template.ttl".equals(memberTemplate)) {
+                log.atDebug().log("memberContent = {} ", memberContent);
+            }
             mockMvc.perform(post("/" + collectionName)
                             .contentType("text/turtle")
                             .content(memberContent))
@@ -285,7 +290,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
             throws Exception {
         log.atDebug().log("Checking first fragment of view {} in collection {} contains {} members", view, collection, expectedMemberCount);
         // Get only relation from view
-        Awaitility.await()
+        await()
+                .atMost(Duration.of(20, ChronoUnit.SECONDS))
+                .pollInterval(Duration.ofSeconds(1))
                 .until(() -> fetchFragment("/%s/%s".formatted(collection, view))
                         .listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).hasNext());
 
@@ -294,6 +301,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 
         await().atMost(60, SECONDS)
+                .pollDelay(Duration.ofSeconds(1))
                 .until(() -> {
                     Model fragmentPage = fetchFragment(fragmentUrl);
 
@@ -306,6 +314,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     public void theLDESContainsMembers(String collection, int expectedMemberCount) {
         log.atDebug().log("Checking LDES {} contains {} members", collection, expectedMemberCount);
         await().atMost(60, SECONDS)
+                .pollDelay(Duration.ofSeconds(1))
                 .until(() -> jdbcTemplate
                         .queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
                                 Integer.class, collection)
