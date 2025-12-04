@@ -1,11 +1,11 @@
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix geosparql: <http://www.opengis.net/ont/geosparql#> .
 
 <http://test-data/mobility-hindrance/1/ID>
-  dc:isVersionOf <http://test-data/mobility-hindrance/1> ;
-  rdf:type <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
-  geosparql:asWKT "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^<http://www.opengis.net/ont/geosparql#wktLiteral> ;
-  dc:created "DATETIME"^^xsd:string .
+    dc:isVersionOf <http://test-data/mobility-hindrance/1> ;
+    rdf:type <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
+    geosparql:asWKT
+        "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^<http://www.opengis.net/ont/geosparql#wktLiteral> ;
+    dc:created "DATETIME"^^xsd:dateTime .

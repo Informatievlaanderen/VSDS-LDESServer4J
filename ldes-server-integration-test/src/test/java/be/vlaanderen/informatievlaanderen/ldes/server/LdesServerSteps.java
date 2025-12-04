@@ -20,7 +20,6 @@ import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
 import org.apache.jena.vocabulary.RDF;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -75,6 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LdesServerSteps extends LdesServerIntegrationTest {
     public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
     private static final Logger log = LoggerFactory.getLogger(LdesServerSteps.class);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'");
     private final Stack<String> interactedStreams = new Stack<>();
     private String responseContentType;
     private String responseBody;
@@ -100,7 +100,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     }
 
     private String getCurrentTimestamp() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+        return LocalDateTime.now().format(DATE_TIME_FORMATTER);
     }
 
     private Model getResponseAsModel(String url, String acceptedContentTypes) throws Exception {
@@ -114,6 +114,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @When("I ingest {int} members to the collection {string}")
     public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
+        log.atDebug().log("When I ingest {} members to the collection {}", numberOfMembers, collectionName);
         for (int i = 0; i < numberOfMembers; i++) {
             String member = readMemberTemplate("data/input/members/mob-hind.template.ttl")
                     .replace("ID", String.valueOf(i))
@@ -128,12 +129,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @When("I ingest {int} members of template {string} to the collection {string}")
     public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
             throws Exception {
-        log.atDebug().log("Ingesting {} members of template {} into collection {}", numberOfMembers, memberTemplate, collectionName);
+        log.atDebug().log("When I ingest {} members of template {} to the collection {}", numberOfMembers, memberTemplate, collectionName);
         final String memberContentTemplate = readMemberTemplate(memberTemplate);
         for (int i = 0; i < numberOfMembers; i++) {
             String memberContent = memberContentTemplate
                     .replace("ID", String.valueOf(i))
                     .replace("DATETIME", getCurrentTimestamp());
+            log.atTrace().log("memberContent = {} ", memberContent);
             mockMvc.perform(post("/" + collectionName)
                             .contentType("text/turtle")
                             .content(memberContent))
@@ -155,6 +157,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("I can fetch the TreeNode {string} and it contains {int} members")
     public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
+        log.atDebug().log("Then I can fetch the TreeNode {} and it contains {} members", url, expectedNumberOfMembers);
         await()
                 .atMost(60, SECONDS)
                 .untilAsserted(() -> {
@@ -166,6 +169,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("The expected response is equal to {string}")
     public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException {
+        log.atDebug().log("And The expected response is equal to {}", expectedOutputFile);
         Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
         Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
         assertTrue(actualModel.isIsomorphicWith(expectedModel));
@@ -180,6 +184,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @When("I ingest the data described in {string} the collection {string}")
     public void iIngestTheMemberDescribedInTheCollection(String memberFileName, String collectionName)
             throws Exception {
+        log.atDebug().log("When I ingest the data described in {} the collection {}", memberFileName, collectionName);
         String member = readBodyFromFile(memberFileName);
         ContentType contentType = RDFLanguages.guessContentType(memberFileName);
         mockMvc.perform(post("/" + collectionName)
@@ -191,6 +196,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("The returned status code is {int}")
     public void checkStatusCode(int statusCode) {
+        log.atDebug().log("Then The returned status code is {}", statusCode);
         assertThat(lastStatusCode).isEqualTo(statusCode);
     }
 
@@ -202,7 +208,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Given("^I create the eventstream ([^ ]+)")
     public void iCreateTheEventstreamEventStreamDescription(String eventStreamDescriptionFile) throws Exception {
-        log.atDebug().log("Creating eventstream {}", eventStreamDescriptionFile);
+        log.atDebug().log("Given I create the eventstream {}", eventStreamDescriptionFile);
         String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
         String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
                 .replace("CURRENTTIME", getCurrentTimestamp());
@@ -226,7 +232,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("^I create the view ([^ ]+)")
     public void iCreateTheViewViewDescriptionFile(String viewDescriptionFile) throws Exception {
-        log.atDebug().log("Creating view {}", viewDescriptionFile);
+        log.atDebug().log("Then I create the view {}", viewDescriptionFile);
         String viewDescriptionFileSanitized = viewDescriptionFile.replace("\"", "");
         String view = readBodyFromFile(viewDescriptionFileSanitized)
                 .replace("CURRENTTIME", getCurrentTimestamp());
@@ -239,7 +245,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @Then("^I delete the eventstream ([^ ]+)")
     public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
-        log.atDebug().log("Deleting eventstream {}", eventStreamName);
+        log.atDebug().log("Then I delete the eventstream {}", eventStreamName);
         String eventStreamNameSanitized = eventStreamName.replace("\"", "");
         mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamNameSanitized))
                 .andExpect(status().isOk());
@@ -248,25 +254,26 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @Then("^I can fetch the TreeNode ([^ ]+) using accept content-types (.+)")
     public void iCanFetchTheTreeNodeTreeNodeUrlUsingAcceptContentTypesAcceptContentTypes(String treeNodeUrl, String acceptContentTypes)
             throws Exception {
-        log.atDebug().log("Fetching TreeNode {} with accept content-types {}", treeNodeUrl, acceptContentTypes);
+        log.atDebug().log("Then I can fetch the TreeNode {} using accept content-types {}", treeNodeUrl, acceptContentTypes);
         await().atMost(Duration.ofSeconds(4));
         assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), acceptContentTypes.replace("\"", "")).listStatements().toList().isEmpty());
     }
 
     @Then("^The content-type of the response header is (.+)")
     public void theContentTypeOfTheResponseIsContentType(String contentType) throws Exception {
-        log.atDebug().log("Checking content-type of response is {}", contentType);
+        log.atDebug().log("Then The content-type of the response header is {}", contentType);
         assertThat(responseContentType).startsWith(contentType.replace("\"", ""));
     }
 
     @And("^The content-type of the response content is (.+)")
     public void theContentTypeOfTheResponseContentIsContentType(String contentType) throws Exception {
-        log.atDebug().log("Checking content-type of response content is {}", contentType);
+        log.atDebug().log("And The content-type of the response content is {}", contentType);
         assertThat(responseContentType).isEqualTo(contentType.replace("\"", ""));
     }
 
     @Then("The response from requesting the url {string} has access control headers, vary header and an etag")
     public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) {
+        log.atDebug().log("Then The response from requesting the url {} has access control headers, vary header and an etag", url);
         await()
                 .atMost(Duration.of(20, ChronoUnit.SECONDS))
                 .untilAsserted(() -> {
@@ -283,9 +290,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
     @Then("the first fragment of the {string} view in collection {string} contains {long} members")
     public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
             throws Exception {
-        log.atDebug().log("Checking first fragment of view {} in collection {} contains {} members", view, collection, expectedMemberCount);
+        log.atDebug().log("Then the first fragment of the {} view in collection {} contains {} members", view, collection, expectedMemberCount);
         // Get only relation from view
-        Awaitility.await()
+        await()
+                .atMost(Duration.of(20, ChronoUnit.SECONDS))
+                .pollInterval(Duration.ofSeconds(1))
                 .until(() -> fetchFragment("/%s/%s".formatted(collection, view))
                         .listObjectsOfProperty(createProperty("https://w3id.org/tree#node")).hasNext());
 
@@ -294,6 +303,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 
         await().atMost(60, SECONDS)
+                .pollDelay(Duration.ofSeconds(1))
                 .until(() -> {
                     Model fragmentPage = fetchFragment(fragmentUrl);
 
@@ -304,8 +314,9 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("the LDES {string} contains {int} members")
     public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-        log.atDebug().log("Checking LDES {} contains {} members", collection, expectedMemberCount);
+        log.atDebug().log("And the LDES {} contains {} members", collection, expectedMemberCount);
         await().atMost(60, SECONDS)
+                .pollDelay(Duration.ofSeconds(1))
                 .until(() -> jdbcTemplate
                         .queryForObject("SELECT COUNT(*) FROM members m JOIN collections c ON m.collection_id = c.collection_id WHERE c.name = ?",
                                 Integer.class, collection)
@@ -326,7 +337,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("The response from requesting the url {string} contains {long} remaining items statements")
     public void theResponseFromRequestingTheUrlDoesContainRemainingitemsStatement(String url, long statementCount) throws Exception {
-        log.atDebug().log("Checking response from requesting the url {} contains {} remaining items statements", url, statementCount);
+        log.atDebug().log("And The response from requesting the url {} contains {} remaining items statements", url, statementCount);
         MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
                         .header("Access-Control-Request-Method", "GET")
                         .header("Origin", "http://www.someurl.com"))
@@ -339,7 +350,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @When("I ingest {int} files of state objects from folder {string} to the collection {string}")
     public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
-        log.atDebug().log("Ingesting {} files of state objects from folder {} into collection {}", numberOfStateFiles, folderName, collectionName);
+        log.atDebug().log("When I ingest {} files of state objects from folder {} to the collection {}", numberOfStateFiles, folderName, collectionName);
         for (int i = 0; i < numberOfStateFiles; i++) {
             Model model = RDFParser.source("%s/%d.ttl".formatted(folderName, i + 1))
                     .lang(Lang.TURTLE)
@@ -354,6 +365,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @When("I fetch a fragment from url {string} in a streaming way and is equal to the model of {string}")
     public void iFetchAStreamingFragment(String url, String compareUrl) {
+        log.atDebug().log("When I fetch a fragment from url {} in a streaming way and is equal to the model of {}", url, compareUrl);
         await().atMost(60, SECONDS)
                 .untilAsserted(() -> {
                     FluxExchangeResult<String> response = client.get()
@@ -382,6 +394,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @When("I close the collection {string}")
     public void iCloseTheEventstream(String collection) throws Exception {
+        log.atDebug().log("When I close the collection {}", collection);
         mockMvc.perform(post("/admin/api/v1/eventstreams/{collection}/close", collection))
                 .andExpect(status().is2xxSuccessful());
     }
@@ -399,6 +412,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("The prometheus value for key {string} in my collection {string} is {string}")
     public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String collection, String value) throws Exception {
+        log.atDebug().log("And The prometheus value for key {} in my collection {} is {}", message, collection, value);
         MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
                 .andReturn().getResponse();
         assertTrue(response.getContentAsString().contains("%s{collection=\"%s\"} %s".formatted(message, collection, value)));
@@ -406,6 +420,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("the background processes did not fail")
     public void theBackgroundProcessesDidNotFail() {
+        log.atDebug().log("And the background processes did not fail");
         assertThat(jobExplorer.getLastJobInstance(MAINTENANCE_JOB))
                 .isNotNull()
                 .extracting(jobExplorer::getLastJobExecution)
@@ -417,6 +432,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
     @And("the batch tables has been cleaned")
     public void theBatchTablesHasBeenCleaned() throws NoSuchJobException {
+        log.atDebug().log("And the batch tables has been cleaned");
         final JobInstance lastJobInstance = jobExplorer.getLastJobInstance(MAINTENANCE_JOB);
         assertThat(lastJobInstance).isNotNull();
         await()

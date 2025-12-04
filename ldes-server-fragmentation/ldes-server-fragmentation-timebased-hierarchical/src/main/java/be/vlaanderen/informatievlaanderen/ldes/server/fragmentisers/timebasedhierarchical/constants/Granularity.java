@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 public enum Granularity {
 
 	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"), DateTimeFormatter.ofPattern("ss"), null),
-	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
-	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH"), DateTimeFormatter.ofPattern("HH"), Granularity.MINUTE),
+	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:00"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
+	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:00:00"), DateTimeFormatter.ofPattern("HH"), Granularity.MINUTE),
 	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"), Granularity.HOUR),
 	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
 	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
