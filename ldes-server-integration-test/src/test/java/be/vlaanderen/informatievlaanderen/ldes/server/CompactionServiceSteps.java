@@ -59,6 +59,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I ingest {int} members of different versions")
     public void ingestDifferentVersions(int amount) throws Exception {
+        log.atDebug().log("And I ingest {} members of different versions", amount);
         for (int i = 0; i < amount; i++) {
             String memberContent = readMemberTemplate("data/input/members/mob-hind.template.ttl")
                     .replace("ID", String.valueOf(++versionIncremeter))
@@ -72,6 +73,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I ingest {int} members of the same version")
     public void ingestSameVersions(int amount) throws Exception {
+        log.atDebug().log("And I ingest {} members of the same version", amount);
         versionIncremeter++;
         for (int i = 0; i < amount; i++) {
             String memberContent = readMemberTemplate("data/input/members/mob-hind.template.ttl")
@@ -86,12 +88,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("verify there are {int} pages")
     public void verifyCreationOfTheFollowingFragments(int i) {
+        log.atDebug().log("And verify there are {} pages", i);
         await().untilAsserted(() -> assertThat(pageEntityRepository.findAll()).hasSize(i));
 
     }
 
     @And("verify the following pages have no relation pointing to them")
     public void verifyUpdateOfPredecessorRelations(List<Long> ids) {
+        log.atDebug().log("And verify the following pages have no relation pointing to them {}", ids);
         await().untilAsserted(() -> {
             var count = pageRelationEntityRepository.findAll()
                     .stream()
@@ -104,6 +108,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("verify the following pages no longer exist")
     public void verifyRemovalOfPages(List<Long> ids) {
+        log.atDebug().log("And verify the following pages no longer exist {}", ids);
         await().atMost(Duration.of(30, ChronoUnit.SECONDS))
                 .untilAsserted(() -> {
                     var count = pageEntityRepository.findAll()
@@ -116,6 +121,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("verify {long} pages have a relation pointing to a compacted page")
     public void verifyUpdateOfPredecessorRelations(long pointingCount) {
+        log.atDebug().log("And verify {} pages have a relation pointing to a compacted page", pointingCount);
         await().untilAsserted(() -> {
             var countNewPage = pageRelationEntityRepository.findAll()
                     .stream()
@@ -132,6 +138,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("verify {long} members are connected to a compacted page")
     public void verifyMembersAreConnectedToCompactedPage(long memberCount) {
+        log.atDebug().log("And verify {} members are connected to a compacted page", memberCount);
         await().untilAsserted(() -> {
             var count = pageMemberEntityRepository.findAll()
                     .stream()
@@ -147,6 +154,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("verify the following pages have no members")
     public void verifyFragmentationOfMembers(List<Long> ids) {
+        log.atDebug().log("And verify the following pages have no members {}", ids);
         await().untilAsserted(() -> {
             var count = entityManager.createQuery("SELECT COUNT(*) FROM RetentionPageMemberEntity p where p.pageId IN :ids")
                     .setParameter("ids", ids).getSingleResult();
@@ -158,6 +166,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @Then("I wait until no fragments can be compacted for collection {string} and view {string} and capacity per page {int}")
     public void waitUntilNoFragmentsCanBeCompacted(String collection, String view, int capacity) {
+        log.atDebug().log("Then I wait until no fragments can be compacted for collection {} and view {} and capacity per page {}", collection, view, capacity);
         await().atMost(90, SECONDS).untilAsserted(() -> {
             var count = compactionPageEntityRepository.findCompactionCandidates(collection.replace("\"", ""), view.replace("\"", ""), 5).size();
             assertThat(count).isEqualTo(0L);
@@ -166,11 +175,13 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @Then("wait until no fragments can be compacted")
     public void waitUntilNoFragmentsCanBeCompacted() {
+        log.atDebug().log("Then wait until no fragments can be compacted");
         await().atMost(30, SECONDS);
     }
 
     @Then("wait for {int} seconds until compaction has executed at least once")
     public void waitForSecondsUntilCompactionHasExecutedAtLeastOnce(int secondsToWait) {
+        log.atDebug().log("Then wait for {} seconds until compaction has executed at least once", secondsToWait);
         await()
                 .timeout(secondsToWait + 1, SECONDS)
                 .pollDelay(secondsToWait, SECONDS)
@@ -198,6 +209,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I start seeding {int} members every {int} seconds")
     public void iStartSeedingMembersEverySeconds(int numberOfMembers, int seconds) {
+        log.atDebug().log("And I start seeding {} members every {} seconds", numberOfMembers, seconds);
         seedingTask = executorService.scheduleAtFixedRate(() -> ingestNumberOfVersionObjects(numberOfMembers), 0, seconds, SECONDS);
     }
 
@@ -220,6 +232,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @Then("I wait until {int} members are ingested")
     public void iWaitUntilMembersAreIngested(int number) {
+        log.atDebug().log("Then I wait until {} members are ingested", number);
         await().atMost(Duration.ofMinutes(3))
                 .pollInterval(Duration.ofSeconds(15))
                 .untilAsserted(() -> assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members", Long.class)).isEqualTo(number));
@@ -227,12 +240,14 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @Then("I stop seeding members")
     public void iStopSeedingMembers() {
+        log.atDebug().log("Then I stop seeding members");
         seedingTask.cancel(true);
     }
 
 
     @When("I wait until the first page does not exists anymore")
     public void iWaitUntilThePageWithPageNumberDoesNotExistsAnymore() {
+        log.atDebug().log("When I wait until the first page does not exists anymore");
         await()
                 .atMost(Duration.ofMinutes(2))
                 .pollInterval(Duration.ofSeconds(5))
@@ -242,17 +257,21 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I only have one open page")
     public void iOnlyHaveOneOpenPage() {
+        log.atDebug().log("And I only have one open page");
         final Long openPageCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM open_pages", Long.class);
         assertThat(openPageCount).isEqualTo(1);
     }
 
     @Then("the root page points to a compacted page")
     public void theRootPagePointsToACompactedPage() throws Exception {
+        log.atDebug().log("Then the root page points to a compacted page");
         final var response = mockMvc.perform(get("/observations/time-based").accept(Lang.NQ.getHeaderString()))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse();
-        log.atDebug().log("theRootPagePointsToACompactedPage -> Response: {}", response.getContentAsString());
+        if (log.isTraceEnabled()) {
+            log.atTrace().log("theRootPagePointsToACompactedPage -> Response: {}", response.getContentAsString());
+        }
         final String pageNumber = new ResponseToModelConverter(response).convert()
                 .listSubjectsWithProperty(RDF.type, ResourceFactory.createProperty("https://w3id.org/tree#Relation"))
                 .nextResource()
@@ -266,6 +285,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I ingest {int} members of version {int}")
     public void iIngestMembersOfVersion(int numberOfMembers, int arg1) {
+        log.atDebug().log("And I ingest {} members of version {}", numberOfMembers, arg1);
         try {
             String memberTemplate = readMemberTemplate("data/input/members/observation.template.json");
             for (int i = 0; i < numberOfMembers; i++) {
@@ -284,6 +304,7 @@ public class CompactionServiceSteps extends LdesServerIntegrationTest {
 
     @And("I ingest {int} members of version {int} of template {string} for collection {string}")
     public void iIngestMembersOfVersionOfTemplate(int numberOfMembers, int version, String template, String endpoint) {
+        log.atDebug().log("And I ingest {} members of version {} of template {} for collection {}", numberOfMembers, version, template, endpoint);
         try {
             String memberTemplate = readMemberTemplate(template);
             for (int i = 0; i < numberOfMembers; i++) {

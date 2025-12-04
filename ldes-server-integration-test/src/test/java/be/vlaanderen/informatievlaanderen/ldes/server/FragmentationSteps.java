@@ -57,6 +57,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @When("I fetch the root {string} fragment of {string}")
     public void iFetchTheRootFragment(String view, String collection) throws Exception {
+        log.atDebug().log("When I fetch the root {} fragment of {}", view, collection);
         currentPath = "/%s/%s".formatted(collection, view);
         fetchFragment(currentPath);
     }
@@ -68,7 +69,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
                 .andReturn()
                 .getResponse();
         if (log.isTraceEnabled()) {
-            log.atDebug().log("fetchFragment({}) -> status: {}, response: {}", path, response.getStatus(), response.getContentAsString());
+            log.atTrace().log("fetchFragment({}) -> status: {}, response: {}", path, response.getStatus(), response.getContentAsString());
         } else {
             log.atDebug().log("fetchFragment({}) -> status: {}", path, response.getStatus());
         }
@@ -82,7 +83,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @And("I fetch the next fragment through the first {string}")
     public void iFetchTheNextFragmentThroughTheFirst(String relation) {
-        log.atDebug().log("iFetchTheNextFragmentThroughTheFirst({})", relation);
+        log.atDebug().log("And I fetch the next fragment through the first {}", relation);
         await()
                 .atMost(60, SECONDS)
                 .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
@@ -111,6 +112,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @Then("this fragment only has {int} {string} relation")
     public void thisFragmentOnlyHasOne(int expectedRelationCount, String relation) {
+        log.atDebug().log("Then this fragment only has {} {}", expectedRelationCount, relation);
         await()
                 .atMost(60, SECONDS)
                 .pollInterval(1, SECONDS)
@@ -126,6 +128,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @And("this fragment is immutable")
     public void thisFragmentIsImmutable() {
+        log.atDebug().log("And this fragment is immutable");
         await().atMost(30, SECONDS)
                 .pollInterval(1, SECONDS)
                 .untilAsserted(() -> {
@@ -140,6 +143,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @And("this fragment contains {int} members")
     public void thisFragmentContainsMembers(int expectedMemberCount) {
+        log.atDebug().log("And this fragment contains {} members", expectedMemberCount);
         await()
                 .atMost(60, SECONDS)
                 .pollInterval(1, SECONDS)
@@ -151,11 +155,13 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @And("this fragment is mutable")
     public void thisFragmentIsNotImmutable() {
+        log.atDebug().log("And this fragment is mutable");
         assertFalse(currentFragmentCacheControl.contains("immutable"));
     }
 
     @And("this fragment has no relations")
     public void thisFragmentHasNoRelations() {
+        log.atDebug().log("And this fragment has no relations");
         await().atMost(60, SECONDS)
                 .pollInterval(1, SECONDS)
                 .until(() -> {
@@ -167,6 +173,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
     @When("I fetch the {string} fragment for {string} from the {string} view of {string}")
     public void iFetchTheFragmentOf(String fragmentKey, String fragmentValue, String view, String collection)
             throws Exception {
+        log.atDebug().log("When I fetch the {} fragment for {} from the {} view of {}", fragmentKey, fragmentValue, view, collection);
         currentPath = "/%s/%s?%s=%s".formatted(collection, view, fragmentKey, fragmentValue);
         iFetchTheFragmentOf(currentPath);
     }
@@ -174,6 +181,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
     @When("I fetch the {string} fragment")
     public void iFetchTheFragmentOf(String path)
             throws Exception {
+        log.atDebug().log("When I fetch the {} fragment", path);
         currentPath = path;
         MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
                 .andReturn()
@@ -184,6 +192,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @When("I fetch the timebased fragment {string} fragment of this month of {string}")
     public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) {
+        log.atDebug().log("When I fetch the timebased fragment {} fragment of today of {}", view, collection);
         LocalDateTime now = LocalDateTime.now();
         currentPath = "/%s/%s?year=%s&month=%02d".formatted(collection, view, now.getYear(), now.getMonthValue());
 
@@ -198,6 +207,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @Then("the following fragment URL {string} contains member with ID {string}")
     public void theLDESCollectionContainsFragments(String fragment, String memberId) {
+        log.atDebug().log("Then the following fragment URL {} contains member with ID {}", fragment, memberId);
         await()
                 .atMost(30, SECONDS)
                 .pollInterval(1, SECONDS)
@@ -209,6 +219,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @And("this fragment contains {int} members with {int} skolemized identifiers")
     public void thisFragmentContainsOnlyMembersWithSkolemizedIdentifiers(int memberCount, int skolemizedIdCount) {
+        log.atDebug().log("And this fragment contains {} members with {} skolemized identifiers", memberCount, skolemizedIdCount);
         List<Integer> skolemizedIdCountPerMember = currentFragment.listObjectsOfProperty(TREE_MEMBER)
                 .filterKeep(RDFNode::isResource)
                 .mapWith(RDFNode::asResource)
@@ -223,6 +234,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @Then("I wait until all members are fragmented")
     public void waitUntilAllMembersAreFragmented() {
+        log.atDebug().log("Then I wait until all members are fragmented");
         await().atMost(30, SECONDS)
                 .pollInterval(1, SECONDS)
                 .until(() -> unprocessedViewRepository.findAll().isEmpty());
@@ -230,6 +242,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @Then("all members of {string} are marked as fragmented")
     public void allMembersAreMarkedAsFragmented(String collection) {
+        log.atDebug().log("Then all members of {} are marked as fragmented", collection);
         allMembersAreMarkedFragmented(true);
     }
 
@@ -239,6 +252,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
     @Then("all members of {string} are marked as unfragmented")
     public void allMembersAreMarkedAsUnFragmented(String collection) {
+        log.atDebug().log("Then all members of {} are marked as unfragmented", collection);
         allMembersAreMarkedFragmented(false);
     }
 

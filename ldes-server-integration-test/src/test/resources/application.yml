@@ -6,9 +6,9 @@ logging:
         informatievlaanderen:
           ldes:
             server:
-              CompactionServiceSteps: INFO
-              FragmentationSteps: INFO
-              LdesServerSteps: INFO
+              CompactionServiceSteps: DEBUG
+              FragmentationSteps: DEBUG
+              LdesServerSteps: DEBUG
               LdesServerIntegrationTest: INFO
               resultactionsextensions:
                 ResponseToModelConverter: INFO
