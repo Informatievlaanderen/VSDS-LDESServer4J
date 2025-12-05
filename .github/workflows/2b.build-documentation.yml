@@ -23,7 +23,7 @@ env:
 
 jobs:
   build:
-    if: ${{ env.DEPLOY_DOCUMENTATION != 'false' }}
+    if: ${{ vars.DEPLOY_DOCUMENTATION != 'false' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
