@@ -5,7 +5,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Java implementation of a Linked Data Event Stream</description>
-    <url>https://semiceu.github.io/LinkedDataEventStreams/</url>
+    <url>https://github.com/Informatievlaanderen/VSDS-LDESServer4J</url>
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
@@ -30,6 +30,12 @@
             <email>Yalz@users.noreply.github.com</email>
             <organization>Cegeka</organization>
             <organizationUrl>http://www.sonatype.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Summ1t</name>
+            <email>Summm1t@users.noreply.github.com</email>
+            <organization>Sirus</organization>
+            <organizationUrl>https://sirus.be/</organizationUrl>
         </developer>
     </developers>
 
@@ -480,6 +486,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <doclint>all,-missing</doclint>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadoc</id>
