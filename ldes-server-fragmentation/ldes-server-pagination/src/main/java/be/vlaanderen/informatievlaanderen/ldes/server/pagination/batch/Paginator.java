@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.entities.Page;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PageRepository;
 import org.springframework.batch.core.StepContribution;
@@ -16,10 +17,12 @@ import java.util.List;
 public class Paginator implements Tasklet {
 	private final PageMemberRepository pageMemberRepository;
 	private final PageRepository pageRepository;
+    private final MemberRepository memberRepository;
 
-	public Paginator(PageMemberRepository pageMemberRepository, PageRepository pageRepository) {
+	public Paginator(PageMemberRepository pageMemberRepository, PageRepository pageRepository, MemberRepository memberRepository) {
 		this.pageMemberRepository = pageMemberRepository;
 		this.pageRepository = pageRepository;
+        this.memberRepository = memberRepository;
 	}
 
 	@Override
@@ -47,6 +50,7 @@ public class Paginator implements Tasklet {
 			membersInPage = pageMembers.size();
 
 			openPage = fillPageWithMembers(openPage, pageMembers);
+            updateIsFragmented(pageMembers);
 		}
 
 		chunkContext.getStepContext().getStepExecution().setWriteCount(members.size());
@@ -63,5 +67,9 @@ public class Paginator implements Tasklet {
 			return openPage;
 		}
 	}
+
+    private void updateIsFragmented(List<Long> pageMembers) {
+        memberRepository.updateIsFragmented(true, pageMembers);
+    }
 
 }

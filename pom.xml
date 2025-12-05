@@ -97,7 +97,8 @@
         <byte-buddy.version>1.15.10</byte-buddy.version>
         <wiremock-jre8.version>2.35.2</wiremock-jre8.version>
         <awaitility.version>4.2.2</awaitility.version>
-        <cucumber.version>7.20.1</cucumber.version>
+        <cucumber.version>7.23.0</cucumber.version>
+        <jna-platform.version>5.18.1</jna-platform.version>
         <assertj-core.version>3.25.3</assertj-core.version>
 
         <!-- VULNERABILITY -->
@@ -233,32 +234,15 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit</artifactId>
+                <artifactId>cucumber-bom</artifactId>
                 <version>${cucumber.version}</version>
-                <scope>test</scope>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-spring</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-core</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit-platform-engine</artifactId>
-                <version>${cucumber.version}</version>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna-platform</artifactId>
+                <version>${jna-platform.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
