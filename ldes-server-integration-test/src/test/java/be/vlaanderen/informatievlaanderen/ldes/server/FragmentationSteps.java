@@ -12,11 +12,14 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.RDF;
+import org.awaitility.core.ConditionTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -84,16 +87,18 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
     @And("I fetch the next fragment through the first {string}")
     public void iFetchTheNextFragmentThroughTheFirst(String relation) {
         log.atDebug().log("And I fetch the next fragment through the first {}", relation);
-        await()
-                .atMost(60, SECONDS)
-                .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
-                .untilAsserted(() -> {
-                    fetchFragment(currentPath);
-                    assertNotNull(currentFragment);
-                    boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation)).hasNext();
-                    log.atDebug().log("hasNextPage: {}", hasNextPage);
-                    assertTrue(hasNextPage);
-                });
+        try {
+            await()
+                    .atMost(60, SECONDS)
+                    .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                        boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation)).hasNext();
+                        log.atDebug().log("hasNextPage: {}", hasNextPage);
+                        assertTrue(hasNextPage);
+                    });
+
         Resource relationSubj = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
                 .next().getSubject();
         log.atDebug().log("relationSubj: {}", relationSubj.toString());
@@ -108,6 +113,13 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
                     fetchFragment(currentPath);
                     assertNotNull(currentFragment);
                 });
+
+        } catch (ConditionTimeoutException e) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            currentFragment.write(stream, "TURTLE");
+            log.atDebug().log("ConditionTimeoutException thrown - currentFragment: \n{}", stream.toString(StandardCharsets.UTF_8));
+            throw e;
+        }
     }
 
     @Then("this fragment only has {int} {string} relation")
