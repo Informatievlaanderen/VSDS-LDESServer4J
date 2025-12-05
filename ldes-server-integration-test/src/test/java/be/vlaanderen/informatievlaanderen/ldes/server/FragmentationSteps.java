@@ -12,11 +12,14 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.RDF;
+import org.awaitility.core.ConditionTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -81,19 +84,67 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
         }
     }
 
+    @And("I fetch the next fragment through the first GreaterThanOrEqualToRelation or LessThanRelation")
+    public void iFetchTheNextFragmentThroughTheFirstGreaterThanOrEqualToRelationOrLessThanRelation() {
+        log.atDebug().log("I fetch the next fragment through the first GreaterThanOrEqualToRelation or LessThanRelation");
+        try {
+            await()
+                    .atMost(60, SECONDS)
+                    .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                        boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + "GreaterThanOrEqualToRelation")).hasNext();
+                        if (!hasNextPage) {
+                            hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + "LessThanRelation")).hasNext();
+                        }
+                        log.atDebug().log("hasNextPage: {}", hasNextPage);
+                        assertTrue(hasNextPage);
+                        logCurrentFragment();
+                    });
+
+            StmtIterator stmtIterator = currentFragment.listStatements(null, RDF.type, createResource(TREE + "GreaterThanOrEqualToRelation"));
+            if (!stmtIterator.hasNext()) {
+                stmtIterator = currentFragment.listStatements(null, RDF.type, createResource(TREE + "LessThanRelation"));
+            }
+
+            Resource relationSubj = stmtIterator.next().getSubject();
+            log.atDebug().log("relationSubj: {}", relationSubj.toString());
+
+            currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
+                    .next().getObject().toString();
+            log.atDebug().log("currentPath: {}", currentPath);
+
+            await().atMost(60, SECONDS)
+                    .pollInterval(1, SECONDS)
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                    });
+        } catch (ConditionTimeoutException e) {
+            logCurrentFragment();
+            throw e;
+        }
+    }
+
+
+
     @And("I fetch the next fragment through the first {string}")
     public void iFetchTheNextFragmentThroughTheFirst(String relation) {
         log.atDebug().log("And I fetch the next fragment through the first {}", relation);
-        await()
-                .atMost(60, SECONDS)
-                .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
-                .untilAsserted(() -> {
-                    fetchFragment(currentPath);
-                    assertNotNull(currentFragment);
-                    boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation)).hasNext();
-                    log.atDebug().log("hasNextPage: {}", hasNextPage);
-                    assertTrue(hasNextPage);
-                });
+        try {
+            await()
+                    .atMost(60, SECONDS)
+                    .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                        boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation)).hasNext();
+                        log.atDebug().log("hasNextPage: {}", hasNextPage);
+                        assertTrue(hasNextPage);
+                        logCurrentFragment();
+                    });
+
         Resource relationSubj = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
                 .next().getSubject();
         log.atDebug().log("relationSubj: {}", relationSubj.toString());
@@ -108,6 +159,18 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
                     fetchFragment(currentPath);
                     assertNotNull(currentFragment);
                 });
+        } catch (ConditionTimeoutException e) {
+            logCurrentFragment();
+            throw e;
+        }
+    }
+
+    private void logCurrentFragment() {
+        if (log.isDebugEnabled()) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            currentFragment.write(stream, "TURTLE");
+            log.atDebug().log("==== currentFragment: \n{}", stream.toString(StandardCharsets.UTF_8));
+        }
     }
 
     @Then("this fragment only has {int} {string} relation")
