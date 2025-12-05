@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -53,7 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.defaultContentType(RdfMediaType.DEFAULT_RDF_MEDIA_TYPE);
+        configurer.defaultContentType(RdfMediaType.DEFAULT_RDF_MEDIA_TYPE, MediaType.ALL);
     }
 
     private List<String> getSwaggerPaths() {

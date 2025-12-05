@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="fragmentation-views">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="members" columnName="is_fragmented" />
+            </not>
+        </preConditions>
+        <dropView viewName="unprocessed_views" />
+        <dropView viewName="needs_bucketization" />
+        <dropView viewName="unprocessed_members" />
+        <dropView viewName="processable_members" />
+        <addColumn tableName="members">
+            <column name="is_fragmented" type="boolean" defaultValueBoolean="false" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <update tableName="members">
+           <column name="is_fragmented" value="true" />
+        </update>
+        <createIndex tableName="members" indexName="members_is_fragmented_idx">
+            <column name="is_fragmented" />
+        </createIndex>
+
+        <createView viewName="processable_members" replaceIfExists="true">
+            SELECT members.member_id,
+                   members.subject,
+                   members.collection_id,
+                   members.is_in_event_source,
+                   members.member_model,
+                   members."timestamp",
+                   members.transaction_id,
+                   members.version_of
+            FROM members
+            WHERE members.is_fragmented = false
+        </createView>
+
+        <createView viewName="unprocessed_members" replaceIfExists="true">
+            SELECT m.member_id,
+                   c.collection_id,
+                   v.view_id
+            FROM collections c
+                     JOIN views v ON v.collection_id = c.collection_id
+                     JOIN view_stats vs ON vs.view_id = v.view_id
+                     JOIN processable_members m ON m.collection_id = c.collection_id
+            WHERE m.member_id > vs.bucketized_last_id
+        </createView>
+
+        <createView viewName="needs_bucketization" replaceIfExists="true">
+            SELECT v.collection_id,
+                   v.view_id,
+                   (EXISTS (SELECT um.member_id
+                            FROM unprocessed_members um
+                            WHERE v.view_id = um.view_id)) AS should_bucketize
+            FROM views v
+            GROUP BY v.collection_id, v.view_id
+        </createView>
+        <createView viewName="unprocessed_views" replaceIfExists="true">
+            SELECT c.collection_id,
+                   c.name AS collection_name,
+                   v.view_id,
+                   v.name AS view_name
+            FROM collections c
+                     JOIN views v ON c.collection_id = v.collection_id
+                     JOIN needs_bucketization nb ON nb.collection_id = c.collection_id AND nb.view_id = v.view_id
+                     JOIN needs_pagination np ON np.collection_id = c.collection_id AND np.view_id = v.view_id
+            WHERE nb.should_bucketize
+               OR np.should_paginate
+        </createView>
+    </changeSet>
+</databaseChangeLog>

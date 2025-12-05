@@ -36,6 +36,6 @@ public class PaginationJobDefinitions {
 
 	@Bean("paginationTaskExecutor")
 	public TaskExecutor paginationTaskExecutor() {
-		return new SimpleAsyncTaskExecutor("spring_batch");
+		return new SimpleAsyncTaskExecutor("pagination_batch");
 	}
 }

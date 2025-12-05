@@ -27,7 +27,7 @@ public class CompactionStepDefinitions {
 				.step(new StepBuilder(SINGLE_VIEW_COMPACTION_STEP, jobRepository)
 						.tasklet(compactionTask, transactionManager)
 						.build())
-				.taskExecutor(new SimpleAsyncTaskExecutor())
+				.taskExecutor(new SimpleAsyncTaskExecutor("compaction_batch"))
 				.build();
 	}
 
