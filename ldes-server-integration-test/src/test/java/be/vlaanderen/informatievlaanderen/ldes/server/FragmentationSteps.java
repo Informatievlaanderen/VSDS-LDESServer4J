@@ -84,6 +84,51 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
         }
     }
 
+    @And("I fetch the next fragment through the first GreaterThanOrEqualToRelation or LessThanRelation")
+    public void iFetchTheNextFragmentThroughTheFirstGreaterThanOrEqualToRelationOrLessThanRelation() {
+        log.atDebug().log("I fetch the next fragment through the first GreaterThanOrEqualToRelation or LessThanRelation");
+        try {
+            await()
+                    .atMost(60, SECONDS)
+                    .pollInterval(iterative(duration -> duration.getSeconds() < 10 ? duration.plus(1, ChronoUnit.SECONDS) : duration))
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                        boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + "GreaterThanOrEqualToRelation")).hasNext();
+                        if (!hasNextPage) {
+                            hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + "LessThanRelation")).hasNext();
+                        }
+                        log.atDebug().log("hasNextPage: {}", hasNextPage);
+                        assertTrue(hasNextPage);
+                        logCurrentFragment();
+                    });
+
+            StmtIterator stmtIterator = currentFragment.listStatements(null, RDF.type, createResource(TREE + "GreaterThanOrEqualToRelation"));
+            if (!stmtIterator.hasNext()) {
+                stmtIterator = currentFragment.listStatements(null, RDF.type, createResource(TREE + "LessThanRelation"));
+            }
+
+            Resource relationSubj = stmtIterator.next().getSubject();
+            log.atDebug().log("relationSubj: {}", relationSubj.toString());
+
+            currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
+                    .next().getObject().toString();
+            log.atDebug().log("currentPath: {}", currentPath);
+
+            await().atMost(60, SECONDS)
+                    .pollInterval(1, SECONDS)
+                    .untilAsserted(() -> {
+                        fetchFragment(currentPath);
+                        assertNotNull(currentFragment);
+                    });
+        } catch (ConditionTimeoutException e) {
+            logCurrentFragment();
+            throw e;
+        }
+    }
+
+
+
     @And("I fetch the next fragment through the first {string}")
     public void iFetchTheNextFragmentThroughTheFirst(String relation) {
         log.atDebug().log("And I fetch the next fragment through the first {}", relation);

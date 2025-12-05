@@ -86,7 +86,7 @@ Feature: LDES Server Fragmentation
     And I wait until all members are fragmented
     Then all members of <collection> are marked as fragmented
     When I fetch the timebased fragment "by-time" fragment of this month of <collection>
-    And I fetch the next fragment through the first "GreaterThanOrEqualToRelation"
+    And I fetch the next fragment through the first GreaterThanOrEqualToRelation or LessThanRelation
     And I fetch the next fragment through the first "Relation"
     Examples:
       | eventStreamDescriptionFile                                              | template                                               | collection            | ingestedMembers |
