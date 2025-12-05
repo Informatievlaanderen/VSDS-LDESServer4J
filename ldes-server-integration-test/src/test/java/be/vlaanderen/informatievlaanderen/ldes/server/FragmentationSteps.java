@@ -97,6 +97,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
                         boolean hasNextPage = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation)).hasNext();
                         log.atDebug().log("hasNextPage: {}", hasNextPage);
                         assertTrue(hasNextPage);
+                        logCurrentFragment();
                     });
 
         Resource relationSubj = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
@@ -113,12 +114,17 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
                     fetchFragment(currentPath);
                     assertNotNull(currentFragment);
                 });
-
         } catch (ConditionTimeoutException e) {
+            logCurrentFragment();
+            throw e;
+        }
+    }
+
+    private void logCurrentFragment() {
+        if (log.isDebugEnabled()) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             currentFragment.write(stream, "TURTLE");
-            log.atDebug().log("ConditionTimeoutException thrown - currentFragment: \n{}", stream.toString(StandardCharsets.UTF_8));
-            throw e;
+            log.atDebug().log("==== currentFragment: \n{}", stream.toString(StandardCharsets.UTF_8));
         }
     }
 
