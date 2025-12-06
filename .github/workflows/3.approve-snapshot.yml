@@ -10,6 +10,8 @@ env:
   IMAGE_NAME: ldes-server
   JAVA_DISTRIBUTION: ${{ vars.JAVA_DISTRIBUTION }}
   JAVA_VERSION: ${{ vars.JAVA_VERSION }}
+  GIT_CONFIG_USERNAME: ${{ vars.GIT_CONFIG_USERNAME }}
+  GIT_CONFIG_EMAIL: ${{ vars.GIT_CONFIG_EMAIL }}
 
 jobs:
   approve-snapshot:
@@ -34,8 +36,9 @@ jobs:
             export NEWVERSION=$(echo ${VERSION/"-SNAPSHOT"/""})
             echo "New version: ${NEWVERSION}"
             mvn -B versions:set -DnewVersion=${NEWVERSION} -DgenerateBackupPoms=false
-            git config user.name "${{ env.GIT_CONFIG_USERNAME }}"
-            git config user.email "${{ env.GIT_CONFIG_EMAIL }}"
+            git config --global user.name "${{ env.GIT_CONFIG_USERNAME }}"
+            git config --global user.email "${{ env.GIT_CONFIG_EMAIL }}"
+            git config --global url."https://${{ env.DEPLOY_DOCS_PAT }}@github.com/".insteadOf https://github.com/
             git add -A
             git commit -am "ci: Promoted version to ${NEWVERSION}"
             echo "NEW_VERSION=${NEWVERSION}" >> $GITHUB_ENV
