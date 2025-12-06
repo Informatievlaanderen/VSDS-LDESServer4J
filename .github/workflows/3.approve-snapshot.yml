@@ -13,7 +13,7 @@ env:
 
 jobs:
   approve-snapshot:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: Approve Snapshot and Promote
     runs-on: ubuntu-latest
     steps:
