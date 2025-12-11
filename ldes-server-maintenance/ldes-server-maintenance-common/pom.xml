@@ -6,7 +6,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server-maintenance</artifactId>
-        <version>3.6.3</version>
+        <version>3.6.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>ldes-server-maintenance-common</artifactId>
