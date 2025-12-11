@@ -1,19 +1,14 @@
 ---
-title: Home
 layout: home
-nav_order: 0
 ---
 
 # Linked Data Event Stream Server
 
-## Introduction
+> ⚠️ **Warning!**
+>
+> **This page has been archived. All documentation, source code, Docker images, and release information for the LDES software have been moved to the open-source project at [openldes.org](https://openldes.org).**
+>
+> **This page was originally created for the completed VSDS project, funded under the European Recovery and Resilience Facility (RRF) as part of NextGenerationEU and aligned with EU digital transformation strategies.**
+>
+> You can find the new source code at: [https://github.com/OpenLDES/LDESServer](https://github.com/OpenLDES/LDESServer)
 
-The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an [LDES](https://semiceu.github.io/LinkedDataEventStreams/).
-
-The LDES server was built in the context of the [VSDS project](https://vlaamseoverheid.atlassian.net/wiki/spaces/VSDSSTART/overview) in order to easily exchange data.
-
-![](./assets/images/LDES%20server.png)
-
-The server can be configured to meet the organisation's specific needs. Functionalities include **retention policy**, **fragmentation**, **deletion** and **pagination** for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage.
-
-![](./assets/images/scalableApplications.png)

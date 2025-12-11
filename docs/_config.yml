@@ -19,47 +19,19 @@ ga_tracking_anonymize_ip: true # Use GDPR compliant Google Analytics settings (t
 
 # Define Jekyll collections
 collections:
-  configuration:
-    permalink: "/:collection/:path"
-    output: true
-  ingest:
-    permalink: "/:collection/:path"
-    output: true
-  fetch:
-    permalink: "/:collection/:path"
-    output: true
-  fragmentations:
-    permalink: "/:collection/:path"
-    output: true
-  retention-policies:
-    permalink: "/:collection/:path"
-    output: true
-  features:
-    permalink: "/:collection/:path"
-    output: true
+
 
 just_the_docs:
   collections:
-    configuration:
-      name: Configuration
-    ingest:
-      name: Data Ingestion
-    fetch:
-      name: Data Retrieval
-    features:
-      name: Features
 
 nav_external_links:
-  - title: VSDS Technical Docs
-    url: https://informatievlaanderen.github.io/VSDS-Tech-Docs/
-    hide_icon: false # set to true to hide the external link icon - defaults to false
 
 enable_copy_code_button: true
 
 # Footer "Edit this page on GitHub" link text
-gh_edit_link: true # show or hide edit this page link
+gh_edit_link: false # show or hide edit this page link
 gh_edit_link_text: "Contribute on GitHub"
-gh_edit_repository: "https://github.com/Informatievlaanderen/VSDS-LDESServer4J" # the github URL for your repo
+gh_edit_repository: "https://github.com/OpenLDES/LDESServer" # the github URL for your repo
 gh_edit_branch: "develop" # the branch that your docs is served from
 gh_edit_source: docs # the source that your files originate from
 gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into the editor immediately
